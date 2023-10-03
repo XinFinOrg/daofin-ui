@@ -1,25 +1,22 @@
 import React from "react";
-import { CardWallet, HeaderDao } from "@aragon/ods";
 import { useDaoQuery } from "../hooks/useDaoDetails";
 import { formatDate, shortenAddress, toDisplayEns } from "../utils/networks";
 import { useNetwork } from "../contexts/network";
 import { useResolveDaoAvatar } from "../hooks/useResolveDaoAvatar";
 import styled from "styled-components";
-import {
-  Badge,
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  Typography,
-} from "@material-tailwind/react";
+
 import useDaoGlobalSettings from "../hooks/useDaoGlobalSettings";
 import { daoAddress, pluginAddress } from "../utils/constants";
 import { formatEther, parseEther, parseUnits } from "@ethersproject/units";
+import { Card, CardBody, CardFooter } from "@chakra-ui/card";
+import { Image } from "@chakra-ui/image";
+import { Box, Flex, Heading, Spacer, Stack, Text } from "@chakra-ui/layout";
+import { Button } from "@chakra-ui/button";
+import { Tag } from "@chakra-ui/tag";
+import BoxWrapper from "./BoxWrapper";
 
-const HeaderWrapper = styled.div.attrs({
-  className:
-    " justify-center	w-screen -mx-2 tablet:col-span-full tablet:w-full tablet:mx-0 desktop:col-start-2 desktop:col-span-10 tablet:mt-3",
+const HeaderWrapper = styled(BoxWrapper).attrs({
+  className: "w-100",
 })``;
 
 const DaoHeader = ({}) => {
@@ -28,59 +25,46 @@ const DaoHeader = ({}) => {
     isLoading: liveDaoLoading,
     isSuccess,
   } = useDaoQuery(daoAddress, 5000);
-  console.log({ liveDao });
   const { avatar: liveDaoAvatar } = useResolveDaoAvatar(
     liveDao?.metadata?.avatar
   );
   const { network } = useNetwork();
   const liveAddressOrEns = toDisplayEns(liveDao?.ensDomain) || liveDao?.address;
 
-  const globalSettings = useDaoGlobalSettings(daoAddress);
-
   return (
     <>
-      <HeaderWrapper>
-        {isSuccess && !liveDaoLoading && liveDao && (
-          <Card className="mt-6 w-96">
-            <CardBody>
-              <Typography variant="h5" color="blue-gray" className="mb-2">
-                Dao Name: {liveDao.metadata.name}
-              </Typography>
-              <Typography>{liveAddressOrEns}</Typography>
+      {isSuccess && !liveDaoLoading && liveDao && (
+        <HeaderWrapper>
+          <Card
+            direction={{ base: "column", sm: "row" }}
+            overflow="hidden"
+            variant="outline"
+            justifyContent={'center'}
+          >
+            <Stack justifyContent={'center'} alignItems={'center'}>
+              <CardBody>
+                <Heading size="md">Dao Name: {liveDao.metadata.name}</Heading>
+                <Text>{liveAddressOrEns}</Text>
+                <Text py="2">{liveDao.metadata.description}</Text>
 
-              {globalSettings && (
-                <div>
-                  <Typography>
-                    Allowed Amounts:
-                    {globalSettings.allowedAmounts
-                      .map((amount) => formatEther(amount.toString()))
-                      .join(" XDC, ")}
-                  </Typography>
-                  <Typography>
-                    Master Node Numbers:{" "}
-                    {globalSettings.totalNumberOfMasterNodes.toString()}
-                  </Typography>
-                  <Typography>
-                    {shortenAddress(globalSettings.xdcValidator.toString())}
-                  </Typography>
-                </div>
-              )}
-            </CardBody>
-            <CardFooter className="pt-0">
-              <Typography>
-                <Button className="mr-1 mt-1">
-                  {formatDate(
-                    liveDao.creationDate.getTime() / 1000,
-                    "MMMM yyyy"
-                  ).toString()}
-                </Button>
-                <Button className="mr-1 mt-1">{liveDao?.plugins[0]?.id}</Button>
-                <Button className="mr-1 mt-1">{network}</Button>
-              </Typography>
-            </CardFooter>
+                <Flex >
+                  <Box className="mr-1">
+                    <Tag>{new Date(liveDao.creationDate).toUTCString()}</Tag>
+                  </Box>
+                  <Spacer />
+                  <Box className="mr-1">
+                    <Tag>{liveDao?.plugins[0]?.id}</Tag>
+                  </Box>
+                  <Spacer />
+                  <Box className="mr-1">
+                    <Tag>{network}</Tag>
+                  </Box>
+                </Flex>
+              </CardBody>
+            </Stack>
           </Card>
-        )}
-      </HeaderWrapper>
+        </HeaderWrapper>
+      )}
     </>
   );
 };

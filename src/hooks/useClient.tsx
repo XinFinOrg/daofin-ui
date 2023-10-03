@@ -25,12 +25,14 @@ import {
 import {
   CHAIN_METADATA,
   SUBGRAPH_API_URL,
+  SUBGRAPH_PLUGIN_API_URL,
   SupportedNetworks,
   translateToAppNetwork,
   translateToNetworkishName,
 } from "../utils/networks";
 import { Buffer } from "buffer";
 import { useNetwork } from "../contexts/network";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 interface ClientContext {
   client?: Client;
   context?: SdkContext;
@@ -57,16 +59,18 @@ export const useClient = () => {
 export const UseClientProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
-  const { signer, provider } = useWallet();
-  console.log({signer});
+  const { signer, provider, address } = useWallet();
+  console.log({ signer });
   console.log(provider?.getSigner());
-  
+
   const [client, setClient] = useState<Client>();
   const { network } = useNetwork();
+
   const [context, setContext] = useState<SdkContext>();
 
   const [daofinClient, setDaofinClient] = useState<DaofinClient>();
   const [daofinContext, setDaofinContext] = useState<DaofinPluginContext>();
+  const { pluginAddress, pluginRepoAddress } = useAppGlobalConfig();
 
   useEffect(() => {
     const translatedNetwork = translateToNetworkishName(network);
@@ -91,11 +95,9 @@ export const UseClientProvider: React.FC<PropsWithChildren> = ({
         },
       },
     ];
-    console.log("0 signer",signer);
-    console.log("netwrok",{
-      name: translatedNetwork,
-      chainId: CHAIN_METADATA[network].id,
-    });
+    console.log(
+      ipfsNodes[0].headers.Authorization
+    );
     
     const contextParams: ContextParams = {
       daoFactoryAddress: LIVE_CONTRACTS[translatedNetwork].daoFactory,
@@ -103,7 +105,7 @@ export const UseClientProvider: React.FC<PropsWithChildren> = ({
         name: translatedNetwork,
         chainId: CHAIN_METADATA[network].id,
       },
-      signer: provider?.getSigner() ?? undefined,
+      signer: signer ?? undefined,
       web3Providers: CHAIN_METADATA[network].rpc[0],
       ipfsNodes,
       ensRegistryAddress: LIVE_CONTRACTS[translatedNetwork].ensRegistry,
@@ -113,15 +115,16 @@ export const UseClientProvider: React.FC<PropsWithChildren> = ({
 
     const daofinContext = new DaofinPluginContext({
       ...contextParams,
-      pluginRepoAddress: "0x9C428271bD37BE705c0bB6c39669964A776Abb9f",
-      pluginAddress: "0x0bc8cb9529E01c0De2C5516Dc228b0C0E268556a",
+      graphqlNodes: [{ url: SUBGRAPH_PLUGIN_API_URL[network]! }],
+      pluginRepoAddress: pluginRepoAddress,
+      pluginAddress: pluginAddress,
     });
 
     setClient(new Client(sdkContext));
     setDaofinClient(new DaofinClient(daofinContext));
     setContext(sdkContext);
     setDaofinContext(daofinContext);
-  }, [network, signer]);
+  }, [network, signer, address]);
 
   const value: ClientContext = {
     client,

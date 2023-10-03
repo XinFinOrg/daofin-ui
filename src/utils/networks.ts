@@ -13,6 +13,8 @@ import { bytesToHex, resolveIpfsCid } from "@aragon/sdk-common";
 import { DaofinDetails } from "@xinfin/osx-daofin-sdk-client";
 import { Client } from "@xinfin/osx-sdk-client";
 import { isAddress } from "@ethersproject/address";
+import { ethers } from "ethers";
+import { defaultAbiCoder } from "@ethersproject/abi";
 export const SUPPORTED_CHAIN_ID = [
   1, 5, 137, 80001, 42161, 421613, 50, 51,
 ] as const;
@@ -206,7 +208,11 @@ export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
   apothem: "http://localhost:8000/subgraphs/name/xinfin-osx-apothem",
   unsupported: undefined,
 };
-
+export const SUBGRAPH_PLUGIN_API_URL: SubgraphNetworkUrl = {
+  xdc: undefined,
+  apothem: "http://localhost:8000/subgraphs/name/daofin-apothem",
+  unsupported: undefined,
+};
 /**
  * Custom function to deserialize values, including Date and BigInt types
  * @param _ key: unused
@@ -241,10 +247,9 @@ export const customJSONReviver = (_: string, value: any) => {
 
 export type DetailedProposal = {};
 
-
 export const KNOWN_FORMATS = {
-  standard: 'MMM dd yyyy HH:mm', // This is our standard used for showing dates.
-  proposals: 'yyyy/MM/dd hh:mm a',
+  standard: "MMM dd yyyy HH:mm", // This is our standard used for showing dates.
+  proposals: "yyyy/MM/dd hh:mm a",
 };
 
 /**
@@ -297,12 +302,50 @@ export async function resolveDaoAvatarIpfsCid(
   }
 }
 export function shortenAddress(address: string | null) {
-  if (address === null) return '';
+  if (address === null) return "";
   if (isAddress(address))
     return (
       address.substring(0, 5) +
-      '…' +
+      "…" +
       address.substring(address.length - 4, address.length)
     );
   else return address;
+}
+
+export type ProposalResource = {
+  name: string;
+  url: string;
+};
+
+export function getPluginInstallationId(
+  daoAddress: string,
+  pluginAddress: string
+): string {
+  return ethers.utils.keccak256(
+    ethers.utils.defaultAbiCoder.encode(
+      ["address", "address"],
+      [daoAddress, pluginAddress]
+    )
+  );
+}
+export function getPluginProposalId(
+  pluginAddress: string,
+  proposalId: number
+): string {
+  return pluginAddress
+    .toLocaleLowerCase()
+    .concat("_")
+    .concat(defaultAbiCoder.encode(["uint256"], [proposalId]));
+}
+
+export function getFormattedUtcOffset(): string {
+  const currDate = new Date();
+  let decimalOffset = currDate.getTimezoneOffset() / 60;
+  const isNegative = decimalOffset < 0;
+  decimalOffset = Math.abs(decimalOffset);
+  const hourOffset = Math.floor(decimalOffset);
+  const minuteOffset = Math.round((decimalOffset - hourOffset) * 60);
+  let formattedOffset = 'UTC' + (isNegative ? '+' : '-') + hourOffset;
+  formattedOffset += minuteOffset > 0 ? ':' + minuteOffset : '';
+  return formattedOffset;
 }
