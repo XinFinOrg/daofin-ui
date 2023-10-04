@@ -93,7 +93,6 @@ export const UseClientProvider: React.FC<PropsWithChildren> = ({
         },
       },
     ];
-    console.log(ipfsNodes[0].headers.Authorization);
 
     const contextParams: ContextParams = {
       daoFactoryAddress: LIVE_CONTRACTS[translatedNetwork].daoFactory,
