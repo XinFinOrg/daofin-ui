@@ -4,7 +4,7 @@ import {
   InMemoryCache,
   makeVar,
   NormalizedCacheObject,
-} from '@apollo/client';
+} from "@apollo/client";
 import {
   DaoListItem,
   Deposit,
@@ -12,10 +12,10 @@ import {
   DaoMetadata,
   InstalledPluginListItem,
   VotingMode,
-} from '@xinfin/osx-sdk-client';
-import {PluginInstallItem} from '@xinfin/osx-client-common';
-import {RestLink} from 'apollo-link-rest';
-import {CachePersistor, LocalStorageWrapper} from 'apollo3-cache-persist';
+} from "@xinfin/osx-sdk-client";
+import { PluginInstallItem } from "@xinfin/osx-client-common";
+import { RestLink } from "apollo-link-rest";
+import { CachePersistor, LocalStorageWrapper } from "apollo3-cache-persist";
 
 import {
   FAVORITE_DAOS_KEY,
@@ -27,12 +27,16 @@ import {
   PENDING_MULTISIG_VOTES_KEY,
   PENDING_PROPOSALS_KEY,
   PENDING_VOTES_KEY,
+} from "../utils/misc";
+import {
+  CHAIN_METADATA,
+  customJSONReviver,
+  DetailedProposal,
+  SupportedChainID,
+  SupportedNetworks,
+} from "../utils/networks";
 
-} from '../utils/misc';
-import { customJSONReviver, DetailedProposal, SUBGRAPH_API_URL, SupportedChainID, SupportedNetworks } from '../utils/networks';
-
-
-export const BASE_URL = 'https://api.coingecko.com/api/v3';
+export const BASE_URL = "https://api.coingecko.com/api/v3";
 const restLink = new RestLink({
   uri: BASE_URL,
 });
@@ -40,9 +44,9 @@ const restLink = new RestLink({
 const cache = new InMemoryCache();
 
 // add the REST API's typename you want to persist here
-const entitiesToPersist = ['tokenData'];
+const entitiesToPersist = ["tokenData"];
 
-export const PRIVACY_KEY = 'privacy-policy-preferences';
+export const PRIVACY_KEY = "privacy-policy-preferences";
 
 // check if cache should be persisted or restored based on user preferences
 const value = localStorage.getItem(PRIVACY_KEY);
@@ -52,19 +56,19 @@ if (value && JSON.parse(value).functional) {
     // TODO: Check and update the size needed for the cache
     maxSize: 5242880, // 5 MiB
     storage: new LocalStorageWrapper(window.localStorage),
-    debug: process.env.NODE_ENV === 'development',
+    debug: process.env.NODE_ENV === "development",
     persistenceMapper: async (data: string) => {
       const parsed = JSON.parse(data);
 
       const mapped: Record<string, unknown> = {};
       const persistEntities: string[] = [];
-      const rootQuery = parsed['ROOT_QUERY'];
+      const rootQuery = parsed["ROOT_QUERY"];
 
-      mapped['ROOT_QUERY'] = Object.keys(rootQuery).reduce(
+      mapped["ROOT_QUERY"] = Object.keys(rootQuery).reduce(
         (obj: Record<string, unknown>, key: string) => {
-          if (key === '__typename') return obj;
+          if (key === "__typename") return obj;
 
-          const keyWithoutArgs = key.substring(0, key.indexOf('('));
+          const keyWithoutArgs = key.substring(0, key.indexOf("("));
           if (entitiesToPersist.includes(keyWithoutArgs)) {
             obj[key] = rootQuery[key];
 
@@ -81,7 +85,7 @@ if (value && JSON.parse(value).functional) {
 
           return obj;
         },
-        {__typename: 'Query'}
+        { __typename: "Query" }
       );
 
       persistEntities.reduce((obj, key) => {
@@ -100,10 +104,11 @@ if (value && JSON.parse(value).functional) {
   restoreApolloCache();
 }
 
-
 export const apothemTestClient = new ApolloClient({
   cache,
-  link: restLink.concat(new HttpLink({uri: SUBGRAPH_API_URL['apothem']})),
+  link: restLink.concat(
+    new HttpLink({ uri: CHAIN_METADATA["apothem"].osxSubgraph })
+  ),
 });
 
 // TODO: remove undefined when all clients are defined
@@ -121,7 +126,7 @@ const client: Record<
  *************************************************/
 // including description, type, and chain in anticipation for
 // showing these daos on explorer page
-export type NavigationDao = Omit<DaoListItem, 'metadata' | 'plugins'> & {
+export type NavigationDao = Omit<DaoListItem, "metadata" | "plugins"> & {
   chain: SupportedChainID;
   metadata: {
     name: string;
@@ -131,16 +136,16 @@ export type NavigationDao = Omit<DaoListItem, 'metadata' | 'plugins'> & {
   plugins: InstalledPluginListItem[] | PluginInstallItem[];
 };
 const favoriteDaos = JSON.parse(
-  localStorage.getItem(FAVORITE_DAOS_KEY) || '[]'
+  localStorage.getItem(FAVORITE_DAOS_KEY) || "[]"
 );
 const favoriteDaosVar = makeVar<Array<NavigationDao>>(favoriteDaos);
 
 const selectedDaoVar = makeVar<NavigationDao>({
-  address: '',
-  ensDomain: '',
+  address: "",
+  ensDomain: "",
   metadata: {
-    name: '',
-    avatar: '',
+    name: "",
+    avatar: "",
   },
   chain: 5,
   plugins: [],
@@ -150,13 +155,10 @@ const selectedDaoVar = makeVar<NavigationDao>({
  *               PENDING DEPOSITS                *
  *************************************************/
 const depositTxs = JSON.parse(
-  localStorage.getItem(PENDING_DEPOSITS_KEY) || '[]',
+  localStorage.getItem(PENDING_DEPOSITS_KEY) || "[]",
   customJSONReviver
 );
 const pendingDeposits = makeVar<Deposit[]>(depositTxs);
-
-
-
 
 /*************************************************
  *                PENDING EXECUTION              *
@@ -167,7 +169,7 @@ export type PendingTokenBasedExecution = {
   [key: string]: boolean;
 };
 const pendingTokenBasedExecution = JSON.parse(
-  localStorage.getItem(PENDING_EXECUTION_KEY) || '{}',
+  localStorage.getItem(PENDING_EXECUTION_KEY) || "{}",
   customJSONReviver
 );
 const pendingTokenBasedExecutionVar = makeVar<PendingTokenBasedExecution>(
@@ -180,7 +182,7 @@ export type PendingMultisigExecution = {
   [key: string]: boolean;
 };
 const pendingMultisigExecution = JSON.parse(
-  localStorage.getItem(PENDING_MULTISIG_EXECUTION_KEY) || '{}',
+  localStorage.getItem(PENDING_MULTISIG_EXECUTION_KEY) || "{}",
   customJSONReviver
 );
 const pendingMultisigExecutionVar = makeVar<PendingMultisigExecution>(
@@ -193,7 +195,7 @@ const pendingMultisigExecutionVar = makeVar<PendingMultisigExecution>(
 // iffy about this structure
 export type CachedProposal = Omit<
   DetailedProposal,
-  'creationBlockNumber' | 'executionBlockNumber' | 'executionDate' | 'status'
+  "creationBlockNumber" | "executionBlockNumber" | "executionDate" | "status"
 >;
 
 type PendingTokenBasedProposals = {
@@ -205,7 +207,7 @@ type PendingTokenBasedProposals = {
 };
 
 const pendingTokenBasedProposals = JSON.parse(
-  localStorage.getItem(PENDING_PROPOSALS_KEY) || '{}',
+  localStorage.getItem(PENDING_PROPOSALS_KEY) || "{}",
   customJSONReviver
 );
 const pendingTokenBasedProposalsVar = makeVar<PendingTokenBasedProposals>(
@@ -222,7 +224,7 @@ type PendingMultisigProposals = {
 };
 
 const pendingMultisigProposals = JSON.parse(
-  localStorage.getItem(PENDING_MULTISIG_PROPOSALS_KEY) || '{}',
+  localStorage.getItem(PENDING_MULTISIG_PROPOSALS_KEY) || "{}",
   customJSONReviver
 );
 const pendingMultisigProposalsVar = makeVar<PendingMultisigProposals>(
@@ -244,7 +246,7 @@ export type PendingDaoCreation = {
   };
 };
 const pendingDaoCreation = JSON.parse(
-  localStorage.getItem(PENDING_DAOS_KEY) || '{}'
+  localStorage.getItem(PENDING_DAOS_KEY) || "{}"
 );
 const pendingDaoCreationVar = makeVar<PendingDaoCreation>(pendingDaoCreation);
 

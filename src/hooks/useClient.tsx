@@ -24,8 +24,6 @@ import {
 } from "@xinfin/osx-daofin-sdk-client";
 import {
   CHAIN_METADATA,
-  SUBGRAPH_API_URL,
-  SUBGRAPH_PLUGIN_API_URL,
   SupportedNetworks,
   translateToAppNetwork,
   translateToNetworkishName,
@@ -95,10 +93,8 @@ export const UseClientProvider: React.FC<PropsWithChildren> = ({
         },
       },
     ];
-    console.log(
-      ipfsNodes[0].headers.Authorization
-    );
-    
+    console.log(ipfsNodes[0].headers.Authorization);
+
     const contextParams: ContextParams = {
       daoFactoryAddress: LIVE_CONTRACTS[translatedNetwork].daoFactory,
       network: {
@@ -109,13 +105,13 @@ export const UseClientProvider: React.FC<PropsWithChildren> = ({
       web3Providers: CHAIN_METADATA[network].rpc[0],
       ipfsNodes,
       ensRegistryAddress: LIVE_CONTRACTS[translatedNetwork].ensRegistry,
-      graphqlNodes: [{ url: SUBGRAPH_API_URL[network]! }],
+      graphqlNodes: [{ url: CHAIN_METADATA[network].osxSubgraph }],
     };
     const sdkContext = new SdkContext(contextParams);
 
     const daofinContext = new DaofinPluginContext({
       ...contextParams,
-      graphqlNodes: [{ url: SUBGRAPH_PLUGIN_API_URL[network]! }],
+      graphqlNodes: [{ url: CHAIN_METADATA[network].daofinSubgraph }],
       pluginRepoAddress: pluginRepoAddress,
       pluginAddress: pluginAddress,
     });

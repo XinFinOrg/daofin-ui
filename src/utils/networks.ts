@@ -69,6 +69,8 @@ export type ChainData = {
   alchemyApi: string;
   supportsEns: boolean;
   ipfs?: string;
+  daofinSubgraph: string;
+  osxSubgraph: string;
 };
 
 export type ChainList = Record<SupportedNetworks, ChainData>;
@@ -91,9 +93,11 @@ export const CHAIN_METADATA: ChainList = {
     etherscanApiKey: "",
     supportsEns: true,
     ipfs: process.env.REACT_APP_IPFS_API_URL,
+    daofinSubgraph: process.env.REACT_APP_APOTHEM_DAOFIN_SUB_GRAPH_URL || "",
+    osxSubgraph: process.env.REACT_APP_APOTHEM_OSX_SUB_GRAPH_URL || "",
   },
   xdc: {
-    id: 51,
+    id: 50,
     name: "XDC",
     domain: "L1 Blockchain",
     logo: "https://icons.llamao.fi/icons/chains/rsz_xdc.jpg",
@@ -110,6 +114,8 @@ export const CHAIN_METADATA: ChainList = {
     etherscanApiKey: "",
     supportsEns: false,
     ipfs: process.env.REACT_APP_IPFS_API_URL,
+    daofinSubgraph: process.env.REACT_APP_XDC_DAOFIN_SUB_GRAPH_URL || "",
+    osxSubgraph: process.env.REACT_APP_XDC_OSX_SUB_GRAPH_URL || "",
   },
   unsupported: {
     id: 1,
@@ -128,6 +134,8 @@ export const CHAIN_METADATA: ChainList = {
     alchemyApi: "",
     supportsEns: false,
     ipfs: "",
+    daofinSubgraph: "",
+    osxSubgraph: "",
   },
 };
 
@@ -203,16 +211,16 @@ export function toDisplayEns(ensName?: string) {
 }
 type SubgraphNetworkUrl = Record<SupportedNetworks, string | undefined>;
 
-export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
-  xdc: undefined,
-  apothem: "http://localhost:8000/subgraphs/name/xinfin-osx-apothem",
-  unsupported: undefined,
-};
-export const SUBGRAPH_PLUGIN_API_URL: SubgraphNetworkUrl = {
-  xdc: undefined,
-  apothem: "http://localhost:8000/subgraphs/name/daofin-apothem",
-  unsupported: undefined,
-};
+// export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
+//   xdc: undefined,
+//   apothem: "http://localhost:8000/subgraphs/name/xinfin-osx-apothem",
+//   unsupported: undefined,
+// };
+// export const SUBGRAPH_PLUGIN_API_URL: SubgraphNetworkUrl = {
+//   xdc: undefined,
+//   apothem: "http://localhost:8000/subgraphs/name/daofin-apothem",
+//   unsupported: undefined,
+// };
 /**
  * Custom function to deserialize values, including Date and BigInt types
  * @param _ key: unused
@@ -345,7 +353,7 @@ export function getFormattedUtcOffset(): string {
   decimalOffset = Math.abs(decimalOffset);
   const hourOffset = Math.floor(decimalOffset);
   const minuteOffset = Math.round((decimalOffset - hourOffset) * 60);
-  let formattedOffset = 'UTC' + (isNegative ? '+' : '-') + hourOffset;
-  formattedOffset += minuteOffset > 0 ? ':' + minuteOffset : '';
+  let formattedOffset = "UTC" + (isNegative ? "+" : "-") + hourOffset;
+  formattedOffset += minuteOffset > 0 ? ":" + minuteOffset : "";
   return formattedOffset;
 }

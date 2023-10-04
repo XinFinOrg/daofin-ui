@@ -38,7 +38,7 @@ export default function Header() {
             onClick={isOpen ? onClose : onOpen}
           />
           <HStack spacing={8} alignItems={"center"}>
-            <Box>Daofin</Box>
+            <Box>DAOFIN</Box>
             <HStack
               as={"nav"}
               spacing={4}
