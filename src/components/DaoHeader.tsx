@@ -14,6 +14,7 @@ import { Box, Flex, Heading, Spacer, Stack, Text } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { Tag } from "@chakra-ui/tag";
 import BoxWrapper from "./BoxWrapper";
+import { Link } from "react-router-dom";
 
 const HeaderWrapper = styled(BoxWrapper).attrs({
   className: "w-100",
@@ -39,15 +40,15 @@ const DaoHeader = ({}) => {
             direction={{ base: "column", sm: "row" }}
             overflow="hidden"
             variant="outline"
-            justifyContent={'center'}
+            justifyContent={"center"}
           >
-            <Stack justifyContent={'center'} alignItems={'center'}>
+            <Stack justifyContent={"center"} alignItems={"center"}>
               <CardBody>
-                <Heading size="md">Dao Name: {liveDao.metadata.name}</Heading>
+                <Heading size="md">{liveDao.metadata.name}</Heading>
                 <Text>{liveAddressOrEns}</Text>
-                <Text py="2">{liveDao.metadata.description}</Text>
+                <Text as={'p'} py="2">{liveDao.metadata.description}</Text>
 
-                <Flex >
+                <Flex>
                   <Box className="mr-1">
                     <Tag>{new Date(liveDao.creationDate).toUTCString()}</Tag>
                   </Box>
@@ -59,6 +60,21 @@ const DaoHeader = ({}) => {
                   <Box className="mr-1">
                     <Tag>{network}</Tag>
                   </Box>
+                </Flex>
+                <Flex className="m-1 justify-center">
+                  {liveDao.metadata?.links?.map(({ name, url }) => (
+                    <Box className="mr-1">
+                      <Tag>
+                        <Link
+                          target="_blank"
+                          className="underline-offset-1 text-sky-400"
+                          to={url}
+                        >
+                          {name}
+                        </Link>
+                      </Tag>
+                    </Box>
+                  ))}
                 </Flex>
               </CardBody>
             </Stack>
