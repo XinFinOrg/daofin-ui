@@ -25,7 +25,7 @@ query DepositsQueries($pluginId: ID!) {
   }
 }
 `;
-function useDeposits(pluginId: string): {
+function usePeoplesHouseDeposits(pluginId: string): {
   data: Deposit[] | undefined;
   error: string;
   isLoading: boolean;
@@ -59,4 +59,4 @@ function useDeposits(pluginId: string): {
 
   return { data: deposits, error: error, isLoading };
 }
-export default useDeposits;
+export default usePeoplesHouseDeposits;

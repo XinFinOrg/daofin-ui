@@ -24,7 +24,6 @@ const DaofinSettingsCard = ({}) => {
     isLoading: liveDaoLoading,
     isSuccess,
   } = useDaoQuery(daoAddress, 5000);
-  console.log({ liveDao });
   const { avatar: liveDaoAvatar } = useResolveDaoAvatar(
     liveDao?.metadata?.avatar
   );
@@ -33,7 +32,6 @@ const DaofinSettingsCard = ({}) => {
 
   const globalSettings = useDaoGlobalSettings();
   const electionPeriods = useDaoElectionPeriods();
-  console.log({ electionPeriods });
 
   return (
     <>

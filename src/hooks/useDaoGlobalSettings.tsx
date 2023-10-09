@@ -3,9 +3,9 @@ import { useClient } from "./useClient";
 import { useNetwork } from "../contexts/network";
 import { GlobalSettings } from "@xinfin/osx-daofin-sdk-client";
 
-function useDaoGlobalSettings() {
+function useDaoGlobalSettings(): GlobalSettings | undefined {
   const [globalSettings, setGlobalSettings] = useState<GlobalSettings>();
-  const { daofinClient,client } = useClient();
+  const { daofinClient, client } = useClient();
   const { network } = useNetwork();
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
@@ -13,7 +13,7 @@ function useDaoGlobalSettings() {
   useEffect(() => {
     if (!daofinClient) return;
     setIsLoading(true);
-    
+
     daofinClient.methods
       .getGlobalSettings()
       .then((data) => {

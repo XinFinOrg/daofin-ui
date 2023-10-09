@@ -18,7 +18,7 @@ import { useForm } from "react-hook-form";
 import { useDisclosure } from "@chakra-ui/hooks";
 import { useClient } from "../hooks/useClient";
 import { DepositSteps } from "@xinfin/osx-daofin-sdk-client";
-import useDeposits from "../hooks/useDeposits";
+import usePeoplesHouseDeposits from "../hooks/useDeposits";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import { FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightAddon } from "@chakra-ui/input";
@@ -28,73 +28,25 @@ import Modal from "./Modal";
 const DepositWrapper = styled(BoxWrapper).attrs({
   className: "m-4 w-100",
 })``;
-
-const Deposits: FC = () => {
+type DepositsProps = {
+  deposits: Deposit[];
+};
+const Deposits: FC<DepositsProps> = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
 
   const { address: voterAddress } = useWallet();
 
-  const { daofinClient } = useClient();
-  const { network } = useNetwork();
   const isUserDeposited = useIsUserDeposited(voterAddress ? voterAddress : "");
 
-  const { isOpen, onClose, onOpen } = useDisclosure();
-
-  const { setValue, getValues, register } = useForm({
-    defaultValues: {
-      depositAmount: 0,
-    },
-  });
-
-  const { data: deposits } = useDeposits(
+  const { data: deposits } = usePeoplesHouseDeposits(
     getPluginInstallationId(daoAddress, pluginAddress)
   );
 
-  const handleDeposit = async () => {
-    const { depositAmount } = getValues();
-    const parsedAmount = parseEther(String(depositAmount));
-    const depositIterator = daofinClient?.methods.deposit(parsedAmount);
-    if (!depositIterator) return;
-    try {
-      for await (const step of depositIterator) {
-        switch (step.key) {
-          case DepositSteps.DEPOSITING:
-            console.log(step.txHash);
-
-            break;
-          case DepositSteps.DONE: {
-            console.log("DONE", step.key, step.key);
-            onClose();
-            break;
-          }
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleOnChange = (e: any) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setValue(name, value);
-  };
   return (
     <>
       {
         <BoxWrapper>
-          <Heading size="md">Deposits</Heading>
-          <Box className="m-4 text-end">
-            <Tooltip isDisabled={isUserDeposited} aria-label="A tooltip">
-              <Button
-                colorScheme="green"
-                isDisabled={isUserDeposited}
-                onClick={onOpen}
-              >
-                +
-              </Button>
-            </Tooltip>
-          </Box>
+          <Heading size="md">People's House Members</Heading>
           {deposits && deposits.length > 0 ? (
             deposits.map(({ amount, id, snapshotBlock, voter }) => (
               <DepositWrapper>
@@ -106,38 +58,10 @@ const Deposits: FC = () => {
               </DepositWrapper>
             ))
           ) : (
-            <>No Deposit</>
+            <>No Item</>
           )}
         </BoxWrapper>
       }
-      {isOpen && (
-        <Modal isOpen={isOpen} onClose={onClose} title="Deposit">
-          <Box>
-            <FormLabel>Amount</FormLabel>
-            <InputGroup className="m-1">
-              <Input
-                {...register("depositAmount", {
-                  valueAsNumber: true,
-                })}
-                onChange={handleOnChange}
-                placeholder="amount"
-              />
-              <InputRightAddon
-                children={CHAIN_METADATA[network].nativeCurrency.symbol}
-              />
-            </InputGroup>
-            <Tooltip isDisabled={isUserDeposited} aria-label="A tooltip">
-              <Button
-                colorScheme="blue"
-                isDisabled={isUserDeposited}
-                onClick={handleDeposit}
-              >
-                Deposit
-              </Button>
-            </Tooltip>
-          </Box>
-        </Modal>
-      )}
     </>
   );
 };

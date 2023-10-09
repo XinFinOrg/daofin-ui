@@ -29,3 +29,10 @@ export type Judiciary = {
   action: BigNumberish;
   creationDate: BigNumberish;
 };
+export const enum TransactionState {
+  NONE = "NONE",
+  WAITING = "WAITING",
+  LOADING = "LOADING",
+  SUCCESS = "SUCCESS",
+  ERROR = "ERROR",
+}

@@ -15,6 +15,9 @@ import { Route, Routes } from "react-router";
 import Dashboard from "./pages/Dashboard";
 import ProposalsPage from "./pages/ProposalsPage";
 import ProposalDetailsPage from "./pages/ProposalDetailsPage";
+import JudicairyPage from "./pages/JudicairyPage";
+import CommitteesPage from "./pages/CommitteesPage";
+import PeoplesHousePage from "./pages/PeoplesHousePage";
 
 function App() {
   return (
@@ -32,6 +35,15 @@ function App() {
           <Route
             path="/proposals/:proposalId/details"
             element={<ProposalDetailsPage />}
+          />
+        </Route>
+
+        <Route path="/committees">
+          <Route path="/committees" element={<CommitteesPage />} />
+          <Route path="/committees/judiciaries" element={<JudicairyPage />} />
+          <Route
+            path="/committees/peoples-house"
+            element={<PeoplesHousePage />}
           />
         </Route>
       </Routes>

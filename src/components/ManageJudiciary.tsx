@@ -13,6 +13,7 @@ import { Button } from "@chakra-ui/button";
 import { useClient } from "../hooks/useClient";
 import { useForm } from "react-hook-form";
 import { AddJudiciarySteps } from "@xinfin/osx-daofin-sdk-client";
+import WithConnectedWallet from "./WithConnectedWallet";
 
 const ManageJudiciary = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
@@ -25,12 +26,10 @@ const ManageJudiciary = () => {
     },
   });
   const  address = watch('address');
-  console.log({ address });
 
   const { daofinClient } = useClient();
   const handleAddJudiciary = async () => {
     const iterator = daofinClient?.methods.addjudiciary(address);
-    console.log({address});
     
     if (!iterator) return;
     try {
@@ -59,6 +58,8 @@ const ManageJudiciary = () => {
     <>
       <BoxWrapper>
         <Heading size="md">Manage Judiciaries</Heading>
+        <WithConnectedWallet>
+
         <Box className="m-4 text-end">
           <Tooltip aria-label="A tooltip">
             <Button colorScheme="green" onClick={onOpen}>
@@ -66,6 +67,7 @@ const ManageJudiciary = () => {
             </Button>
           </Tooltip>
         </Box>
+        </WithConnectedWallet>
         <Flex className="w-full flex-col">
           {data?.length > 0 &&
             data.map(

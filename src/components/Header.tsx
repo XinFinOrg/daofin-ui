@@ -21,6 +21,7 @@ const Links = [
   { location: "/", name: "Dashboard" },
   { location: "/proposals", name: "Proposals" },
   { location: "/create", name: "Create Proposal" },
+  { location: "/committees", name: "Committees" },
 ];
 
 export default function Header() {

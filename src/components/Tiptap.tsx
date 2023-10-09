@@ -56,7 +56,6 @@ const Tiptap: FC<Props> = ({ handleOnChange, setValue, name }) => {
   const [url, setUrl] = useState<string>("");
 
   const openModal = useCallback(() => {
-    console.log(editor.chain().focus());
     setUrl(editor.getAttributes("link").href);
     setIsOpen(true);
   }, [editor]);

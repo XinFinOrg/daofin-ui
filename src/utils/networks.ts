@@ -80,7 +80,7 @@ export const CHAIN_METADATA: ChainList = {
     name: "Apothem",
     domain: "L1 Blockchain",
     logo: "https://icons.llamao.fi/icons/chains/rsz_xdc.jpg",
-    explorer: "https://apothem.xdcscan.io/",
+    explorer: "https://apothem.xdcscan.io",
     testnet: true,
     rpc: [`https://erpc.apothem.network/`, `https://apothem.xdcrpc.com/`],
     nativeCurrency: {
@@ -101,7 +101,7 @@ export const CHAIN_METADATA: ChainList = {
     name: "XDC",
     domain: "L1 Blockchain",
     logo: "https://icons.llamao.fi/icons/chains/rsz_xdc.jpg",
-    explorer: "https://apothem.xdcscan.io/",
+    explorer: "https://apothem.xdcscan.io",
     testnet: false,
     rpc: [`https://xdc.xdcrpc.com/      `, `wss://ews.xdc.network/`],
     nativeCurrency: {
@@ -318,6 +318,15 @@ export function shortenAddress(address: string | null) {
       address.substring(address.length - 4, address.length)
     );
   else return address;
+}
+export function shortenTxHash(address: string | null) {
+  if (address === null) return "";
+
+  return (
+    address.substring(0, 5) +
+    "…" +
+    address.substring(address.length - 4, address.length)
+  );
 }
 
 export type ProposalResource = {
