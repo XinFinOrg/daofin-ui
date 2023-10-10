@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/layout";
 import React, { useEffect } from "react";
-import Deposits from "../components/Deposits";
+import PeoplesHouseDeposits from "../components/PeoplesHouseDeposits";
 import { DepositSteps } from "@xinfin/osx-daofin-sdk-client";
 import { formatEther, parseEther } from "@ethersproject/units";
 import { CHAIN_METADATA, getPluginInstallationId } from "../utils/networks";
@@ -22,6 +22,8 @@ import useDaoGlobalSettings from "../hooks/useDaoGlobalSettings";
 import { Select } from "@chakra-ui/select";
 import { option } from "yargs";
 import { use } from "chai";
+import WithConnectedWallet from "../components/WithConnectedWallet";
+import useIsJudiciaryMember from "../hooks/useIsJudiciaryMember";
 
 const PeoplesHousePage = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
@@ -31,7 +33,13 @@ const PeoplesHousePage = () => {
   const { daofinClient } = useClient();
   const { network } = useNetwork();
   const isUserDeposited = useIsUserDeposited(voterAddress ? voterAddress : "");
+  const isJudiciaryMember = useIsJudiciaryMember(
+    voterAddress ? voterAddress : ""
+  );
 
+  const showAddNewButton = isJudiciaryMember || isUserDeposited;
+  
+  
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   const { setValue, getValues, register, watch } = useForm({
@@ -52,7 +60,7 @@ const PeoplesHousePage = () => {
   }, [globalSettings]);
   const handleDeposit = async () => {
     const { depositAmount } = getValues();
-    
+
     const parsedAmount = depositAmount;
     const depositIterator = daofinClient?.methods.deposit(parsedAmount);
     if (!depositIterator) return;
@@ -84,16 +92,18 @@ const PeoplesHousePage = () => {
     <>
       <Box className="grid grid-cols-3">
         <Box className="col-start-2">
-          <Tooltip isDisabled={isUserDeposited} aria-label="A tooltip">
-            <Button
-              colorScheme="green"
-              isDisabled={isUserDeposited}
-              onClick={onOpen}
-            >
-              Add a new
-            </Button>
-          </Tooltip>
-          {deposits && <Deposits deposits={deposits} />}
+          <WithConnectedWallet>
+            <Tooltip isDisabled={showAddNewButton} aria-label="A tooltip">
+              <Button
+                colorScheme="green"
+                isDisabled={showAddNewButton}
+                onClick={onOpen}
+              >
+                Add a new
+              </Button>
+            </Tooltip>
+          </WithConnectedWallet>
+          {deposits && <PeoplesHouseDeposits deposits={deposits} />}
         </Box>
       </Box>
       {isOpen && (

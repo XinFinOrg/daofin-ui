@@ -31,7 +31,7 @@ const DepositWrapper = styled(BoxWrapper).attrs({
 type DepositsProps = {
   deposits: Deposit[];
 };
-const Deposits: FC<DepositsProps> = () => {
+const PeoplesHouseDeposits: FC<DepositsProps> = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
 
   const { address: voterAddress } = useWallet();
@@ -66,4 +66,4 @@ const Deposits: FC<DepositsProps> = () => {
   );
 };
 
-export default Deposits;
+export default PeoplesHouseDeposits;

@@ -19,7 +19,7 @@ const CommitteesList = [
   {
     id: uuid(),
     name: "Master Node Senate",
-    path: "",
+    path: "/committees/master-node-delegatee",
   },
 ];
 const CommitteesPage = () => {
