@@ -63,8 +63,6 @@ function useDaoProposal(pluginId: string): {
         const metadataCid = resolveIpfsCid(pluginProposal.metadata);
         const metadataString = await daofinClient.ipfs.fetchString(metadataCid);
         const metadata = JSON.parse(metadataString) as ProposalMetadata;
-        console.log(pluginProposal.startDate);
-        console.log(parseInt(pluginProposal.startDate));
 
         const startDate = +pluginProposal.startDate * 1000;
         const endDate = +pluginProposal.endDate * 1000;

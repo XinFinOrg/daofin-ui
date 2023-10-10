@@ -58,8 +58,6 @@ export const UseClientProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
   const { signer, provider, address } = useWallet();
-  console.log({ signer });
-  console.log(provider?.getSigner());
 
   const [client, setClient] = useState<Client>();
   const { network } = useNetwork();

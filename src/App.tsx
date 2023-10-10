@@ -15,6 +15,10 @@ import { Route, Routes } from "react-router";
 import Dashboard from "./pages/Dashboard";
 import ProposalsPage from "./pages/ProposalsPage";
 import ProposalDetailsPage from "./pages/ProposalDetailsPage";
+import JudiciaryPage from "./pages/JudiciaryPage";
+import CommitteesPage from "./pages/CommitteesPage";
+import PeoplesHousePage from "./pages/PeoplesHousePage";
+import MasterNodeDelegatePage from "./pages/MasterNodeDelegatePage";
 
 function App() {
   return (
@@ -32,6 +36,19 @@ function App() {
           <Route
             path="/proposals/:proposalId/details"
             element={<ProposalDetailsPage />}
+          />
+        </Route>
+
+        <Route path="/committees">
+          <Route path="/committees" element={<CommitteesPage />} />
+          <Route path="/committees/judiciaries" element={<JudiciaryPage />} />
+          <Route
+            path="/committees/peoples-house"
+            element={<PeoplesHousePage />}
+          />
+          <Route
+            path="/committees/master-node-delegatee"
+            element={<MasterNodeDelegatePage />}
           />
         </Route>
       </Routes>

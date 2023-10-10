@@ -55,7 +55,6 @@ function useDaoProposals(
         },
       })
       .then(({ pluginProposals }) => {
-        console.log({ pluginProposals });
         return Promise.all(
           pluginProposals.map(async (item) => {
             const metadataCid = resolveIpfsCid(item.metadata);
@@ -63,8 +62,6 @@ function useDaoProposals(
               metadataCid
             );
             const metadata = JSON.parse(metadataString) as ProposalMetadata;
-            console.log({ metadata });
-  
             return {
               ...item,
               metadata,
@@ -73,7 +70,6 @@ function useDaoProposals(
         )
       })
       .then((data) => {
-        console.log({ data });
 
         setProposals(data as unknown as Proposal[]);
       })

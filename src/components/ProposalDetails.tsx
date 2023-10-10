@@ -28,7 +28,7 @@ import { Input, InputGroup, InputRightAddon } from "@chakra-ui/input";
 import { useDisclosure } from "@chakra-ui/hooks";
 import Modal from "./Modal";
 import { useForm } from "react-hook-form";
-import Deposits from "./Deposits";
+import PeoplesHouseDeposits from "./PeoplesHouseDeposits";
 
 const ProposalWrapper = styled.div.attrs({
   className: "",
