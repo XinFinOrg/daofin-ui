@@ -45,7 +45,7 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
   const [step, setStep] = useState({
     initialStep: 1,
     currentStep: 1,
-    totalSteps: 3,
+    totalSteps: 2,
   });
   const { initialStep, currentStep, totalSteps } = step;
   const [progress, setProgress] = useState(50);
@@ -77,7 +77,7 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
         {currentStep === 1 && (
           <CreateMetaData handleOnChange={handleOnChange} />
         )}
-        {currentStep === 2 && (
+        {/* {currentStep === 2 && (
           <>
             Action
             <FormControl>
@@ -106,8 +106,8 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
               </InputGroup>
             </FormControl>
           </>
-        )}
-        {currentStep === 3 && (
+        )} */}
+        {currentStep === 2 && (
           <>
             Choose the Election Period:
             <RadioGroup

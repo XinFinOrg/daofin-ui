@@ -25,6 +25,7 @@ import {
   shortenAddress,
   shortenTxHash,
 } from "../utils/networks";
+import { zeroAddress } from "viem";
 const CreateProposalWrapper = styled.div.attrs({
   className: "flex justify-center",
 })``;
@@ -95,8 +96,8 @@ const CreateProposal = () => {
       actions: [
         {
           data: new Uint8Array(),
-          to: data.withdrawAction.to,
-          value: parseEther(data.withdrawAction.value.toString()).toBigInt(),
+          to: zeroAddress,
+          value: BigInt('0'),
         },
       ],
       allowFailureMap: 0,

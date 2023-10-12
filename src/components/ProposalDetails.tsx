@@ -68,9 +68,6 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
     pluginProposalId,
     voterAddress ? voterAddress : ""
   );
-  const voterDepositAmount = useFetchVoterDepositAmount(
-    voterAddress ? voterAddress : ""
-  );
 
   const { setValue, getValues, register } = useForm({
     defaultValues: {
@@ -78,33 +75,6 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
     },
   });
   const { daofinClient } = useClient();
-  const handleDeposit = async () => {
-    const { depositAmount } = getValues();
-    const parsedAmount = parseEther(String(depositAmount));
-    const depositIterator = daofinClient?.methods.deposit(parsedAmount);
-    if (!depositIterator) return;
-    try {
-      for await (const step of depositIterator) {
-        switch (step.key) {
-          case DepositSteps.DEPOSITING:
-            console.log(step.txHash);
-
-            break;
-          case DepositSteps.DONE: {
-            console.log("DONE", step.key, step.key);
-            break;
-          }
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const handleOnChange = (e: any) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setValue(name, value);
-  };
   return (
     <>
       {proposal && (
@@ -188,12 +158,12 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                     >
                     
                       <Tooltip
-                        isDisabled={isUserVotedOnProposal}
-                        aria-label="A tooltip"
+                        // isDisabled={isUserVotedOnProposal}
+                        aria-label="Coming"
                       >
                         <Button
                           colorScheme="green"
-                          isDisabled={isUserVotedOnProposal}
+                          isDisabled={true}
                         >
                           Vote
                         </Button>
@@ -250,35 +220,6 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
             </DurationWrapper>
           </Box>
         </ProposalWrapper>
-      )}
-
-      {isOpen && (
-        <Modal isOpen={isOpen} onClose={onClose} title="Deposit">
-          <Box>
-            <FormLabel>Amount</FormLabel>
-            <InputGroup className="m-1">
-              <Input
-                {...register("depositAmount", {
-                  valueAsNumber: true,
-                })}
-                onChange={handleOnChange}
-                placeholder="amount"
-              />
-              <InputRightAddon
-                children={CHAIN_METADATA[network].nativeCurrency.symbol}
-              />
-            </InputGroup>
-            <Tooltip isDisabled={isUserDeposited} aria-label="A tooltip">
-              <Button
-                colorScheme="blue"
-                isDisabled={isUserDeposited}
-                onClick={handleDeposit}
-              >
-                Deposit
-              </Button>
-            </Tooltip>
-          </Box>
-        </Modal>
       )}
     </>
   );
