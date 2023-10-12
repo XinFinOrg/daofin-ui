@@ -6,6 +6,8 @@ import {
   useDisclosure,
   useColorModeValue,
   Stack,
+  Text,
+  Heading,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { Web3Button } from "@web3modal/react";
@@ -19,8 +21,8 @@ interface Props {
 
 const Links = [
   { location: "/", name: "Dashboard" },
-  { location: "/proposals", name: "Proposals" },
-  { location: "/create", name: "Create Proposal" },
+  { location: "/proposals", name: "List of Proposals" },
+  { location: "/create", name: "Make a new Proposal" },
   { location: "/committees", name: "Committees" },
 ];
 
@@ -39,14 +41,23 @@ export default function Header() {
             onClick={isOpen ? onClose : onOpen}
           />
           <HStack spacing={8} alignItems={"center"}>
-            <Box>DAOFIN</Box>
+            <Link to={""}>
+              <Heading>DAOFIN</Heading>
+            </Link>
             <HStack
               as={"nav"}
               spacing={4}
               display={{ base: "none", md: "flex" }}
             >
               {Links.map((link) => (
-                <Link to={link.location}>{link.name}</Link>
+                <Link
+                  to={link.location}
+                  className="border-1 py-2 pl-3 pr-4 font-bold hover:text-blue-600 ease-in-out duration-300"
+                >
+                  <Box>
+                    <Text>{link.name}</Text>
+                  </Box>
+                </Link>
               ))}
             </HStack>
           </HStack>
