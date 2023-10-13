@@ -29,6 +29,8 @@ import { useDisclosure } from "@chakra-ui/hooks";
 import Modal from "./Modal";
 import { useForm } from "react-hook-form";
 import PeoplesHouseDeposits from "./PeoplesHouseDeposits";
+import { Link } from "react-router-dom";
+import { Tag } from "@chakra-ui/react";
 
 const ProposalWrapper = styled.div.attrs({
   className: "",
@@ -84,6 +86,19 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
               <Flex justifyContent={"start"} alignItems={"center"}>
                 <Box>
                   <Heading>{metadata.title}</Heading>
+                  <Flex className="my-1">
+                    {metadata.resources.map(({ name, url }) => (
+                      <Tag>
+                        <a
+                          href={url}
+                          target="_blank"
+                          className="pr-2 hover:text-blue-500"
+                        >
+                          {name}
+                        </a>
+                      </Tag>
+                    ))}
+                  </Flex>
                 </Box>
               </Flex>
 
@@ -156,15 +171,11 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                       justifyContent={"space-around"}
                       alignItems={"center"}
                     >
-                    
                       <Tooltip
                         // isDisabled={isUserVotedOnProposal}
                         aria-label="Coming"
                       >
-                        <Button
-                          colorScheme="green"
-                          isDisabled={true}
-                        >
+                        <Button colorScheme="green" isDisabled={true}>
                           Vote
                         </Button>
                       </Tooltip>

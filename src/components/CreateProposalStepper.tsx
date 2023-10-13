@@ -12,7 +12,7 @@ import React, { ChangeEvent, FC, useState } from "react";
 import CreateMetaData from "./CreateMetaData";
 import { Button } from "@chakra-ui/button";
 import { ProposalMetadata } from "@xinfin/osx-client-common";
-import { useFormContext } from "react-hook-form";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import {
   FormControl,
   FormErrorMessage,
@@ -58,12 +58,16 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
     setStep((prev) => ({ ...prev, currentStep: prev.currentStep - 1 }));
     setProgress((prev) => prev - 50);
   };
-  const { getValues, formState, register, handleSubmit, setValue } =
+  const { getValues, formState, register, handleSubmit, setValue, resetField } =
     useFormContext();
   const { errors } = formState;
   const { metaData, actions } = getValues();
   const electionPeriods = useDaoElectionPeriods();
   const onCreateProposal = handleSubmit(handleSubmitProposal);
+  const { append } = useFieldArray({
+    name: "metaData.resources",
+  });
+
   return (
     <>
       <CreateProposalStepperWrapper className="mt-4">
