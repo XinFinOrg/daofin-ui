@@ -19,12 +19,20 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
         proposals.map(({ id, pluginProposalId, creator, metadata }) => (
           <ProposalWrapper key={id}>
             <Flex direction={"column"}>
-              <Flex direction={"column"} justifyContent={"start"} alignItems={"start"}>
+              <Flex
+                direction={"column"}
+                justifyContent={"start"}
+                alignItems={"start"}
+              >
                 <Box mr={1}>
-                  <Text fontSize={"2xl"}>Proposal ID: # {pluginProposalId}</Text>
+                  <Text fontSize={"2xl"}>
+                    Proposal ID: # {pluginProposalId}
+                  </Text>
                 </Box>
                 <Box>
-                  <Text fontSize="xl" textAlign={'start'}>{metadata.title}</Text>
+                  <Text fontSize="xl" textAlign={"start"}>
+                    {metadata.title}
+                  </Text>
                 </Box>
               </Flex>
               <Flex justifyContent={"start"} alignItems={"center"}>
@@ -42,9 +50,9 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
                     {shortenAddress(creator)}
                   </Text>
                 </Text>
-                <Button>
-                  <Link to={`${pluginProposalId}/details`}>View details</Link>
-                </Button>
+                <Link to={`${pluginProposalId}/details`}>
+                  <Button>View details</Button>
+                </Link>
               </Flex>
             </Flex>
           </ProposalWrapper>

@@ -5483,10 +5483,10 @@
     "@xinfin/osx-ethers" "^1.3.0-rc1"
     "@xinfin/osx-sdk-client" "^1.10.1"
 
-"@xinfin/osx-daofin-sdk-client@^1.0.52":
-  version "1.0.52"
-  resolved "https://registry.yarnpkg.com/@xinfin/osx-daofin-sdk-client/-/osx-daofin-sdk-client-1.0.52.tgz#254129f31eb8f194471418c2df6c35bb66dd59b5"
-  integrity sha512-7TN98tg08zgio5XP1eJxxABo33+gu4rkp1fO8EwURvAReQB0tM00jV4sWvgyuJx6x8pNqZVpTaiYu6n41VzYHA==
+"@xinfin/osx-daofin-sdk-client@^1.0.54":
+  version "1.0.54"
+  resolved "https://registry.yarnpkg.com/@xinfin/osx-daofin-sdk-client/-/osx-daofin-sdk-client-1.0.54.tgz#5c956504b9a8d750d0b6c0aeb253d00a57812e3d"
+  integrity sha512-SUmxTNvESuEPW0XeBpk70xUXXDiN4cXxVG9EOpBMn9XQUpIGkYZBSdM/5QBC0NuWfpY48mN74Mc0A0uiRotxWg==
   dependencies:
     "@aragon/osx-ethers" "1.3.0-rc0"
     "@aragon/sdk-client-common" "1.2.0-rc0"

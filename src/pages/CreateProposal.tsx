@@ -25,6 +25,7 @@ import {
   shortenAddress,
   shortenTxHash,
 } from "../utils/networks";
+import { zeroAddress } from "viem";
 const CreateProposalWrapper = styled.div.attrs({
   className: "flex justify-center",
 })``;
@@ -45,6 +46,11 @@ const CreateProposal = () => {
         title: "",
         summary: "",
         description: "",
+        resources: [],
+        resource: {
+          name: "",
+          url: "",
+        },
       },
       withdrawAction: {
         to: "",
@@ -81,7 +87,7 @@ const CreateProposal = () => {
       title: data.metaData.title,
       description: data.metaData.description,
       summary: data.metaData.summary,
-      resources: [],
+      resources: data.metaData.resources,
     });
 
     if (!ipfsUri) return;
@@ -95,19 +101,18 @@ const CreateProposal = () => {
       actions: [
         {
           data: new Uint8Array(),
-          to: data.withdrawAction.to,
-          value: parseEther(data.withdrawAction.value.toString()).toBigInt(),
+          to: zeroAddress,
+          value: BigInt("0"),
         },
       ],
       allowFailureMap: 0,
       electionIndex: data.electionPeriodIndex,
     });
     if (!proposalIterator) {
-
       return;
     }
     onOpen();
-    
+
     try {
       for await (const step of proposalIterator) {
         switch (step.key) {

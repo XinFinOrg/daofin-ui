@@ -10,8 +10,8 @@ import {
   Locale,
 } from "date-fns";
 import { bytesToHex, resolveIpfsCid } from "@aragon/sdk-common";
-import { DaofinDetails } from "@xinfin/osx-daofin-sdk-client";
-import { Client } from "@xinfin/osx-sdk-client";
+import { DaofinDetails, VoteOption } from "@xinfin/osx-daofin-sdk-client";
+import { Client, VoteValues } from "@xinfin/osx-sdk-client";
 import { isAddress } from "@ethersproject/address";
 import { ethers } from "ethers";
 import { defaultAbiCoder } from "@ethersproject/abi";
@@ -365,4 +365,47 @@ export function getFormattedUtcOffset(): string {
   let formattedOffset = "UTC" + (isNegative ? "+" : "-") + hourOffset;
   formattedOffset += minuteOffset > 0 ? ":" + minuteOffset : "";
   return formattedOffset;
+}
+
+export function convertVoteOptionToText(option: VoteOption) {
+  switch (option) {
+    case 1:
+      return "ABSTAIN";
+    case 2:
+      return "YES";
+    case 3:
+      return "NO";
+    default:
+      return "NONE";
+  }
+}
+export function convertVoteOptionToItsColor(option: VoteOption) {
+  switch (option) {
+    case 1:
+      return "gray";
+    case 2:
+      return "green";
+    case 3:
+      return "red";
+    default:
+      return "yellow";
+  }
+}
+export const MasterNodeCommittee = ethers.utils.id("MASTER_NODE_COMMITTEE");
+export const PeoplesHouseCommittee = ethers.utils.id("PEOPLES_HOUSE_COMMITTEE");
+export const JudiciaryCommittee = ethers.utils.id("JUDICIARY_COMMITTEE");
+
+
+
+export function convertCommitteeToPlainText(bytesName: string) {
+  switch (bytesName) {
+    case MasterNodeCommittee:
+      return "Master Node Senate";
+    case PeoplesHouseCommittee:
+      return "People's House";
+    case JudiciaryCommittee:
+      return "Judiciary";
+    default:
+      return "Invalid actor";
+  }
 }

@@ -1,9 +1,15 @@
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { Proposal } from "../utils/types";
 import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
 import {
   CHAIN_METADATA,
+  JudiciaryCommittee,
   KNOWN_FORMATS,
+  MasterNodeCommittee,
+  PeoplesHouseCommittee,
+  convertCommitteeToPlainText,
+  convertVoteOptionToItsColor,
+  convertVoteOptionToText,
   formatDate,
   getFormattedUtcOffset,
   shortenAddress,
@@ -11,25 +17,22 @@ import {
 import { styled } from "styled-components";
 import { FormLabel } from "@chakra-ui/form-control";
 import BoxWrapper from "./BoxWrapper";
-import { BigNumber } from "ethers";
-import { formatEther, parseEther } from "@ethersproject/units";
+import { formatEther } from "@ethersproject/units";
 import { useNetwork } from "../contexts/network";
-// import format from "date-fns/format";
-import { format } from "date-fns";
 import useIsUserDeposited from "../hooks/useIsUserDeposited";
 import { useWallet } from "../hooks/useWallet";
 import { Button } from "@chakra-ui/button";
 import { Tooltip } from "@chakra-ui/tooltip";
 import useIsUserVotedOnProposal from "../hooks/useIsUserVotedOnProposal";
-import useFetchVoterDepositAmount from "../hooks/useFetchVoterDepositAmount";
 import { useClient } from "../hooks/useClient";
-import { DepositSteps } from "@xinfin/osx-daofin-sdk-client";
-import { Input, InputGroup, InputRightAddon } from "@chakra-ui/input";
+import { InputGroup } from "@chakra-ui/input";
 import { useDisclosure } from "@chakra-ui/hooks";
-import Modal from "./Modal";
 import { useForm } from "react-hook-form";
-import PeoplesHouseDeposits from "./PeoplesHouseDeposits";
-
+import { Select, Tag } from "@chakra-ui/react";
+import { VoteOption, VoteSteps } from "@xinfin/osx-daofin-sdk-client";
+import useFetchVotersOnProposal from "../hooks/useFetchVotersOnProposal";
+import { daoAddress, pluginAddress } from "../utils/constants";
+import useVoteStats from "../hooks/useVoteStats";
 const ProposalWrapper = styled.div.attrs({
   className: "",
 })``;
@@ -45,6 +48,10 @@ const DepositStatusWrapper = styled(BoxWrapper).attrs({
 })``;
 const InfoWrapper = styled(BoxWrapper).attrs({
   className: "",
+})``;
+
+const VotersOnProposalWrapper = styled(BoxWrapper).attrs({
+  className: "h-fit",
 })``;
 const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
   const {
@@ -68,42 +75,63 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
     pluginProposalId,
     voterAddress ? voterAddress : ""
   );
-  const voterDepositAmount = useFetchVoterDepositAmount(
-    voterAddress ? voterAddress : ""
-  );
 
-  const { setValue, getValues, register } = useForm({
+  const { setValue, getValues, register, watch } = useForm({
     defaultValues: {
       depositAmount: 0,
+      voteOption: VoteOption.NONE,
     },
   });
   const { daofinClient } = useClient();
-  const handleDeposit = async () => {
-    const { depositAmount } = getValues();
-    const parsedAmount = parseEther(String(depositAmount));
-    const depositIterator = daofinClient?.methods.deposit(parsedAmount);
-    if (!depositIterator) return;
+  const voteOption = watch("voteOption");
+
+  const { data: votersOnProposal } = useFetchVotersOnProposal(
+    daoAddress,
+    pluginAddress,
+    pluginProposalId
+  );
+  const {
+    judiciaryVoteListLength,
+    masterNodeVoteListLength,
+    peoplesHouseVoteListLength,
+  } = useVoteStats(pluginProposalId);
+  const committeesList = useMemo(
+    () => [MasterNodeCommittee, PeoplesHouseCommittee, JudiciaryCommittee],
+    []
+  );
+  const handleVote = async () => {
+    const iterator = daofinClient?.methods.vote(
+      pluginProposalId,
+      voteOption,
+      false
+    );
+    if (!iterator) return;
     try {
-      for await (const step of depositIterator) {
+      for await (const step of iterator) {
         switch (step.key) {
-          case DepositSteps.DEPOSITING:
-            console.log(step.txHash);
+          case VoteSteps.WAITING:
+            console.log("Key:", step.key);
+            console.log("Tx:", step.txHash);
 
             break;
-          case DepositSteps.DONE: {
-            console.log("DONE", step.key, step.key);
+          case VoteSteps.DONE:
+            console.log("Key:", step.key);
             break;
-          }
         }
       }
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.log(e);
     }
   };
-  const handleOnChange = (e: any) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setValue(name, value);
+  const convertCommitteeBytesToVoteLength = (committee: string) => {
+    switch (committee) {
+      case MasterNodeCommittee:
+        return masterNodeVoteListLength;
+      case PeoplesHouseCommittee:
+        return peoplesHouseVoteListLength;
+      case JudiciaryCommittee:
+        return judiciaryVoteListLength;
+    }
   };
   return (
     <>
@@ -114,6 +142,19 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
               <Flex justifyContent={"start"} alignItems={"center"}>
                 <Box>
                   <Heading>{metadata.title}</Heading>
+                  <Flex className="my-1">
+                    {metadata.resources.map(({ name, url }) => (
+                      <Tag>
+                        <a
+                          href={url}
+                          target="_blank"
+                          className="pr-2 hover:text-blue-500"
+                        >
+                          {name}
+                        </a>
+                      </Tag>
+                    ))}
+                  </Flex>
                 </Box>
               </Flex>
 
@@ -186,14 +227,34 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                       justifyContent={"space-around"}
                       alignItems={"center"}
                     >
-                    
+                      <Box>
+                        <FormLabel>Vote Option</FormLabel>
+                        <InputGroup className="m-1">
+                          <Select {...register("voteOption", {})}>
+                            {Object.keys(VoteOption)
+                              .filter((option) => isNaN(Number(option)))
+                              .map((option, index) => (
+                                <option value={index}>
+                                  {convertVoteOptionToText(index as VoteOption)}
+                                </option>
+                              ))}
+                          </Select>
+                        </InputGroup>
+                      </Box>
+                    </Flex>
+                    <Flex
+                      className="mt-4"
+                      justifyContent={"space-around"}
+                      alignItems={"center"}
+                    >
                       <Tooltip
-                        isDisabled={isUserVotedOnProposal}
-                        aria-label="A tooltip"
+                        // isDisabled={isUserVotedOnProposal}
+                        aria-label="Coming"
                       >
                         <Button
                           colorScheme="green"
-                          isDisabled={isUserVotedOnProposal}
+                          onClick={handleVote}
+                          isDisabled={voteOption === VoteOption.NONE}
                         >
                           Vote
                         </Button>
@@ -249,36 +310,75 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
               </Flex>
             </DurationWrapper>
           </Box>
+          {committeesList.map((c) => (
+            <VotersOnProposalWrapper
+              key={c}
+              className="col-span-4 row-start-auto"
+            >
+              <Flex direction={"column"}>
+                <Flex justifyContent={"center"} alignItems={"center"}>
+                  <Box>
+                    <Heading fontSize={"2xl"}>
+                      {convertCommitteeToPlainText(c)} Votes{" "}
+                      {`(${convertCommitteeBytesToVoteLength(c)})`}
+                    </Heading>
+                  </Box>
+                </Flex>
+                <Flex
+                  direction={"column"}
+                  justifyContent={"start"}
+                  alignItems={"center"}
+                >
+                  {votersOnProposal?.length > 0 ? (
+                    votersOnProposal.filter((item) => item.committee == c)
+                      .length === 0 ? (
+                      <BoxWrapper className="w-full">
+                        <Text color={"gray"}>No Item</Text>
+                      </BoxWrapper>
+                    ) : (
+                      votersOnProposal
+                        .filter((item) => item.committee == c)
+                        .map(
+                          ({
+                            committee,
+                            creationDate,
+                            id,
+                            option,
+                            pluginProposalId,
+                            txHash,
+                            voter,
+                            snapshotBlock,
+                          }) => (
+                            <BoxWrapper className="w-full" key={id}>
+                              <Text>
+                                {shortenAddress(voter)} -{" "}
+                                <Text color={"blue"} as={"span"}>
+                                  {convertCommitteeToPlainText(committee)}{" "}
+                                </Text>
+                              </Text>
+                              <Text color={"gray"} as={"span"}>
+                                {`@ ${snapshotBlock} - `}
+                                <Text
+                                  color={convertVoteOptionToItsColor(option)}
+                                  as={"span"}
+                                >
+                                  {convertVoteOptionToText(option)}
+                                </Text>
+                              </Text>
+                            </BoxWrapper>
+                          )
+                        )
+                    )
+                  ) : (
+                    <BoxWrapper className="w-full">
+                      <Text color={"gray"}>No Item</Text>
+                    </BoxWrapper>
+                  )}
+                </Flex>
+              </Flex>
+            </VotersOnProposalWrapper>
+          ))}
         </ProposalWrapper>
-      )}
-
-      {isOpen && (
-        <Modal isOpen={isOpen} onClose={onClose} title="Deposit">
-          <Box>
-            <FormLabel>Amount</FormLabel>
-            <InputGroup className="m-1">
-              <Input
-                {...register("depositAmount", {
-                  valueAsNumber: true,
-                })}
-                onChange={handleOnChange}
-                placeholder="amount"
-              />
-              <InputRightAddon
-                children={CHAIN_METADATA[network].nativeCurrency.symbol}
-              />
-            </InputGroup>
-            <Tooltip isDisabled={isUserDeposited} aria-label="A tooltip">
-              <Button
-                colorScheme="blue"
-                isDisabled={isUserDeposited}
-                onClick={handleDeposit}
-              >
-                Deposit
-              </Button>
-            </Tooltip>
-          </Box>
-        </Modal>
       )}
     </>
   );

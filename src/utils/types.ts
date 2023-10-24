@@ -1,4 +1,5 @@
 import { DaoAction, ProposalMetadata } from "@xinfin/osx-client-common";
+import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
 import { BigNumberish } from "ethers";
 
 export type Proposal = {
@@ -45,3 +46,14 @@ export const enum TransactionState {
   SUCCESS = "SUCCESS",
   ERROR = "ERROR",
 }
+
+export type VoterOnProposal = {
+  id: string;
+  voter: string;
+  committee: string;
+  pluginProposalId: string;
+  option: VoteOption;
+  txHash: string;
+  creationDate: BigNumberish;
+  snapshotBlock: BigNumberish;
+};
