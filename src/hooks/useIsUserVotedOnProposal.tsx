@@ -8,11 +8,13 @@ function useIsUserVotedOnProposal(proposalId: string, voterAddress: string) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!daofinClient) return;
+    console.log({ proposalId, voterAddress });
+
+    if (!daofinClient || !voterAddress) return;
     setIsLoading(true);
 
     daofinClient.methods
-      .isVotedOnProposal(proposalId, voterAddress)
+      .isVotedOnProposal("0", voterAddress)
       .then((data) => {
         setIsLoading(false);
         setIsUserVotedOnProposal(data);

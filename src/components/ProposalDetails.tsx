@@ -1,9 +1,15 @@
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { Proposal } from "../utils/types";
 import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
 import {
   CHAIN_METADATA,
+  JudiciaryCommittee,
   KNOWN_FORMATS,
+  MasterNodeCommittee,
+  PeoplesHouseCommittee,
+  convertCommitteeToPlainText,
+  convertVoteOptionToItsColor,
+  convertVoteOptionToText,
   formatDate,
   getFormattedUtcOffset,
   shortenAddress,
@@ -11,27 +17,22 @@ import {
 import { styled } from "styled-components";
 import { FormLabel } from "@chakra-ui/form-control";
 import BoxWrapper from "./BoxWrapper";
-import { BigNumber } from "ethers";
-import { formatEther, parseEther } from "@ethersproject/units";
+import { formatEther } from "@ethersproject/units";
 import { useNetwork } from "../contexts/network";
-// import format from "date-fns/format";
-import { format } from "date-fns";
 import useIsUserDeposited from "../hooks/useIsUserDeposited";
 import { useWallet } from "../hooks/useWallet";
 import { Button } from "@chakra-ui/button";
 import { Tooltip } from "@chakra-ui/tooltip";
 import useIsUserVotedOnProposal from "../hooks/useIsUserVotedOnProposal";
-import useFetchVoterDepositAmount from "../hooks/useFetchVoterDepositAmount";
 import { useClient } from "../hooks/useClient";
-import { DepositSteps } from "@xinfin/osx-daofin-sdk-client";
-import { Input, InputGroup, InputRightAddon } from "@chakra-ui/input";
+import { InputGroup } from "@chakra-ui/input";
 import { useDisclosure } from "@chakra-ui/hooks";
-import Modal from "./Modal";
 import { useForm } from "react-hook-form";
-import PeoplesHouseDeposits from "./PeoplesHouseDeposits";
-import { Link } from "react-router-dom";
-import { Tag } from "@chakra-ui/react";
-
+import { Select, Tag } from "@chakra-ui/react";
+import { VoteOption, VoteSteps } from "@xinfin/osx-daofin-sdk-client";
+import useFetchVotersOnProposal from "../hooks/useFetchVotersOnProposal";
+import { daoAddress, pluginAddress } from "../utils/constants";
+import useVoteStats from "../hooks/useVoteStats";
 const ProposalWrapper = styled.div.attrs({
   className: "",
 })``;
@@ -47,6 +48,10 @@ const DepositStatusWrapper = styled(BoxWrapper).attrs({
 })``;
 const InfoWrapper = styled(BoxWrapper).attrs({
   className: "",
+})``;
+
+const VotersOnProposalWrapper = styled(BoxWrapper).attrs({
+  className: "h-fit",
 })``;
 const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
   const {
@@ -71,12 +76,63 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
     voterAddress ? voterAddress : ""
   );
 
-  const { setValue, getValues, register } = useForm({
+  const { setValue, getValues, register, watch } = useForm({
     defaultValues: {
       depositAmount: 0,
+      voteOption: VoteOption.NONE,
     },
   });
   const { daofinClient } = useClient();
+  const voteOption = watch("voteOption");
+
+  const { data: votersOnProposal } = useFetchVotersOnProposal(
+    daoAddress,
+    pluginAddress,
+    pluginProposalId
+  );
+  const {
+    judiciaryVoteListLength,
+    masterNodeVoteListLength,
+    peoplesHouseVoteListLength,
+  } = useVoteStats(pluginProposalId);
+  const committeesList = useMemo(
+    () => [MasterNodeCommittee, PeoplesHouseCommittee, JudiciaryCommittee],
+    []
+  );
+  const handleVote = async () => {
+    const iterator = daofinClient?.methods.vote(
+      pluginProposalId,
+      voteOption,
+      false
+    );
+    if (!iterator) return;
+    try {
+      for await (const step of iterator) {
+        switch (step.key) {
+          case VoteSteps.WAITING:
+            console.log("Key:", step.key);
+            console.log("Tx:", step.txHash);
+
+            break;
+          case VoteSteps.DONE:
+            console.log("Key:", step.key);
+            break;
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const convertCommitteeBytesToVoteLength = (committee: string) => {
+    switch (committee) {
+      case MasterNodeCommittee:
+        return masterNodeVoteListLength;
+      case PeoplesHouseCommittee:
+        return peoplesHouseVoteListLength;
+      case JudiciaryCommittee:
+        return judiciaryVoteListLength;
+    }
+  };
   return (
     <>
       {proposal && (
@@ -171,11 +227,35 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                       justifyContent={"space-around"}
                       alignItems={"center"}
                     >
+                      <Box>
+                        <FormLabel>Vote Option</FormLabel>
+                        <InputGroup className="m-1">
+                          <Select {...register("voteOption", {})}>
+                            {Object.keys(VoteOption)
+                              .filter((option) => isNaN(Number(option)))
+                              .map((option, index) => (
+                                <option value={index}>
+                                  {convertVoteOptionToText(index as VoteOption)}
+                                </option>
+                              ))}
+                          </Select>
+                        </InputGroup>
+                      </Box>
+                    </Flex>
+                    <Flex
+                      className="mt-4"
+                      justifyContent={"space-around"}
+                      alignItems={"center"}
+                    >
                       <Tooltip
                         // isDisabled={isUserVotedOnProposal}
                         aria-label="Coming"
                       >
-                        <Button colorScheme="green" isDisabled={true}>
+                        <Button
+                          colorScheme="green"
+                          onClick={handleVote}
+                          isDisabled={voteOption === VoteOption.NONE}
+                        >
                           Vote
                         </Button>
                       </Tooltip>
@@ -230,6 +310,74 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
               </Flex>
             </DurationWrapper>
           </Box>
+          {committeesList.map((c) => (
+            <VotersOnProposalWrapper
+              key={c}
+              className="col-span-4 row-start-auto"
+            >
+              <Flex direction={"column"}>
+                <Flex justifyContent={"center"} alignItems={"center"}>
+                  <Box>
+                    <Heading fontSize={"2xl"}>
+                      {convertCommitteeToPlainText(c)} Votes{" "}
+                      {`(${convertCommitteeBytesToVoteLength(c)})`}
+                    </Heading>
+                  </Box>
+                </Flex>
+                <Flex
+                  direction={"column"}
+                  justifyContent={"start"}
+                  alignItems={"center"}
+                >
+                  {votersOnProposal?.length > 0 ? (
+                    votersOnProposal.filter((item) => item.committee == c)
+                      .length === 0 ? (
+                      <BoxWrapper className="w-full">
+                        <Text color={"gray"}>No Item</Text>
+                      </BoxWrapper>
+                    ) : (
+                      votersOnProposal
+                        .filter((item) => item.committee == c)
+                        .map(
+                          ({
+                            committee,
+                            creationDate,
+                            id,
+                            option,
+                            pluginProposalId,
+                            txHash,
+                            voter,
+                            snapshotBlock,
+                          }) => (
+                            <BoxWrapper className="w-full" key={id}>
+                              <Text>
+                                {shortenAddress(voter)} -{" "}
+                                <Text color={"blue"} as={"span"}>
+                                  {convertCommitteeToPlainText(committee)}{" "}
+                                </Text>
+                              </Text>
+                              <Text color={"gray"} as={"span"}>
+                                {`@ ${snapshotBlock} - `}
+                                <Text
+                                  color={convertVoteOptionToItsColor(option)}
+                                  as={"span"}
+                                >
+                                  {convertVoteOptionToText(option)}
+                                </Text>
+                              </Text>
+                            </BoxWrapper>
+                          )
+                        )
+                    )
+                  ) : (
+                    <BoxWrapper className="w-full">
+                      <Text color={"gray"}>No Item</Text>
+                    </BoxWrapper>
+                  )}
+                </Flex>
+              </Flex>
+            </VotersOnProposalWrapper>
+          ))}
         </ProposalWrapper>
       )}
     </>
