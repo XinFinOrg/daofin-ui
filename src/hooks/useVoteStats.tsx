@@ -35,7 +35,6 @@ function useVoteStats(proposalId: string): VoteStatsType {
     proposalId,
     PeoplesHouseCommittee
   );
-    console.log(peoplesHouseVoteList);
     
   const masterNodeVoteListLength = useMemo(
     () => (masterNodeVoteList && masterNodeVoteList?.data?.length) ?? 0,

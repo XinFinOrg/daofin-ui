@@ -83,7 +83,9 @@ const ManageJudiciary = () => {
                 return (
                   <BoxWrapper key={id}>
                     <Text>Member: {shortenAddress(member)}</Text>
-                    <Text>At Block: {snapshotBlock.toString()}</Text>
+                    <Text color={'gray'}>
+                      {`@ ${snapshotBlock.toString()}`}
+                    </Text>
                   </BoxWrapper>
                 );
               }

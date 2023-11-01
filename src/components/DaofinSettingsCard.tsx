@@ -1,6 +1,13 @@
 import React, { useEffect } from "react";
 import { useDaoQuery } from "../hooks/useDaoDetails";
-import { formatDate, shortenAddress, toDisplayEns } from "../utils/networks";
+import {
+  JudiciaryCommittee,
+  MasterNodeCommittee,
+  PeoplesHouseCommittee,
+  formatDate,
+  shortenAddress,
+  toDisplayEns,
+} from "../utils/networks";
 import { useNetwork } from "../contexts/network";
 import { useResolveDaoAvatar } from "../hooks/useResolveDaoAvatar";
 import styled from "styled-components";
@@ -14,6 +21,7 @@ import useDaoElectionPeriods from "../hooks/useDaoElectionPeriods";
 import { BigNumber } from "ethers";
 import BoxWrapper from "./BoxWrapper";
 import { v4 as uuid } from "uuid";
+import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
 const HeaderWrapper = styled(BoxWrapper).attrs({
   className: "w-100",
 })``;
@@ -32,7 +40,9 @@ const DaofinSettingsCard = ({}) => {
 
   const globalSettings = useDaoGlobalSettings();
   const electionPeriods = useDaoElectionPeriods();
-
+  const masterNodeSenateNumbers =
+    useFetchTotalNumbersByCommittee(MasterNodeCommittee);
+// Formula: Reaching at Min Participations: Min Participations >= All Total Member
   return (
     <>
       <HeaderWrapper>
@@ -89,13 +99,18 @@ const DaofinSettingsCard = ({}) => {
                       Global Settings:
                     </Heading>
                     <Flex className="flex-row justify-start">
-                      {globalSettings && (
+                      {masterNodeSenateNumbers?.toString() && (
                         <BoxWrapper className="m-4">
                           <Text>
                             Master Node Numbers:{" "}
-                            {globalSettings.totalNumberOfMasterNodes.toString()}
+                            {masterNodeSenateNumbers.toString()}
                           </Text>
+                        </BoxWrapper>
+                      )}
+                      {globalSettings && (
+                        <BoxWrapper className="m-4">
                           <Text>
+                            XDC Validator Contract @{" "}
                             {shortenAddress(
                               globalSettings.xdcValidator.toString()
                             )}

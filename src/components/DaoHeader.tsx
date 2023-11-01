@@ -45,22 +45,10 @@ const DaoHeader = ({}) => {
             <Stack justifyContent={"center"} alignItems={"center"}>
               <CardBody>
                 <Heading size="md">{liveDao.metadata.name}</Heading>
-                <Text>{liveAddressOrEns}</Text>
-                <Text as={'p'} py="2">{liveDao.metadata.description}</Text>
-
-                <Flex>
-                  <Box className="mr-1">
-                    <Tag>{new Date(liveDao.creationDate).toUTCString()}</Tag>
-                  </Box>
-                  <Spacer />
-                  <Box className="mr-1">
-                    <Tag>{liveDao?.plugins[0]?.id}</Tag>
-                  </Box>
-                  <Spacer />
-                  <Box className="mr-1">
-                    <Tag>{network}</Tag>
-                  </Box>
-                </Flex>
+                {/* <Text>{liveAddressOrEns}</Text> */}
+                <Text as={"p"} py="2">
+                  {liveDao.metadata.description}
+                </Text>
                 <Flex className="m-1 justify-center">
                   {liveDao.metadata?.links?.map(({ name, url }) => (
                     <Box className="mr-1">
@@ -75,6 +63,19 @@ const DaoHeader = ({}) => {
                       </Tag>
                     </Box>
                   ))}
+                </Flex>
+                <Flex className="mt-4">
+                  <Box className="mr-1">
+                    <Tag>{new Date(liveDao.creationDate).toUTCString()}</Tag>
+                  </Box>
+                  <Spacer />
+                  <Box className="mr-1">
+                    <Tag>{liveDao?.plugins[0]?.id}</Tag>
+                  </Box>
+                  <Spacer />
+                  <Box className="mr-1">
+                    <Tag>{network}</Tag>
+                  </Box>
                 </Flex>
               </CardBody>
             </Stack>

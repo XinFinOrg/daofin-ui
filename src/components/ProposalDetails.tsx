@@ -7,6 +7,7 @@ import {
   KNOWN_FORMATS,
   MasterNodeCommittee,
   PeoplesHouseCommittee,
+  applyRatioCeiled,
   convertCommitteeToPlainText,
   convertVoteOptionToItsColor,
   convertVoteOptionToText,
@@ -28,11 +29,18 @@ import { useClient } from "../hooks/useClient";
 import { InputGroup } from "@chakra-ui/input";
 import { useDisclosure } from "@chakra-ui/hooks";
 import { useForm } from "react-hook-form";
-import { Select, Tag } from "@chakra-ui/react";
+import { Progress, Select, Tag } from "@chakra-ui/react";
 import { VoteOption, VoteSteps } from "@xinfin/osx-daofin-sdk-client";
 import useFetchVotersOnProposal from "../hooks/useFetchVotersOnProposal";
 import { daoAddress, pluginAddress } from "../utils/constants";
 import useVoteStats from "../hooks/useVoteStats";
+import useFetchProposalTallyDetails from "../hooks/useFetchProposalTallyDetails";
+import useFetchGlobalCommitteeToVotingSettings from "../hooks/useFetchGlobalCommitteeToVotingSettings";
+import { parseEther } from "viem";
+import { BigNumber } from "@ethersproject/bignumber";
+import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
+import useMinParticipationVotingStatsPerCommittee from "../hooks/useMinParticipationVotingStatsPerCommittee";
+import useThresholdVotingStatsPerCommittee from "../hooks/useThresholdVotingStatsPerCommittee";
 const ProposalWrapper = styled.div.attrs({
   className: "",
 })``;
@@ -123,6 +131,7 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
       console.log(e);
     }
   };
+
   const convertCommitteeBytesToVoteLength = (committee: string) => {
     switch (committee) {
       case MasterNodeCommittee:
@@ -133,6 +142,108 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
         return judiciaryVoteListLength;
     }
   };
+
+  const mnStats = useMinParticipationVotingStatsPerCommittee(
+    pluginProposalId,
+    MasterNodeCommittee
+  );
+
+  const judiciaryStats = useMinParticipationVotingStatsPerCommittee(
+    pluginProposalId,
+    JudiciaryCommittee
+  );
+  const peopleStats = useMinParticipationVotingStatsPerCommittee(
+    pluginProposalId,
+    PeoplesHouseCommittee
+  );
+
+  const convertCommitteeBytesToVotingStats = (
+    committee: string
+  ):
+    | {
+        current: BigNumber;
+        minParticipations: BigNumber;
+        percentage: string;
+      }
+    | undefined => {
+    switch (committee) {
+      case MasterNodeCommittee:
+        return mnStats;
+      case PeoplesHouseCommittee:
+        return peopleStats
+          ? {
+              current: BigNumber.from(
+                parseInt(formatEther(peopleStats.current))
+              ),
+              percentage: peopleStats.percentage,
+              minParticipations: BigNumber.from(
+                parseInt(formatEther(peopleStats.minParticipations))
+              ),
+            }
+          : {
+              current: BigNumber.from(0),
+              minParticipations: BigNumber.from(0),
+              percentage: "0",
+            };
+      case JudiciaryCommittee:
+        return judiciaryStats;
+    }
+  };
+
+  const mnThresholdStats = useThresholdVotingStatsPerCommittee(
+    pluginProposalId,
+    MasterNodeCommittee
+  );
+
+  const judiciaryThresholdStats = useThresholdVotingStatsPerCommittee(
+    pluginProposalId,
+    JudiciaryCommittee
+  );
+  const peopleThresholdStats = useThresholdVotingStatsPerCommittee(
+    pluginProposalId,
+    PeoplesHouseCommittee
+  );
+  const convertCommitteeBytesToSupportTresholdStats = (
+    committee: string
+  ):
+    | {
+        current: BigNumber;
+        supportThreshold: BigNumber;
+        percentage: string;
+      }
+    | undefined => {
+    switch (committee) {
+      case MasterNodeCommittee:
+        return mnThresholdStats;
+      case PeoplesHouseCommittee:
+        return peopleThresholdStats;
+      case JudiciaryCommittee:
+        return judiciaryThresholdStats;
+    }
+  };
+  const minParticipationStats = useMemo(
+    () =>
+      committeesList && peopleStats && mnStats && judiciaryStats
+        ? committeesList.map((committee) =>
+            convertCommitteeBytesToVotingStats(committee)
+          )
+        : [],
+    [committeesList, peopleStats, mnStats, judiciaryStats]
+  );
+
+  const supportThresholdStats = useMemo(
+    () =>
+      committeesList &&
+      peopleThresholdStats &&
+      mnThresholdStats &&
+      judiciaryThresholdStats
+        ? committeesList.map((committee) =>
+            convertCommitteeBytesToSupportTresholdStats(committee)
+          )
+        : [],
+    [committeesList, peopleStats, mnStats, judiciaryStats]
+  );
+
   return (
     <>
       {proposal && (
@@ -295,7 +406,7 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                 </Flex>
               </Flex>
             </ActionsWrapper>
-            <DurationWrapper className="col-span-4 row-span-3 col-start-9 row-start-auto">
+            {/* <DurationWrapper className="col-span-4 row-span-3 col-start-9 row-start-auto">
               <Flex direction={"column"}>
                 <Flex justifyContent={"center"} alignItems={"center"}>
                   <Box>
@@ -308,9 +419,9 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                   <Text>End Date: {new Date(endDate).toUTCString()}</Text>
                 </Flex>
               </Flex>
-            </DurationWrapper>
+            </DurationWrapper> */}
           </Box>
-          {committeesList.map((c) => (
+          {committeesList.map((c, i) => (
             <VotersOnProposalWrapper
               key={c}
               className="col-span-4 row-start-auto"
@@ -324,6 +435,57 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                     </Heading>
                   </Box>
                 </Flex>
+                {minParticipationStats[i] && (
+                  <Box className="text-start my-2">
+                    {
+                      <Text fontWeight={500}>
+                        <Text>
+                          {`(Quruam - % ${parseFloat(
+                            minParticipationStats[i]!.percentage
+                          ).toFixed(3)}) | ${minParticipationStats[
+                            i
+                          ]?.current.toString()}  ${
+                            c === PeoplesHouseCommittee
+                              ? CHAIN_METADATA[network].nativeCurrency.symbol
+                              : "Address"
+                          } (Current) Of ${minParticipationStats[
+                            i
+                          ]?.minParticipations.toString()} ${
+                            c === PeoplesHouseCommittee
+                              ? CHAIN_METADATA[network].nativeCurrency.symbol
+                              : "Address"
+                          }`}
+                        </Text>
+                      </Text>
+                    }
+
+                    <Progress
+                      colorScheme="blue"
+                      size="sm"
+                      value={+minParticipationStats[i]!.percentage}
+                    />
+                  </Box>
+                )}
+
+                {supportThresholdStats[i] && (
+                  <Box className="text-start my-2">
+                    {minParticipationStats[i] && (
+                      <Text fontWeight={500}>
+                        <Text>{`Support Threshold: % ${parseFloat(
+                          supportThresholdStats[i]!.percentage
+                        ).toFixed(3)}  
+                         `}</Text>
+                      </Text>
+                    )}
+
+                    <Progress
+                      colorScheme="blue"
+                      size="sm"
+                      value={+supportThresholdStats[i]!.percentage}
+                    />
+                  </Box>
+                )}
+
                 <Flex
                   direction={"column"}
                   justifyContent={"start"}

@@ -4322,6 +4322,11 @@
   dependencies:
     "@babel/types" "^7.20.7"
 
+"@types/big.js@^6.2.1":
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/@types/big.js/-/big.js-6.2.1.tgz#0e5eda9b8ffe33e2cc4540fad6e91a4c7255ca88"
+  integrity sha512-dKzZVT10m3ELZgYIShPJ+3Os/E1s3aDQS+wr1ne7VCLU/8hc/R+z/+gkm9WabxSkV9E8wJhTl5wC+0fD9nitsw==
+
 "@types/bn.js@^5.1.0", "@types/bn.js@^5.1.1":
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/@types/bn.js/-/bn.js-5.1.2.tgz#162f5238c46f4bcbac07a98561724eca1fcf0c5e"
@@ -5462,17 +5467,17 @@
     graphql "^16.5.0"
     graphql-request "^4.3.0"
 
-"@xinfin/osx-daofin-contracts-ethers@0.10.1":
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/@xinfin/osx-daofin-contracts-ethers/-/osx-daofin-contracts-ethers-0.10.1.tgz#1603646d45409c522161aae9884fdd4cd5a5f5cb"
-  integrity sha512-LZrBuY08JDbUD6O785coIN9R0YMPZ8pM1Tc1InnD+miuI4KW4LepsST3DvEO9WZzBQ2WlXSHMMm9l6dk9bZlTQ==
+"@xinfin/osx-daofin-contracts-ethers@0.10.4":
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/@xinfin/osx-daofin-contracts-ethers/-/osx-daofin-contracts-ethers-0.10.4.tgz#155282dfb5784eff7658db6904fe9b28bcbb909a"
+  integrity sha512-0EezYehCd6yp9YkXHrzPytApSeLMGnKAX2YWDv1rX8lxD5GNtNqaGibhUllQzZ+f+RZIBrhrmUFSvAT+CWL2/A==
   dependencies:
     ethers "^5.6.2"
 
-"@xinfin/osx-daofin-contracts@0.10.1":
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/@xinfin/osx-daofin-contracts/-/osx-daofin-contracts-0.10.1.tgz#9807505282553e88fa871842a646a5e38bd2b657"
-  integrity sha512-eiWDOAJsZwbgu3m65ywwjdrJg8wylu8T7UAWnfLjF888QGQaOCWtOs3RjYaS9JYWCKgzk1jhXT1YV5iSOzbFNA==
+"@xinfin/osx-daofin-contracts@0.10.4":
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/@xinfin/osx-daofin-contracts/-/osx-daofin-contracts-0.10.4.tgz#9b6f6c143c60c81b3825263cdb989077009b6d99"
+  integrity sha512-eZWVwAT/POVBYocGX2IQI2f26IBxDGY8CcKWVFnqbxjYw/Ynq7szRIot0HOPlo2kdQjOUS0WF3IdLWkWVPiabg==
   dependencies:
     "@ensdomains/ens-contracts" "0.0.20"
     "@openzeppelin/contracts" "^4.8.2"
@@ -5483,10 +5488,10 @@
     "@xinfin/osx-ethers" "^1.3.0-rc1"
     "@xinfin/osx-sdk-client" "^1.10.1"
 
-"@xinfin/osx-daofin-sdk-client@^1.0.54":
-  version "1.0.54"
-  resolved "https://registry.yarnpkg.com/@xinfin/osx-daofin-sdk-client/-/osx-daofin-sdk-client-1.0.54.tgz#5c956504b9a8d750d0b6c0aeb253d00a57812e3d"
-  integrity sha512-SUmxTNvESuEPW0XeBpk70xUXXDiN4cXxVG9EOpBMn9XQUpIGkYZBSdM/5QBC0NuWfpY48mN74Mc0A0uiRotxWg==
+"@xinfin/osx-daofin-sdk-client@^1.0.59":
+  version "1.0.59"
+  resolved "https://registry.yarnpkg.com/@xinfin/osx-daofin-sdk-client/-/osx-daofin-sdk-client-1.0.59.tgz#b57efe12f8898c90c812eb4d2cf4f831cfd1c8bf"
+  integrity sha512-6MNvN95UEekNpole1wAZsZyuyIxdpyQmVYWvo1U1uTV/t89xTuhNxHBtSMeT5r+mTEqaSqLjiZKfVbovg03cHg==
   dependencies:
     "@aragon/osx-ethers" "1.3.0-rc0"
     "@aragon/sdk-client-common" "1.2.0-rc0"
@@ -5499,8 +5504,8 @@
     "@ethersproject/keccak256" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
     "@ethersproject/wallet" "^5.7.0"
-    "@xinfin/osx-daofin-contracts" "0.10.1"
-    "@xinfin/osx-daofin-contracts-ethers" "0.10.1"
+    "@xinfin/osx-daofin-contracts" "0.10.4"
+    "@xinfin/osx-daofin-contracts-ethers" "0.10.4"
     "@xinfin/osx-sdk-client" "^1.10.1"
     graphql "^16.6.0"
     graphql-request "4.3.0"
@@ -6291,7 +6296,7 @@ big.js@^5.2.2:
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-5.2.2.tgz#65f0af382f578bcdc742bd9c281e9cb2d7768328"
   integrity sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==
 
-big.js@^6.0.3:
+big.js@^6.0.3, big.js@^6.2.1:
   version "6.2.1"
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-6.2.1.tgz#7205ce763efb17c2e41f26f121c420c6a7c2744f"
   integrity sha512-bCtHMwL9LeDIozFn+oNhhFoq+yQ3BNdnsLSASUxLciOb1vgvpHsIO1dsENiGMgbb4SkP5TrzWzRiLddn8ahVOQ==

@@ -23,11 +23,12 @@
     "@types/react-dom": "^18.0.0",
     "@web3modal/ethereum": "^2.7.1",
     "@web3modal/react": "^2.7.1",
-    "@xinfin/osx-daofin-sdk-client": "^1.0.54",
+    "@xinfin/osx-daofin-sdk-client": "^1.0.59",
     "@xinfin/osx-sdk-client": "^1.10.1",
     "apollo-link-rest": "^0.9.0",
     "apollo3-cache-persist": "^0.14.1",
     "autoprefixer": "^10.4.16",
+    "big.js": "^6.2.1",
     "classnames": "^2.3.2",
     "date-fns": "^2.28.0",
     "date-fns-tz": "^2.0.0",
@@ -72,6 +73,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@types/big.js": "^6.2.1",
     "@types/uuid": "^9.0.4"
   }
 }

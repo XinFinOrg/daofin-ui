@@ -15,7 +15,7 @@ const ProposalWrapper = styled.div.attrs({
 const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
   return (
     <>
-      {proposals.length > 0 &&
+      {proposals.length > 0 ? (
         proposals.map(({ id, pluginProposalId, creator, metadata }) => (
           <ProposalWrapper key={id}>
             <Flex direction={"column"}>
@@ -56,7 +56,12 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
               </Flex>
             </Flex>
           </ProposalWrapper>
-        ))}
+        ))
+      ) : (
+        <ProposalWrapper>
+          <Text color="gray">No Item</Text>
+        </ProposalWrapper>
+      )}
     </>
   );
 };

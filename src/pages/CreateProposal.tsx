@@ -180,19 +180,22 @@ const CreateProposal = () => {
               </Box>
             )}
 
-            {proposalState?.proposalId && proposalState?.proposalId > -1 && (
-              <>
-                <Text>Proposal ID: {proposalState.proposalId}</Text>
-                <Button
-                  onClick={() => {
-                    navigate(`/proposals/${proposalState.proposalId}/details`);
-                    resetProposalState();
-                  }}
-                >
-                  Go to
-                </Button>
-              </>
-            )}
+            {proposalState?.proposalId !== undefined &&
+              proposalState?.proposalId > -1 && (
+                <>
+                  <Text>Proposal ID: {proposalState.proposalId}</Text>
+                  <Button
+                    onClick={() => {
+                      navigate(
+                        `/proposals/${proposalState.proposalId}/details`
+                      );
+                      resetProposalState();
+                    }}
+                  >
+                    Go to
+                  </Button>
+                </>
+              )}
           </Box>
         </Modal>
       </CreateProposalWrapper>

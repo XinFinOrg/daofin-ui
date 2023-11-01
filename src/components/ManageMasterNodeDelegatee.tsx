@@ -86,7 +86,7 @@ const ManageMasterNodeDelegatee = () => {
           </Box>
         </WithConnectedWallet>
         <Flex className="w-full flex-col">
-          {data?.length > 0 &&
+          {data?.length > 0 ? (
             data.map(
               ({
                 action,
@@ -105,7 +105,10 @@ const ManageMasterNodeDelegatee = () => {
                   </BoxWrapper>
                 );
               }
-            )}
+            )
+          ) : (
+            <Text>No Item</Text>
+          )}
         </Flex>
         {isOpen && (
           <Modal isOpen={isOpen} onClose={onClose} title="Add Delegatee">

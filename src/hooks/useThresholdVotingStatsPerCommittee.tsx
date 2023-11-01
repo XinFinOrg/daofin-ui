@@ -1,0 +1,50 @@
+import { useMemo } from "react";
+import { MasterNodeCommittee, applyRatioCeiled } from "../utils/networks";
+import useFetchGlobalCommitteeToVotingSettings from "./useFetchGlobalCommitteeToVotingSettings";
+import useFetchProposalTallyDetails from "./useFetchProposalTallyDetails";
+import useFetchTotalNumbersByCommittee from "./useFetchTotalNumbersByCommittee";
+import { BigNumber } from "@ethersproject/bignumber";
+import { parseEther } from "viem";
+import Big from "big.js"
+function useThresholdVotingStatsPerCommittee(
+  pluginProposalId: string,
+  committee: string
+):
+  | {
+      current: BigNumber;
+      supportThreshold: BigNumber;
+      percentage: string;
+    }
+  | undefined {
+  const globalCommitteeToVotingSettings =
+    useFetchGlobalCommitteeToVotingSettings(committee);
+
+  const totalNumbers = useFetchTotalNumbersByCommittee(committee);
+
+  const tally = useFetchProposalTallyDetails(pluginProposalId, committee);
+
+  return useMemo(() => {
+    if (
+      !tally ||
+      !tally.data ||
+      !globalCommitteeToVotingSettings ||
+      !totalNumbers
+    )
+      return;
+    const currentVotes = BigNumber.from(tally.data.yes);
+    const supportThreshold = applyRatioCeiled(
+      BigNumber.from(totalNumbers),
+      BigNumber.from(globalCommitteeToVotingSettings?.supportThreshold)
+    );
+
+      const percentage = currentVotes.eq(0)
+      ? '0'
+      : Big(currentVotes.toString()).mul(100).div(supportThreshold.toString()).toString();
+    return {
+      current: currentVotes,
+      supportThreshold,
+      percentage,
+    };
+  }, [tally, totalNumbers, globalCommitteeToVotingSettings]);
+}
+export default useThresholdVotingStatsPerCommittee;
