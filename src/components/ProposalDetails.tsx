@@ -440,7 +440,7 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                     {
                       <Text fontWeight={500}>
                         <Text>
-                          {`(Quruam - % ${parseFloat(
+                          {`(Quorum - % ${parseFloat(
                             minParticipationStats[i]!.percentage
                           ).toFixed(3)}) | ${minParticipationStats[
                             i
