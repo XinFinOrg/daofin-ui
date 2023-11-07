@@ -8,6 +8,7 @@ import {
   Stack,
   Text,
   Heading,
+  Button,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { Web3Button } from "@web3modal/react";
@@ -59,6 +60,22 @@ export default function Header() {
                   </Box>
                 </Link>
               ))}
+              <Button colorScheme="blue">
+                <a
+                  href="https://github.com/XinFinOrg/osx-daofin/issues"
+                  target="_blank"
+                >
+                  FAQs
+                </a>
+              </Button>
+              <Button colorScheme="green">
+                <a
+                  href="https://github.com/XinFinOrg/osx-daofin/issues/new"
+                  target="_blank"
+                >
+                  Ask a question
+                </a>
+              </Button>
             </HStack>
           </HStack>
           <Web3Button />
