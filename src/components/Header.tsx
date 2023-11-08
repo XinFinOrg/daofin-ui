@@ -9,11 +9,15 @@ import {
   Text,
   Heading,
   Button,
+  useColorMode,
+  Switch,
+  Icon,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
+import { HamburgerIcon, CloseIcon, SunIcon, MoonIcon } from "@chakra-ui/icons";
 import { Web3Button } from "@web3modal/react";
 import { Navigate } from "react-router";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
 interface Props {
   children: React.ReactNode;
   href: string;
@@ -29,6 +33,7 @@ const Links = [
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   return (
     <>
@@ -60,25 +65,34 @@ export default function Header() {
                   </Box>
                 </Link>
               ))}
-              <Button colorScheme="blue">
-                <a
-                  href="https://github.com/XinFinOrg/osx-daofin/issues"
-                  target="_blank"
-                >
-                  FAQs
-                </a>
-              </Button>
-              <Button colorScheme="green">
-                <a
-                  href="https://github.com/XinFinOrg/osx-daofin/issues/new"
-                  target="_blank"
-                >
-                  Ask a question
-                </a>
-              </Button>
             </HStack>
           </HStack>
-          <Web3Button />
+          <HStack>
+            <Button colorScheme="blue" variant={"outline"}>
+              <a
+                href="https://github.com/XinFinOrg/osx-daofin/issues"
+                target="_blank"
+              >
+                FAQs
+              </a>
+            </Button>
+            <Button colorScheme="green" variant={"outline"}>
+              <a
+                href="https://github.com/XinFinOrg/osx-daofin/issues/new"
+                target="_blank"
+              >
+                Ask a question
+              </a>
+            </Button>
+            <Button onClick={toggleColorMode}>
+              {colorMode === "light" ? (
+                <Icon as={SunIcon} />
+              ) : (
+                <Icon as={MoonIcon} />
+              )}
+            </Button>
+            <Web3Button />
+          </HStack>
         </Flex>
 
         {isOpen ? (

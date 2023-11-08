@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from "react";
 import { Proposal } from "../utils/types";
-import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
+import { Box, Flex, Heading, Text, Badge } from "@chakra-ui/layout";
 import {
   CHAIN_METADATA,
   JudiciaryCommittee,
@@ -514,9 +514,9 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                             <BoxWrapper className="w-full" key={id}>
                               <Text>
                                 {shortenAddress(voter)} -{" "}
-                                <Text color={"blue"} as={"span"}>
+                                <Badge>
                                   {convertCommitteeToPlainText(committee)}{" "}
-                                </Text>
+                                </Badge>
                               </Text>
                               <Text color={"gray"} as={"span"}>
                                 {`@ ${snapshotBlock} - `}
@@ -524,7 +524,9 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                                   color={convertVoteOptionToItsColor(option)}
                                   as={"span"}
                                 >
-                                  {convertVoteOptionToText(option)}
+                                  <strong>
+                                    {convertVoteOptionToText(option)}
+                                  </strong>
                                 </Text>
                               </Text>
                             </BoxWrapper>

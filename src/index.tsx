@@ -27,7 +27,7 @@ root.render(
     <Router>
       <AppGlobalConfigProvider>
         <QueryClientProvider client={queryClient}>
-          <ChakraProvider>
+          <ChakraProvider >
             <WagmiProvider>
               <UseClientProvider>
                 <WalletMenuProvider>
