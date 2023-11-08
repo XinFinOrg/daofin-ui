@@ -39,12 +39,10 @@ function useMinParticipationVotingStatsPerCommittee(
       BigNumber.from(totalNumbers),
       BigNumber.from(globalCommitteeToVotingSettings?.minParticipation)
     );
-    console.log("minParticipations", minParticipations.toString());
 
     const percentage = currentVotes.eq(0)
       ? '0'
       : Big(currentVotes.toString()).mul(100).div(minParticipations.toString()).toString();
-    console.log("percentage", percentage.toString());
 
     return {
       current: currentVotes,
