@@ -84,7 +84,21 @@ export default function Header() {
                 Ask a question
               </a>
             </Button>
-            <Button onClick={toggleColorMode}>
+            <Button colorScheme="red" variant={"outline"}>
+              <a href="https://faucet.apothem.network" target="_blank">
+                Faucet
+              </a>
+            </Button>
+            <Button colorScheme="white" variant={"outline"}>
+              <a href="https://forms.gle/yD7CxWUqZU7bKe6JA" target="_blank">
+                Become a voter
+              </a>
+            </Button>
+            <Button
+              onClick={toggleColorMode}
+              color={"darkcyan"}
+              variant={"outline"}
+            >
               {colorMode === "light" ? (
                 <Icon as={SunIcon} />
               ) : (
