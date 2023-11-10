@@ -15,6 +15,7 @@ import { apothemTestClient, client } from "./contexts/apolloClient";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Route, HashRouter as Router } from "react-router-dom";
 import { AppGlobalConfigProvider } from "./contexts/AppGlobalConfig";
+import { NetworkProvider } from "./contexts/network";
 
 // import 'tailwindcss/tailwind.css';
 const root = ReactDOM.createRoot(
@@ -29,6 +30,7 @@ root.render(
         <QueryClientProvider client={queryClient}>
           <ChakraProvider >
             <WagmiProvider>
+            <NetworkProvider>
               <UseClientProvider>
                 <WalletMenuProvider>
                   <ProvidersProvider>
@@ -40,6 +42,7 @@ root.render(
                   </ProvidersProvider>
                 </WalletMenuProvider>
               </UseClientProvider>
+              </NetworkProvider>
             </WagmiProvider>
           </ChakraProvider>
         </QueryClientProvider>

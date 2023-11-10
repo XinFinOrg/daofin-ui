@@ -18,6 +18,7 @@ import { Web3Button } from "@web3modal/react";
 import { Navigate } from "react-router";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import WrongNetwork from "./WrongNetwork";
 interface Props {
   children: React.ReactNode;
   href: string;
@@ -89,11 +90,6 @@ export default function Header() {
                 Faucet
               </a>
             </Button>
-            <Button colorScheme="white" variant={"outline"}>
-              <a href="https://forms.gle/yD7CxWUqZU7bKe6JA" target="_blank">
-                Become a voter
-              </a>
-            </Button>
             <Button
               onClick={toggleColorMode}
               color={"darkcyan"}
@@ -119,6 +115,7 @@ export default function Header() {
           </Box>
         ) : null}
       </Box>
+      <WrongNetwork />
     </>
   );
 }

@@ -11,6 +11,7 @@ import { getPluginInstallationId } from "../utils/networks";
 import { Box } from "@chakra-ui/layout";
 import ManageJudiciary from "../components/ManageJudiciary";
 import ManageMasterNodeDelegatee from "../components/ManageMasterNodeDelegatee";
+import WrongNetwork from "../components/WrongNetwork";
 
 const DashboardWrapper = styled.div.attrs({
   className: "m-4 w-100 grid grid-cols-12 grid-rows-12 gap-4",
@@ -40,7 +41,7 @@ const Dashboard: FC = () => {
           <Box className="h-fit col-span-4 row-span-3">
             <ManageJudiciary />
           </Box>
-           <Box className="h-fit col-span-4 row-span-3">
+          <Box className="h-fit col-span-4 row-span-3">
             <ManageMasterNodeDelegatee />
           </Box>
         </Box>
