@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import "./utils/assets/inter-regular.ttf";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import WagmiProvider from "./providers/WagmiProvider";
@@ -16,6 +17,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { Route, HashRouter as Router } from "react-router-dom";
 import { AppGlobalConfigProvider } from "./contexts/AppGlobalConfig";
 import { NetworkProvider } from "./contexts/network";
+import { theme } from "./utils/theme";
 
 // import 'tailwindcss/tailwind.css';
 const root = ReactDOM.createRoot(
@@ -28,20 +30,20 @@ root.render(
     <Router>
       <AppGlobalConfigProvider>
         <QueryClientProvider client={queryClient}>
-          <ChakraProvider >
+          <ChakraProvider theme={theme}>
             <WagmiProvider>
-            <NetworkProvider>
-              <UseClientProvider>
-                <WalletMenuProvider>
-                  <ProvidersProvider>
-                    <ApolloProvider
-                      client={client["apothem"] || apothemTestClient} //TODO remove fallback when all clients are defined
-                    >
-                      <App />
-                    </ApolloProvider>
-                  </ProvidersProvider>
-                </WalletMenuProvider>
-              </UseClientProvider>
+              <NetworkProvider>
+                <UseClientProvider>
+                  <WalletMenuProvider>
+                    <ProvidersProvider>
+                      <ApolloProvider
+                        client={client["apothem"] || apothemTestClient} //TODO remove fallback when all clients are defined
+                      >
+                        <App />
+                      </ApolloProvider>
+                    </ProvidersProvider>
+                  </WalletMenuProvider>
+                </UseClientProvider>
               </NetworkProvider>
             </WagmiProvider>
           </ChakraProvider>

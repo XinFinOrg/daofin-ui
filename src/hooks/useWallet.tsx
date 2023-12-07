@@ -15,7 +15,7 @@ import { useNetwork } from "../contexts/network";
 import { useEthersSigner } from "./useEthersSigner";
 import { BigNumber } from "ethers";
 import { CHAIN_METADATA, translateToNetworkishName } from "../utils/networks";
-import { useWeb3Modal } from "@web3modal/react";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 export interface IUseWallet {
   connectorName: string;
@@ -23,7 +23,7 @@ export interface IUseWallet {
   ensAvatarUrl: string;
   ensName: string;
   isConnected: boolean;
-  isModalOpen: boolean;
+  isModalOpen?: boolean;
   /**
    * Returns true iff the wallet is connected and it is on the wrong network
    * (i.e., the chainId returned by the useSigner context does not agree with
@@ -47,11 +47,10 @@ export interface IUseWallet {
 
 export const useWallet = (): IUseWallet => {
   const { network } = useNetwork();
-
+  const { openConnectModal, } = useConnectModal();
   const { chain } = useWagmiNetwork();
   const { address, status: wagmiStatus, isConnected, connector } = useAccount();
   const { disconnect } = useDisconnect();
-  const { open: openWeb3Modal, isOpen } = useWeb3Modal();
   const chainId = chain?.id || 0;
   const signer = useEthersSigner(chainId);
 
@@ -85,8 +84,8 @@ export const useWallet = (): IUseWallet => {
 
   const methods = {
     selectWallet: async (cacheProvider?: boolean, networkId?: string) => {
+      // openConnectModal
       await new Promise((resolve) => {
-        openWeb3Modal();
         resolve({
           networkId,
           cacheProvider,
@@ -112,7 +111,6 @@ export const useWallet = (): IUseWallet => {
     ensAvatarUrl: ensAvatarUrl as string,
     ensName: ensName as string,
     isConnected,
-    isModalOpen: isOpen,
     isOnWrongNetwork,
     methods,
     network,

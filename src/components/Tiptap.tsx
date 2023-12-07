@@ -1,11 +1,4 @@
-import React, {
-  ChangeEvent,
-  FC,
-  FormEvent,
-  FormEventHandler,
-  useCallback,
-  useState,
-} from "react";
+import { FC, InputHTMLAttributes, useCallback, useState } from "react";
 import classNames from "classnames";
 // => Tiptap packages
 import { useEditor, EditorContent, Editor, BubbleMenu } from "@tiptap/react";
@@ -20,19 +13,16 @@ import Strike from "@tiptap/extension-strike";
 import Code from "@tiptap/extension-code";
 import History from "@tiptap/extension-history";
 import * as Icons from "./Icons";
-import {
-  FieldValues,
-  UseFormRegister,
-  UseFormSetValue,
-  useFormContext,
-} from "react-hook-form";
-import { registerStyles } from "@emotion/utils";
-type Props = {
+import { useField, useFormikContext } from "formik";
+
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
-  setValue: UseFormSetValue<FieldValues>;
-  handleOnChange: (e: ChangeEvent<HTMLDivElement>) => void;
-};
-const Tiptap: FC<Props> = ({ handleOnChange, setValue, name }) => {
+  label?: string;
+}
+const Tiptap: FC<InputProps> = ({ label, size: _, ...props }) => {
+  const { setFieldValue } = useFormikContext();
+  const [field, meta] = useField(props);
+
   const editor = useEditor({
     extensions: [
       Document,
@@ -49,19 +39,19 @@ const Tiptap: FC<Props> = ({ handleOnChange, setValue, name }) => {
       Code,
     ],
     onUpdate: ({ editor }) => {
-      setValue(name, editor.getHTML());
+      setFieldValue(field.name, editor.getHTML());
     },
   }) as Editor;
-  const [modalIsOpen, setIsOpen] = useState(false);
-  const [url, setUrl] = useState<string>("");
 
+  const [url, setUrl] = useState<string>("");
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const openModal = useCallback(() => {
     setUrl(editor.getAttributes("link").href);
-    setIsOpen(true);
+    setIsOpenModal(true);
   }, [editor]);
 
   const closeModal = useCallback(() => {
-    setIsOpen(false);
+    setIsOpenModal(false);
     setUrl("");
   }, []);
 
@@ -124,14 +114,14 @@ const Tiptap: FC<Props> = ({ handleOnChange, setValue, name }) => {
         >
           <Icons.RotateRight />
         </button>
-        <button
+        {/* <button
           className={classNames("menu-button", {
             "is-active": editor.isActive("link"),
           })}
           onClick={openModal}
         >
           <Icons.Link />
-        </button>
+        </button> */}
         <button
           className={classNames("menu-button", {
             "is-active": editor.isActive("bold"),
@@ -192,9 +182,10 @@ const Tiptap: FC<Props> = ({ handleOnChange, setValue, name }) => {
       </BubbleMenu>
 
       <EditorContent
+        {...field}
+        {...props}
         editor={editor}
-        className={"border border-1 text-start"}
-        height={"500px"}
+        className={"border border-1 text-start	"}
       />
     </div>
   );

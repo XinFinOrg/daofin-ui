@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import DaoHeader from "../components/DaoHeader";
 import DaofinSettingsCard from "../components/DaofinSettingsCard";
 import { styled } from "styled-components";
@@ -13,21 +13,56 @@ import ManageJudiciary from "../components/ManageJudiciary";
 import ManageMasterNodeDelegatee from "../components/ManageMasterNodeDelegatee";
 import WrongNetwork from "../components/WrongNetwork";
 
+import {
+  Button,
+  useDisclosure,
+  VStack,
+  Text,
+  Badge,
+  HStack,
+  Flex,
+} from "@chakra-ui/react";
+import { Modal, Page } from "../components";
+import { v4 as uuid } from "uuid";
+import { useLocation, useNavigate } from "react-router-dom";
 const DashboardWrapper = styled.div.attrs({
-  className: "m-4 w-100 grid grid-cols-12 grid-rows-12 gap-4",
+  className: "grid grid-cols-12 grid-rows-12 gap-4",
 })``;
 
 const Dashboard: FC = () => {
   const { daofinClient, client } = useClient();
+  const navigate = useNavigate();
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
   const proposals = useDaoProposals(daoAddress, pluginAddress);
   const { data: deposits } = usePeoplesHouseDeposits(
     getPluginInstallationId(daoAddress, pluginAddress)
   );
+  const { isOpen, onClose, onToggle } = useDisclosure();
 
+  const [proposalTypes, setProposalTypes] = useState([
+    {
+      id: uuid(),
+      name: "Grant",
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+      isComingSoon: false,
+      proposalId: 1,
+    },
+    {
+      id: uuid(),
+      name: "Update Settings",
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+      isComingSoon: true,
+    },
+    {
+      id: uuid(),
+      name: "Modify Voting Period",
+      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+      isComingSoon: true,
+    },
+  ]);
   return (
-    <>
-      <DashboardWrapper>
+    <Page>
+      {/* <DashboardWrapper>
         <Box className="col-span-12">
           <DaoHeader />
         </Box>
@@ -45,8 +80,45 @@ const Dashboard: FC = () => {
             <ManageMasterNodeDelegatee />
           </Box>
         </Box>
-      </DashboardWrapper>
-    </>
+      </DashboardWrapper> */}
+      <Button color={"primary"} onClick={() => onToggle()}>
+        Make a new Proposal
+      </Button>
+      {isOpen && (
+        <Modal
+          title="What would like to propose?"
+          isOpen={isOpen}
+          onClose={onClose}
+          size="lg"
+        >
+          <VStack w={"full"}>
+            {proposalTypes.map(
+              ({ name, description, isComingSoon, id, proposalId }) => (
+                <Flex
+                  className={
+                    "transition hover:ease-in duration-300 hover:opacity-80	"
+                  }
+                  direction={"column"}
+                  p={2}
+                  cursor={"pointer"}
+                  w={"full"}
+                  onClick={() => {
+                    if (isComingSoon) return;
+                    navigate(`/create/${proposalId}`);
+                  }}
+                >
+                  <Text fontWeight={"bold"}>
+                    {name} {isComingSoon && <Badge>Coming Soon</Badge>}
+                  </Text>
+
+                  <Text>{description}</Text>
+                </Flex>
+              )
+            )}
+          </VStack>
+        </Modal>
+      )}
+    </Page>
   );
 };
 export default Dashboard;

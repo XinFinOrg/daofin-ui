@@ -5,7 +5,6 @@ import { DepositSteps } from "@xinfin/osx-daofin-sdk-client";
 import { formatEther, parseEther } from "@ethersproject/units";
 import { CHAIN_METADATA, getPluginInstallationId } from "../utils/networks";
 import usePeoplesHouseDeposits from "../hooks/useDeposits";
-import { useForm } from "react-hook-form";
 import { useDisclosure } from "@chakra-ui/hooks";
 import useIsUserDeposited from "../hooks/useIsUserDeposited";
 import { useNetwork } from "../contexts/network";
@@ -42,12 +41,12 @@ const PeoplesHousePage = () => {
   
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  const { setValue, getValues, register, watch } = useForm({
-    defaultValues: {
-      depositAmount: "",
-    },
-  });
-  const depositAmount = watch(["depositAmount"]);
+  // const { setValue, getValues, register, watch } = useForm({
+  //   defaultValues: {
+  //     depositAmount: "",
+  //   },
+  // });
+  // const depositAmount = watch(["depositAmount"]);
 
   const { data: deposits } = usePeoplesHouseDeposits(
     getPluginInstallationId(daoAddress, pluginAddress)
@@ -56,37 +55,37 @@ const PeoplesHousePage = () => {
   useEffect(() => {
     if (!globalSettings || !globalSettings.allowedAmounts) return;
 
-    setValue("depositAmount", globalSettings.allowedAmounts[0].toString());
+    // setValue("depositAmount", globalSettings.allowedAmounts[0].toString());
   }, [globalSettings]);
   const handleDeposit = async () => {
-    const { depositAmount } = getValues();
+    // const { depositAmount } = getValues();
 
-    const parsedAmount = depositAmount;
-    const depositIterator = daofinClient?.methods.deposit(parsedAmount);
-    if (!depositIterator) return;
-    try {
-      for await (const step of depositIterator) {
-        switch (step.key) {
-          case DepositSteps.DEPOSITING:
-            console.log(step.txHash);
+    // const parsedAmount = depositAmount;
+    // const depositIterator = daofinClient?.methods.deposit(parsedAmount);
+    // if (!depositIterator) return;
+    // try {
+    //   for await (const step of depositIterator) {
+    //     switch (step.key) {
+    //       case DepositSteps.DEPOSITING:
+    //         console.log(step.txHash);
 
-            break;
-          case DepositSteps.DONE: {
-            console.log("DONE", step.key, step.key);
-            onClose();
-            break;
-          }
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    //         break;
+    //       case DepositSteps.DONE: {
+    //         console.log("DONE", step.key, step.key);
+    //         onClose();
+    //         break;
+    //       }
+    //     }
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
 
   const handleOnChange = (e: any) => {
     const name = e.target.name;
     const value = e.target.value;
-    setValue(name, value);
+    // setValue(name, value);
   };
   return (
     <>
@@ -111,7 +110,9 @@ const PeoplesHousePage = () => {
           <Box>
             <FormLabel>Amount</FormLabel>
             <InputGroup className="m-1">
-              <Select {...register("depositAmount", {})}>
+              <Select 
+              // {...register("depositAmount", {})}
+              >
                 {globalSettings?.allowedAmounts.map((amount) => (
                   <option value={amount.toString()}>
                     {formatEther(amount.toString())}

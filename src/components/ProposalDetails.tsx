@@ -28,7 +28,6 @@ import useIsUserVotedOnProposal from "../hooks/useIsUserVotedOnProposal";
 import { useClient } from "../hooks/useClient";
 import { InputGroup } from "@chakra-ui/input";
 import { useDisclosure } from "@chakra-ui/hooks";
-import { useForm } from "react-hook-form";
 import { Progress, Select, Tag } from "@chakra-ui/react";
 import { VoteOption, VoteSteps } from "@xinfin/osx-daofin-sdk-client";
 import useFetchVotersOnProposal from "../hooks/useFetchVotersOnProposal";
@@ -84,14 +83,14 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
     voterAddress ? voterAddress : ""
   );
 
-  const { setValue, getValues, register, watch } = useForm({
-    defaultValues: {
-      depositAmount: 0,
-      voteOption: VoteOption.NONE,
-    },
-  });
+  // const { setValue, getValues, register, watch } = useForm({
+  //   defaultValues: {
+  //     depositAmount: 0,
+  //     voteOption: VoteOption.NONE,
+  //   },
+  // });
   const { daofinClient } = useClient();
-  const voteOption = watch("voteOption");
+  // const voteOption = watch("voteOption");
 
   const { data: votersOnProposal } = useFetchVotersOnProposal(
     daoAddress,
@@ -108,28 +107,28 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
     []
   );
   const handleVote = async () => {
-    const iterator = daofinClient?.methods.vote(
-      pluginProposalId,
-      voteOption,
-      false
-    );
-    if (!iterator) return;
-    try {
-      for await (const step of iterator) {
-        switch (step.key) {
-          case VoteSteps.WAITING:
-            console.log("Key:", step.key);
-            console.log("Tx:", step.txHash);
+    // const iterator = daofinClient?.methods.vote(
+    //   pluginProposalId,
+    //   voteOption,
+    //   false
+    // );
+    // if (!iterator) return;
+    // try {
+    //   for await (const step of iterator) {
+    //     switch (step.key) {
+    //       case VoteSteps.WAITING:
+    //         console.log("Key:", step.key);
+    //         console.log("Tx:", step.txHash);
 
-            break;
-          case VoteSteps.DONE:
-            console.log("Key:", step.key);
-            break;
-        }
-      }
-    } catch (e) {
-      console.log(e);
-    }
+    //         break;
+    //       case VoteSteps.DONE:
+    //         console.log("Key:", step.key);
+    //         break;
+    //     }
+    //   }
+    // } catch (e) {
+    //   console.log(e);
+    // }
   };
 
   const convertCommitteeBytesToVoteLength = (committee: string) => {
@@ -341,7 +340,9 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                       <Box>
                         <FormLabel>Vote Option</FormLabel>
                         <InputGroup className="m-1">
-                          <Select {...register("voteOption", {})}>
+                          <Select 
+                          // {...register("voteOption", {})}
+                          >
                             {Object.keys(VoteOption)
                               .filter((option) => isNaN(Number(option)))
                               .map((option, index) => (
@@ -365,7 +366,7 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                         <Button
                           colorScheme="green"
                           onClick={handleVote}
-                          isDisabled={voteOption === VoteOption.NONE}
+                          // isDisabled={voteOption === VoteOption.NONE}
                         >
                           Vote
                         </Button>
