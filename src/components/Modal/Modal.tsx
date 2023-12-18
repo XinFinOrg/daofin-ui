@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { FC, PropsWithChildren } from "react";
 
-type ModalProps = {
+export type ModalProps = {
   isOpen: boolean;
   title: string;
   onClose: () => void;

@@ -1,5 +1,5 @@
 import React, { InputHTMLAttributes } from "react";
-import { useField } from "formik";
+import { Field, useField } from "formik";
 import {
   Input as ChakraInput,
   FormErrorMessage,
@@ -7,35 +7,57 @@ import {
   FormControl,
   InputGroup,
   InputLeftAddon,
+  InputRightAddon,
+  FormLabel,
 } from "@chakra-ui/react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
   label?: string;
   leftAddon?: string;
+  rightAddon?: string;
+  onClickRightAddon?: any;
+  noErrorMessage?: true;
 }
 
 const Input: React.FC<InputProps & ChakraInputProps> = ({
   label,
   size: _,
   leftAddon,
+  rightAddon,
+  onClickRightAddon,
+  isRequired,
+  value,
+  noErrorMessage,
   ...props
 }) => {
   const [field, meta] = useField(props);
 
   return (
-    <FormControl isRequired={props.isRequired}>
-      {label && <label htmlFor={props.id || props.name}>{label}</label>}
+    <FormControl
+      isRequired={isRequired}
+      isInvalid={Boolean(meta.touched && meta.error)}
+    >
+      <FormLabel>{label && label}</FormLabel>
+
       <InputGroup>
         {leftAddon && <InputLeftAddon children={leftAddon} />}
-        <ChakraInput
+        <Field
+          as={ChakraInput}
           {...field}
           {...props}
           id={props.id || props.name}
           placeholder={props.placeholder || ""}
         />
+        {rightAddon && (
+          <InputRightAddon
+            className={onClickRightAddon ? "cursor-pointer" : ""}
+            children={rightAddon}
+            onClick={onClickRightAddon}
+          />
+        )}
       </InputGroup>
-      {meta.touched && meta.error ? (
+      {noErrorMessage === undefined && meta.touched && meta.error ? (
         <FormErrorMessage>{meta.error}</FormErrorMessage>
       ) : null}
     </FormControl>

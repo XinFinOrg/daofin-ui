@@ -32,31 +32,31 @@ import {
   StackDivider,
   CardFooter,
   Badge,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { InfoIcon } from "@chakra-ui/icons";
+import { GrantsProposalTypeForm } from "../actions";
+import ElectionPeriodsForm from "./ElectionPeriodsForm";
+import useDaoElectionPeriods from "../../hooks/useDaoElectionPeriods";
+import Preview from "./ProposalPreview";
+import { CommunityIcon } from "../../utils/assets/icons";
+import ProposalCosts from "./ProposalCosts";
+import { TransactionReviewModal } from "../Modal";
+import { useFormikContext } from "formik";
+import { CreateProposalFormData } from "../../pages/CreateProposal";
+import { useClient } from "../../hooks/useClient";
+import { BigNumber } from "@ethersproject/bignumber";
+import { GasFeeEstimation } from "@xinfin/osx-client-common";
+import { useCreateProposalContext } from "../../contexts/CreateProposalContext";
+import { TransactionState } from "../../utils/types";
 type CreateProposalStepperProps = {
   proposalType?: Number;
-  handleOnChange: (
-    e: ChangeEvent<HTMLDivElement | HTMLTextAreaElement>
-  ) => void;
-  handleSubmitProposal: (data: any) => void;
 };
 
 const CreateProposalStepperWrapper = styled.div.attrs({
   className: "max-w-full",
 })``;
-const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
-  handleOnChange,
-  handleSubmitProposal,
-}) => {
-  // const goToNext = () => {
-  //   setStep((prev) => ({ ...prev, currentStep: prev.currentStep + 1 }));
-  //   setProgress((prev) => prev + 50);
-  // };
-  // const goToPrevious = () => {
-  //   setStep((prev) => ({ ...prev, currentStep: prev.currentStep - 1 }));
-  //   setProgress((prev) => prev - 50);
-  // };
+const CreateProposalStepper: FC<CreateProposalStepperProps> = ({}) => {
   const grantsSteps = [
     {
       title: "Name Your Proposal",
@@ -88,9 +88,29 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
     },
   ];
   const { activeStep, goToNext, goToPrevious } = useSteps({
-    index: 1,
+    index: 0,
     count: grantsSteps.length,
   });
+  const [gasEstimationData, setGasEstimationData] =
+    useState<GasFeeEstimation>();
+  const lastStep = grantsSteps.length - 2;
+  const periods = useDaoElectionPeriods();
+
+  const { values, submitForm, validateField, errors } =
+    useFormikContext<CreateProposalFormData>();
+  const { daofinClient } = useClient();
+  const { handleOpenPublishModal } = useCreateProposalContext();
+
+  const handleProceedButton = () => {
+    if (activeStep === lastStep) {
+      handleOpenPublishModal();
+    } else {
+      goToNext();
+    }
+  };
+
+  const isDisabledProceedButton =
+    activeStep === grantsSteps.length || Object.keys(errors).length !== 0;
   return (
     <>
       <CreateProposalStepperWrapper className="mt-4 px-4">
@@ -102,6 +122,7 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
         >
           <GridItem colSpan={3} colStart={3}>
             <Stepper
+              position={"fixed"}
               index={activeStep}
               colorScheme="blue"
               orientation="vertical"
@@ -121,7 +142,7 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
                   <Box flexShrink="0" maxWidth={"full"}>
                     <StepTitle>{step.title}</StepTitle>
                     <StepDescription className="max-w-xs	">
-                      {step.description}
+                      {/* {step.description} */}
                     </StepDescription>
                   </Box>
                   <StepSeparator />
@@ -133,48 +154,32 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
             <Card shadow={"2xl"}>
               <CardHeader>
                 <Badge mb={"4"}>GRANT</Badge>
-                <Heading size="md">New Proposal</Heading>
+                <Heading size="md">{grantsSteps[activeStep].title}</Heading>
               </CardHeader>
 
               <CardBody>
                 <Stack divider={<StackDivider />} spacing="4">
-                  <CreateMetaData handleOnChange={handleOnChange}/>
-                  <Box>
-                    <Heading size="xs" textTransform="uppercase">
-                      Summary
-                    </Heading>
-                    <Text pt="2" fontSize="sm">
-                      View a summary of all your clients over the last month.
-                    </Text>
-                  </Box>
-                  <Box>
-                    <Heading size="xs" textTransform="uppercase">
-                      Overview
-                    </Heading>
-                    <Text pt="2" fontSize="sm">
-                      Check out the overview of your clients.
-                    </Text>
-                  </Box>
-                  <Box>
-                    <Heading size="xs" textTransform="uppercase">
-                      Analysis
-                    </Heading>
-                    <Text pt="2" fontSize="sm">
-                      See a detailed analysis of all your business clients.
-                    </Text>
-                  </Box>
+                  {activeStep === 0 && <CreateMetaData />}
+                  {activeStep === 1 && <GrantsProposalTypeForm />}
+                  {activeStep === 2 && periods && (
+                    <ElectionPeriodsForm periods={periods} />
+                  )}
+                  {activeStep === 3 && <Preview />}
+                  {activeStep === 4 && <ProposalCosts />}
                 </Stack>
               </CardBody>
-              <CardFooter justifyContent={"end"}>
+              <CardFooter justifyContent={"space-between"}>
                 <Button
                   isDisabled={activeStep === 0}
                   onClick={() => goToPrevious()}
+                  variant={"unstyled"}
                 >
-                  Previous
+                  {"<-"} Back
                 </Button>
+
                 <Button
-                  isDisabled={activeStep === grantsSteps.length}
-                  onClick={() => goToNext()}
+                  isDisabled={isDisabledProceedButton}
+                  onClick={handleProceedButton}
                   colorScheme={"blue"}
                   mx={1}
                 >

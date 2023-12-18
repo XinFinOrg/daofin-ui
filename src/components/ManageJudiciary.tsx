@@ -4,7 +4,7 @@ import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
 import useFetchJudiciaries from "../hooks/useFetchJudiciaries";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import { shortenAddress } from "../utils/networks";
-import Modal from "./Modal";
+import Modal from "./Modal/Modal";
 import { useDisclosure } from "@chakra-ui/hooks";
 import { FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup } from "@chakra-ui/input";

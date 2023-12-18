@@ -6,10 +6,10 @@ import Footer from "./Footer";
 const Page: FC<PropsWithChildren> = ({ children }) => {
   return (
     <Box
-      bgGradient={useColorModeValue(
-        "linear(to-b, #D9EDF7, #BFE1F2)",
-        "linear(to-b, #001018, #BFE1F2)"
-      )}
+      // bgGradient={useColorModeValue(
+      //   "linear(to-b, #D9EDF7, #BFE1F2)",
+      //   "linear(to-b, #001018, #BFE1F2)"
+      // )}
       h={"full"}
     >
       <Header />

@@ -11,7 +11,7 @@ import { useNetwork } from "../contexts/network";
 import { useClient } from "../hooks/useClient";
 import { useWallet } from "../hooks/useWallet";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
-import Modal from "../components/Modal";
+import Modal from "../components/Modal/Modal";
 import { FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightAddon } from "@chakra-ui/input";
 import BoxWrapper from "../components/BoxWrapper";

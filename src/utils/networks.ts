@@ -15,7 +15,7 @@ import { Client, VoteValues } from "@xinfin/osx-sdk-client";
 import { isAddress } from "@ethersproject/address";
 import { ethers } from "ethers";
 import { defaultAbiCoder } from "@ethersproject/abi";
-import { BigNumber,BigNumberish } from "@ethersproject/bignumber";
+import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
 export const SUPPORTED_CHAIN_ID = [
   1, 5, 137, 80001, 42161, 421613, 50, 51,
 ] as const;
@@ -440,4 +440,24 @@ export function applyRatioCeiled(
   }
 
   return result;
+}
+export const BASE_URL = "https://api.coingecko.com/api/v3";
+export const DEFAULT_CURRENCY = "usd";
+
+// Coingecko Api specific asset platform keys
+export const ASSET_PLATFORMS: Record<SupportedNetworks, string | null> = {
+  xdc: null,
+  apothem: null,
+  unsupported: null,
+};
+
+export const NATIVE_TOKEN_ID = {
+  default: "xdce-crowd-sale",
+};
+
+export function makeBlockScannerHashUrl(
+  network: SupportedNetworks,
+  hash: string
+) {
+  return `${CHAIN_METADATA[network].etherscanApi}/txs/${hash}`;
 }

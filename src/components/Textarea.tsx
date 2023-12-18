@@ -5,6 +5,7 @@ import {
   FormErrorMessage,
   TextareaProps as ChakraTextareaProps,
   FormControl,
+  FormLabel,
 } from "@chakra-ui/react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -15,13 +16,19 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 const Input: React.FC<InputProps & ChakraTextareaProps> = ({
   label,
   size: _,
+  isRequired,
   ...props
 }) => {
   const [field, meta] = useField(props);
 
   return (
-    <FormControl isRequired={props.isRequired}>
-      {label && <label htmlFor={props.id || props.name}>{label}</label>}
+    <FormControl
+      isRequired={isRequired}
+      isInvalid={Boolean(meta.touched && meta.error)}
+    >
+      <FormLabel>
+        {label && <label htmlFor={props.id || props.name}>{label}</label>}
+      </FormLabel>
       <ChakraTextarea
         {...field}
         {...props}
