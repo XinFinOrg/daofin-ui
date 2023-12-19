@@ -8,11 +8,8 @@ import {
   Stack,
   Text,
   Heading,
-  Button,
   useColorMode,
   Switch,
-  Icon,
-  Container,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
