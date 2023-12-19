@@ -133,7 +133,7 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
     console.log({ metadaIpfsHash });
 
     setProposalCreationData({
-      metdata: "0x00",
+      metdata: metadaIpfsHash.slice(7),
       actions: [
         {
           data: new Uint8Array(),
