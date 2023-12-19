@@ -14,8 +14,8 @@ export const MetaDataSchema = Yup.object().shape({
 });
 
 export const GrantActionSchema = Yup.object().shape({
-  amount: Yup.string().required(),
-  recipient: Yup.string().required(),
+  amount: Yup.string().optional(),
+  recipient: Yup.string().optional(),
 });
 export const CreationFormSchema = Yup.object().shape({
   metaData: MetaDataSchema,

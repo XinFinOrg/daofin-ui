@@ -7,7 +7,6 @@ import { CHAIN_METADATA } from "../../utils/networks";
 import { useNetwork } from "../../contexts/network";
 
 const GrantsProposalTypeForm = () => {
-  const { setValue, value } = useClipboard("");
   const { values, setFieldValue } = useFormikContext<CreateProposalFormData>();
   const { network } = useNetwork();
   return (
