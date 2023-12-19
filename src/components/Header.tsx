@@ -12,6 +12,7 @@ import {
   useColorMode,
   Switch,
   Icon,
+  Container,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -30,7 +31,13 @@ import {
   DashboardIcon,
   CommunityIcon,
   TreasuryIcon,
+  BlockIcon,
 } from "../utils/assets/icons";
+import { useBlockNumber } from "wagmi";
+import { CHAIN_METADATA } from "../utils/networks";
+import { useNetwork } from "../contexts/network";
+import { useState } from "react";
+import { XdcIcon } from "../utils/assets/icons/XdcIcon";
 interface Props {
   children: React.ReactNode;
   href: string;
@@ -46,9 +53,86 @@ const Links = [
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
-
+  const { network } = useNetwork();
+  const { data } = useBlockNumber({
+    watch: true,
+    chainId: CHAIN_METADATA[network].id,
+  });
+  const handleSwitchTheme = () => {
+    toggleColorMode();
+  };
+  const bgColorModeLinks = useColorModeValue("blue.100", "blue.800");
   return (
     <>
+      <Flex
+        py="1"
+        px={"4"}
+        justifyContent={"space-around"}
+        bgColor={useColorModeValue("blue.50", "blue.800")}
+      >
+        <HStack>
+          <Box mx={"4"}>
+            {data ? (
+              <a
+                href={`${
+                  CHAIN_METADATA[network].explorer
+                }/blocks/${data.toString()}`}
+                target={"_blank"}
+              >
+                <HStack>
+                  <BlockIcon />
+
+                  <Text fontWeight={"medium"}>{data.toString()}</Text>
+                </HStack>
+              </a>
+            ) : (
+              ""
+            )}
+          </Box>
+          <Box mx={"4"}>
+            <HStack>
+              <XdcIcon />
+              <Text fontWeight={"medium"}>$0.01</Text>
+            </HStack>
+          </Box>
+        </HStack>
+        <HStack>
+          <Box mx={"4"}>
+            <Text fontWeight="semibold">
+              <a href={"https://xdc.dev"} target={"_blank"}>
+                XDC.DEV
+              </a>
+            </Text>
+          </Box>
+          <Box mx={"4"}>
+            <Text fontWeight="semibold">
+              <a href={"https://docs.xdc.community"} target={"_blank"}>
+                DOCS
+              </a>
+            </Text>
+          </Box>
+          <Box mx={"4"}>
+            <Switch
+              id="isChecked"
+              isChecked={colorMode === "dark"}
+              onChange={handleSwitchTheme}
+              size={"lg"}
+            />{" "}
+            {/* <Button
+              onClick={toggleColorMode}
+              color={"darkcyan"}
+              variant={"outline"}
+            >
+              {colorMode === "light" ? (
+                <Icon as={SunIcon} />
+              ) : (
+                <Icon as={MoonIcon} />
+              )}
+            </Button> */}
+          </Box>
+        </HStack>
+      </Flex>
+
       <Box px={4}>
         <Flex h={16} alignItems={"center"} justifyContent={"space-around"}>
           <IconButton
@@ -68,15 +152,28 @@ export default function Header() {
               display={{ base: "none", md: "flex" }}
             >
               {Links.map((link) => (
-                <Link
-                  to={link.location}
-                  className="border-1 py-2 pl-3 pr-4 font-bold hover:text-blue-600 ease-in-out duration-300"
+                <Box
+                  fontSize={"md"}
+                  fontWeight={"bold"}
+                  px={3}
+                  py={1}
+                  borderRadius={"md"}
+                  transition="background-color .1s ease-in-out"
+                  _hover={{
+                    bgColor: bgColorModeLinks,
+                  }}
                 >
-                  <HStack>
-                    <>{link.icon}</>
-                    <Text>{link.name}</Text>
-                  </HStack>
-                </Link>
+                  <Link
+                    to={link.location}
+
+                    // className="border-1 py-2 pl-3 pr-4 font-bold hover:text-blue-600 ease-in-out duration-300"
+                  >
+                    <HStack>
+                      <>{link.icon}</>
+                      <Text>{link.name}</Text>
+                    </HStack>
+                  </Link>
+                </Box>
               ))}
             </HStack>
           </HStack>
@@ -94,17 +191,6 @@ export default function Header() {
               bg="trasparent"
             />
 
-            <Button
-              onClick={toggleColorMode}
-              color={"darkcyan"}
-              variant={"outline"}
-            >
-              {colorMode === "light" ? (
-                <Icon as={SunIcon} />
-              ) : (
-                <Icon as={MoonIcon} />
-              )}
-            </Button>
             {/* <Web3Button balance='show' icon="hide"/> */}
             <ConnectButton chainStatus="icon" />
           </HStack>
