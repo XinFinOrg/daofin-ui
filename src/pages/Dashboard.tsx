@@ -21,10 +21,12 @@ import {
   Badge,
   HStack,
   Flex,
+  Container,
 } from "@chakra-ui/react";
 import { Modal, Page } from "../components";
 import { v4 as uuid } from "uuid";
 import { useLocation, useNavigate } from "react-router-dom";
+import Proposals from "../components/Proposals";
 const DashboardWrapper = styled.div.attrs({
   className: "grid grid-cols-12 grid-rows-12 gap-4",
 })``;
@@ -37,6 +39,7 @@ const Dashboard: FC = () => {
   const { data: deposits } = usePeoplesHouseDeposits(
     getPluginInstallationId(daoAddress, pluginAddress)
   );
+
   const { isOpen, onClose, onToggle } = useDisclosure();
 
   const [proposalTypes, setProposalTypes] = useState([
@@ -60,6 +63,8 @@ const Dashboard: FC = () => {
       isComingSoon: true,
     },
   ]);
+  console.log({ proposals });
+
   return (
     <Page>
       {/* <DashboardWrapper>
@@ -84,6 +89,9 @@ const Dashboard: FC = () => {
       <Button color={"primary"} onClick={() => onToggle()}>
         Make a new Proposal
       </Button>
+      <Flex justifyContent={"center"} p={2}>
+        <Box w={"90%"}>{<Proposals proposals={proposals.data} />}</Box>
+      </Flex>
       {isOpen && (
         <Modal
           title="What would like to propose?"

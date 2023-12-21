@@ -1,6 +1,16 @@
 import React, { FC, useMemo } from "react";
 import { Proposal } from "../utils/types";
-import { Box, Flex, Heading, Text, Badge } from "@chakra-ui/layout";
+import {
+  Box,
+  Flex,
+  Heading,
+  Text,
+  Badge,
+  Grid,
+  GridItem,
+  HStack,
+  VStack,
+} from "@chakra-ui/layout";
 import {
   CHAIN_METADATA,
   JudiciaryCommittee,
@@ -28,84 +38,75 @@ import useIsUserVotedOnProposal from "../hooks/useIsUserVotedOnProposal";
 import { useClient } from "../hooks/useClient";
 import { InputGroup } from "@chakra-ui/input";
 import { useDisclosure } from "@chakra-ui/hooks";
-import { Progress, Select, Tag } from "@chakra-ui/react";
+import {
+  Progress,
+  Select,
+  Step,
+  StepDescription,
+  StepIcon,
+  StepIndicator,
+  StepNumber,
+  StepSeparator,
+  StepStatus,
+  StepTitle,
+  Stepper,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Tag,
+  useSteps,
+} from "@chakra-ui/react";
 import { VoteOption, VoteSteps } from "@xinfin/osx-daofin-sdk-client";
 import useFetchVotersOnProposal from "../hooks/useFetchVotersOnProposal";
 import { daoAddress, pluginAddress } from "../utils/constants";
 import useVoteStats from "../hooks/useVoteStats";
 import useFetchProposalTallyDetails from "../hooks/useFetchProposalTallyDetails";
 import useFetchGlobalCommitteeToVotingSettings from "../hooks/useFetchGlobalCommitteeToVotingSettings";
-import { parseEther } from "viem";
+import { parseEther, zeroAddress } from "viem";
 import { BigNumber } from "@ethersproject/bignumber";
 import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
 import useMinParticipationVotingStatsPerCommittee from "../hooks/useMinParticipationVotingStatsPerCommittee";
 import useThresholdVotingStatsPerCommittee from "../hooks/useThresholdVotingStatsPerCommittee";
-const ProposalWrapper = styled.div.attrs({
-  className: "",
-})``;
+import ProposalTypeBadge from "./ProposalTypeBadge";
+import { IoShareSocial } from "react-icons/io5";
+import { ArrowForwardIcon, TimeIcon } from "@chakra-ui/icons";
+import MasterNodeDelegateeSenateIcon from "../utils/assets/icons/MasterNodeDelegateeSenateIcon";
+import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
+import PeopleHouseIcon from "../utils/assets/icons/PeopleHouseIcon";
+import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
+import VoteStatProgressBar from "./VoteStatProgressBar";
+import VotingStatsBox from "./VotingStatsBox";
+import WalletAddressCard from "./WalletAddressCard";
+import { BlockIcon } from "../utils/assets/icons";
+import ProposalStatusStepper from "./ProposalStatusStepper";
+import { XdcIcon } from "../utils/assets/icons/XdcIcon";
 
-const ActionsWrapper = styled(BoxWrapper).attrs({
-  className: "h-fit",
-})``;
-const DurationWrapper = styled(BoxWrapper).attrs({
-  className: "h-fit",
-})``;
-const DepositStatusWrapper = styled(BoxWrapper).attrs({
-  className: "h-fit",
-})``;
-const InfoWrapper = styled(BoxWrapper).attrs({
-  className: "",
-})``;
-
-const VotersOnProposalWrapper = styled(BoxWrapper).attrs({
-  className: "h-fit",
-})``;
-const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
-  const {
-    actions,
-    creator,
-    dao,
-    endDate,
-    executed,
-    id,
-    metadata,
-    pluginProposalId,
-    potentiallyExecutable,
-    startDate,
-  } = proposal;
+const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
+  // const {
+  //   actions,
+  //   creator,
+  //   dao,
+  //   endDate,
+  //   executed,
+  //   id,
+  //   metadata,
+  //   pluginProposalId,
+  //   potentiallyExecutable,
+  //   startDate,
+  // } = proposal;
 
   const { isOpen, onClose, onOpen } = useDisclosure();
   const { network } = useNetwork();
   const { address: voterAddress } = useWallet();
-  const isUserDeposited = useIsUserDeposited(voterAddress ? voterAddress : "");
-  const isUserVotedOnProposal = useIsUserVotedOnProposal(
-    pluginProposalId,
-    voterAddress ? voterAddress : ""
-  );
+  const { committeesListWithIcon, committeesList } = useCommitteeUtils();
+  // const {
+  //   judiciaryVoteListLength,
+  //   masterNodeVoteListLength,
+  //   peoplesHouseVoteListLength,
+  // } = useVoteStats(pluginProposalId);
 
-  // const { setValue, getValues, register, watch } = useForm({
-  //   defaultValues: {
-  //     depositAmount: 0,
-  //     voteOption: VoteOption.NONE,
-  //   },
-  // });
-  const { daofinClient } = useClient();
-  // const voteOption = watch("voteOption");
-
-  const { data: votersOnProposal } = useFetchVotersOnProposal(
-    daoAddress,
-    pluginAddress,
-    pluginProposalId
-  );
-  const {
-    judiciaryVoteListLength,
-    masterNodeVoteListLength,
-    peoplesHouseVoteListLength,
-  } = useVoteStats(pluginProposalId);
-  const committeesList = useMemo(
-    () => [MasterNodeCommittee, PeoplesHouseCommittee, JudiciaryCommittee],
-    []
-  );
   const handleVote = async () => {
     // const iterator = daofinClient?.methods.vote(
     //   pluginProposalId,
@@ -119,7 +120,6 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
     //       case VoteSteps.WAITING:
     //         console.log("Key:", step.key);
     //         console.log("Tx:", step.txHash);
-
     //         break;
     //       case VoteSteps.DONE:
     //         console.log("Key:", step.key);
@@ -131,420 +131,393 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
     // }
   };
 
-  const convertCommitteeBytesToVoteLength = (committee: string) => {
-    switch (committee) {
-      case MasterNodeCommittee:
-        return masterNodeVoteListLength;
-      case PeoplesHouseCommittee:
-        return peoplesHouseVoteListLength;
-      case JudiciaryCommittee:
-        return judiciaryVoteListLength;
-    }
-  };
+  // const convertCommitteeBytesToVoteLength = (committee: string) => {
+  //   switch (committee) {
+  //     case MasterNodeCommittee:
+  //       return masterNodeVoteListLength;
+  //     case PeoplesHouseCommittee:
+  //       return peoplesHouseVoteListLength;
+  //     case JudiciaryCommittee:
+  //       return judiciaryVoteListLength;
+  //   }
+  // };
+  const committeePanelData = useMemo(
+    () => committeesList.map((item) => ({ ...item })),
+    [committeesList]
+  );
+  // const mnStats = useMinParticipationVotingStatsPerCommittee(
+  //   pluginProposalId,
+  //   MasterNodeCommittee
+  // );
 
-  const mnStats = useMinParticipationVotingStatsPerCommittee(
-    pluginProposalId,
-    MasterNodeCommittee
-  );
+  // const judiciaryStats = useMinParticipationVotingStatsPerCommittee(
+  //   pluginProposalId,
+  //   JudiciaryCommittee
+  // );
+  // const peopleStats = useMinParticipationVotingStatsPerCommittee(
+  //   pluginProposalId,
+  //   PeoplesHouseCommittee
+  // );
 
-  const judiciaryStats = useMinParticipationVotingStatsPerCommittee(
-    pluginProposalId,
-    JudiciaryCommittee
-  );
-  const peopleStats = useMinParticipationVotingStatsPerCommittee(
-    pluginProposalId,
-    PeoplesHouseCommittee
-  );
+  // const convertCommitteeBytesToVotingStats = (
+  //   committee: string
+  // ):
+  //   | {
+  //       current: BigNumber;
+  //       minParticipations: BigNumber;
+  //       percentage: string;
+  //     }
+  //   | undefined => {
+  //   switch (committee) {
+  //     case MasterNodeCommittee:
+  //       return mnStats;
+  //     case PeoplesHouseCommittee:
+  //       return peopleStats
+  //         ? {
+  //             current: BigNumber.from(
+  //               parseInt(formatEther(peopleStats.current))
+  //             ),
+  //             percentage: peopleStats.percentage,
+  //             minParticipations: BigNumber.from(
+  //               parseInt(formatEther(peopleStats.minParticipations))
+  //             ),
+  //           }
+  //         : {
+  //             current: BigNumber.from(0),
+  //             minParticipations: BigNumber.from(0),
+  //             percentage: "0",
+  //           };
+  //     case JudiciaryCommittee:
+  //       return judiciaryStats;
+  //   }
+  // };
 
-  const convertCommitteeBytesToVotingStats = (
-    committee: string
-  ):
-    | {
-        current: BigNumber;
-        minParticipations: BigNumber;
-        percentage: string;
-      }
-    | undefined => {
-    switch (committee) {
-      case MasterNodeCommittee:
-        return mnStats;
-      case PeoplesHouseCommittee:
-        return peopleStats
-          ? {
-              current: BigNumber.from(
-                parseInt(formatEther(peopleStats.current))
-              ),
-              percentage: peopleStats.percentage,
-              minParticipations: BigNumber.from(
-                parseInt(formatEther(peopleStats.minParticipations))
-              ),
-            }
-          : {
-              current: BigNumber.from(0),
-              minParticipations: BigNumber.from(0),
-              percentage: "0",
-            };
-      case JudiciaryCommittee:
-        return judiciaryStats;
-    }
-  };
+  // const mnThresholdStats = useThresholdVotingStatsPerCommittee(
+  //   pluginProposalId,
+  //   MasterNodeCommittee
+  // );
 
-  const mnThresholdStats = useThresholdVotingStatsPerCommittee(
-    pluginProposalId,
-    MasterNodeCommittee
-  );
+  // const judiciaryThresholdStats = useThresholdVotingStatsPerCommittee(
+  //   pluginProposalId,
+  //   JudiciaryCommittee
+  // );
+  // const peopleThresholdStats = useThresholdVotingStatsPerCommittee(
+  //   pluginProposalId,
+  //   PeoplesHouseCommittee
+  // );
+  // const convertCommitteeBytesToSupportTresholdStats = (
+  //   committee: string
+  // ):
+  //   | {
+  //       current: BigNumber;
+  //       supportThreshold: BigNumber;
+  //       percentage: string;
+  //     }
+  //   | undefined => {
+  //   switch (committee) {
+  //     case MasterNodeCommittee:
+  //       return mnThresholdStats;
+  //     case PeoplesHouseCommittee:
+  //       return peopleThresholdStats;
+  //     case JudiciaryCommittee:
+  //       return judiciaryThresholdStats;
+  //   }
+  // };
+  // const minParticipationStats = useMemo(
+  //   () =>
+  //     committeesList && peopleStats && mnStats && judiciaryStats
+  //       ? committeesList.map((committee) =>
+  //           convertCommitteeBytesToVotingStats(committee)
+  //         )
+  //       : [],
+  //   [committeesList, peopleStats, mnStats, judiciaryStats]
+  // );
 
-  const judiciaryThresholdStats = useThresholdVotingStatsPerCommittee(
-    pluginProposalId,
-    JudiciaryCommittee
-  );
-  const peopleThresholdStats = useThresholdVotingStatsPerCommittee(
-    pluginProposalId,
-    PeoplesHouseCommittee
-  );
-  const convertCommitteeBytesToSupportTresholdStats = (
-    committee: string
-  ):
-    | {
-        current: BigNumber;
-        supportThreshold: BigNumber;
-        percentage: string;
-      }
-    | undefined => {
-    switch (committee) {
-      case MasterNodeCommittee:
-        return mnThresholdStats;
-      case PeoplesHouseCommittee:
-        return peopleThresholdStats;
-      case JudiciaryCommittee:
-        return judiciaryThresholdStats;
-    }
-  };
-  const minParticipationStats = useMemo(
-    () =>
-      committeesList && peopleStats && mnStats && judiciaryStats
-        ? committeesList.map((committee) =>
-            convertCommitteeBytesToVotingStats(committee)
-          )
-        : [],
-    [committeesList, peopleStats, mnStats, judiciaryStats]
-  );
-
-  const supportThresholdStats = useMemo(
-    () =>
-      committeesList &&
-      peopleThresholdStats &&
-      mnThresholdStats &&
-      judiciaryThresholdStats
-        ? committeesList.map((committee) =>
-            convertCommitteeBytesToSupportTresholdStats(committee)
-          )
-        : [],
-    [committeesList, peopleStats, mnStats, judiciaryStats]
-  );
+  // const supportThresholdStats = useMemo(
+  //   () =>
+  //     committeesList &&
+  //     peopleThresholdStats &&
+  //     mnThresholdStats &&
+  //     judiciaryThresholdStats
+  //       ? committeesList.map((committee) =>
+  //           convertCommitteeBytesToSupportTresholdStats(committee)
+  //         )
+  //       : [],
+  //   [committeesList, peopleStats, mnStats, judiciaryStats]
+  // );
 
   return (
     <>
-      {proposal && (
-        <ProposalWrapper className="grid grid-cols-12  w-100 p-4 gap-4">
-          <InfoWrapper className=" col-span-12 md:col-span-8">
-            <Flex direction={"column"}>
-              <Flex justifyContent={"start"} alignItems={"center"}>
+      {
+        <Grid
+          templateColumns="repeat(2, 1fr)"
+          // templateRows={"repeat(1, 1fr)"}
+          gap={6}
+        >
+          <GridItem
+            w="100%"
+            bg="gray.50"
+            p={"6"}
+            borderRadius={"lg"}
+            border={"1px"}
+            borderColor={"blue.50"}
+            boxShadow={"sm"}
+            colSpan={2}
+          >
+            <Flex justifyContent={"space-between"}>
+              <Flex flexDirection={"column"} w={"50%"}>
                 <Box>
-                  <Heading>{metadata.title}</Heading>
-                  <Flex className="my-1">
-                    {metadata.resources.map(({ name, url }) => (
-                      <Tag>
-                        <a
-                          href={url}
-                          target="_blank"
-                          className="pr-2 hover:text-blue-500"
-                        >
-                          {name}
-                        </a>
-                      </Tag>
-                    ))}
-                  </Flex>
+                  <ProposalTypeBadge title="Grant" />
                 </Box>
+                <Box my={"4"}>
+                  <Text as={"h1"} fontSize={"xl"} fontWeight={"bold"}>
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                  </Text>
+                </Box>
+                <Flex fontSize={"sm"} justifyContent={"space-between"}>
+                  <Text>Published By: 0x22323423423</Text>
+                  <HStack>
+                    <TimeIcon />
+                    <Text> {new Date(Date.now()).toISOString()}</Text>
+                  </HStack>
+                  <Text>ID {12}</Text>
+                  <HStack>
+                    <IoShareSocial />
+                    <Text>Share</Text>
+                  </HStack>
+                </Flex>
               </Flex>
 
-              <Flex
-                justifyContent={"space-between"}
-                mt={"1.5"}
-                alignItems={"center"}
-              >
-                <Text color={"gray"}>
-                  Published By{" "}
-                  <Text display={"inline-block"}>
-                    {" "}
-                    {shortenAddress(creator)}
-                  </Text>
-                </Text>
-              </Flex>
-              <Flex
-                direction="column"
-                justifyContent={"start"}
-                alignItems={"start"}
-                mt={"2"}
-              >
-                <Text>
-                  <strong>Summary:</strong>
-                </Text>
-                <Text textAlign={"left"}>{metadata.summary}</Text>
-              </Flex>
-              <Flex
-                direction="column"
-                justifyContent={"start"}
-                alignItems={"start"}
-                mt={"1.5"}
-              >
-                <Text>
-                  <strong>Description:</strong>
-                </Text>
-                <Text
-                  textAlign={"left"}
-                  dangerouslySetInnerHTML={{
-                    __html: metadata.description,
-                  }}
-                />
+              <Flex alignItems={"center"}>
+                <Button colorScheme="blue">Vote Now</Button>
               </Flex>
             </Flex>
-          </InfoWrapper>
-          <Box className="col-span-12 md:col-span-4">
-            {voterAddress ? (
-              <>
-                <DepositStatusWrapper className="col-span-4 row-span-3 col-start-9 row-start-auto">
-                  <Flex direction={"column"}>
-                    <Flex justifyContent={"center"} alignItems={"center"}>
-                      <Box>
-                        <Heading>Voting Eligibility</Heading>
-                      </Box>
-                    </Flex>
-                    <Flex className="mt-4 flex-col justify-start items-start">
-                      <Text>
-                        <strong>Has Deposit? </strong>
-                        {isUserDeposited ? "Yes" : "No"}
-                      </Text>
-                      <Text>
-                        <strong>
-                          Has Voted on proposal no. {pluginProposalId}?{" "}
-                        </strong>
-                        {isUserVotedOnProposal ? "Yes" : "No"}
-                      </Text>
-                    </Flex>
-                    <Flex
-                      className="mt-4"
-                      justifyContent={"space-around"}
-                      alignItems={"center"}
-                    >
-                      <Box>
-                        <FormLabel>Vote Option</FormLabel>
-                        <InputGroup className="m-1">
-                          <Select 
-                          // {...register("voteOption", {})}
-                          >
-                            {Object.keys(VoteOption)
-                              .filter((option) => isNaN(Number(option)))
-                              .map((option, index) => (
-                                <option value={index}>
-                                  {convertVoteOptionToText(index as VoteOption)}
-                                </option>
-                              ))}
-                          </Select>
-                        </InputGroup>
-                      </Box>
-                    </Flex>
-                    <Flex
-                      className="mt-4"
-                      justifyContent={"space-around"}
-                      alignItems={"center"}
-                    >
-                      <Tooltip
-                        // isDisabled={isUserVotedOnProposal}
-                        aria-label="Coming"
-                      >
-                        <Button
-                          colorScheme="green"
-                          onClick={handleVote}
-                          // isDisabled={voteOption === VoteOption.NONE}
-                        >
-                          Vote
-                        </Button>
-                      </Tooltip>
-                    </Flex>
-                  </Flex>
-                </DepositStatusWrapper>
-              </>
-            ) : (
-              <></>
-            )}
-            <ActionsWrapper className="col-span-4 row-span-3 col-start-9 row-start-auto">
-              <Flex direction={"column"}>
-                <Flex justifyContent={"center"} alignItems={"center"}>
-                  <Box>
-                    <Heading>Actions</Heading>
-                  </Box>
-                </Flex>
-                <Flex justifyContent={"start"} alignItems={"center"}>
-                  {actions.map(({ data, to, value }) => (
-                    <BoxWrapper className="w-full">
-                      <Text>
-                        {`${formatEther(value)} ${
-                          CHAIN_METADATA[network].nativeCurrency.symbol
-                        }`}{" "}
-                        {"->"} {shortenAddress(to)}
-                      </Text>
-                      <Text color={"red"}>
-                        {" "}
-                        {data.toString() === "0x" ? (
-                          <></>
-                        ) : (
-                          `${"invalid Action"} ${data.toString()}`
-                        )}
-                      </Text>
-                    </BoxWrapper>
-                  ))}
-                </Flex>
-              </Flex>
-            </ActionsWrapper>
-            {/* <DurationWrapper className="col-span-4 row-span-3 col-start-9 row-start-auto">
-              <Flex direction={"column"}>
-                <Flex justifyContent={"center"} alignItems={"center"}>
-                  <Box>
-                    <Heading>Duration</Heading>
-                  </Box>
-                </Flex>
-                <Flex className="flex-col justify-start items-start">
-                  <Text>Now: {new Date().toUTCString()}</Text>
-                  <Text>Start Date: {new Date(startDate).toUTCString()}</Text>
-                  <Text>End Date: {new Date(endDate).toUTCString()}</Text>
-                </Flex>
-              </Flex>
-            </DurationWrapper> */}
-          </Box>
-          {committeesList.map((c, i) => (
-            <VotersOnProposalWrapper
-              key={c}
-              className="col-span-4 row-start-auto"
+          </GridItem>
+
+          <GridItem colSpan={1} w="100%">
+            <GridItem
+              w="100%"
+              bg="gray.50"
+              borderRadius={"lg"}
+              border={"1px"}
+              borderColor={"blue.50"}
+              boxShadow={"sm"}
+              h={"min-content"}
+              mb={4}
             >
-              <Flex direction={"column"}>
-                <Flex justifyContent={"center"} alignItems={"center"}>
-                  <Box>
-                    <Heading fontSize={"2xl"}>
-                      {convertCommitteeToPlainText(c)} Votes{" "}
-                      {`(${convertCommitteeBytesToVoteLength(c)})`}
-                    </Heading>
-                  </Box>
-                </Flex>
-                {minParticipationStats[i] && (
-                  <Box className="text-start my-2">
-                    {
-                      <Text fontWeight={500}>
-                        <Text>
-                          {`(Quorum - % ${parseFloat(
-                            minParticipationStats[i]!.percentage
-                          ).toFixed(3)}) | ${minParticipationStats[
-                            i
-                          ]?.current.toString()}  ${
-                            c === PeoplesHouseCommittee
-                              ? CHAIN_METADATA[network].nativeCurrency.symbol
-                              : "Address"
-                          } (Current) Of ${minParticipationStats[
-                            i
-                          ]?.minParticipations.toString()} ${
-                            c === PeoplesHouseCommittee
-                              ? CHAIN_METADATA[network].nativeCurrency.symbol
-                              : "Address"
-                          }`}
-                        </Text>
-                      </Text>
-                    }
-
-                    <Progress
-                      colorScheme="blue"
-                      size="sm"
-                      value={+minParticipationStats[i]!.percentage}
-                    />
-                  </Box>
-                )}
-
-                {supportThresholdStats[i] && (
-                  <Box className="text-start my-2">
-                    {minParticipationStats[i] && (
-                      <Text fontWeight={500}>
-                        <Text>{`Support Threshold: % ${parseFloat(
-                          supportThresholdStats[i]!.percentage
-                        ).toFixed(3)}  
-                         `}</Text>
-                      </Text>
-                    )}
-
-                    <Progress
-                      colorScheme="blue"
-                      size="sm"
-                      value={+supportThresholdStats[i]!.percentage}
-                    />
-                  </Box>
-                )}
-
-                <Flex
-                  direction={"column"}
-                  justifyContent={"start"}
-                  alignItems={"center"}
+              <VotingStatsBox />
+            </GridItem>
+            <GridItem
+              colSpan={1}
+              w="100%"
+              bg="gray.50"
+              borderRadius={"lg"}
+              border={"1px"}
+              borderColor={"blue.50"}
+              boxShadow={"sm"}
+              h={"min-content"}
+              mb={4}
+            >
+              <ProposalStatusStepper />
+            </GridItem>
+            <GridItem
+              colSpan={1}
+              w="100%"
+              bg="gray.50"
+              borderRadius={"lg"}
+              border={"1px"}
+              borderColor={"blue.50"}
+              boxShadow={"sm"}
+            >
+              <Box p={5}>
+                <Text fontSize={"lg"} fontWeight={"bold"}>
+                  Executing Actions
+                </Text>
+                <Text fontSize={"sm"} fontWeight={"normal"}>
+                  These actions can be executed only once the governance
+                  parameters are met
+                </Text>
+              </Box>
+              <VStack p={5}>
+                <Box
+                  bgColor={"blue.100"}
+                  fontWeight={"semibold"}
+                  width={"full"}
+                  textAlign={"center"}
+                  p={4}
+                  borderRadius={"md"}
                 >
-                  {votersOnProposal?.length > 0 ? (
-                    votersOnProposal.filter((item) => item.committee == c)
-                      .length === 0 ? (
-                      <BoxWrapper className="w-full">
-                        <Text color={"gray"}>No Item</Text>
-                      </BoxWrapper>
-                    ) : (
-                      votersOnProposal
-                        .filter((item) => item.committee == c)
-                        .map(
-                          ({
-                            committee,
-                            creationDate,
-                            id,
-                            option,
-                            pluginProposalId,
-                            txHash,
-                            voter,
-                            snapshotBlock,
-                          }) => (
-                            <BoxWrapper className="w-full" key={id}>
-                              <Text>
-                                {shortenAddress(voter)} -{" "}
-                                <Badge>
-                                  {convertCommitteeToPlainText(committee)}{" "}
-                                </Badge>
-                              </Text>
-                              <Text color={"gray"} as={"span"}>
-                                {`@ ${snapshotBlock} - `}
-                                <Text
-                                  color={convertVoteOptionToItsColor(option)}
-                                  as={"span"}
-                                >
-                                  <strong>
-                                    {convertVoteOptionToText(option)}
-                                  </strong>
-                                </Text>
-                              </Text>
-                            </BoxWrapper>
-                          )
-                        )
-                    )
-                  ) : (
-                    <BoxWrapper className="w-full">
-                      <Text color={"gray"}>No Item</Text>
-                    </BoxWrapper>
-                  )}
-                </Flex>
-              </Flex>
-            </VotersOnProposalWrapper>
-          ))}
-        </ProposalWrapper>
-      )}
+                  <HStack justifyContent={"center"}>
+                    <XdcIcon />
+                    <Text>1000 XDC</Text>
+                  </HStack>
+                </Box>
+                <HStack justifyContent={"space-between"} width={"full"}>
+                  <Box
+                    bgColor={"blue.100"}
+                    p={3}
+                    borderRadius={"md"}
+                    justifySelf={"stretch"}
+                    w={"xs"}
+                  >
+                    <Text>From</Text>
+                    <HStack>
+                      <Text>{shortenAddress(zeroAddress)}</Text>
+                    </HStack>
+                  </Box>{" "}
+                  <Box w={"auto"}>
+                    <ArrowForwardIcon />
+                  </Box>
+                  <Box bgColor={"blue.100"} p={2} borderRadius={"md"} w={"xs"}>
+                    <Text>To</Text>
+                    <HStack>
+                      <Text>{shortenAddress(zeroAddress)}</Text>
+                    </HStack>
+                  </Box>
+                </HStack>
+              </VStack>
+            </GridItem>
+          </GridItem>
+
+          <GridItem colSpan={1} colStart={2} w="100%">
+            <GridItem
+              w="100%"
+              bg="gray.50"
+              borderRadius={"lg"}
+              border={"1px"}
+              borderColor={"blue.50"}
+              boxShadow={"sm"}
+              h={"min-content"}
+              mb={4}
+            >
+              <HStack justifyContent={"space-between"} mb={"6"} p={"6"}>
+                <Text fontSize={"lg"} fontWeight={"bold"}>
+                  Voter
+                </Text>
+              </HStack>
+              <Tabs isFitted>
+                <TabList>
+                  {committeesListWithIcon.map(({ icon, id, name }) => (
+                    <Tab key={id}>
+                      <HStack>
+                        <Box w={"25px"} h={"25px"}>
+                          {icon}
+                        </Box>
+                        <Text
+                          fontSize={"sm"}
+                          fontWeight={"semibold"}
+                          whiteSpace={"nowrap"}
+                        >
+                          {name}
+                        </Text>
+                      </HStack>
+                    </Tab>
+                  ))}
+                </TabList>
+
+                <TabPanels>
+                  {committeesListWithIcon.map(({}) => (
+                    <TabPanel p={"6"}>
+                      <Tabs isFitted variant="soft-rounded">
+                        <TabList>
+                          <Tab>For</Tab>
+                          <Tab>Against</Tab>
+                          <Tab>Abstain</Tab>
+                        </TabList>
+                        <TabPanels>
+                          {committeesListWithIcon.map(({}) => (
+                            <TabPanel w={"full"}>
+                              <VStack spacing={"1"} alignItems={"start"}>
+                                <HStack>
+                                  <WalletAddressCard sm address={zeroAddress} />
+                                  <a href="">
+                                    <BlockIcon w={"5"} h={"5"} />
+                                  </a>
+                                </HStack>
+                                <HStack>
+                                  <WalletAddressCard sm address={zeroAddress} />
+                                  <a href="">
+                                    <BlockIcon w={"5"} h={"5"} />
+                                  </a>
+                                </HStack>
+                                <HStack>
+                                  <WalletAddressCard sm address={zeroAddress} />
+                                  <a href="">
+                                    <BlockIcon w={"5"} h={"5"} />
+                                  </a>
+                                </HStack>
+                              </VStack>
+                            </TabPanel>
+                          ))}
+                        </TabPanels>
+                      </Tabs>
+                    </TabPanel>
+                  ))}
+                </TabPanels>
+              </Tabs>
+            </GridItem>
+            <GridItem
+              colSpan={1}
+              w="100%"
+              bg="gray.50"
+              borderRadius={"lg"}
+              border={"1px"}
+              borderColor={"blue.50"}
+              boxShadow={"sm"}
+              h={"fit-content"}
+              mb={4}
+            >
+              <Text p={"5"} fontSize={"lg"} fontWeight={"bold"}>
+                Discussions & References
+              </Text>
+              <HStack p={"6"}>
+                <Badge
+                  p={2}
+                  borderRadius={"md"}
+                  bgColor={"blue.100"}
+                  textColor={"blue.300"}
+                >
+                  XDC official
+                </Badge>
+              </HStack>
+            </GridItem>
+            <GridItem
+              colSpan={1}
+              w="100%"
+              bg="gray.50"
+              borderRadius={"lg"}
+              border={"1px"}
+              borderColor={"blue.50"}
+              boxShadow={"sm"}
+              rowSpan={0}
+            >
+              <Box p={"5"}>
+                <Text mb={4} fontSize={"lg"} fontWeight={"bold"}>
+                  Details
+                </Text>
+                <Text>
+                  This AIP propose to modify the parameters of stablecoins
+                  across all the Aave pools. Mainly by setting the slope1 to 5%,
+                  as well as changing the RF to 25% and Uopt to 90% of some of
+                  them. According to research by @monet-supply, the borrowing
+                  parameters of the stablecoins on Aave have diverged from the
+                  broader market leading to potentials inefficiencies and bad
+                  user experience. Those proposed changes have been approved by
+                  both risk providers, with additional suggestion by @Gauntlet.
+                  Stablecoin across all the V2 and V3 markets are concerned by
+                  those change. Namely USDC, USDT, LUSD, FRAX, sUSD, DAI, MAI,
+                  GUSD, USDP on ethereum (V2 and V3), polygon (V2 and V2),
+                  Arbitrum, Gnosis, Optimism, Avalanche (v2 and V3) and Metis.
+                  However the changes of RF and Uopt would be more limited, with
+                  the Uopt changes being limited to USDC, USDT, DAI and FRAX
+                  across all V3s and the RF ones to USDC, USDT and LUSD only for
+                  Ethereum V2.
+                </Text>
+              </Box>
+            </GridItem>
+          </GridItem>
+        </Grid>
+      }
     </>
   );
 };
