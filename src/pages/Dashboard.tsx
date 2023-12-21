@@ -39,9 +39,7 @@ const Dashboard: FC = () => {
   const { data: deposits } = usePeoplesHouseDeposits(
     getPluginInstallationId(daoAddress, pluginAddress)
   );
-  const { data } = useDaoProposals(daoAddress, pluginAddress);
-  console.log({ data });
-  
+
   const { isOpen, onClose, onToggle } = useDisclosure();
 
   const [proposalTypes, setProposalTypes] = useState([
@@ -65,6 +63,8 @@ const Dashboard: FC = () => {
       isComingSoon: true,
     },
   ]);
+  console.log({ proposals });
+
   return (
     <Page>
       {/* <DashboardWrapper>
@@ -90,9 +90,7 @@ const Dashboard: FC = () => {
         Make a new Proposal
       </Button>
       <Flex justifyContent={"center"} p={2}>
-        <Box w={"90%"}>
-          <Proposals proposals={data} />
-        </Box>
+        <Box w={"90%"}>{<Proposals proposals={proposals.data} />}</Box>
       </Flex>
       {isOpen && (
         <Modal

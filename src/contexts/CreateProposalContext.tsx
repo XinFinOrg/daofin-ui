@@ -130,15 +130,14 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
       throw Error("Could not pin metadata on IPFS");
     }
     if (!metadaIpfsHash) return;
-    console.log({ metadaIpfsHash });
 
     setProposalCreationData({
-      metdata: metadaIpfsHash.slice(7),
+      metdata: '0x00',
       actions: [
         {
           data: new Uint8Array(),
           to: action.recipient,
-          value: BigInt(parseEther("1000")),
+          value: BigInt(parseEther(action.amount.toString())),
         },
       ],
       allowFailureMap: 0,

@@ -1,27 +1,55 @@
 import { TimeIcon } from "@chakra-ui/icons";
-import { Box, Divider, HStack, Progress } from "@chakra-ui/react";
-import React, { Component, ComponentType, FC, ReactNode } from "react";
+import {
+  Box,
+  BoxProps,
+  Divider,
+  HStack,
+  Progress,
+  ProgressProps,
+} from "@chakra-ui/react";
+import React, {
+  Component,
+  ComponentType,
+  FC,
+  ReactElement,
+  ReactNode,
+} from "react";
 import MasterNodeDelegateeSenateIcon from "../utils/assets/icons/MasterNodeDelegateeSenateIcon";
 
-interface VoteStatProgressBarProps {
+interface VoteStatProgressBarProps extends ProgressProps {
   percentage: number;
   threshold: number;
-  Icon: ComponentType;
+  Icon?: ComponentType;
+  ProgressLabel?: ReactElement;
 }
 const VoteStatProgressBar: FC<VoteStatProgressBarProps> = ({
   percentage,
   threshold,
   Icon,
+  ProgressLabel,
+  w = "90%",
+  size = "sm",
 }) => {
   return (
-    <HStack alignItems={'center'}>
-      <Box w={'5'} h={'5'}>
-        <Icon />
+    <HStack alignItems={"center"} w={"full"}>
+      <Box w={'20%'}>
+        {Icon ? (
+          <Box w={"5"} h={"5"}>
+            {<Icon />}
+          </Box>
+        ) : (
+          <></>
+        )}
+        {ProgressLabel ? (
+          <Box alignSelf={"baseline"}>{ProgressLabel}</Box>
+        ) : (
+          <></>
+        )}
       </Box>
 
       <Progress
-        size={"xs"}
-        w="50%"
+        w={"full"}
+        size={size}
         value={Number(percentage)}
         borderRadius={"md"}
       >

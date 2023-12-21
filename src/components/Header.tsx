@@ -33,8 +33,10 @@ import {
 import { useBlockNumber } from "wagmi";
 import { CHAIN_METADATA } from "../utils/networks";
 import { useNetwork } from "../contexts/network";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { XdcIcon } from "../utils/assets/icons/XdcIcon";
+import { fetchTokenPrice } from "../services/prices";
+import { constants } from "ethers";
 interface Props {
   children: React.ReactNode;
   href: string;
@@ -58,7 +60,13 @@ export default function Header() {
   const handleSwitchTheme = () => {
     toggleColorMode();
   };
+  const [tokenPrice, setTokenPrice] = useState<number>(0);
   const bgColorModeLinks = useColorModeValue("blue.100", "blue.800");
+  useEffect(() => {
+    fetchTokenPrice(constants.AddressZero, network)
+      .then((data) => data && setTokenPrice(data))
+      .catch(console.log);
+  }, []);
   return (
     <>
       <Flex
@@ -89,7 +97,7 @@ export default function Header() {
           <Box mx={"4"}>
             <HStack>
               <XdcIcon />
-              <Text fontWeight={"medium"}>$0.01</Text>
+              <Text fontWeight={"medium"}>${tokenPrice.toFixed(4)}</Text>
             </HStack>
           </Box>
         </HStack>

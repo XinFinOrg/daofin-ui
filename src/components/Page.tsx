@@ -13,7 +13,7 @@ const Page: FC<PropsWithChildren> = ({ children }) => {
       h={"full"}
     >
       <Header />
-      <Box w={"100%"} p={'4'} m={'auto'}>{children}</Box>
+      <Box w={"90%"} p={'4'} m={'auto'}>{children}</Box>
       <Box p={5}>
         <Footer />
       </Box>

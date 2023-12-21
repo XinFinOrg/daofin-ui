@@ -9,6 +9,7 @@ import {
 } from "../utils/networks";
 
 import { BigNumber, ethers } from "ethers";
+import { Page } from "../components";
 
 const ProposalDetailsPage = () => {
   const { pluginAddress, daoAddress } = useAppGlobalConfig();
@@ -17,12 +18,7 @@ const ProposalDetailsPage = () => {
     getPluginProposalId(pluginAddress, proposalId ? parseInt(proposalId) : 0)
   );
 
-  
-  return (
-    <>
-      {data && !error && !isLoading && <ProposalDetails proposal={data} />}
-    </>
-  );
+  return <Page>{<ProposalDetails />}</Page>;
 };
 
 export default ProposalDetailsPage;

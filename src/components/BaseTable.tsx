@@ -1,4 +1,4 @@
-import React, { Component, FC, ReactNode } from "react";
+import React, { Component, FC, ReactNode, useEffect } from "react";
 import {
   Table,
   TableCaption,
@@ -18,6 +18,7 @@ interface BaseTableProps<T> {
 }
 
 const BaseTable = <T,>({ columns, data }: BaseTableProps<T>) => {
+
   return (
     <TableContainer boxShadow="sm" borderRadius={'md'} bgColor={useColorModeValue('gray.50','gray.900')}>
       <Table variant="simple">
