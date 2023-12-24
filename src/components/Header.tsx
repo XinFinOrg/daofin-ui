@@ -157,28 +157,24 @@ export default function Header() {
               display={{ base: "none", md: "flex" }}
             >
               {Links.map((link) => (
-                <Box
-                  fontSize={"md"}
-                  fontWeight={"bold"}
-                  px={3}
-                  py={1}
-                  borderRadius={"md"}
-                  transition="background-color .1s ease-in-out"
-                  _hover={{
-                    bgColor: bgColorModeLinks,
-                  }}
-                >
-                  <Link
-                    to={link.location}
-
-                    // className="border-1 py-2 pl-3 pr-4 font-bold hover:text-blue-600 ease-in-out duration-300"
+                <Link to={link.location}>
+                  <Box
+                    fontSize={"md"}
+                    fontWeight={"bold"}
+                    px={3}
+                    py={1}
+                    borderRadius={"md"}
+                    transition="background-color .1s ease-in-out"
+                    _hover={{
+                      bgColor: bgColorModeLinks,
+                    }}
                   >
                     <HStack>
                       <>{link.icon}</>
                       <Text>{link.name}</Text>
                     </HStack>
-                  </Link>
-                </Box>
+                  </Box>
+                </Link>
               ))}
             </HStack>
           </HStack>

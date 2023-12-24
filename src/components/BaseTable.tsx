@@ -18,9 +18,12 @@ interface BaseTableProps<T> {
 }
 
 const BaseTable = <T,>({ columns, data }: BaseTableProps<T>) => {
-
   return (
-    <TableContainer boxShadow="sm" borderRadius={'md'} bgColor={useColorModeValue('gray.50','gray.900')}>
+    <TableContainer
+      boxShadow="sm"
+      borderRadius={"md"}
+      bgColor={useColorModeValue("gray.50", "gray.900")}
+    >
       <Table variant="simple">
         <Thead>
           <Tr key={uuid()}>
