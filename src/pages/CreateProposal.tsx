@@ -3,17 +3,16 @@ import { DaoAction, ProposalMetadata } from "@xinfin/osx-client-common";
 import { styled } from "styled-components";
 import { useClient } from "../hooks/useClient";
 import { v4 as uuid } from "uuid";
-import CreateMetaData from "../components/CreateMetaData";
-import { FormProvider, useForm } from "react-hook-form";
-import CreateProposalStepper from "../components/CreateProposalStepper";
+import CreateMetaData from "../components/CreateProposalStepper/CreateMetaData";
+
+import CreateProposalStepper from "../components/CreateProposalStepper/CreateProposalStepper";
 import { ProposalCreationSteps } from "@xinfin/osx-sdk-client";
 
 import { useDisclosure } from "@chakra-ui/hooks";
-import Modal from "../components/Modal";
+import Modal from "../components/Modal/Modal";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import { Progress } from "@chakra-ui/progress";
-import { useEffect, useState } from "react";
-import { parseEther } from "@ethersproject/units";
+import { useState } from "react";
 import { TransactionState } from "../utils/types";
 import { decodeProposalId } from "@xinfin/osx-sdk-common";
 import { CheckCircleIcon } from "@chakra-ui/icons";
@@ -26,8 +25,21 @@ import {
   shortenTxHash,
 } from "../utils/networks";
 import { zeroAddress } from "viem";
+import Page from "../components/Page";
+import {
+  Formik,
+  FormikProps,
+  useField,
+  useFormik,
+  useFormikContext,
+} from "formik";
+import { CreateProposalProvider } from "../contexts/CreateProposalContext";
+import {
+  CreationFormSchema,
+  MetaDataSchema,
+} from "../schemas/createProposalSchema";
 const CreateProposalWrapper = styled.div.attrs({
-  className: "flex justify-center",
+  className: "min-h-screen",
 })``;
 
 const steps = [
@@ -39,27 +51,42 @@ type CreateProposalType = {
   metaData: ProposalMetadata;
   actions: DaoAction[];
 };
+
+export interface CreateProposalFormData {
+  metaData: {
+    title: string;
+    summary: string;
+    description: string;
+    resource: { name: string; url: string };
+    resources: { name: string; url: string }[];
+  };
+  action: {
+    recipient: string;
+    amount: string;
+  };
+  selectedElectionPeriod: string;
+}
 const CreateProposal = () => {
-  const methods = useForm({
-    defaultValues: {
-      metaData: {
-        title: "",
-        summary: "",
-        description: "",
-        resources: [],
-        resource: {
-          name: "",
-          url: "",
-        },
-      },
-      withdrawAction: {
-        to: "",
-        value: 0,
-        data: "",
-      },
-      electionPeriodIndex: 0,
-    },
-  });
+  // const methods = useForm({
+  //   defaultValues: {
+  //     metaData: {
+  //       title: "",
+  //       summary: "",
+  //       description: "",
+  //       resources: [],
+  //       resource: {
+  //         name: "",
+  //         url: "",
+  //       },
+  //     },
+  //     withdrawAction: {
+  //       to: "",
+  //       value: 0,
+  //       data: "",
+  //     },
+  //     electionPeriodIndex: 0,
+  //   },
+  // });
   // 0 - NOT_STAR
   const [proposalState, setProposalState] = useState<{
     key: TransactionState;
@@ -82,7 +109,7 @@ const CreateProposal = () => {
       error: false,
     });
   };
-  const handleSubmitProposal = async (data: any) => {
+  const handleSubmitProposal = async (data: CreateProposalFormData) => {
     const ipfsUri = await daofinClient?.methods.pinMetadata({
       title: data.metaData.title,
       description: data.metaData.description,
@@ -106,12 +133,11 @@ const CreateProposal = () => {
         },
       ],
       allowFailureMap: 0,
-      electionIndex: data.electionPeriodIndex,
+      electionIndex: data.selectedElectionPeriod,
     });
     if (!proposalIterator) {
       return;
     }
-    onOpen();
 
     try {
       for await (const step of proposalIterator) {
@@ -142,64 +168,33 @@ const CreateProposal = () => {
     }
   };
 
-  const handleOnChange = (e: any) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    methods.setValue(name, value);
+  const initvalues: CreateProposalFormData = {
+    metaData: {
+      title: "",
+      summary: "",
+      description: "",
+      resource: { name: "", url: "" },
+      resources: [{ name: "", url: "" }],
+    },
+    action: { amount: "", recipient: "" },
+    selectedElectionPeriod: "0",
   };
-  const { isOpen, onClose, onOpen } = useDisclosure();
   return (
-    <FormProvider {...methods}>
-      <CreateProposalWrapper className="px-24">
-        <CreateProposalStepper
-          handleSubmitProposal={handleSubmitProposal}
-          handleOnChange={handleOnChange}
-        />
-        <Modal isOpen={isOpen} onClose={onClose} title="Publishing Proposal">
-          <Box className="text-center">
-            {proposalState.key === TransactionState.LOADING ||
-              (proposalState.key === TransactionState.WAITING && (
-                <Box className="text-center">
-                  <Progress isIndeterminate />
-                </Box>
-              ))}
-            {proposalState.key === TransactionState.SUCCESS && (
-              <Box>
-                <CheckCircleIcon w={8} h={8} color="green.500" />
-              </Box>
-            )}
-            {proposalState.txHash && (
-              <Box>
-                <Link
-                  to={`${CHAIN_METADATA["apothem"].explorer}/txs/${proposalState.txHash}`}
-                  target="_blank"
-                  className="blue"
-                >
-                  Tx Hash {shortenTxHash(proposalState.txHash)}
-                </Link>
-              </Box>
-            )}
-
-            {proposalState?.proposalId !== undefined &&
-              proposalState?.proposalId > -1 && (
-                <>
-                  <Text>Proposal ID: {proposalState.proposalId}</Text>
-                  <Button
-                    onClick={() => {
-                      navigate(
-                        `/proposals/${proposalState.proposalId}/details`
-                      );
-                      resetProposalState();
-                    }}
-                  >
-                    Go to
-                  </Button>
-                </>
-              )}
-          </Box>
-        </Modal>
-      </CreateProposalWrapper>
-    </FormProvider>
+    <Page>
+      <Formik
+        initialValues={initvalues}
+        validate={(values) => {}}
+        validationSchema={CreationFormSchema}
+        validateOnChange={true}
+        onSubmit={handleSubmitProposal}
+      >
+        {(props: FormikProps<CreateProposalFormData>) => (
+          <CreateProposalProvider>
+            <CreateProposalStepper />
+          </CreateProposalProvider>
+        )}
+      </Formik>
+    </Page>
   );
 };
 

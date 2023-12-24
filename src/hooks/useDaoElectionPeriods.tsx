@@ -3,7 +3,7 @@ import { useClient } from "./useClient";
 import { useNetwork } from "../contexts/network";
 import { GlobalSettings } from "@xinfin/osx-daofin-sdk-client";
 import { DaofinPlugin } from "@xinfin/osx-daofin-contracts-ethers";
-type ElectionPeriod = { startDate: number; endDate: number };
+export type ElectionPeriod = { startDate: number; endDate: number };
 function useDaoElectionPeriods() {
   const [electionPeriods, setElectionPeriods] = useState<ElectionPeriod[]>();
   const { daofinClient, client } = useClient();
