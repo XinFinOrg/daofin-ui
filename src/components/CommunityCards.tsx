@@ -16,14 +16,7 @@ import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByComm
 const CommunityCards = () => {
   const navigate = useNavigate();
   const { committeesListWithIcon } = useCommitteeUtils();
-  //   const mergedData = useMemo(
-  //     () =>
-  //       committeesListWithIcon.map((item) => ({
-  //         ...item,
-  //         total: data.find(({ id }) => id == item.id)?.total,
-  //       })),
-  //     []
-  //   );
+
   return (
     <HStack w={"full"}>
       {committeesListWithIcon.map(({ bgGradient, icon, id, name, link }) => (
@@ -32,7 +25,7 @@ const CommunityCards = () => {
           w={"full"}
           boxShadow={"sm"}
           bgGradient={bgGradient}
-          opacity={"0.9"}
+          opacity={0.9}
           borderRadius={"md"}
           p={4}
         >

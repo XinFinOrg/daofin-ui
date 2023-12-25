@@ -85,7 +85,9 @@ export default function Header() {
                 target={"_blank"}
               >
                 <HStack>
-                  <BlockIcon />
+                  <BlockIcon
+                    w={"20px"}
+                  />
 
                   <Text fontWeight={"medium"}>{data.toString()}</Text>
                 </HStack>

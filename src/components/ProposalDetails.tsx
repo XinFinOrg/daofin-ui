@@ -253,9 +253,10 @@ const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
           templateColumns="repeat(2, 1fr)"
           // templateRows={"repeat(1, 1fr)"}
           gap={6}
+          // w={"full"}
         >
           <GridItem
-            w="100%"
+            w="full"
             bg="gray.50"
             p={"6"}
             borderRadius={"lg"}
@@ -294,7 +295,7 @@ const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
             </Flex>
           </GridItem>
 
-          <GridItem colSpan={1} w="100%">
+          <GridItem colSpan={1} w="full">
             <GridItem
               w="100%"
               bg="gray.50"
@@ -338,7 +339,7 @@ const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
                   parameters are met
                 </Text>
               </Box>
-              <VStack p={5}>
+              <VStack p={5} alignItems={"flex-start"}>
                 <Box
                   bgColor={"blue.100"}
                   fontWeight={"semibold"}
@@ -352,25 +353,30 @@ const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
                     <Text>1000 XDC</Text>
                   </HStack>
                 </Box>
-                <HStack justifyContent={"space-between"} width={"full"}>
+                <HStack justifyContent={"start"} w={"full"}>
                   <Box
                     bgColor={"blue.100"}
                     p={3}
+                    width={"full"}
                     borderRadius={"md"}
                     justifySelf={"stretch"}
-                    w={"xs"}
                   >
-                    <Text>From</Text>
                     <HStack>
+                      <Text>From</Text>
                       <Text>{shortenAddress(zeroAddress)}</Text>
                     </HStack>
                   </Box>{" "}
-                  <Box w={"auto"}>
+                  <Box>
                     <ArrowForwardIcon />
                   </Box>
-                  <Box bgColor={"blue.100"} p={2} borderRadius={"md"} w={"xs"}>
-                    <Text>To</Text>
+                  <Box
+                    bgColor={"blue.100"}
+                    p={2}
+                    borderRadius={"md"}
+                    width={"full"}
+                  >
                     <HStack>
+                      <Text>To</Text>
                       <Text>{shortenAddress(zeroAddress)}</Text>
                     </HStack>
                   </Box>
@@ -379,9 +385,9 @@ const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
             </GridItem>
           </GridItem>
 
-          <GridItem colSpan={1} colStart={2} w="100%">
+          <GridItem colSpan={1} colStart={2} colEnd={2}>
             <GridItem
-              w="100%"
+              // w="100%"
               bg="gray.50"
               borderRadius={"lg"}
               border={"1px"}
@@ -458,7 +464,7 @@ const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
             </GridItem>
             <GridItem
               colSpan={1}
-              w="100%"
+              // w="100%"
               bg="gray.50"
               borderRadius={"lg"}
               border={"1px"}
@@ -483,7 +489,7 @@ const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
             </GridItem>
             <GridItem
               colSpan={1}
-              w="100%"
+              // w="100%"
               bg="gray.50"
               borderRadius={"lg"}
               border={"1px"}
