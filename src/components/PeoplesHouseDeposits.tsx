@@ -14,7 +14,6 @@ import useIsUserDeposited from "../hooks/useIsUserDeposited";
 import useIsUserVotedOnProposal from "../hooks/useIsUserVotedOnProposal";
 import { useWallet } from "../hooks/useWallet";
 import { Tooltip } from "@chakra-ui/tooltip";
-import { useForm } from "react-hook-form";
 import { useDisclosure } from "@chakra-ui/hooks";
 import { useClient } from "../hooks/useClient";
 import { DepositSteps } from "@xinfin/osx-daofin-sdk-client";
@@ -23,7 +22,7 @@ import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import { FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup, InputRightAddon } from "@chakra-ui/input";
 import { useNetwork } from "../contexts/network";
-import Modal from "./Modal";
+import Modal from "./Modal/Modal";
 
 const DepositWrapper = styled(BoxWrapper).attrs({
   className: "m-4 w-100",

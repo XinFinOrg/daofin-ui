@@ -55,7 +55,7 @@ const determineNetwork = (
     if (isSupportedChainId(chainId)) {
       // NETWORK from wallet chain
       console.log("test1");
-      
+
       return Object.entries(CHAIN_METADATA).find(
         ([, v]) => v.id === chainId
       )?.[0] as SupportedNetworks;
@@ -95,7 +95,6 @@ export function NetworkProvider({ children }: NetworkProviderProps) {
   const [networkState, setNetworkState] = useState<
     SupportedNetworks | "unsupported"
   >(determineNetwork(networkUrlSegment, chainId, status));
-console.log({networkState});
 
   useEffect(() => {
     setNetworkState(determineNetwork(networkUrlSegment, chainId, status));
@@ -121,7 +120,7 @@ console.log({networkState});
       navigate("./not-found", { replace: true });
     }
   }, [networkState, navigate, networkUrlSegment]);
-
+  
   return (
     <NetworkContext.Provider
       value={{
