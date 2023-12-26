@@ -10,6 +10,7 @@ import PeoplesHousePage from "./pages/PeoplesHousePage";
 import MasterNodeDelegatePage from "./pages/MasterNodeDelegatePage";
 import { Box } from "@chakra-ui/react";
 import CommunityPage from "./pages/CommunityPage";
+import TreasuryPage from "./pages/TreasuryPage";
 
 function App() {
   return (
@@ -40,6 +41,9 @@ function App() {
             path="/community/master-node-delegatee"
             element={<MasterNodeDelegatePage />}
           />
+        </Route>
+        <Route path="/treasury">
+          <Route path="/treasury" element={<TreasuryPage />} />
         </Route>
       </Routes>
     </Box>

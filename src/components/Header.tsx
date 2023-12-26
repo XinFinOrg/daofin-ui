@@ -85,9 +85,7 @@ export default function Header() {
                 target={"_blank"}
               >
                 <HStack>
-                  <BlockIcon
-                    w={"20px"}
-                  />
+                  <BlockIcon w={"20px"} />
 
                   <Text fontWeight={"medium"}>{data.toString()}</Text>
                 </HStack>
@@ -98,7 +96,9 @@ export default function Header() {
           </Box>
           <Box mx={"4"}>
             <HStack>
-              <XdcIcon />
+              <Box w={"25px"}>
+                <XdcIcon />
+              </Box>
               <Text fontWeight={"medium"}>${tokenPrice.toFixed(4)}</Text>
             </HStack>
           </Box>
