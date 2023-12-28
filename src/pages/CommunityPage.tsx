@@ -14,7 +14,12 @@ import BoxWrapper from "../components/BoxWrapper";
 import { Link } from "react-router-dom";
 import Page from "../components/Page";
 import { IoBarChart } from "react-icons/io5";
-import { Button, IconButton, useColorModeValue } from "@chakra-ui/react";
+import {
+  Button,
+  IconButton,
+  Tooltip,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import CommunityCards from "../components/CommunityCards";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import WalletAddressCard from "../components/WalletAddressCard";
@@ -24,6 +29,35 @@ import { CHAIN_METADATA } from "../utils/networks";
 import { useNetwork } from "../contexts/network";
 import MasterNodeDelegatePage from "./MasterNodeDelegatePage";
 import MasterNodeSenateCard from "../components/MasterNodeSenateCard";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from "recharts";
+
+const data = [
+  {
+    name: "",
+    uv: 4000,
+    pv: 2400,
+    amt: 2400,
+  },
+  {
+    name: "",
+    uv: 3000,
+    pv: 1398,
+    amt: 2210,
+  },
+  {
+    name: "",
+    uv: 2000,
+    pv: 9800,
+    amt: 2290,
+  },
+];
 
 const CommunityPage = () => {
   const { network } = useNetwork();
@@ -127,6 +161,18 @@ const CommunityPage = () => {
                 This is the group of expert people who are selected during
                 initial deployment
               </Text>
+            </Box>
+            <Box w={"100%"}>
+              <ResponsiveContainer width={"100%"} minHeight={300}>
+                <AreaChart width={600} height={200} data={data}>
+                  <Area
+                    type="monotone"
+                    dataKey="uv"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
             </Box>
           </VStack>
           <VStack alignItems={"flex-start"} w={"50%"}>
