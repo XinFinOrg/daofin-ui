@@ -12,11 +12,23 @@ import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
 import { CommitteeGlobal, useCommitteeUtils } from "../hooks/useCommitteeUtils";
 import { useNavigate } from "react-router-dom";
 import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
+import { JudiciaryCommittee } from "../utils/networks";
 
 const CommunityCards = () => {
   const navigate = useNavigate();
   const { committeesListWithIcon } = useCommitteeUtils();
+  const judiciariesTotalMembers =
+    useFetchTotalNumbersByCommittee(JudiciaryCommittee);
 
+  const mapCommitteeToTotalNumber = (committeeName: string) => {
+    switch (committeeName) {
+      case JudiciaryCommittee:
+        return judiciariesTotalMembers?.toString();
+
+      default:
+        return "0";
+    }
+  };
   return (
     <HStack w={"full"}>
       {committeesListWithIcon.map(({ bgGradient, icon, id, name, link }) => (
@@ -37,7 +49,7 @@ const CommunityCards = () => {
               Number of {name}
             </Text>
             <Text fontSize={"lg"} fontWeight={"bold"}>
-              20
+              {mapCommitteeToTotalNumber(id)}
             </Text>
           </VStack>
           <IconButton

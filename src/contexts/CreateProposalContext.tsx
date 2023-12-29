@@ -17,7 +17,7 @@ import { TransactionReviewModal } from "../components/Modal";
 import { useDisclosure } from "@chakra-ui/react";
 import { BigNumberish, BigNumber } from "@ethersproject/bignumber";
 import { TransactionState } from "../utils/types";
-import { parseEther } from "viem";
+import { decodeAbiParameters, parseEther } from "viem";
 import { ProposalCreationSteps } from "@xinfin/osx-sdk-client";
 
 export type CreateProposalContextType = {
@@ -43,6 +43,11 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>();
+
+  const [publishedTxData, setPublishedTxData] = useState<{
+    hash: string;
+    proposalId: string;
+  }>();
 
   const shouldPoll =
     proposalCreationData !== undefined &&
@@ -72,20 +77,17 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
       for await (const step of proposalIterator) {
         switch (step.key) {
           case ProposalCreationSteps.CREATING:
-            console.log(step);
-            // setProposalState((prev) => ({
-            //   ...prev,
-            //   key: TransactionState.WAITING,
-            //   txHash: step.txHash,
-            // }));
+            setPublishedTxData({
+              hash: step.txHash,
+              proposalId: "",
+            });
             break;
           case ProposalCreationSteps.DONE: {
-            console.log("DONE", step.key, step.proposalId);
-            // setProposalState((prev) => ({
-            //   ...prev,
-            //   key: TransactionState.SUCCESS,
-            //   proposalId: decodeProposalId(step.proposalId).id,
-            // }));
+            if (!publishedTxData) return;
+            setPublishedTxData((prev) => ({
+              hash: prev?.hash ? prev.hash : "",
+              proposalId: step.proposalId.split("_0x")[1],
+            }));
 
             setCreationProcessState(TransactionState.SUCCESS);
             break;
@@ -130,9 +132,10 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
       throw Error("Could not pin metadata on IPFS");
     }
     if (!metadaIpfsHash) return;
+    console.log({ metadaIpfsHash });
 
     setProposalCreationData({
-      metdata: '0x00',
+      metdata: metadaIpfsHash,
       actions: [
         {
           data: new Uint8Array(),
@@ -162,6 +165,7 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
           totalCosts={totalCosts}
           onSubmitClick={handlePublishProposal}
           status={creationProcessState}
+          txData={publishedTxData}
         />
       )}
     </CreateProposalContext.Provider>

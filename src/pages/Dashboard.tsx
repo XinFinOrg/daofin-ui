@@ -23,6 +23,7 @@ import {
   Flex,
   Container,
   useColorModeValue,
+  Skeleton,
 } from "@chakra-ui/react";
 import { Modal, Page } from "../components";
 import { v4 as uuid } from "uuid";
@@ -41,10 +42,11 @@ const Dashboard: FC = () => {
   const { daofinClient, client } = useClient();
   const navigate = useNavigate();
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
-  const proposals = useDaoProposals(daoAddress, pluginAddress);
-  const { data: deposits } = usePeoplesHouseDeposits(
-    getPluginInstallationId(daoAddress, pluginAddress)
-  );
+  const {
+    data: proposals,
+    error,
+    isLoading,
+  } = useDaoProposals(daoAddress, pluginAddress);
 
   const { isOpen, onClose, onToggle } = useDisclosure();
 
@@ -69,7 +71,6 @@ const Dashboard: FC = () => {
       isComingSoon: true,
     },
   ]);
-  console.log({ proposals });
   const { committeesListWithIcon } = useCommitteeUtils();
   return (
     <Page>
@@ -92,14 +93,15 @@ const Dashboard: FC = () => {
           w={"50%"}
           justifyContent={"space-between"}
         >
-          <VStack alignItems={"flex-start"}>
-            <Text fontSize="sm" fontWeight={"normal"}>
-              Total Proposals
-            </Text>
-            <Text fontSize="large" fontWeight={"bold"}>
-              904
-            </Text>
-          </VStack>
+            <VStack alignItems={"flex-start"}>
+              <Text fontSize="sm" fontWeight={"normal"}>
+                Total Proposals
+              </Text>
+
+              <Text fontSize="large" fontWeight={"bold"}>
+                {proposals.length}
+              </Text>
+            </VStack>
           <Box>
             <Button
               variant="outline"
@@ -204,7 +206,7 @@ const Dashboard: FC = () => {
       </Flex>
 
       <Flex justifyContent={"center"}>
-        <Box w={"100%"}>{<Proposals proposals={proposals.data} />}</Box>
+        <Box w={"100%"}>{<Proposals proposals={proposals} />}</Box>
       </Flex>
       {isOpen && (
         <Modal

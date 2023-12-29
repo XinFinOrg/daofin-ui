@@ -36,7 +36,7 @@ import { parseEther, zeroAddress } from "viem";
 
 import ProposalTypeBadge from "./ProposalTypeBadge";
 import { IoShareSocial } from "react-icons/io5";
-import { ArrowForwardIcon, TimeIcon } from "@chakra-ui/icons";
+import { ArrowForwardIcon, InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
 
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 import VoteStatProgressBar from "./VoteStatProgressBar";
@@ -45,21 +45,24 @@ import { BlockIcon } from "../utils/assets/icons";
 import ProposalStatusStepper from "./ProposalStatusStepper";
 import { XdcIcon } from "../utils/assets/icons/XdcIcon";
 import { WalletAddressCard } from "./WalletAddressCard";
+import { timestampToStandardFormatString } from "../utils/date";
 
-const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
-  // const {
-  //   actions,
-  //   creator,
-  //   dao,
-  //   endDate,
-  //   executed,
-  //   id,
-  //   metadata,
-  //   pluginProposalId,
-  //   potentiallyExecutable,
-  //   startDate,
-  // } = proposal;
+const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
+  const {
+    actions,
+    creator,
+    dao,
+    endDate,
+    executed,
+    id,
+    metadata,
+    pluginProposalId,
+    potentiallyExecutable,
+    startDate,
+    createdAt,
+  } = proposal;
 
+  const { description, resources, summary, title, media } = metadata;
   const { isOpen, onClose, onOpen } = useDisclosure();
   const { network } = useNetwork();
   const { address: voterAddress } = useWallet();
@@ -235,16 +238,19 @@ const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
                 </Box>
                 <Box my={"4"}>
                   <Text as={"h1"} fontSize={"xl"} fontWeight={"bold"}>
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                    {title}
                   </Text>
                 </Box>
                 <Flex fontSize={"sm"} justifyContent={"space-between"}>
-                  <Text>Published By: 0x22323423423</Text>
+                  <Text>Published By: {shortenAddress(creator)}</Text>
                   <HStack>
                     <TimeIcon />
-                    <Text> {new Date(Date.now()).toISOString()}</Text>
+                    <Text> {timestampToStandardFormatString(createdAt)}</Text>
                   </HStack>
-                  <Text>ID {12}</Text>
+                  <Text>
+                    <InfoOutlineIcon mr={1} />
+                    ID: {pluginProposalId}
+                  </Text>
                   <HStack>
                     <IoShareSocial />
                     <Text>Share</Text>
@@ -312,8 +318,8 @@ const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
                   borderRadius={"md"}
                 >
                   <HStack justifyContent={"center"}>
-                    <Box w={'20px'}><XdcIcon  />
-
+                    <Box w={"20px"}>
+                      <XdcIcon />
                     </Box>
                     <Text>1000 XDC</Text>
                   </HStack>
@@ -442,14 +448,18 @@ const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
                 Discussions & References
               </Text>
               <HStack p={"6"}>
-                <Badge
-                  p={2}
-                  borderRadius={"md"}
-                  bgColor={"blue.100"}
-                  textColor={"blue.300"}
-                >
-                  XDC official
-                </Badge>
+                {resources.map(({ name, url }) => (
+                  <a href={url} target="_blank">
+                    <Badge
+                      p={2}
+                      borderRadius={"md"}
+                      bgColor={"blue.100"}
+                      textColor={"blue.300"}
+                    >
+                      {name}
+                    </Badge>
+                  </a>
+                ))}
               </HStack>
             </GridItem>
             <GridItem
@@ -466,24 +476,11 @@ const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
                 <Text mb={4} fontSize={"lg"} fontWeight={"bold"}>
                   Details
                 </Text>
-                <Text>
-                  This AIP propose to modify the parameters of stablecoins
-                  across all the Aave pools. Mainly by setting the slope1 to 5%,
-                  as well as changing the RF to 25% and Uopt to 90% of some of
-                  them. According to research by @monet-supply, the borrowing
-                  parameters of the stablecoins on Aave have diverged from the
-                  broader market leading to potentials inefficiencies and bad
-                  user experience. Those proposed changes have been approved by
-                  both risk providers, with additional suggestion by @Gauntlet.
-                  Stablecoin across all the V2 and V3 markets are concerned by
-                  those change. Namely USDC, USDT, LUSD, FRAX, sUSD, DAI, MAI,
-                  GUSD, USDP on ethereum (V2 and V3), polygon (V2 and V2),
-                  Arbitrum, Gnosis, Optimism, Avalanche (v2 and V3) and Metis.
-                  However the changes of RF and Uopt would be more limited, with
-                  the Uopt changes being limited to USDC, USDT, DAI and FRAX
-                  across all V3s and the RF ones to USDC, USDT and LUSD only for
-                  Ethereum V2.
-                </Text>
+                <Text
+                  dangerouslySetInnerHTML={{
+                    __html: description,
+                  }}
+                ></Text>
               </Box>
             </GridItem>
           </GridItem>

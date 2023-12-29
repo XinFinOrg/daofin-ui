@@ -22,6 +22,9 @@ query ProposalsQuery($pluginId: ID!) {
     creationBlockNumber
     snapshotBlock
     executed
+    createdAt
+    executionTxHash
+    creationTxHash
     actions {
       id
       to
@@ -67,11 +70,11 @@ function useDaoProposals(
               metadata,
             };
           })
-        )
+        );
       })
       .then((data) => {
-
         setProposals(data as unknown as Proposal[]);
+        setIsLoading(false);
       })
       .catch((e) => {
         setIsLoading(false);

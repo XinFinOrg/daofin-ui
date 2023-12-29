@@ -25,9 +25,10 @@ import { ArrowForwardIcon } from "@chakra-ui/icons";
 import {
   WalletAddressCardWithBalance,
   WalletAddressCard,
+  WalletAddressCardWithDate,
 } from "../components/WalletAddressCard";
 import { zeroAddress } from "viem";
-import { CHAIN_METADATA } from "../utils/networks";
+import { CHAIN_METADATA, JudiciaryCommittee } from "../utils/networks";
 import { useNetwork } from "../contexts/network";
 import MasterNodeDelegatePage from "./MasterNodeDelegatePage";
 import { MasterNodeSenateCard } from "../components/WalletAddressCard";
@@ -39,6 +40,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
+import useFetchJudiciaries from "../hooks/useFetchJudiciaries";
+import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
+import { toStandardTimestamp } from "../utils/date";
 
 const data = [
   {
@@ -63,6 +68,14 @@ const data = [
 
 const CommunityPage = () => {
   const { network } = useNetwork();
+
+  const { daoAddress, pluginAddress } = useAppGlobalConfig();
+  const { data: juries, error } = useFetchJudiciaries(
+    daoAddress,
+    pluginAddress
+  );
+  const totalNumberOfJudiciaries =
+    useFetchTotalNumbersByCommittee(JudiciaryCommittee);
   return (
     <Page>
       <Text fontWeight={"semibold"} fontSize={"lg"}>
@@ -137,12 +150,16 @@ const CommunityPage = () => {
             <ArrowForwardIcon />
           </Box>
         </HStack>
-        <HStack flexWrap={"wrap"} justifyContent={"space-between"}>
-          {new Array(5).fill(5).map(() => (
-            <Box w={"20%"}>
-              <WalletAddressCard address={zeroAddress} sm />
-            </Box>
-          ))}
+        <HStack flexWrap={"wrap"} justifyContent={"flex-start"}>
+          {juries.length > 0 &&
+            juries.map(({ member, creationDate }) => (
+              <Box w={'sm'}>
+                <WalletAddressCardWithDate
+                  address={member}
+                  date={new Date(toStandardTimestamp(creationDate.toString()))}
+                />
+              </Box>
+            ))}
         </HStack>
       </Flex>
 

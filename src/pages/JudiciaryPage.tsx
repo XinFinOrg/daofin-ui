@@ -20,8 +20,24 @@ import {
   WalletAddressCard,
   WalletAddressCardWithDate,
 } from "../components/WalletAddressCard";
+import useFetchJudiciaries from "../hooks/useFetchJudiciaries";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
+import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
+import { JudiciaryCommittee } from "../utils/networks";
+import {
+  timestampToStandardFormatString,
+  toStandardFormatString,
+  toStandardTimestamp,
+} from "../utils/date";
 
 const JudiciaryPage = () => {
+  const { daoAddress, pluginAddress } = useAppGlobalConfig();
+  const { data: juries, error } = useFetchJudiciaries(
+    daoAddress,
+    pluginAddress
+  );
+  const totalNumberOfJudiciaries =
+    useFetchTotalNumbersByCommittee(JudiciaryCommittee);
   return (
     <Page>
       <VStack
@@ -67,7 +83,7 @@ const JudiciaryPage = () => {
           >
             <Text>Total Judiciaries</Text>
             <Text fontSize={"lg"} fontWeight={"bold"}>
-              10
+              {totalNumberOfJudiciaries?.toString()}
             </Text>
           </VStack>
           <Box
@@ -91,10 +107,13 @@ const JudiciaryPage = () => {
       </VStack>
       <HStack>
         <VStack w={["70%"]} alignSelf={"flex-start"}>
-          <WalletAddressCardWithDate address={zeroAddress} date={new Date()} />
-          <WalletAddressCardWithDate address={zeroAddress} date={new Date()} />
-          <WalletAddressCardWithDate address={zeroAddress} date={new Date()} />
-          <WalletAddressCardWithDate address={zeroAddress} date={new Date()} />
+          {juries.length > 0 &&
+            juries.map(({ member, creationDate }) => (
+              <WalletAddressCardWithDate
+                address={member}
+                date={new Date(toStandardTimestamp(creationDate.toString()))}
+              />
+            ))}
         </VStack>
         <Box
           alignSelf={"flex-start"}

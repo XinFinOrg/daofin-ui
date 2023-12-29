@@ -35,6 +35,7 @@ query ProposalQuery($id: ID!) {
       creationBlockNumber
       failureMap 
       pluginProposalId
+      creationTxHash
     }
   }
 `;

@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { useNetwork } from "../../contexts/network";
+import { toStandardFormatString } from "../../utils/date";
 
 interface WalletAddressCardWithDateProps {
   address: string;
@@ -115,7 +116,7 @@ const WalletAddressCardWithDate: FC<WalletAddressCardWithDateProps> = ({
         <HStack>
           <TimeIcon boxSize={"3"} />
           <Text fontSize={"xs"} fontWeight={"normal"}>
-            {date.toISOString()}
+            {toStandardFormatString(date)}
           </Text>
         </HStack>
       </VStack>
