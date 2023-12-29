@@ -13,8 +13,9 @@ import { TreasuryIcon } from "../utils/assets/icons";
 import { XdcIcon } from "../utils/assets/icons/XdcIcon";
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 import { Link } from "react-router-dom";
-import WalletAddressCardWithBalance from "../components/WalletAddressCardWithBalance";
+
 import { zeroAddress } from "viem";
+import { WalletAddressCardWithBalance } from "../components/WalletAddressCard";
 
 const data = [
   { name: "Group A", value: 400 },

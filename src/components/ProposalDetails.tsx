@@ -11,20 +11,7 @@ import {
   HStack,
   VStack,
 } from "@chakra-ui/layout";
-import {
-  CHAIN_METADATA,
-  JudiciaryCommittee,
-  KNOWN_FORMATS,
-  MasterNodeCommittee,
-  PeoplesHouseCommittee,
-  applyRatioCeiled,
-  convertCommitteeToPlainText,
-  convertVoteOptionToItsColor,
-  convertVoteOptionToText,
-  formatDate,
-  getFormattedUtcOffset,
-  shortenAddress,
-} from "../utils/networks";
+import { shortenAddress } from "../utils/networks";
 import { styled } from "styled-components";
 import { FormLabel } from "@chakra-ui/form-control";
 import BoxWrapper from "./BoxWrapper";
@@ -33,23 +20,9 @@ import { useNetwork } from "../contexts/network";
 import useIsUserDeposited from "../hooks/useIsUserDeposited";
 import { useWallet } from "../hooks/useWallet";
 import { Button } from "@chakra-ui/button";
-import { Tooltip } from "@chakra-ui/tooltip";
-import useIsUserVotedOnProposal from "../hooks/useIsUserVotedOnProposal";
-import { useClient } from "../hooks/useClient";
-import { InputGroup } from "@chakra-ui/input";
+
 import { useDisclosure } from "@chakra-ui/hooks";
 import {
-  Progress,
-  Select,
-  Step,
-  StepDescription,
-  StepIcon,
-  StepIndicator,
-  StepNumber,
-  StepSeparator,
-  StepStatus,
-  StepTitle,
-  Stepper,
   Tab,
   TabList,
   TabPanel,
@@ -58,30 +31,20 @@ import {
   Tag,
   useSteps,
 } from "@chakra-ui/react";
-import { VoteOption, VoteSteps } from "@xinfin/osx-daofin-sdk-client";
-import useFetchVotersOnProposal from "../hooks/useFetchVotersOnProposal";
-import { daoAddress, pluginAddress } from "../utils/constants";
-import useVoteStats from "../hooks/useVoteStats";
-import useFetchProposalTallyDetails from "../hooks/useFetchProposalTallyDetails";
-import useFetchGlobalCommitteeToVotingSettings from "../hooks/useFetchGlobalCommitteeToVotingSettings";
+
 import { parseEther, zeroAddress } from "viem";
-import { BigNumber } from "@ethersproject/bignumber";
-import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
-import useMinParticipationVotingStatsPerCommittee from "../hooks/useMinParticipationVotingStatsPerCommittee";
-import useThresholdVotingStatsPerCommittee from "../hooks/useThresholdVotingStatsPerCommittee";
+
 import ProposalTypeBadge from "./ProposalTypeBadge";
 import { IoShareSocial } from "react-icons/io5";
 import { ArrowForwardIcon, TimeIcon } from "@chakra-ui/icons";
-import MasterNodeDelegateeSenateIcon from "../utils/assets/icons/MasterNodeDelegateeSenateIcon";
-import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
-import PeopleHouseIcon from "../utils/assets/icons/PeopleHouseIcon";
+
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 import VoteStatProgressBar from "./VoteStatProgressBar";
 import VotingStatsBox from "./VotingStatsBox";
-import WalletAddressCard from "./WalletAddressCard";
 import { BlockIcon } from "../utils/assets/icons";
 import ProposalStatusStepper from "./ProposalStatusStepper";
 import { XdcIcon } from "../utils/assets/icons/XdcIcon";
+import { WalletAddressCard } from "./WalletAddressCard";
 
 const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
   // const {
@@ -349,7 +312,9 @@ const ProposalDetails: FC<{ proposal?: Proposal }> = ({ proposal }) => {
                   borderRadius={"md"}
                 >
                   <HStack justifyContent={"center"}>
-                    <XdcIcon />
+                    <Box w={'20px'}><XdcIcon  />
+
+                    </Box>
                     <Text>1000 XDC</Text>
                   </HStack>
                 </Box>

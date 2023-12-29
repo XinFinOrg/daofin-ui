@@ -10,6 +10,7 @@ import {
   Heading,
   useColorMode,
   Switch,
+  Image,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,

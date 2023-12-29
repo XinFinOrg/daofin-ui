@@ -1,11 +1,18 @@
-import { Box, HStack, IconButton, Text, useClipboard, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  HStack,
+  IconButton,
+  Text,
+  useClipboard,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import React, { FC, useEffect, useState } from "react";
 import { jsNumberForAddress } from "react-jazzicon";
 import Jazzicon from "react-jazzicon/dist/Jazzicon";
-import { CHAIN_METADATA, shortenAddress } from "../utils/networks";
+import { CHAIN_METADATA, shortenAddress } from "../../utils/networks";
 import { CheckIcon, CopyIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
-import { useNetwork } from "../contexts/network";
+import { useNetwork } from "../../contexts/network";
 
 interface WalletAddressCardProps {
   address: string;
@@ -33,31 +40,38 @@ const WalletAddressCard: FC<WalletAddressCardProps> = ({ address, sm }) => {
   return (
     <HStack
       bgColor={useColorModeValue("white", "black")}
-      p={1}
-      pl={2}
+      px={4}
+      py={2}
+      border={"1px"}
+      borderColor={useColorModeValue("#DDE3E9", "black")}
       boxShadow={"sm"}
       borderRadius={"md"}
       alignItems={"center"}
-      justifyContent={"space-between"}
+      justifyContent={"flex-start"}
       cursor={"pointer"}
       w={"full"}
     >
-      <Box mt={"0.5"} w={"10%"}>
-        <Jazzicon diameter={sm ? 25 : 50} seed={jsNumberForAddress(address)} />
+      <Box mt={"0.5"}>
+        <Jazzicon diameter={25} seed={jsNumberForAddress(address)} />
       </Box>
-      <Text
-        w={"md"}
-        fontSize="md"
-        fontWeight={"medium"}
-        onClick={handleCopyClick}
-      >
+      <Text fontSize="sm" fontWeight={"500"} onClick={handleCopyClick}>
         {shortenAddress(address)}
       </Text>
-      <Box w={"10%"}>
+      <Box w={"25px"}>
         {clicked ? (
-          <CheckIcon />
+          <IconButton
+            bgColor="unset"
+            color="unset"
+            size={"xs"}
+            as={CheckIcon}
+            aria-label=""
+            w={"5"}
+            h={"5"}
+          />
         ) : (
           <IconButton
+            w={"5"}
+            h={"5"}
             bgColor="unset"
             color="unset"
             size={"xs"}
@@ -67,19 +81,23 @@ const WalletAddressCard: FC<WalletAddressCardProps> = ({ address, sm }) => {
           />
         )}
       </Box>
-
-      <IconButton
-        aria-label=""
-        onClick={() =>
-          window.open(
-            `${CHAIN_METADATA[network].explorer}/address/${address}`,
-            "_blank"
-          )
-        }
-        size={"lg"}
-        icon={<ExternalLinkIcon />}
-        variant={"unstyled"}
-      />
+      <Box w={"1%"}>
+        <IconButton
+          w={"5"}
+          h={"5"}
+          aria-label=""
+          onClick={() =>
+            window.open(
+              `${CHAIN_METADATA[network].explorer}/address/${address}`,
+              "_blank"
+            )
+          }
+          size={"xs"}
+          bgColor="unset"
+          color="unset"
+          as={ExternalLinkIcon}
+        />
+      </Box>
     </HStack>
   );
 };

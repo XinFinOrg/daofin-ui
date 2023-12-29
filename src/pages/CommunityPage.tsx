@@ -22,13 +22,15 @@ import {
 } from "@chakra-ui/react";
 import CommunityCards from "../components/CommunityCards";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
-import WalletAddressCard from "../components/WalletAddressCard";
+import {
+  WalletAddressCardWithBalance,
+  WalletAddressCard,
+} from "../components/WalletAddressCard";
 import { zeroAddress } from "viem";
-import WalletAddressCardWithBalance from "../components/WalletAddressCardWithBalance";
 import { CHAIN_METADATA } from "../utils/networks";
 import { useNetwork } from "../contexts/network";
 import MasterNodeDelegatePage from "./MasterNodeDelegatePage";
-import MasterNodeSenateCard from "../components/MasterNodeSenateCard";
+import { MasterNodeSenateCard } from "../components/WalletAddressCard";
 import {
   Area,
   AreaChart,

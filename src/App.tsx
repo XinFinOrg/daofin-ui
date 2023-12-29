@@ -32,13 +32,13 @@ function App() {
 
         <Route path="/community">
           <Route path="/community" element={<CommunityPage />} />
-          <Route path="/community/judiciaries" element={<JudiciaryPage />} />
+          <Route path="/community/judiciary" element={<JudiciaryPage />} />
           <Route
             path="/community/peoples-house"
             element={<PeoplesHousePage />}
           />
           <Route
-            path="/community/master-node-delegatee"
+            path="/community/masternode-delegatee-senate"
             element={<MasterNodeDelegatePage />}
           />
         </Route>
