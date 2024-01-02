@@ -82,11 +82,13 @@ const DaofinSettingsCard = ({}) => {
                     <Flex className="flex-row justify-start">
                       {globalSettings && (
                         <>
-                          {globalSettings.allowedAmounts.map((amount) => (
+                          {
                             <BoxWrapper key={uuid()} className="m-3">
-                              {`${formatEther(amount.toString())} XDC`}
+                              {`${formatEther(
+                                globalSettings.houseMinAmount.toString()
+                              )} XDC`}
                             </BoxWrapper>
-                          ))}
+                          }
                         </>
                       )}
                     </Flex>

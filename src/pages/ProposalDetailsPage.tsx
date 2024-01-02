@@ -9,6 +9,8 @@ import {
 } from "../utils/networks";
 
 import { BigNumber, ethers } from "ethers";
+import { Page } from "../components";
+import { Skeleton } from "@chakra-ui/react";
 
 const ProposalDetailsPage = () => {
   const { pluginAddress, daoAddress } = useAppGlobalConfig();
@@ -17,11 +19,8 @@ const ProposalDetailsPage = () => {
     getPluginProposalId(pluginAddress, proposalId ? parseInt(proposalId) : 0)
   );
 
-  
   return (
-    <>
-      {data && !error && !isLoading && <ProposalDetails proposal={data} />}
-    </>
+    <Page>{data ? <ProposalDetails proposal={data} /> : null}</Page>
   );
 };
 

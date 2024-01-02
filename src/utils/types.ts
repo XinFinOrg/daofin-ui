@@ -15,6 +15,9 @@ export type Proposal = {
   executed: boolean;
   potentiallyExecutable: boolean;
   actions: DaoAction[];
+  createdAt: string;
+  executionTxHash: string;
+  creationTxHash: string;
 };
 export type Deposit = {
   id: string;
