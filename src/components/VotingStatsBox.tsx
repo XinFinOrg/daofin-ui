@@ -9,16 +9,17 @@ import {
   Text,
   Box,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { FC } from "react";
 import VoteStatProgressBar from "./VoteStatProgressBar";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
+import useVoteStats from "../hooks/useVoteStats";
 
 interface VotingStatsBoxProps {
-  currentVoters: number;
+  currentVoters?: number;
+  proposalId: string;
 }
-const VotingStatsBox = () => {
+const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
   const { committeesListWithIcon, committeesList } = useCommitteeUtils();
-
   return (
     <>
       <HStack justifyContent={"space-between"} mb={"6"} p={"6"}>

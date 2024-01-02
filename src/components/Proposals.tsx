@@ -27,17 +27,19 @@ import {
   toStandardTimestamp,
 } from "../utils/date";
 import { IoIdCardOutline } from "react-icons/io5";
+import { NoProposalIcon } from "../utils/assets/icons/NoProposalIcon";
+import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
 const jazzicon = require("@metamask/jazzicon");
 
 const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
   const navigate = useNavigate();
   const date = useMemo(() => new Date(), []);
-  console.log("proposals", proposals.slice(2));
 
   return (
     <>
-      {proposals.length > 0 && (
+      {proposals.length > 0 ? (
         <BaseTable
+          emptyText={"There is no proposal yet. Be the first to make change"}
           data={proposals.map(
             ({
               metadata,
@@ -135,6 +137,8 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
             },
           ]}
         />
+      ) : (
+        <></>
       )}
     </>
   );
@@ -160,11 +164,13 @@ const ProposalSummary: FC<ProposalSummaryProps> = ({
   creatorAddress,
   startDate,
   endDate,
-  creationTxHash
+  creationTxHash,
 }) => {
   return (
     <HStack>
-      <Jazzicon diameter={50} seed={jsNumberForAddress(creationTxHash)} />
+      <Box minW={"50px"}>
+        <Jazzicon diameter={50} seed={jsNumberForAddress(creationTxHash)} />
+      </Box>
       <Flex flexDirection={"column"}>
         <Text fontWeight={"semibold"}>{title}</Text>
         <HStack fontSize={"sm"} my={"2"}>
@@ -182,7 +188,7 @@ const ProposalSummary: FC<ProposalSummaryProps> = ({
           <Box color={"orange"} fontSize={"sm"}>
             <TimeIcon display={"inline-block"} mr={"2"} />
             <Text display={"inline-block"}>
-              Expired in {expirationDistance(startDate, endDate)}{" "}
+              Expired in {expirationDistance(new Date(), endDate)}{" "}
             </Text>
           </Box>
         </HStack>

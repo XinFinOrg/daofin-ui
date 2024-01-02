@@ -143,8 +143,10 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
           value: BigInt(parseEther(action.amount.toString())),
         },
       ],
+      proposalType: 0,
       allowFailureMap: 0,
       electionIndex: selectedElectionPeriod,
+      voteOption: 1,
     });
   };
   return (

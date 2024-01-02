@@ -11,7 +11,7 @@ import {
   HStack,
   VStack,
 } from "@chakra-ui/layout";
-import { shortenAddress } from "../utils/networks";
+import { makeBlockScannerHashUrl, shortenAddress } from "../utils/networks";
 import { styled } from "styled-components";
 import { FormLabel } from "@chakra-ui/form-control";
 import BoxWrapper from "./BoxWrapper";
@@ -46,6 +46,11 @@ import ProposalStatusStepper from "./ProposalStatusStepper";
 import { XdcIcon } from "../utils/assets/icons/XdcIcon";
 import { WalletAddressCard } from "./WalletAddressCard";
 import { timestampToStandardFormatString } from "../utils/date";
+import useVoteStats from "../hooks/useVoteStats";
+import useFetchVotersOnProposal from "../hooks/useFetchVotersOnProposal";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
+import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
+import { NoProposalIcon } from "../utils/assets/icons/NoProposalIcon";
 
 const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
   const {
@@ -67,11 +72,18 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
   const { network } = useNetwork();
   const { address: voterAddress } = useWallet();
   const { committeesListWithIcon, committeesList } = useCommitteeUtils();
+  const { daoAddress, pluginAddress } = useAppGlobalConfig();
   // const {
   //   judiciaryVoteListLength,
   //   masterNodeVoteListLength,
   //   peoplesHouseVoteListLength,
   // } = useVoteStats(pluginProposalId);
+
+  const { data: allVoters } = useFetchVotersOnProposal(
+    daoAddress,
+    pluginAddress,
+    pluginProposalId
+  );
 
   const handleVote = async () => {
     // const iterator = daofinClient?.methods.vote(
@@ -211,6 +223,13 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
   //       : [],
   //   [committeesList, peopleStats, mnStats, judiciaryStats]
   // );
+  const voteOptionsList = useMemo(
+    () =>
+      Object.entries(VoteOption)
+        .filter(([_, value]) => isNaN(Number(value)))
+        .slice(1),
+    []
+  );
 
   return (
     <>
@@ -275,7 +294,7 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
               h={"min-content"}
               mb={4}
             >
-              <VotingStatsBox />
+              <VotingStatsBox proposalId={pluginProposalId} />
             </GridItem>
             <GridItem
               colSpan={1}
@@ -393,36 +412,54 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                 </TabList>
 
                 <TabPanels>
-                  {committeesListWithIcon.map(({}) => (
+                  {committeesListWithIcon.map(({ id, name }) => (
                     <TabPanel p={"6"}>
                       <Tabs isFitted variant="soft-rounded">
                         <TabList>
-                          <Tab>For</Tab>
-                          <Tab>Against</Tab>
-                          <Tab>Abstain</Tab>
+                          {voteOptionsList.map(([key, value]) => (
+                            <Tab key={key}>{value}</Tab>
+                          ))}
                         </TabList>
                         <TabPanels>
-                          {committeesListWithIcon.map(({}) => (
+                          {voteOptionsList.map(([key, value]) => (
                             <TabPanel w={"full"}>
                               <VStack spacing={"1"} alignItems={"start"}>
-                                <HStack>
-                                  <WalletAddressCard sm address={zeroAddress} />
-                                  <a href="">
-                                    <BlockIcon w={"5"} h={"5"} />
-                                  </a>
-                                </HStack>
-                                <HStack>
-                                  <WalletAddressCard sm address={zeroAddress} />
-                                  <a href="">
-                                    <BlockIcon w={"5"} h={"5"} />
-                                  </a>
-                                </HStack>
-                                <HStack>
-                                  <WalletAddressCard sm address={zeroAddress} />
-                                  <a href="">
-                                    <BlockIcon w={"5"} h={"5"} />
-                                  </a>
-                                </HStack>
+                                {allVoters.filter(
+                                  (item) =>
+                                    item.committee === id &&
+                                    item.option === +key
+                                ).length > 0 ? (
+                                  allVoters
+                                    .filter(
+                                      (item) =>
+                                        item.committee === id &&
+                                        item.option === +key
+                                    )
+                                    .map(({ voter, txHash }) => (
+                                      <HStack>
+                                        <WalletAddressCard sm address={voter} />
+                                        <a
+                                          href={makeBlockScannerHashUrl(
+                                            network,
+                                            txHash
+                                          )}
+                                          target="_blank"
+                                        >
+                                          <BlockIcon w={"5"} h={"5"} />
+                                        </a>
+                                      </HStack>
+                                    ))
+                                ) : (
+                                  <VStack alignSelf={"center"} p={6}>
+                                    <NoProposalIcon />
+                                    <Text>
+                                      No {name} has voted yet! Be the first!
+                                    </Text>
+                                    <Button variant={"outline"}>
+                                      Vote now!
+                                    </Button>
+                                  </VStack>
+                                )}
                               </VStack>
                             </TabPanel>
                           ))}

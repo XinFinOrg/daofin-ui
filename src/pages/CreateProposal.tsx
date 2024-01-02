@@ -109,64 +109,64 @@ const CreateProposal = () => {
       error: false,
     });
   };
-  const handleSubmitProposal = async (data: CreateProposalFormData) => {
-    const ipfsUri = await daofinClient?.methods.pinMetadata({
-      title: data.metaData.title,
-      description: data.metaData.description,
-      summary: data.metaData.summary,
-      resources: data.metaData.resources,
-    });
+  // const handleSubmitProposal = async (data: CreateProposalFormData) => {
+  //   const ipfsUri = await daofinClient?.methods.pinMetadata({
+  //     title: data.metaData.title,
+  //     description: data.metaData.description,
+  //     summary: data.metaData.summary,
+  //     resources: data.metaData.resources,
+  //   });
 
-    if (!ipfsUri) return;
+  //   if (!ipfsUri) return;
 
-    setProposalState((prev) => ({
-      ...prev,
-      key: TransactionState.LOADING,
-    }));
-    const proposalIterator = daofinClient?.methods.createProposal({
-      metdata: ipfsUri,
-      actions: [
-        {
-          data: new Uint8Array(),
-          to: zeroAddress,
-          value: BigInt("0"),
-        },
-      ],
-      allowFailureMap: 0,
-      electionIndex: data.selectedElectionPeriod,
-    });
-    if (!proposalIterator) {
-      return;
-    }
+  //   setProposalState((prev) => ({
+  //     ...prev,
+  //     key: TransactionState.LOADING,
+  //   }));
+  //   const proposalIterator = daofinClient?.methods.createProposal({
+  //     metdata: ipfsUri,
+  //     actions: [
+  //       {
+  //         data: new Uint8Array(),
+  //         to: zeroAddress,
+  //         value: BigInt("0"),
+  //       },
+  //     ],
+  //     allowFailureMap: 0,
+  //     electionIndex: data.selectedElectionPeriod,
+  //   });
+  //   if (!proposalIterator) {
+  //     return;
+  //   }
 
-    try {
-      for await (const step of proposalIterator) {
-        switch (step.key) {
-          case ProposalCreationSteps.CREATING:
-            console.log(step.txHash);
-            setProposalState((prev) => ({
-              ...prev,
-              key: TransactionState.WAITING,
-              txHash: step.txHash,
-            }));
-            break;
-          case ProposalCreationSteps.DONE: {
-            console.log("DONE", step.key, step.proposalId);
-            setProposalState((prev) => ({
-              ...prev,
-              key: TransactionState.SUCCESS,
-              proposalId: decodeProposalId(step.proposalId).id,
-            }));
+  //   try {
+  //     for await (const step of proposalIterator) {
+  //       switch (step.key) {
+  //         case ProposalCreationSteps.CREATING:
+  //           console.log(step.txHash);
+  //           setProposalState((prev) => ({
+  //             ...prev,
+  //             key: TransactionState.WAITING,
+  //             txHash: step.txHash,
+  //           }));
+  //           break;
+  //         case ProposalCreationSteps.DONE: {
+  //           console.log("DONE", step.key, step.proposalId);
+  //           setProposalState((prev) => ({
+  //             ...prev,
+  //             key: TransactionState.SUCCESS,
+  //             proposalId: decodeProposalId(step.proposalId).id,
+  //           }));
 
-            break;
-          }
-        }
-      }
-    } catch (error) {
-      console.log(error);
-      resetProposalState();
-    }
-  };
+  //           break;
+  //         }
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //     resetProposalState();
+  //   }
+  // };
 
   const initvalues: CreateProposalFormData = {
     metaData: {
@@ -186,7 +186,7 @@ const CreateProposal = () => {
         validate={(values) => {}}
         validationSchema={CreationFormSchema}
         validateOnChange={true}
-        onSubmit={handleSubmitProposal}
+        onSubmit={() => {}}
       >
         {(props: FormikProps<CreateProposalFormData>) => (
           <CreateProposalProvider>

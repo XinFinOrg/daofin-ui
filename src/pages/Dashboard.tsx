@@ -93,15 +93,15 @@ const Dashboard: FC = () => {
           w={"50%"}
           justifyContent={"space-between"}
         >
-            <VStack alignItems={"flex-start"}>
-              <Text fontSize="sm" fontWeight={"normal"}>
-                Total Proposals
-              </Text>
+          <VStack alignItems={"flex-start"}>
+            <Text fontSize="sm" fontWeight={"normal"}>
+              Total Proposals
+            </Text>
 
-              <Text fontSize="large" fontWeight={"bold"}>
-                {proposals.length}
-              </Text>
-            </VStack>
+            <Text fontSize="large" fontWeight={"bold"}>
+              {proposals.length}
+            </Text>
+          </VStack>
           <Box>
             <Button
               variant="outline"
@@ -205,6 +205,9 @@ const Dashboard: FC = () => {
         </Box>
       </Flex>
 
+      <Text fontSize={"md"} fontWeight={"semibold"} mb={"4"}>
+        Most Recent Proposals
+      </Text>
       <Flex justifyContent={"center"}>
         <Box w={"100%"}>{<Proposals proposals={proposals} />}</Box>
       </Flex>

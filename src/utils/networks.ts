@@ -459,5 +459,5 @@ export function makeBlockScannerHashUrl(
   network: SupportedNetworks,
   hash: string
 ) {
-  return `${CHAIN_METADATA[network].etherscanApi}/txs/${hash}`;
+  return `${CHAIN_METADATA[network].explorer}/txs/${hash}`;
 }

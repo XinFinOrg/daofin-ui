@@ -69,11 +69,6 @@ const PeoplesHousePage = () => {
     getPluginInstallationId(daoAddress, pluginAddress)
   );
   const globalSettings = useDaoGlobalSettings();
-  useEffect(() => {
-    if (!globalSettings || !globalSettings.allowedAmounts) return;
-
-    // setValue("depositAmount", globalSettings.allowedAmounts[0].toString());
-  }, [globalSettings]);
   const handleDeposit = async () => {
     // const { depositAmount } = getValues();
     // const parsedAmount = depositAmount;
