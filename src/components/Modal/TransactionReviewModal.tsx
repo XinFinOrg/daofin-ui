@@ -28,7 +28,13 @@ import { BigNumberish } from "@ethersproject/bignumber";
 import { TransactionState } from "../../utils/types";
 import { useNetwork } from "../../contexts/network";
 import { Link } from "react-router-dom";
-export type TransactionReviewModalProps = Pick<
+import { numberWithCommaSeparate } from "../../utils/numbers";
+
+export type ModalActionButtonType = {
+  goTo: string;
+  text: string;
+};
+export type TransactionReviewModalProps<T> = Pick<
   ModalProps,
   "isOpen" | "onClose"
 > & {
@@ -49,10 +55,10 @@ export type TransactionReviewModalProps = Pick<
   status?: TransactionState | undefined;
   txData?: {
     hash: string;
-    proposalId: string;
+    data: ModalActionButtonType;
   };
 };
-const TransactionReviewModal: FC<TransactionReviewModalProps> = ({
+const TransactionReviewModal = <T extends any | undefined>({
   isOpen,
   onClose,
   data,
@@ -60,7 +66,7 @@ const TransactionReviewModal: FC<TransactionReviewModalProps> = ({
   onSubmitClick,
   status,
   txData,
-}) => {
+}: TransactionReviewModalProps<T>) => {
   const [title, setTitle] = useState("");
   useEffect(() => {
     switch (status) {
@@ -96,10 +102,12 @@ const TransactionReviewModal: FC<TransactionReviewModalProps> = ({
                       fontWeight={"semibold"}
                       alignItems={"center"}
                     >
+                      <Text mr={1}>
+                        {numberWithCommaSeparate(value.toString())}
+                      </Text>
                       <Box w={"20px"}>
                         <XdcIcon />
                       </Box>
-                      <Text ml={1}>{value.toString()}</Text>
                     </Flex>
                   </Flex>
                 ))}
@@ -119,10 +127,12 @@ const TransactionReviewModal: FC<TransactionReviewModalProps> = ({
                       fontWeight={"semibold"}
                       alignItems={"center"}
                     >
+                      <Text mr={1}>
+                        {numberWithCommaSeparate(totalCosts.tokenValue)}
+                      </Text>
                       <Box w={"20px"}>
                         <XdcIcon />
                       </Box>
-                      <Text ml={1}>{totalCosts.tokenValue}</Text>
                     </Flex>
                     <Text fontSize={"sm"} fontWeight={"semibold"}>
                       ${totalCosts.usdValue}
@@ -221,9 +231,10 @@ const TransactionReviewModal: FC<TransactionReviewModalProps> = ({
             </Box>
 
             <Box mb={4} w={"full"}>
-              <Link to={`/proposals/${txData?.proposalId}/details`}>
+              {/* <Link to={`/proposals/${txData?.proposalId}/details`}> */}
+              <Link to={`${txData?.data.goTo}`}>
                 <Button w={"full"} colorScheme="blue" mb={2}>
-                  View my proposal
+                  {txData?.data.text}
                 </Button>
               </Link>
 

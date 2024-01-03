@@ -35,7 +35,10 @@ import { MasterNodeSenateCard } from "../components/WalletAddressCard";
 import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
+  Legend,
   ResponsiveContainer,
   XAxis,
   YAxis,
@@ -43,7 +46,14 @@ import {
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import useFetchJudiciaries from "../hooks/useFetchJudiciaries";
 import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
-import { toStandardTimestamp } from "../utils/date";
+import { toNormalDate, toStandardTimestamp } from "../utils/date";
+import { useMasterNodeDelegateeSentateContext } from "../contexts/MasterNodeDelegateeSentateContext";
+import useFetchMasterNodeDelegatee from "../hooks/useFetchMasterNodeDelegatee";
+import usePeoplesHouseDeposits from "../hooks/useDeposits";
+import { weiBigNumberToFormattedNumber } from "../utils/numbers";
+import { NoProposalIcon } from "../utils/assets/icons/NoProposalIcon";
+import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
+import CoinIcon from "../utils/assets/icons/CoinIcon";
 
 const data = [
   {
@@ -76,6 +86,9 @@ const CommunityPage = () => {
   );
   const totalNumberOfJudiciaries =
     useFetchTotalNumbersByCommittee(JudiciaryCommittee);
+
+  const { data: people } = usePeoplesHouseDeposits();
+  const { data: delegatees } = useFetchMasterNodeDelegatee();
   return (
     <Page>
       <Text fontWeight={"semibold"} fontSize={"lg"}>
@@ -153,7 +166,7 @@ const CommunityPage = () => {
         <HStack flexWrap={"wrap"} justifyContent={"flex-start"}>
           {juries.length > 0 &&
             juries.map(({ member, creationDate }) => (
-              <Box w={'sm'}>
+              <Box w={"sm"}>
                 <WalletAddressCardWithDate
                   address={member}
                   date={new Date(toStandardTimestamp(creationDate.toString()))}
@@ -181,17 +194,18 @@ const CommunityPage = () => {
                 initial deployment
               </Text>
             </Box>
-            <Box w={"100%"}>
+            <Box w={"100%"} px={6} py={4}>
               <ResponsiveContainer width={"100%"} minHeight={300}>
-                <AreaChart width={600} height={200} data={data}>
-                  <Area
-                    type="monotone"
-                    dataKey="uv"
-                    stroke="#8884d8"
-                    fill="#8884d8"
-                  />
-                </AreaChart>
+                <BarChart width={730} height={250} data={data}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  {/* <YAxis /> */}
+                  {/* <Legend /> */}
+                  <Bar dataKey="pv" fill="#8884d8" />
+                  <Bar dataKey="uv" fill="#82ca9d" />
+                </BarChart>
               </ResponsiveContainer>
+
             </Box>
           </VStack>
           <VStack alignItems={"flex-start"} w={"50%"}>
@@ -204,23 +218,43 @@ const CommunityPage = () => {
               </Text>
             </Box>
             <VStack w={"full"}>
-              {new Array(4).fill(4).map(() => (
-                <Box w={"full"}>
-                  <WalletAddressCardWithBalance
-                    address={zeroAddress}
-                    sm
-                    balance={122}
-                    symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
-                  />
-                </Box>
-              ))}
+              {people.length < 0 ? (
+                people.map(
+                  ({ amount, depositDate, snapshotBlock, id, voter }) => (
+                    <Box w={"full"}>
+                      <WalletAddressCardWithBalance
+                        address={voter}
+                        sm
+                        balance={weiBigNumberToFormattedNumber(amount)}
+                        symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
+                      />
+                    </Box>
+                  )
+                )
+              ) : (
+                <>
+                  <VStack
+                    w={"100%"}
+                    alignItems="center"
+                    alignSelf={"center"}
+                    p={6}
+                  >
+                    <CoinIcon />
+                    <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                      {"There is not enough data this month to showcase"}
+                    </Text>
+                  </VStack>
+                </>
+              )}
             </VStack>
-            <Button variant={"ghost"} w={"full"}>
-              View All
-            </Button>
-            <Button variant={"outline"} w={"full"}>
-              Join House
-            </Button>
+            <VStack w={"full"}>
+              <Button variant={"ghost"} w={"full"} alignSelf={"end"}>
+                View All
+              </Button>
+              <Button colorScheme="blue" w={"full"} alignSelf={"end"}>
+                Join House
+              </Button>
+            </VStack>
           </VStack>
         </HStack>
       </Flex>
@@ -230,6 +264,7 @@ const CommunityPage = () => {
         p={"6"}
         bgColor={useColorModeValue("gray.50", "gray.900")}
         borderRadius={"md"}
+        w={"full"}
       >
         <HStack w={"full"} justifyContent={"space-between"} mb={"4"}>
           <Box>
@@ -243,17 +278,26 @@ const CommunityPage = () => {
             <ArrowForwardIcon />
           </Box>
         </HStack>
-        <HStack flexWrap={"wrap"} justifyContent={"space-around"}>
-          {new Array(4).fill(5).map(() => (
-            <Box w={"20%"}>
-              <MasterNodeSenateCard
-                address={zeroAddress}
-                blockNumber={58138715}
-                joinedDate={new Date()}
-                masterNodeAddress={zeroAddress}
-              />
-            </Box>
-          ))}
+        <HStack flexWrap={"wrap"} justifyContent={"flex-start"}>
+          {delegatees.map(
+            ({
+              creationDate,
+              masterNode,
+              member,
+              snapshotBlock,
+              txHash,
+              id,
+            }) => (
+              <Box w={["50%", "20%"]} key={id}>
+                <MasterNodeSenateCard
+                  address={member}
+                  blockNumber={parseInt(snapshotBlock.toString())}
+                  joinedDate={toNormalDate(creationDate.toString())}
+                  masterNodeAddress={masterNode}
+                />
+              </Box>
+            )
+          )}
         </HStack>
       </Flex>
     </Page>

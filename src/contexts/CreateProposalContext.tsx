@@ -19,6 +19,7 @@ import { BigNumberish, BigNumber } from "@ethersproject/bignumber";
 import { TransactionState } from "../utils/types";
 import { decodeAbiParameters, parseEther } from "viem";
 import { ProposalCreationSteps } from "@xinfin/osx-sdk-client";
+import useTransactionModalDisclosure from "../hooks/useTransactionModalDisclosure";
 
 export type CreateProposalContextType = {
   handlePublishProposal: () => void;
@@ -34,19 +35,22 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
   const [proposalCreationData, setProposalCreationData] =
     useState<CreateProposalParams>();
 
-  const { values } = useFormikContext<CreateProposalFormData>();
+  const { values, resetForm } = useFormikContext<CreateProposalFormData>();
   const { action, metaData, selectedElectionPeriod } = values;
 
   const { daofinClient } = useClient();
 
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { isOpen, onClose, onOpen } = useTransactionModalDisclosure();
 
   const [creationProcessState, setCreationProcessState] =
     useState<TransactionState>();
 
   const [publishedTxData, setPublishedTxData] = useState<{
     hash: string;
-    proposalId: string;
+    data: {
+      goTo: string;
+      text: string;
+    };
   }>();
 
   const shouldPoll =
@@ -60,10 +64,11 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
       );
   }, [daofinClient?.estimation, proposalCreationData]);
 
-  const { averageFee, error, maxFee, stopPolling, tokenPrice } = usePollGasFee(
+  const { stopPolling, txCosts, txFees } = usePollGasFee(
     estimateCreationFees,
     shouldPoll
   );
+
   const handlePublishProposal = async () => {
     if (!proposalCreationData) return;
     const proposalIterator =
@@ -79,17 +84,25 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
           case ProposalCreationSteps.CREATING:
             setPublishedTxData({
               hash: step.txHash,
-              proposalId: "",
+              data: {
+                goTo: "",
+                text: "",
+              },
             });
             break;
           case ProposalCreationSteps.DONE: {
-            if (!publishedTxData) return;
+            // if (!publishedTxData) return;
             setPublishedTxData((prev) => ({
               hash: prev?.hash ? prev.hash : "",
-              proposalId: step.proposalId.split("_0x")[1],
+              data: {
+                goTo: `/proposals/${step.proposalId.split("_0x")[1]}/details`,
+                text: "View my proposal",
+              },
             }));
 
             setCreationProcessState(TransactionState.SUCCESS);
+            resetForm();
+            stopPolling();
             break;
           }
         }
@@ -99,32 +112,11 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
       setCreationProcessState(TransactionState.ERROR);
     }
   };
-  const feesData = useMemo(() => {
-    return maxFee && averageFee
-      ? [
-          { title: "Proposal Cost", tooltip: "", value: "10000" },
-          {
-            title: "Gas fees (estimated)",
-            tooltip: "",
-            value: averageFee.toString(),
-          },
-          { title: "Max Fees", tooltip: "", value: maxFee.toString() },
-        ]
-      : undefined;
-  }, [averageFee, maxFee]);
-
-  const totalCosts = useMemo(() => {
-    return averageFee && tokenPrice
-      ? {
-          tokenValue: averageFee.toString(),
-          usdValue: tokenPrice.toString(),
-        }
-      : undefined;
-  }, [tokenPrice, averageFee]);
 
   const handleOpenPublishModal = async () => {
-    onOpen();
-    setCreationProcessState(TransactionState.LOADING);
+    onOpen(() => {
+      setCreationProcessState(TransactionState.LOADING);
+    });
     let metadaIpfsHash;
     try {
       metadaIpfsHash = await daofinClient?.methods.pinMetadata(metaData);
@@ -132,7 +124,6 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
       throw Error("Could not pin metadata on IPFS");
     }
     if (!metadaIpfsHash) return;
-    console.log({ metadaIpfsHash });
 
     setProposalCreationData({
       metdata: metadaIpfsHash,
@@ -149,6 +140,7 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
       voteOption: 1,
     });
   };
+
   return (
     <CreateProposalContext.Provider
       value={{
@@ -162,9 +154,13 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
       {isOpen && (
         <TransactionReviewModal
           isOpen={isOpen}
-          onClose={onClose}
-          data={feesData}
-          totalCosts={totalCosts}
+          onClose={() =>
+            onClose(() => {
+              stopPolling();
+            })
+          }
+          data={txFees}
+          totalCosts={txCosts}
           onSubmitClick={handlePublishProposal}
           status={creationProcessState}
           txData={publishedTxData}

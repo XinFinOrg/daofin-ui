@@ -16,7 +16,6 @@ import { useWallet } from "../hooks/useWallet";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { useDisclosure } from "@chakra-ui/hooks";
 import { useClient } from "../hooks/useClient";
-import { DepositSteps } from "@xinfin/osx-daofin-sdk-client";
 import usePeoplesHouseDeposits from "../hooks/useDeposits";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import { FormLabel } from "@chakra-ui/form-control";
@@ -38,7 +37,6 @@ const PeoplesHouseDeposits: FC<DepositsProps> = () => {
   const isUserDeposited = useIsUserDeposited(voterAddress ? voterAddress : "");
 
   const { data: deposits } = usePeoplesHouseDeposits(
-    getPluginInstallationId(daoAddress, pluginAddress)
   );
 
   return (

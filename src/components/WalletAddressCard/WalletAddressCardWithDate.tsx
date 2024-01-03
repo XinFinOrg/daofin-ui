@@ -60,7 +60,6 @@ const WalletAddressCardWithDate: FC<WalletAddressCardWithDateProps> = ({
       borderRadius={"md"}
       alignItems={"center"}
       justifyContent={"flex-start"}
-      cursor={"pointer"}
       w={"full"}
     >
       <VStack spacing={"0"}>

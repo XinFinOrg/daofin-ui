@@ -39,7 +39,7 @@ const BaseTable = <T,>({ columns, data, emptyText }: BaseTableProps<T>) => {
       <Table variant="simple">
         <Thead>
           <Tr key={uuid()}>
-            {columns.length > 0 ? (
+            {data.length > 0 && columns.length > 0 ? (
               columns.map(({ label, w }) => <Th w={w}>{label}</Th>)
             ) : (
               <></>

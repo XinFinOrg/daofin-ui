@@ -1,7 +1,10 @@
 import PeoplesHouseDeposits from "../components/PeoplesHouseDeposits";
-import { DepositSteps } from "@xinfin/osx-daofin-sdk-client";
 import { formatEther, parseEther } from "@ethersproject/units";
-import { CHAIN_METADATA, getPluginInstallationId } from "../utils/networks";
+import {
+  CHAIN_METADATA,
+  PeoplesHouseCommittee,
+  getPluginInstallationId,
+} from "../utils/networks";
 import usePeoplesHouseDeposits from "../hooks/useDeposits";
 import { useDisclosure } from "@chakra-ui/hooks";
 import useIsUserDeposited from "../hooks/useIsUserDeposited";
@@ -21,7 +24,7 @@ import { option } from "yargs";
 import { use } from "chai";
 import WithConnectedWallet from "../components/WithConnectedWallet";
 import useIsJudiciaryMember from "../hooks/useIsJudiciaryMember";
-import React, { useEffect } from "react";
+import React, { FC, useEffect, useMemo } from "react";
 import ManageJudiciary from "../components/ManageJudiciary";
 import { Box, HStack, VStack } from "@chakra-ui/layout";
 import {
@@ -40,8 +43,26 @@ import { zeroAddress } from "viem";
 import VoteStatProgressBar from "../components/VoteStatProgressBar";
 import {
   WalletAddressCard,
+  WalletAddressCardWithBalance,
   WalletAddressCardWithDate,
 } from "../components/WalletAddressCard";
+import {
+  PeoplesHouseProvider,
+  usePeopleHouseContext,
+} from "../contexts/PeoplesHouseContext";
+import { Formik } from "formik";
+import { toStandardTimestamp } from "../utils/date";
+import useFetchVoterDepositAmount from "../hooks/useFetchVoterDepositAmount";
+import {
+  numberWithCommaSeparate,
+  toEther,
+  weiBigNumberToFormattedNumber,
+} from "../utils/numbers";
+import { BigNumber } from "ethers";
+import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
+export type JoinHouseFormType = {
+  amount: string;
+};
 const PeoplesHousePage = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
 
@@ -53,7 +74,7 @@ const PeoplesHousePage = () => {
   const isJudiciaryMember = useIsJudiciaryMember(
     voterAddress ? voterAddress : ""
   );
-
+  const totalSupply = useFetchTotalNumbersByCommittee(PeoplesHouseCommittee);
   const showAddNewButton = isJudiciaryMember || isUserDeposited;
 
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -66,7 +87,6 @@ const PeoplesHousePage = () => {
   // const depositAmount = watch(["depositAmount"]);
 
   const { data: deposits } = usePeoplesHouseDeposits(
-    getPluginInstallationId(daoAddress, pluginAddress)
   );
   const globalSettings = useDaoGlobalSettings();
   const handleDeposit = async () => {
@@ -97,8 +117,157 @@ const PeoplesHousePage = () => {
     const value = e.target.value;
     // setValue(name, value);
   };
+  const totalDeposits = useMemo(
+    () =>
+      deposits && deposits.length > 0
+        ? deposits.reduce((acc, { amount }) => {
+            return BigNumber.from(amount).add(acc);
+          }, BigNumber.from(0))
+        : BigNumber.from(0),
+    []
+  );
   return (
     <Page>
+      <Formik
+        initialValues={{
+          amount: "",
+        }}
+        onSubmit={() => {}}
+      >
+        <>
+          <PeoplesHouseProvider>
+            <PeoplesHouseHeader
+              totalMembers={deposits ? deposits.length : 0}
+              totalDeposits={weiBigNumberToFormattedNumber(totalDeposits)}
+              totalSupply={weiBigNumberToFormattedNumber(
+                totalSupply ? totalSupply : 0
+              )}
+            />
+            <HStack>
+              <VStack w={["70%"]} alignSelf={"flex-start"}>
+                {deposits &&
+                  deposits.length > 0 &&
+                  deposits.map(
+                    ({
+                      amount,
+                      id,
+                      snapshotBlock,
+                      voter,
+                      depositDate,
+                      txHash,
+                    }) => (
+                      <WalletAddressCardWithBalance
+                        address={voter}
+                        // date={new Date(toStandardTimestamp(depositDate))}
+                        balance={weiBigNumberToFormattedNumber(amount)}
+                        symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
+                      />
+                    )
+                  )}
+              </VStack>
+              <Box
+                alignSelf={"flex-start"}
+                boxShadow={"sm"}
+                bgColor={useColorModeValue("gray.50", "gray.900")}
+                opacity={0.9}
+                borderRadius={"md"}
+                p={6}
+              >
+                <Accordion>
+                  <Box
+                    borderRadius={"md"}
+                    p={6}
+                    bg={"blue.100"}
+                    fontSize={"sm"}
+                    mb={4}
+                  >
+                    <Text fontWeight={"semibold"}>Rules of Decisions</Text>
+                    <Text>
+                      This is where judiciaries can decide on how rules of
+                      decisions are differentiated between various proposal
+                      types
+                    </Text>
+                  </Box>
+                  <AccordionItem>
+                    <h2>
+                      <AccordionButton>
+                        <Box as="span" flex="1" textAlign="left">
+                          <Text fontWeight={"semibold"}>Grant</Text>
+                        </Box>
+                        <AccordionIcon />
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel pb={4}>
+                      <HStack justifyContent={"space-between"}>
+                        <VoteStatProgressBar
+                          percentage={10}
+                          threshold={50}
+                          ProgressLabel={<Text fontSize={"sm"}>Threshold</Text>}
+                        />
+                        <Text fontSize={"sm"}>10%</Text>
+                      </HStack>
+                      <HStack>
+                        <VoteStatProgressBar
+                          percentage={60}
+                          threshold={50}
+                          ProgressLabel={<Text fontSize={"sm"}>Pass Rate</Text>}
+                        />
+                        <Text fontSize={"sm"}>60%</Text>
+                      </HStack>
+                    </AccordionPanel>
+                  </AccordionItem>
+                  <AccordionItem>
+                    <h2>
+                      <AccordionButton>
+                        <Box as="span" flex="1" textAlign="left">
+                          <Text fontWeight={"semibold"}>Update Settings</Text>
+                        </Box>
+                        <AccordionIcon />
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel pb={4}>
+                      <HStack justifyContent={"space-between"}>
+                        <VoteStatProgressBar
+                          percentage={50}
+                          threshold={60}
+                          ProgressLabel={<Text fontSize={"sm"}>Threshold</Text>}
+                        />
+                        <Text fontSize={"sm"}>50%</Text>
+                      </HStack>
+                      <HStack>
+                        <VoteStatProgressBar
+                          percentage={80}
+                          threshold={70}
+                          ProgressLabel={<Text fontSize={"sm"}>Pass Rate</Text>}
+                        />
+                        <Text fontSize={"sm"}>80%</Text>
+                      </HStack>
+                    </AccordionPanel>
+                  </AccordionItem>
+                </Accordion>
+              </Box>
+            </HStack>
+          </PeoplesHouseProvider>
+        </>
+      </Formik>
+    </Page>
+  );
+};
+
+interface PeoplesHouseHeaderType {
+  totalMembers: number;
+  totalDeposits: string;
+  totalSupply: string;
+}
+const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
+  totalMembers,
+  totalDeposits,
+  totalSupply,
+}) => {
+  const { handleToggleFormModal } = usePeopleHouseContext();
+  const { network } = useNetwork();
+  return (
+    <>
       <VStack
         boxShadow={"sm"}
         bgColor={useColorModeValue("gray.50", "gray.900")}
@@ -125,7 +294,9 @@ const PeoplesHousePage = () => {
             </HStack>
           </Box>
           <Box>
-            <Button colorScheme="blue">Join House</Button>
+            <Button colorScheme="blue" onClick={handleToggleFormModal}>
+              Join House
+            </Button>
           </Box>
         </HStack>
         <HStack>
@@ -143,7 +314,7 @@ const PeoplesHousePage = () => {
             >
               <Text>Deposited Tokens</Text>
               <Text fontSize={"lg"} fontWeight={"bold"}>
-                10,323 {CHAIN_METADATA[network].nativeCurrency.symbol}
+                {totalDeposits} {CHAIN_METADATA[network].nativeCurrency.symbol}
               </Text>
             </VStack>
             <VStack
@@ -158,8 +329,8 @@ const PeoplesHousePage = () => {
               justifyContent={"center"}
             >
               <Text>Total Supply</Text>
-              <Text fontSize={"lg"} fontWeight={"bold"}>
-                10M {CHAIN_METADATA[network].nativeCurrency.symbol}
+              <Text fontSize={"lg"} fontWeight={"bold"} whiteSpace={"nowrap"}>
+                {totalSupply} {CHAIN_METADATA[network].nativeCurrency.symbol}
               </Text>
             </VStack>{" "}
             <VStack
@@ -175,7 +346,7 @@ const PeoplesHousePage = () => {
             >
               <Text>House Members</Text>
               <Text fontSize={"lg"} fontWeight={"bold"}>
-                10,000 {CHAIN_METADATA[network].nativeCurrency.symbol}
+                {numberWithCommaSeparate(totalMembers)}
               </Text>
             </VStack>
           </HStack>
@@ -198,95 +369,7 @@ const PeoplesHousePage = () => {
           </Box>
         </HStack>
       </VStack>
-      <HStack>
-        <VStack w={["70%"]} alignSelf={"flex-start"}>
-          <WalletAddressCardWithDate address={zeroAddress} date={new Date()} />
-          <WalletAddressCardWithDate address={zeroAddress} date={new Date()} />
-          <WalletAddressCardWithDate address={zeroAddress} date={new Date()} />
-          <WalletAddressCardWithDate address={zeroAddress} date={new Date()} />
-        </VStack>
-        <Box
-          alignSelf={"flex-start"}
-          boxShadow={"sm"}
-          bgColor={useColorModeValue("gray.50", "gray.900")}
-          opacity={0.9}
-          borderRadius={"md"}
-          p={6}
-        >
-          <Accordion>
-            <Box
-              borderRadius={"md"}
-              p={6}
-              bg={"blue.100"}
-              fontSize={"sm"}
-              mb={4}
-            >
-              <Text fontWeight={"semibold"}>Rules of Decisions</Text>
-              <Text>
-                This is where judiciaries can decide on how rules of decisions
-                are differentiated between various proposal types
-              </Text>
-            </Box>
-            <AccordionItem>
-              <h2>
-                <AccordionButton>
-                  <Box as="span" flex="1" textAlign="left">
-                    <Text fontWeight={"semibold"}>Grant</Text>
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-              </h2>
-              <AccordionPanel pb={4}>
-                <HStack justifyContent={"space-between"}>
-                  <VoteStatProgressBar
-                    percentage={10}
-                    threshold={50}
-                    ProgressLabel={<Text fontSize={"sm"}>Threshold</Text>}
-                  />
-                  <Text fontSize={"sm"}>10%</Text>
-                </HStack>
-                <HStack>
-                  <VoteStatProgressBar
-                    percentage={60}
-                    threshold={50}
-                    ProgressLabel={<Text fontSize={"sm"}>Pass Rate</Text>}
-                  />
-                  <Text fontSize={"sm"}>60%</Text>
-                </HStack>
-              </AccordionPanel>
-            </AccordionItem>
-            <AccordionItem>
-              <h2>
-                <AccordionButton>
-                  <Box as="span" flex="1" textAlign="left">
-                    <Text fontWeight={"semibold"}>Update Settings</Text>
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-              </h2>
-              <AccordionPanel pb={4}>
-                <HStack justifyContent={"space-between"}>
-                  <VoteStatProgressBar
-                    percentage={50}
-                    threshold={60}
-                    ProgressLabel={<Text fontSize={"sm"}>Threshold</Text>}
-                  />
-                  <Text fontSize={"sm"}>50%</Text>
-                </HStack>
-                <HStack>
-                  <VoteStatProgressBar
-                    percentage={80}
-                    threshold={70}
-                    ProgressLabel={<Text fontSize={"sm"}>Pass Rate</Text>}
-                  />
-                  <Text fontSize={"sm"}>80%</Text>
-                </HStack>
-              </AccordionPanel>
-            </AccordionItem>
-          </Accordion>
-        </Box>
-      </HStack>
-    </Page>
+    </>
   );
 };
 

@@ -12,19 +12,36 @@ import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
 import { CommitteeGlobal, useCommitteeUtils } from "../hooks/useCommitteeUtils";
 import { useNavigate } from "react-router-dom";
 import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
-import { JudiciaryCommittee } from "../utils/networks";
+import {
+  JudiciaryCommittee,
+  MasterNodeCommittee,
+  PeoplesHouseCommittee,
+  getPluginInstallationId,
+} from "../utils/networks";
+import useFetchMasterNodeDelegatee from "../hooks/useFetchMasterNodeDelegatee";
+import useFetchVoterDepositAmount from "../hooks/useFetchVoterDepositAmount";
+import usePeoplesHouseDeposits from "../hooks/useDeposits";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 
 const CommunityCards = () => {
   const navigate = useNavigate();
+  const { daoAddress, pluginAddress } = useAppGlobalConfig();
   const { committeesListWithIcon } = useCommitteeUtils();
   const judiciariesTotalMembers =
     useFetchTotalNumbersByCommittee(JudiciaryCommittee);
+
+  const { data: delegatees, isLoading } = useFetchMasterNodeDelegatee();
+  const { data: deposits } = usePeoplesHouseDeposits();
 
   const mapCommitteeToTotalNumber = (committeeName: string) => {
     switch (committeeName) {
       case JudiciaryCommittee:
         return judiciariesTotalMembers?.toString();
+      case MasterNodeCommittee:
+        return delegatees.length;
 
+      case PeoplesHouseCommittee:
+        return deposits.length;
       default:
         return "0";
     }

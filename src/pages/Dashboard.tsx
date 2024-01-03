@@ -1,13 +1,16 @@
 import { FC, useState } from "react";
 import DaoHeader from "../components/DaoHeader";
-import DaofinSettingsCard from "../components/DaofinSettingsCard";
 import { styled } from "styled-components";
 import useDaoProposals from "../hooks/useDaoProposals";
 import { useClient } from "../hooks/useClient";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import PeoplesHouseDeposits from "../components/PeoplesHouseDeposits";
 import usePeoplesHouseDeposits from "../hooks/useDeposits";
-import { getPluginInstallationId, shortenAddress } from "../utils/networks";
+import {
+  CHAIN_METADATA,
+  getPluginInstallationId,
+  shortenAddress,
+} from "../utils/networks";
 import { Box } from "@chakra-ui/layout";
 import ManageJudiciary from "../components/ManageJudiciary";
 import ManageMasterNodeDelegatee from "../components/ManageMasterNodeDelegatee";
@@ -34,6 +37,10 @@ import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 import { CheckCircleIcon, CheckIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { zeroAddress } from "viem";
 import { IoBarChart } from "react-icons/io5";
+import useFetchDaoBalance from "../hooks/useFetchDaoBalance";
+import { weiBigNumberToFormattedNumber } from "../utils/numbers";
+import { fetchTokenPrice } from "../services/prices";
+import { useNetwork } from "../contexts/network";
 const DashboardWrapper = styled.div.attrs({
   className: "grid grid-cols-12 grid-rows-12 gap-4",
 })``;
@@ -49,7 +56,7 @@ const Dashboard: FC = () => {
   } = useDaoProposals(daoAddress, pluginAddress);
 
   const { isOpen, onClose, onToggle } = useDisclosure();
-
+  const nativeBalanceOfDao = useFetchDaoBalance();
   const [proposalTypes, setProposalTypes] = useState([
     {
       id: uuid(),
@@ -72,6 +79,7 @@ const Dashboard: FC = () => {
     },
   ]);
   const { committeesListWithIcon } = useCommitteeUtils();
+  const { network } = useNetwork();
   return (
     <Page>
       <HStack>
@@ -127,7 +135,10 @@ const Dashboard: FC = () => {
               Balance in Treasury
             </Text>
             <Text fontSize="large" fontWeight={"bold"}>
-              430,000
+              {nativeBalanceOfDao
+                ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
+                : 0}{" "}
+              {CHAIN_METADATA[network].nativeCurrency.symbol}
             </Text>
           </VStack>
           <Box>

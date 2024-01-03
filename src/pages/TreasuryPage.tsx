@@ -16,6 +16,9 @@ import { Link } from "react-router-dom";
 
 import { zeroAddress } from "viem";
 import { WalletAddressCardWithBalance } from "../components/WalletAddressCard";
+import useFetchDaoBalance from "../hooks/useFetchDaoBalance";
+import { weiBigNumberToFormattedNumber } from "../utils/numbers";
+import { CHAIN_METADATA } from "../utils/networks";
 
 const data = [
   { name: "Group A", value: 400 },
@@ -25,11 +28,13 @@ const data = [
 ];
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 const TreasuryPage = () => {
+  const nativeBalanceOfDao = useFetchDaoBalance();
+
   const { network } = useNetwork();
   return (
     <Page>
       <Text fontWeight={"semibold"} fontSize={"lg"}>
-        Community
+        Treasury
       </Text>
 
       <Box
@@ -58,7 +63,7 @@ const TreasuryPage = () => {
           <HStack>
             <a href="">
               <Text fontSize={"xs"} fontWeight={"normal"}>
-                View contract
+                View contract <ExternalLinkIcon />
               </Text>
             </a>
             <a href="">
@@ -75,7 +80,10 @@ const TreasuryPage = () => {
               Total Value
             </Text>
             <Text fontSize={"lg"} fontWeight={"bold"} mb={"1"}>
-              $ 200,900
+              {nativeBalanceOfDao
+                ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
+                : 0}{" "}
+              {CHAIN_METADATA[network].nativeCurrency.symbol}
             </Text>
           </Box>
           <HStack>

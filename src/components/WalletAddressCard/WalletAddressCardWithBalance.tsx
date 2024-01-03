@@ -17,7 +17,7 @@ import { useNetwork } from "../../contexts/network";
 interface WalletAddressCardWithBalanceProps {
   address: string;
   sm?: true;
-  balance: number;
+  balance: string | number;
   symbol: string;
 }
 const WalletAddressCardWithBalance: FC<WalletAddressCardWithBalanceProps> = ({
@@ -55,7 +55,6 @@ const WalletAddressCardWithBalance: FC<WalletAddressCardWithBalanceProps> = ({
       borderColor={useColorModeValue("#DDE3E9", "black")}
       boxShadow={"sm"}
       borderRadius={"md"}
-      cursor={"pointer"}
       w={"full"}
     >
       <HStack>

@@ -23,6 +23,7 @@ import { useNetwork } from "../../contexts/network";
 import { useNavigate } from "react-router-dom";
 import { BlockIcon } from "../../utils/assets/icons";
 import { zeroAddress } from "viem";
+import { toStandardFormatString } from "../../utils/date";
 
 interface MasterNodeSenateCardProps {
   address: string;
@@ -64,10 +65,9 @@ const MasterNodeSenateCard: FC<MasterNodeSenateCardProps> = ({
       boxShadow={"sm"}
       borderRadius={"md"}
       alignItems={"flex-start"}
-      cursor={"pointer"}
       w={"full"}
     >
-      <VStack spacing={"0"}>
+      <VStack spacing={"0"} alignItems={"flex-start"}>
         <HStack>
           <Box mt={"0.5"}>
             <Jazzicon diameter={25} seed={jsNumberForAddress(address)} />
@@ -120,7 +120,7 @@ const MasterNodeSenateCard: FC<MasterNodeSenateCardProps> = ({
         <HStack>
           <TimeIcon boxSize={"3"} />
           <Text fontSize={"xs"} fontWeight={"normal"}>
-            {joinedDate.toISOString()}
+            {toStandardFormatString(joinedDate)}
           </Text>
         </HStack>
         <HStack>

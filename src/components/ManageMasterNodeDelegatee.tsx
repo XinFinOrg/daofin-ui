@@ -23,7 +23,7 @@ import useFetchMasterNodeDelegatee from "../hooks/useFetchMasterNodeDelegatee";
 
 const ManageMasterNodeDelegatee = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
-  const { data } = useFetchMasterNodeDelegatee(daoAddress, pluginAddress);
+  const { data } = useFetchMasterNodeDelegatee();
   const { onClose, isOpen, onOpen } = useDisclosure();
   const { address: connectedAddress } = useWallet();
   // const { setValue, getValues, register, watch } = useForm({
@@ -37,7 +37,6 @@ const ManageMasterNodeDelegatee = () => {
   const handleAddDelegatee = async () => {
     // const iterator =
     //   daofinClient?.methods.updateOrJoinMasterNodeDelegatee(address);
-
     // if (!iterator) return;
     // try {
     //   for await (const step of iterator) {

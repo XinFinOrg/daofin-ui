@@ -24,6 +24,8 @@ export type Deposit = {
   voter: string;
   amount: string;
   snapshotBlock: number;
+  depositDate: number;
+  txHash:string
 };
 export type Judiciary = {
   id: string;

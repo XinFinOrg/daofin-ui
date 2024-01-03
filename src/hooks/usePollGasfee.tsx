@@ -1,5 +1,5 @@
 import { constants } from "ethers";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useNetwork } from "../contexts/network";
 import { fetchTokenPrice } from "../services/prices";
@@ -19,13 +19,37 @@ import { GasFeeEstimation } from "@aragon/sdk-client-common";
  */
 export const usePollGasFee = (
   estimationFunction: () => Promise<GasFeeEstimation | undefined>,
-  shouldPoll = true
+  shouldPoll = true,
+  value = "0"
 ) => {
   const { network } = useNetwork();
   const [error, setError] = useState<Error | undefined>();
   const [maxFee, setMaxFee] = useState<BigInt | undefined>(BigInt(0));
   const [averageFee, setAverageFee] = useState<BigInt | undefined>(BigInt(0));
   const [tokenPrice, setTokenPrice] = useState<number>(0);
+
+  const txFees = useMemo(() => {
+    return maxFee && averageFee
+      ? [
+          { title: "Value (Ether)", tooltip: "", value },
+          {
+            title: "Estimated Gas fee (Gwei)",
+            tooltip: "",
+            value: averageFee.toString(),
+          },
+          { title: "Max Fee (Gwei)", tooltip: "", value: maxFee.toString() },
+        ]
+      : undefined;
+  }, [averageFee, maxFee]);
+
+  const txCosts = useMemo(() => {
+    return averageFee && tokenPrice
+      ? {
+          tokenValue: averageFee.toString(),
+          usdValue: tokenPrice.toString(),
+        }
+      : undefined;
+  }, [tokenPrice, averageFee]);
 
   // estimate gas for DAO creation
   useEffect(() => {
@@ -57,5 +81,13 @@ export const usePollGasFee = (
     setAverageFee(BigInt(0));
     setTokenPrice(0);
   }, []);
-  return { error, tokenPrice, maxFee, averageFee, stopPolling };
+  return {
+    error,
+    tokenPrice,
+    maxFee,
+    averageFee,
+    stopPolling,
+    txCosts,
+    txFees,
+  };
 };

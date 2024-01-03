@@ -37,7 +37,7 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
 
   return (
     <>
-      {proposals.length > 0 ? (
+      {
         <BaseTable
           emptyText={"There is no proposal yet. Be the first to make change"}
           data={proposals.map(
@@ -137,9 +137,7 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
             },
           ]}
         />
-      ) : (
-        <></>
-      )}
+      }
     </>
   );
 };
