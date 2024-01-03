@@ -15,12 +15,17 @@ export type Proposal = {
   executed: boolean;
   potentiallyExecutable: boolean;
   actions: DaoAction[];
+  createdAt: string;
+  executionTxHash: string;
+  creationTxHash: string;
 };
 export type Deposit = {
   id: string;
   voter: string;
   amount: string;
   snapshotBlock: number;
+  depositDate: number;
+  txHash:string
 };
 export type Judiciary = {
   id: string;

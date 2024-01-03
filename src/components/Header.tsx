@@ -8,11 +8,9 @@ import {
   Stack,
   Text,
   Heading,
-  Button,
   useColorMode,
   Switch,
-  Icon,
-  Container,
+  Image,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -36,8 +34,10 @@ import {
 import { useBlockNumber } from "wagmi";
 import { CHAIN_METADATA } from "../utils/networks";
 import { useNetwork } from "../contexts/network";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { XdcIcon } from "../utils/assets/icons/XdcIcon";
+import { fetchTokenPrice } from "../services/prices";
+import { constants } from "ethers";
 interface Props {
   children: React.ReactNode;
   href: string;
@@ -61,7 +61,13 @@ export default function Header() {
   const handleSwitchTheme = () => {
     toggleColorMode();
   };
+  const [tokenPrice, setTokenPrice] = useState<number>(0);
   const bgColorModeLinks = useColorModeValue("blue.100", "blue.800");
+  useEffect(() => {
+    fetchTokenPrice(constants.AddressZero, network)
+      .then((data) => data && setTokenPrice(data))
+      .catch(console.log);
+  }, []);
   return (
     <>
       <Flex
@@ -80,7 +86,7 @@ export default function Header() {
                 target={"_blank"}
               >
                 <HStack>
-                  <BlockIcon />
+                  <BlockIcon w={"20px"} />
 
                   <Text fontWeight={"medium"}>{data.toString()}</Text>
                 </HStack>
@@ -91,8 +97,10 @@ export default function Header() {
           </Box>
           <Box mx={"4"}>
             <HStack>
-              <XdcIcon />
-              <Text fontWeight={"medium"}>$0.01</Text>
+              <Box w={"25px"}>
+                <XdcIcon />
+              </Box>
+              <Text fontWeight={"medium"}>${tokenPrice.toFixed(4)}</Text>
             </HStack>
           </Box>
         </HStack>
@@ -152,28 +160,24 @@ export default function Header() {
               display={{ base: "none", md: "flex" }}
             >
               {Links.map((link) => (
-                <Box
-                  fontSize={"md"}
-                  fontWeight={"bold"}
-                  px={3}
-                  py={1}
-                  borderRadius={"md"}
-                  transition="background-color .1s ease-in-out"
-                  _hover={{
-                    bgColor: bgColorModeLinks,
-                  }}
-                >
-                  <Link
-                    to={link.location}
-
-                    // className="border-1 py-2 pl-3 pr-4 font-bold hover:text-blue-600 ease-in-out duration-300"
+                <Link to={link.location}>
+                  <Box
+                    fontSize={"md"}
+                    fontWeight={"bold"}
+                    px={3}
+                    py={1}
+                    borderRadius={"md"}
+                    transition="background-color .1s ease-in-out"
+                    _hover={{
+                      bgColor: bgColorModeLinks,
+                    }}
                   >
                     <HStack>
                       <>{link.icon}</>
                       <Text>{link.name}</Text>
                     </HStack>
-                  </Link>
-                </Box>
+                  </Box>
+                </Link>
               ))}
             </HStack>
           </HStack>

@@ -14,6 +14,7 @@ import {
   getExtendedProposalId,
   resolveIpfsCid,
 } from "@xinfin/osx-sdk-common";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 const DepositsQueries = `
 query DepositsQueries($pluginId: ID!) {
   pluginDeposits(where: {plugin: $pluginId}) {
@@ -21,29 +22,30 @@ query DepositsQueries($pluginId: ID!) {
     voter
     amount
     snapshotBlock
+    depositDate
     txHash
   }
 }
 `;
-function usePeoplesHouseDeposits(pluginId: string): {
-  data: Deposit[] | undefined;
+function usePeoplesHouseDeposits(): {
+  data: Deposit[];
   error: string;
   isLoading: boolean;
 } {
   const { daofinClient } = useClient();
-
+  const { daoAddress, pluginAddress } = useAppGlobalConfig();
   const [deposits, setDeposits] = useState<Deposit[]>([]);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!daofinClient || !pluginId) return;
+    if (!daofinClient) return;
     setIsLoading(true);
     daofinClient.graphql
       .request<{ pluginDeposits: Deposit[] }>({
         query: DepositsQueries,
         params: {
-          pluginId: pluginId,
+          pluginId: getPluginInstallationId(daoAddress, pluginAddress),
         },
       })
       .then(({ pluginDeposits }) => {
