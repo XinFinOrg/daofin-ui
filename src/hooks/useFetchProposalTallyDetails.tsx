@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { useClient } from "./useClient";
-import {
-  TallyDetails,
-} from "@xinfin/osx-daofin-sdk-client";
-
+import { TallyDetails } from "@xinfin/osx-daofin-sdk-client";
 
 function useFetchProposalTallyDetails(
   proposalId: string,
@@ -29,7 +26,7 @@ function useFetchProposalTallyDetails(
         setError(e);
         console.log("error", e);
       });
-  }, [daofinClient]);
+  }, [daofinClient, proposalId]);
 
   return { data: tallyDetails, error: error, isLoading };
 }

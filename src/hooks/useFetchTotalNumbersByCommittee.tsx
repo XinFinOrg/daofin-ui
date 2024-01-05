@@ -10,7 +10,7 @@ import { BigNumberish } from "@ethersproject/bignumber";
 function useFetchTotalNumbersByCommittee(
   committee: string
 ): BigNumberish | undefined {
-  const [total, setTotal] = useState<BigNumberish>();
+  const [total, setTotal] = useState<BigNumberish>(0);
   const { daofinClient, client } = useClient();
   const { network } = useNetwork();
   const [error, setError] = useState<Error>();
@@ -28,6 +28,7 @@ function useFetchTotalNumbersByCommittee(
       })
       .catch((e) => {
         setIsLoading(false);
+        setTotal(0);
         console.log("error", e);
       });
   }, [daofinClient]);

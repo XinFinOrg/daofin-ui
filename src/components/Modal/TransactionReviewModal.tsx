@@ -27,7 +27,14 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 import { BigNumberish } from "@ethersproject/bignumber";
 import { TransactionState } from "../../utils/types";
 import { useNetwork } from "../../contexts/network";
-export type TransactionReviewModalProps = Pick<
+import { Link } from "react-router-dom";
+import { numberWithCommaSeparate } from "../../utils/numbers";
+
+export type ModalActionButtonType = {
+  goTo: string;
+  text: string;
+};
+export type TransactionReviewModalProps<T> = Pick<
   ModalProps,
   "isOpen" | "onClose"
 > & {
@@ -46,20 +53,20 @@ export type TransactionReviewModalProps = Pick<
     | undefined;
   onSubmitClick: () => void;
   status?: TransactionState | undefined;
-  //   txData: {
-  //     hash: string;
-  //     proposalId: string;
-  //   };
+  txData?: {
+    hash: string;
+    data: ModalActionButtonType;
+  };
 };
-const TransactionReviewModal: FC<TransactionReviewModalProps> = ({
+const TransactionReviewModal = <T extends any | undefined>({
   isOpen,
   onClose,
   data,
   totalCosts,
   onSubmitClick,
   status,
-  //   transactionData,
-}) => {
+  txData,
+}: TransactionReviewModalProps<T>) => {
   const [title, setTitle] = useState("");
   useEffect(() => {
     switch (status) {
@@ -95,8 +102,12 @@ const TransactionReviewModal: FC<TransactionReviewModalProps> = ({
                       fontWeight={"semibold"}
                       alignItems={"center"}
                     >
-                      <XdcIcon />
-                      <Text ml={1}>{value.toString()}</Text>
+                      <Text mr={1}>
+                        {numberWithCommaSeparate(value.toString())}
+                      </Text>
+                      <Box w={"20px"}>
+                        <XdcIcon />
+                      </Box>
                     </Flex>
                   </Flex>
                 ))}
@@ -116,8 +127,12 @@ const TransactionReviewModal: FC<TransactionReviewModalProps> = ({
                       fontWeight={"semibold"}
                       alignItems={"center"}
                     >
-                      <XdcIcon />
-                      <Text ml={1}>{totalCosts.tokenValue}</Text>
+                      <Text mr={1}>
+                        {numberWithCommaSeparate(totalCosts.tokenValue)}
+                      </Text>
+                      <Box w={"20px"}>
+                        <XdcIcon />
+                      </Box>
                     </Flex>
                     <Text fontSize={"sm"} fontWeight={"semibold"}>
                       ${totalCosts.usdValue}
@@ -196,30 +211,38 @@ const TransactionReviewModal: FC<TransactionReviewModalProps> = ({
                 fontSize={"sm"}
                 textAlign={"center"}
               >
-                <IoDocumentTextOutline style={{ display: "inline-block" }} />
-                <Box as={"span"} mx={2}>
-                  {shortenTxHash(
-                    "0xa51996fd4438d0080767c0d8d25a954affa8bc836e5ec866bf9ba30ea1510dc5"
-                  )}
-                </Box>
-                <a
-                  href={
-                    "0xa51996fd4438d0080767c0d8d25a954affa8bc836e5ec866bf9ba30ea1510dc5"
-                  }
-                  target="_blank"
-                >
-                  <ExternalLinkIcon />
-                </a>
+                {txData?.hash && (
+                  <>
+                    <IoDocumentTextOutline
+                      style={{ display: "inline-block" }}
+                    />
+                    <Box as={"span"} mx={2}>
+                      {shortenTxHash(txData.hash)}
+                    </Box>
+                    <a
+                      href={makeBlockScannerHashUrl(network, txData.hash)}
+                      target="_blank"
+                    >
+                      <ExternalLinkIcon />
+                    </a>
+                  </>
+                )}
               </Text>
             </Box>
 
             <Box mb={4} w={"full"}>
-              <Button w={"full"} colorScheme="blue" mb={2}>
-                View my proposal
-              </Button>
-              <Button w={"full"} variant={"outline"}>
-                Dashboard
-              </Button>
+              {/* <Link to={`/proposals/${txData?.proposalId}/details`}> */}
+              <Link to={`${txData?.data.goTo}`}>
+                <Button w={"full"} colorScheme="blue" mb={2}>
+                  {txData?.data.text}
+                </Button>
+              </Link>
+
+              <Link to={`/`}>
+                <Button w={"full"} variant={"outline"}>
+                  Dashboard
+                </Button>
+              </Link>
             </Box>
           </Flex>
         </Box>
@@ -250,25 +273,36 @@ const TransactionReviewModal: FC<TransactionReviewModalProps> = ({
                 fontSize={"sm"}
                 textAlign={"center"}
               >
-                <IoDocumentTextOutline style={{ display: "inline-block" }} />
-                <Box as={"span"} mx={2}>
-                  {shortenTxHash(
-                    "0xa51996fd4438d0080767c0d8d25a954affa8bc836e5ec866bf9ba30ea1510dc5"
-                  )}
-                </Box>
-                <a href="" target="_blank">
-                  <ExternalLinkIcon />
-                </a>
+                {txData && (
+                  <>
+                    <IoDocumentTextOutline
+                      style={{ display: "inline-block" }}
+                    />
+                    <Box as={"span"} mx={2}>
+                      {shortenTxHash(txData.hash)}
+                    </Box>
+                    <a
+                      href={makeBlockScannerHashUrl(network, txData.hash)}
+                      target="_blank"
+                    >
+                      <ExternalLinkIcon />
+                    </a>
+                  </>
+                )}
               </Text>
             </Box>
 
             <Box mb={4} w={"full"}>
-              <Button w={"full"} colorScheme="blue" mb={2}>
-                Back to Dashboard
-              </Button>
-              <Button w={"full"} variant={"outline"}>
-                Contact Customer Support
-              </Button>
+              <Link to={"/"}>
+                <Button w={"full"} colorScheme="blue" mb={2}>
+                  Back to Dashboard
+                </Button>
+              </Link>
+              <a href="https://www.xdc.dev/new">
+                <Button w={"full"} variant={"outline"}>
+                  Raise a post on XDC.dev
+                </Button>
+              </a>
             </Box>
           </Flex>
         </Box>

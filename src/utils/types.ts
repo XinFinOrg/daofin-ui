@@ -1,6 +1,7 @@
 import { DaoAction, ProposalMetadata } from "@xinfin/osx-client-common";
 import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
 import { BigNumberish } from "ethers";
+import { VoteStatsType } from "../hooks/useVoteStats";
 
 export type Proposal = {
   id: string;
@@ -15,12 +16,28 @@ export type Proposal = {
   executed: boolean;
   potentiallyExecutable: boolean;
   actions: DaoAction[];
+  createdAt: string;
+  executionTxHash: string;
+  creationTxHash: string;
+  proposalType: {
+    id: string;
+    txHash: string;
+    settings: {
+      id: string;
+      supportThreshold: string;
+      minParticipation: string;
+      minVotingPower: string;
+    };
+  };
+  committeesVotes: VoteStatsType[];
 };
 export type Deposit = {
   id: string;
   voter: string;
   amount: string;
   snapshotBlock: number;
+  depositDate: number;
+  txHash: string;
 };
 export type Judiciary = {
   id: string;

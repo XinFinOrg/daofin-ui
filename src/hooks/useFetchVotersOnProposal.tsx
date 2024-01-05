@@ -9,6 +9,7 @@ import { ProposalBase, ProposalMetadata } from "@xinfin/osx-client-common";
 import { Judiciary, Proposal, VoterOnProposal } from "../utils/types";
 import { SubgraphProposalBase } from "@xinfin/osx-daofin-sdk-client";
 import { resolveIpfsCid } from "@xinfin/osx-sdk-common";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 const PluginProposalVotes = `
 query pluginProposalVotes($pluginId: ID!, $pluginProposalId: String!  ) {
     pluginProposalVotes(where:{plugin: $pluginId ,pluginProposalId: $pluginProposalId}) {
@@ -24,13 +25,13 @@ query pluginProposalVotes($pluginId: ID!, $pluginProposalId: String!  ) {
   }
 `;
 
-function useFetchVotersOnProposal(
-  daoAddress: string,
-  pluginAddress: string,
-  proposalId: string
-): { data: VoterOnProposal[]; error: string; isLoading: boolean } {
+function useFetchVotersOnProposal(proposalId: string): {
+  data: VoterOnProposal[];
+  error: string;
+  isLoading: boolean;
+} {
   const { daofinClient } = useClient();
-
+  const { daoAddress, pluginAddress, pluginRepoAddress } = useAppGlobalConfig();
   const [voters, setVoters] = useState<VoterOnProposal[]>([]);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
