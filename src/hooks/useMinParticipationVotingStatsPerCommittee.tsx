@@ -1,24 +1,34 @@
 import { useMemo } from "react";
-import { MasterNodeCommittee, applyRatioCeiled } from "../utils/networks";
+import {
+  MasterNodeCommittee,
+  applyRatioCeiled,
+  getPluginInstallationId,
+} from "../utils/networks";
 import useFetchGlobalCommitteeToVotingSettings from "./useFetchGlobalCommitteeToVotingSettings";
 import useFetchProposalTallyDetails from "./useFetchProposalTallyDetails";
 import useFetchTotalNumbersByCommittee from "./useFetchTotalNumbersByCommittee";
 import { BigNumber } from "@ethersproject/bignumber";
 import { parseEther } from "viem";
 import Big from "big.js";
+import useDaoProposal from "./useDaoProposal";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
+import { toEther, toStandardPercentage } from "../utils/numbers";
+import { DaofinPlugin } from "@xinfin/osx-daofin-contracts-ethers";
+
+export type VotingMinParticipationStats = {
+  tally: DaofinPlugin.TallyDatailsStruct;
+  numberOfVotes: BigNumber;
+  minParticipation: BigNumber;
+  numberOfVotesPercentage: number;
+  minParticipationPercentage: number;
+};
 
 function useMinParticipationVotingStatsPerCommittee(
   pluginProposalId: string,
   committee: string
-):
-  | {
-      current: BigNumber;
-      minParticipations: BigNumber;
-      percentage: string;
-    }
-  | undefined {
+): VotingMinParticipationStats | undefined {
   const globalCommitteeToVotingSettings =
-    useFetchGlobalCommitteeToVotingSettings(committee);
+    useFetchGlobalCommitteeToVotingSettings(committee, pluginProposalId);
 
   const totalNumbers = useFetchTotalNumbersByCommittee(committee);
 
@@ -26,29 +36,39 @@ function useMinParticipationVotingStatsPerCommittee(
 
   return useMemo(() => {
     if (
-      !tally ||
+      !pluginProposalId ||
+      !tally.data ||
       !tally.data ||
       !globalCommitteeToVotingSettings ||
       !totalNumbers
     )
       return;
-    const currentVotes = BigNumber.from(tally.data.yes)
+    const numberOfVotes = BigNumber.from(tally.data.yes)
       .add(tally.data.no.toString())
       .add(tally.data.abstain.toString());
-    const minParticipations = applyRatioCeiled(
+
+    const minParticipation = applyRatioCeiled(
       BigNumber.from(totalNumbers),
       BigNumber.from(globalCommitteeToVotingSettings?.minParticipation)
     );
 
-    const percentage = currentVotes.eq(0)
-      ? '0'
-      : Big(currentVotes.toString()).mul(100).div(minParticipations.toString()).toString();
+    const numberOfVotesPercentage = numberOfVotes.eq(0)
+      ? 0
+      : +toEther(
+          BigNumber.from(numberOfVotes).mul(100).div(totalNumbers).toString()
+        );
+
+    const minParticipationPercentage = +toStandardPercentage(
+      globalCommitteeToVotingSettings.minParticipation.toString()
+    );
 
     return {
-      current: currentVotes,
-      minParticipations: minParticipations,
-      percentage,
+      tally: tally.data,
+      numberOfVotes,
+      minParticipation,
+      numberOfVotesPercentage,
+      minParticipationPercentage,
     };
-  }, [tally, totalNumbers, globalCommitteeToVotingSettings]);
+  }, [pluginProposalId, tally, totalNumbers, globalCommitteeToVotingSettings]);
 }
 export default useMinParticipationVotingStatsPerCommittee;

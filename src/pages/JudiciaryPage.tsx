@@ -15,7 +15,7 @@ import { Page } from "../components";
 import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
 import { zeroAddress } from "viem";
 
-import VoteStatProgressBar from "../components/VoteStatProgressBar";
+import DefaultProgressBar from "../components/DefaultProgressBar";
 import {
   WalletAddressCard,
   WalletAddressCardWithDate,
@@ -29,6 +29,7 @@ import {
   toStandardFormatString,
   toStandardTimestamp,
 } from "../utils/date";
+import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
 
 const JudiciaryPage = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
@@ -107,13 +108,23 @@ const JudiciaryPage = () => {
       </VStack>
       <HStack>
         <VStack w={["70%"]} alignSelf={"flex-start"}>
-          {juries.length > 0 &&
+          {juries.length > 0 ? (
             juries.map(({ member, creationDate }) => (
               <WalletAddressCardWithDate
                 address={member}
                 date={new Date(toStandardTimestamp(creationDate.toString()))}
               />
-            ))}
+            ))
+          ) : (
+            <>
+              <VStack w={"100%"} alignItems="center" alignSelf={"center"} p={6}>
+                <EmptyBoxIcon />
+                <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                  {"There is no member yet."}
+                </Text>
+              </VStack>
+            </>
+          )}
         </VStack>
         <Box
           alignSelf={"flex-start"}
@@ -148,7 +159,7 @@ const JudiciaryPage = () => {
               </h2>
               <AccordionPanel pb={4}>
                 <HStack justifyContent={"space-between"}>
-                  <VoteStatProgressBar
+                  <DefaultProgressBar
                     percentage={10}
                     threshold={50}
                     ProgressLabel={<Text fontSize={"sm"}>Threshold</Text>}
@@ -156,7 +167,7 @@ const JudiciaryPage = () => {
                   <Text fontSize={"sm"}>10%</Text>
                 </HStack>
                 <HStack>
-                  <VoteStatProgressBar
+                  <DefaultProgressBar
                     percentage={60}
                     threshold={50}
                     ProgressLabel={<Text fontSize={"sm"}>Pass Rate</Text>}
@@ -176,7 +187,7 @@ const JudiciaryPage = () => {
               </h2>
               <AccordionPanel pb={4}>
                 <HStack justifyContent={"space-between"}>
-                  <VoteStatProgressBar
+                  <DefaultProgressBar
                     percentage={50}
                     threshold={60}
                     ProgressLabel={<Text fontSize={"sm"}>Threshold</Text>}
@@ -184,7 +195,7 @@ const JudiciaryPage = () => {
                   <Text fontSize={"sm"}>50%</Text>
                 </HStack>
                 <HStack>
-                  <VoteStatProgressBar
+                  <DefaultProgressBar
                     percentage={80}
                     threshold={70}
                     ProgressLabel={<Text fontSize={"sm"}>Pass Rate</Text>}

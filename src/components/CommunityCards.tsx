@@ -22,33 +22,17 @@ import useFetchMasterNodeDelegatee from "../hooks/useFetchMasterNodeDelegatee";
 import useFetchVoterDepositAmount from "../hooks/useFetchVoterDepositAmount";
 import usePeoplesHouseDeposits from "../hooks/useDeposits";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
+import useTotalNumberOfVoters from "../hooks/useTotalNumberOfVoters";
 
 const CommunityCards = () => {
   const navigate = useNavigate();
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
   const { committeesListWithIcon } = useCommitteeUtils();
-  const judiciariesTotalMembers =
-    useFetchTotalNumbersByCommittee(JudiciaryCommittee);
+  const { mapCommitteeToTotalNumber } = useTotalNumberOfVoters();
 
-  const { data: delegatees, isLoading } = useFetchMasterNodeDelegatee();
-  const { data: deposits } = usePeoplesHouseDeposits();
-
-  const mapCommitteeToTotalNumber = (committeeName: string) => {
-    switch (committeeName) {
-      case JudiciaryCommittee:
-        return judiciariesTotalMembers?.toString();
-      case MasterNodeCommittee:
-        return delegatees.length;
-
-      case PeoplesHouseCommittee:
-        return deposits.length;
-      default:
-        return "0";
-    }
-  };
   return (
     <HStack w={"full"}>
-      {committeesListWithIcon.map(({ bgGradient, icon, id, name, link }) => (
+      {committeesListWithIcon.map(({ bgGradient, Icon, id, name, link }) => (
         <HStack
           key={id}
           w={"full"}
@@ -59,7 +43,7 @@ const CommunityCards = () => {
           p={4}
         >
           <Box w={"50px"} flexShrink={1}>
-            {icon}
+            {Icon && Icon}
           </Box>
           <VStack flexGrow="1" alignSelf={"stretch"} alignItems={"start"}>
             <Text fontSize={"sm"} fontWeight={"normal"}>

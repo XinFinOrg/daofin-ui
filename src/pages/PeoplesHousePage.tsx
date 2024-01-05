@@ -40,7 +40,7 @@ import { Page } from "../components";
 import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
 import { zeroAddress } from "viem";
 
-import VoteStatProgressBar from "../components/VoteStatProgressBar";
+import DefaultProgressBar from "../components/DefaultProgressBar";
 import {
   WalletAddressCard,
   WalletAddressCardWithBalance,
@@ -60,6 +60,7 @@ import {
 } from "../utils/numbers";
 import { BigNumber } from "ethers";
 import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
+import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
 export type JoinHouseFormType = {
   amount: string;
 };
@@ -86,8 +87,7 @@ const PeoplesHousePage = () => {
   // });
   // const depositAmount = watch(["depositAmount"]);
 
-  const { data: deposits } = usePeoplesHouseDeposits(
-  );
+  const { data: deposits } = usePeoplesHouseDeposits();
   const globalSettings = useDaoGlobalSettings();
   const handleDeposit = async () => {
     // const { depositAmount } = getValues();
@@ -126,6 +126,7 @@ const PeoplesHousePage = () => {
         : BigNumber.from(0),
     []
   );
+  const bgColor = useColorModeValue("gray.50", "gray.900");
   return (
     <Page>
       <Formik
@@ -145,8 +146,7 @@ const PeoplesHousePage = () => {
             />
             <HStack>
               <VStack w={["70%"]} alignSelf={"flex-start"}>
-                {deposits &&
-                  deposits.length > 0 &&
+                {deposits && deposits.length > 0 ? (
                   deposits.map(
                     ({
                       amount,
@@ -163,7 +163,24 @@ const PeoplesHousePage = () => {
                         symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
                       />
                     )
-                  )}
+                  )
+                ) : (
+                  <>
+                    <VStack
+                      p={"6"}
+                      bgColor={bgColor}
+                      borderRadius={"md"}
+                      w={"100%"}
+                      alignItems="center"
+                      alignSelf={"center"}
+                    >
+                      <EmptyBoxIcon />
+                      <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                        {"There is no member yet."}
+                      </Text>
+                    </VStack>
+                  </>
+                )}
               </VStack>
               <Box
                 alignSelf={"flex-start"}
@@ -199,7 +216,7 @@ const PeoplesHousePage = () => {
                     </h2>
                     <AccordionPanel pb={4}>
                       <HStack justifyContent={"space-between"}>
-                        <VoteStatProgressBar
+                        <DefaultProgressBar
                           percentage={10}
                           threshold={50}
                           ProgressLabel={<Text fontSize={"sm"}>Threshold</Text>}
@@ -207,7 +224,7 @@ const PeoplesHousePage = () => {
                         <Text fontSize={"sm"}>10%</Text>
                       </HStack>
                       <HStack>
-                        <VoteStatProgressBar
+                        <DefaultProgressBar
                           percentage={60}
                           threshold={50}
                           ProgressLabel={<Text fontSize={"sm"}>Pass Rate</Text>}
@@ -227,7 +244,7 @@ const PeoplesHousePage = () => {
                     </h2>
                     <AccordionPanel pb={4}>
                       <HStack justifyContent={"space-between"}>
-                        <VoteStatProgressBar
+                        <DefaultProgressBar
                           percentage={50}
                           threshold={60}
                           ProgressLabel={<Text fontSize={"sm"}>Threshold</Text>}
@@ -235,7 +252,7 @@ const PeoplesHousePage = () => {
                         <Text fontSize={"sm"}>50%</Text>
                       </HStack>
                       <HStack>
-                        <VoteStatProgressBar
+                        <DefaultProgressBar
                           percentage={80}
                           threshold={70}
                           ProgressLabel={<Text fontSize={"sm"}>Pass Rate</Text>}

@@ -54,6 +54,7 @@ import { weiBigNumberToFormattedNumber } from "../utils/numbers";
 import { NoProposalIcon } from "../utils/assets/icons/NoProposalIcon";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
 import CoinIcon from "../utils/assets/icons/CoinIcon";
+import useFetchDaoBalance from "../hooks/useFetchDaoBalance";
 
 const data = [
   {
@@ -89,6 +90,8 @@ const CommunityPage = () => {
 
   const { data: people } = usePeoplesHouseDeposits();
   const { data: delegatees } = useFetchMasterNodeDelegatee();
+  const nativeBalanceOfDao = useFetchDaoBalance();
+
   return (
     <Page>
       <Text fontWeight={"semibold"} fontSize={"lg"}>
@@ -131,7 +134,9 @@ const CommunityPage = () => {
               Balance in Treasury
             </Text>
             <Text fontSize="large" fontWeight={"bold"}>
-              430,000
+              {nativeBalanceOfDao
+                ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
+                : 0}{" "}
             </Text>
           </VStack>
           <Box>
@@ -205,7 +210,6 @@ const CommunityPage = () => {
                   <Bar dataKey="uv" fill="#82ca9d" />
                 </BarChart>
               </ResponsiveContainer>
-
             </Box>
           </VStack>
           <VStack alignItems={"flex-start"} w={"50%"}>
@@ -218,7 +222,7 @@ const CommunityPage = () => {
               </Text>
             </Box>
             <VStack w={"full"}>
-              {people.length < 0 ? (
+              {people.length > 0 ? (
                 people.map(
                   ({ amount, depositDate, snapshotBlock, id, voter }) => (
                     <Box w={"full"}>
@@ -279,24 +283,35 @@ const CommunityPage = () => {
           </Box>
         </HStack>
         <HStack flexWrap={"wrap"} justifyContent={"flex-start"}>
-          {delegatees.map(
-            ({
-              creationDate,
-              masterNode,
-              member,
-              snapshotBlock,
-              txHash,
-              id,
-            }) => (
-              <Box w={["50%", "20%"]} key={id}>
-                <MasterNodeSenateCard
-                  address={member}
-                  blockNumber={parseInt(snapshotBlock.toString())}
-                  joinedDate={toNormalDate(creationDate.toString())}
-                  masterNodeAddress={masterNode}
-                />
-              </Box>
+          {delegatees.length > 0 ? (
+            delegatees.map(
+              ({
+                creationDate,
+                masterNode,
+                member,
+                snapshotBlock,
+                txHash,
+                id,
+              }) => (
+                <Box w={["50%", "20%"]} key={id}>
+                  <MasterNodeSenateCard
+                    address={member}
+                    blockNumber={parseInt(snapshotBlock.toString())}
+                    joinedDate={toNormalDate(creationDate.toString())}
+                    masterNodeAddress={masterNode}
+                  />
+                </Box>
+              )
             )
+          ) : (
+            <>
+              <VStack w={"100%"} alignItems="center" alignSelf={"center"} p={6}>
+                <EmptyBoxIcon />
+                <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                  {"No data"}
+                </Text>
+              </VStack>
+            </>
           )}
         </HStack>
       </Flex>

@@ -15,14 +15,15 @@ import React, {
   ReactNode,
 } from "react";
 import MasterNodeDelegateeSenateIcon from "../utils/assets/icons/MasterNodeDelegateeSenateIcon";
+import { IconBase } from "react-icons/lib";
 
 interface VoteStatProgressBarProps extends ProgressProps {
   percentage: number;
   threshold: number;
-  Icon?: ComponentType;
+  Icon?: ReactElement;
   ProgressLabel?: ReactElement;
 }
-const VoteStatProgressBar: FC<VoteStatProgressBarProps> = ({
+const DefaultProgressBar: FC<VoteStatProgressBarProps> = ({
   percentage,
   threshold,
   Icon,
@@ -32,10 +33,10 @@ const VoteStatProgressBar: FC<VoteStatProgressBarProps> = ({
 }) => {
   return (
     <HStack alignItems={"center"} w={"full"}>
-      <Box w={'20%'}>
+      <Box w={"20%"}>
         {Icon ? (
           <Box w={"5"} h={"5"}>
-            {<Icon />}
+            {Icon}
           </Box>
         ) : (
           <></>
@@ -67,4 +68,4 @@ const VoteStatProgressBar: FC<VoteStatProgressBarProps> = ({
   );
 };
 
-export default VoteStatProgressBar;
+export default DefaultProgressBar;

@@ -1,4 +1,5 @@
-import { utils, BigNumberish } from "ethers";
+import Big from "big.js";
+import { utils, BigNumberish, BigNumber } from "ethers";
 
 export function toEther(value: string) {
   return utils.formatEther(value);
@@ -16,4 +17,11 @@ export function numberWithCommaSeparate(value: number | string) {
 
 export function weiBigNumberToFormattedNumber(value: BigNumberish) {
   return numberWithCommaSeparate(toEther(value.toString()).toString());
+}
+// percentageBase: Up to 10^6
+export function toStandardPercentage(percentage: string) {
+  return BigNumber.from(percentage)
+    .mul(100)
+    .div(1000000)
+    .toString();
 }

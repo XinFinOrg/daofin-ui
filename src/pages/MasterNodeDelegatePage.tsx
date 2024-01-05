@@ -15,7 +15,7 @@ import { Page } from "../components";
 import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
 import { zeroAddress } from "viem";
 
-import VoteStatProgressBar from "../components/VoteStatProgressBar";
+import DefaultProgressBar from "../components/DefaultProgressBar";
 import {
   MasterNodeSenateCard,
   WalletAddressCard,
@@ -31,6 +31,7 @@ import useFetchMasterNodeDelegatee from "../hooks/useFetchMasterNodeDelegatee";
 import { toNormalDate, toStandardTimestamp } from "../utils/date";
 import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
 import { MasterNodeCommittee } from "../utils/networks";
+import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
 
 export type UpdateOrJoinMasterNodeDelegateeType = {
   delegateeAddress: string;
@@ -38,6 +39,8 @@ export type UpdateOrJoinMasterNodeDelegateeType = {
 const MasterNodeDelegatePage = () => {
   const { data: delegatees } = useFetchMasterNodeDelegatee();
   const totalMasterNodes = useFetchTotalNumbersByCommittee(MasterNodeCommittee);
+  const bgColor = useColorModeValue("gray.50", "gray.900");
+
   return (
     <Page>
       <Formik
@@ -64,23 +67,41 @@ const MasterNodeDelegatePage = () => {
             </VStack>
             <HStack>
               <VStack w={["70%"]} alignSelf={"flex-start"}>
-                {delegatees.map(
-                  ({
-                    member,
-                    masterNode,
-                    snapshotBlock,
-                    txHash,
-                    id,
-                    creationDate,
-                  }) => (
-                    <MasterNodeSenateCard
-                      key={id}
-                      address={member}
-                      joinedDate={toNormalDate(creationDate.toString())}
-                      blockNumber={parseInt(snapshotBlock.toString())}
-                      masterNodeAddress={masterNode}
-                    />
+                {delegatees.length > 0 ? (
+                  delegatees.map(
+                    ({
+                      member,
+                      masterNode,
+                      snapshotBlock,
+                      txHash,
+                      id,
+                      creationDate,
+                    }) => (
+                      <MasterNodeSenateCard
+                        key={id}
+                        address={member}
+                        joinedDate={toNormalDate(creationDate.toString())}
+                        blockNumber={parseInt(snapshotBlock.toString())}
+                        masterNodeAddress={masterNode}
+                      />
+                    )
                   )
+                ) : (
+                  <>
+                    <VStack
+                      p={"6"}
+                      bgColor={bgColor}
+                      borderRadius={"md"}
+                      w={"100%"}
+                      alignItems="center"
+                      alignSelf={"center"}
+                    >
+                      <EmptyBoxIcon />
+                      <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                        {"There is no member yet."}
+                      </Text>
+                    </VStack>
+                  </>
                 )}
               </VStack>
               <Box
@@ -117,7 +138,7 @@ const MasterNodeDelegatePage = () => {
                     </h2>
                     <AccordionPanel pb={4}>
                       <HStack justifyContent={"space-between"}>
-                        <VoteStatProgressBar
+                        <DefaultProgressBar
                           percentage={10}
                           threshold={50}
                           ProgressLabel={<Text fontSize={"sm"}>Threshold</Text>}
@@ -125,7 +146,7 @@ const MasterNodeDelegatePage = () => {
                         <Text fontSize={"sm"}>10%</Text>
                       </HStack>
                       <HStack>
-                        <VoteStatProgressBar
+                        <DefaultProgressBar
                           percentage={60}
                           threshold={50}
                           ProgressLabel={<Text fontSize={"sm"}>Pass Rate</Text>}
@@ -145,7 +166,7 @@ const MasterNodeDelegatePage = () => {
                     </h2>
                     <AccordionPanel pb={4}>
                       <HStack justifyContent={"space-between"}>
-                        <VoteStatProgressBar
+                        <DefaultProgressBar
                           percentage={50}
                           threshold={60}
                           ProgressLabel={<Text fontSize={"sm"}>Threshold</Text>}
@@ -153,7 +174,7 @@ const MasterNodeDelegatePage = () => {
                         <Text fontSize={"sm"}>50%</Text>
                       </HStack>
                       <HStack>
-                        <VoteStatProgressBar
+                        <DefaultProgressBar
                           percentage={80}
                           threshold={70}
                           ProgressLabel={<Text fontSize={"sm"}>Pass Rate</Text>}

@@ -9,10 +9,26 @@ import {
   Text,
   Box,
 } from "@chakra-ui/react";
-import React, { FC } from "react";
-import VoteStatProgressBar from "./VoteStatProgressBar";
+import React, { FC, useEffect, useMemo } from "react";
+import DefaultProgressBar from "./DefaultProgressBar";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
+import {
+  JudiciaryCommittee,
+  MasterNodeCommittee,
+  PeoplesHouseCommittee,
+} from "../utils/networks";
+import useThresholdVotingStatsPerCommittee from "../hooks/useThresholdVotingStatsPerCommittee";
+import useMinParticipationVotingStatsPerCommittee from "../hooks/useMinParticipationVotingStatsPerCommittee";
+import { BigNumber, utils } from "ethers";
+import {
+  numberWithCommaSeparate,
+  toEther,
+  weiBigNumberToFormattedNumber,
+} from "../utils/numbers";
+import useTotalNumberOfVoters from "../hooks/useTotalNumberOfVoters";
+import useFetchVotersOnProposal from "../hooks/useFetchVotersOnProposal";
 import useVoteStats from "../hooks/useVoteStats";
+import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
 
 interface VotingStatsBoxProps {
   currentVoters?: number;
@@ -20,21 +36,36 @@ interface VotingStatsBoxProps {
 }
 const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
   const { committeesListWithIcon, committeesList } = useCommitteeUtils();
+
+  const { mapCommitteeToTotalNumber } = useTotalNumberOfVoters();
+
+  const data = useVoteStats(proposalId);
+  // useEffect(() => call(proposalId), []);
+  const allVotersNumber = useMemo(
+    () =>
+      data
+        ? data.reduce(
+            (acc, { voters }) => (voters ? acc + voters?.data.length : acc),
+            0
+          )
+        : 0,
+    [data]
+  );
   return (
     <>
       <HStack justifyContent={"space-between"} mb={"6"} p={"6"}>
         <Text fontSize={"lg"} fontWeight={"bold"}>
           Voting
         </Text>
-        <Text>Current voters 99</Text>
+        <Text>Current voters {numberWithCommaSeparate(allVotersNumber)}</Text>
       </HStack>
       <Tabs isFitted>
         <TabList>
-          {committeesListWithIcon.map(({ icon, id, name }) => (
+          {committeesListWithIcon.map(({ Icon, id, name }) => (
             <Tab key={id}>
               <HStack>
                 <Box w={"25px"} h={"25px"}>
-                  {icon}
+                  {Icon && Icon}
                 </Box>
                 <Text
                   fontSize={"sm"}
@@ -49,59 +80,74 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
         </TabList>
 
         <TabPanels>
-          {committeesListWithIcon.map(({ id, name }) => (
+          {data.map(({ id, name, voters }) => (
             <TabPanel key={id} p={"6"}>
               <HStack justifyContent={"space-between"} py={"4"}>
                 <Text fontWeight={"semibold"} textColor={"gray.600"}>
                   <Text>
-                    2312{" "}
+                    {
+                      data.find(({ id: committeeId }) => id === committeeId)
+                        ?.voters?.data.length
+                    }{" "}
                     <Text as="p" color="gray.500" display={"inline-block"}>
                       Voted
                     </Text>{" "}
                   </Text>
                 </Text>
                 <HStack fontWeight={"semibold"} textColor={"gray.600"}>
-                  <Text>
-                    <Text as="p" color="green" display={"inline-block"}>
-                      1231
-                    </Text>{" "}
-                    For
-                  </Text>
-                  <Text>
-                    <Text as="p" color="red" display={"inline-block"}>
-                      1231
-                    </Text>{" "}
-                    Against
-                  </Text>
-                  <Text>
-                    <Text as="p" display={"inline-block"}>
-                      2
-                    </Text>{" "}
-                    Abstain
-                  </Text>
+                  {data
+                    .find(({ id: committeeId }) => id === committeeId)
+                    ?.options.map(({ value, text }) => (
+                      <Text>
+                        <Text as="p" display={"inline-block"}>
+                          {value}
+                        </Text>{" "}
+                        {text}
+                      </Text>
+                    ))}
                 </HStack>
               </HStack>
-              <VStack alignItems={"flex-start"}>
-                <VoteStatProgressBar
-                  percentage={80}
-                  threshold={70}
-                  height={"2"}
-                  ProgressLabel={
-                    <Text fontWeight={"semibold"} color={"gray.600"}>
-                      Quorum
-                    </Text>
-                  }
-                />
-                <VoteStatProgressBar
-                  percentage={40}
-                  threshold={30}
-                  ProgressLabel={
-                    <Text fontWeight={"semibold"} color={"gray.600"}>
-                      Threshold
-                    </Text>
-                  }
-                />
-              </VStack>
+              {data
+                .filter(({ id: committeeId }) => id === committeeId)
+                .map(({ minParticipation, supportThreshold }) => (
+                  <VStack alignItems={"flex-start"}>
+                    <DefaultProgressBar
+                      percentage={
+                        minParticipation?.numberOfVotesPercentage
+                          ? +minParticipation.numberOfVotesPercentage.toString()
+                          : 0
+                      }
+                      threshold={
+                        minParticipation?.minParticipationPercentage
+                          ? +minParticipation.minParticipationPercentage.toString()
+                          : 0
+                      }
+                      height={"2"}
+                      ProgressLabel={
+                        <Text fontWeight={"semibold"} color={"gray.600"}>
+                          Quorum
+                        </Text>
+                      }
+                    />
+                    <DefaultProgressBar
+                      percentage={
+                        supportThreshold?.numberOfVotesPercentage
+                          ? +supportThreshold?.numberOfVotesPercentage
+                          : 0
+                      }
+                      threshold={
+                        supportThreshold?.supportThresholdPercentage
+                          ? +supportThreshold?.supportThresholdPercentage
+                          : 0
+                      }
+                      ProgressLabel={
+                        <Text fontWeight={"semibold"} color={"gray.600"}>
+                          Threshold
+                        </Text>
+                      }
+                    />
+                  </VStack>
+                ))}
             </TabPanel>
           ))}
         </TabPanels>

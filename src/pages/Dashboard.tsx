@@ -30,17 +30,24 @@ import {
 } from "@chakra-ui/react";
 import { Modal, Page } from "../components";
 import { v4 as uuid } from "uuid";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Proposals from "../components/Proposals";
 import CommunityCards from "../components/CommunityCards";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
-import { CheckCircleIcon, CheckIcon, ExternalLinkIcon } from "@chakra-ui/icons";
+import {
+  ArrowForwardIcon,
+  CheckCircleIcon,
+  CheckIcon,
+  ExternalLinkIcon,
+} from "@chakra-ui/icons";
 import { zeroAddress } from "viem";
 import { IoBarChart } from "react-icons/io5";
 import useFetchDaoBalance from "../hooks/useFetchDaoBalance";
 import { weiBigNumberToFormattedNumber } from "../utils/numbers";
 import { fetchTokenPrice } from "../services/prices";
 import { useNetwork } from "../contexts/network";
+import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
+import CoinIcon from "../utils/assets/icons/CoinIcon";
 const DashboardWrapper = styled.div.attrs({
   className: "grid grid-cols-12 grid-rows-12 gap-4",
 })``;
@@ -163,7 +170,7 @@ const Dashboard: FC = () => {
             bgColor={useColorModeValue("gray.50", "gray.900")}
             borderRadius={"md"}
           >
-            <VStack alignItems={"flex-start"}>
+            {/* <VStack alignItems={"flex-start"}>
               <Text as={"h1"} fontSize={"sm"} fontWeight={"bold"}>
                 Lorem ipsum dolor sit amet consectetur ellus adipiscing
               </Text>
@@ -183,7 +190,13 @@ const Dashboard: FC = () => {
               <Button variant={"outline"} colorScheme="blue" size={"sm"}>
                 Execute Now
               </Button>
-            </Box>
+            </Box> */}
+            <VStack w={"100%"} alignItems="center" alignSelf={"center"} p={6}>
+              {/* <CoinIcon /> */}
+              <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                {"There is no proposal yet."}
+              </Text>
+            </VStack>
           </HStack>
         </Box>
         <Box w={"40%"} mb={"4"}>
@@ -196,7 +209,7 @@ const Dashboard: FC = () => {
             bgColor={useColorModeValue("gray.50", "gray.900")}
             borderRadius={"md"}
           >
-            <VStack alignItems={"flex-start"}>
+            {/* <VStack alignItems={"flex-start"}>
               <Text as={"h1"} fontSize={"sm"} fontWeight={"bold"}>
                 Lorem ipsum dolor sit amet consectetur ellus adipiscing
               </Text>
@@ -211,17 +224,35 @@ const Dashboard: FC = () => {
                   <ExternalLinkIcon />
                 </Text>
               </HStack>
+            </VStack> */}
+            <VStack w={"100%"} alignItems="center" alignSelf={"center"} p={6}>
+              {/* <EmptyBoxIcon /> */}
+              <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                {"There is no proposal yet."}
+              </Text>
             </VStack>
           </HStack>
         </Box>
       </Flex>
 
-      <Text fontSize={"md"} fontWeight={"semibold"} mb={"4"}>
-        Most Recent Proposals
-      </Text>
-      <Flex justifyContent={"center"}>
-        <Box w={"100%"}>{<Proposals proposals={proposals} />}</Box>
-      </Flex>
+      <VStack w={"full"}>
+        <Text
+          alignSelf={"flex-start"}
+          fontSize={"md"}
+          fontWeight={"semibold"}
+          mb={"4"}
+        >
+          Most Recent Proposals
+        </Text>
+        <Flex justifyContent={"center"} w={"full"}>
+          <Box w={"full"}>{<Proposals proposals={proposals} />}</Box>
+        </Flex>
+        <Link to={"/proposals"}>
+          <Button variant={"link"}>
+            View all proposals <ArrowForwardIcon />
+          </Button>
+        </Link>
+      </VStack>
       {isOpen && (
         <Modal
           title="What would like to propose?"

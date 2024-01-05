@@ -11,7 +11,13 @@ import {
   HStack,
   VStack,
 } from "@chakra-ui/layout";
-import { makeBlockScannerHashUrl, shortenAddress } from "../utils/networks";
+import {
+  JudiciaryCommittee,
+  MasterNodeCommittee,
+  PeoplesHouseCommittee,
+  makeBlockScannerHashUrl,
+  shortenAddress,
+} from "../utils/networks";
 import { styled } from "styled-components";
 import { FormLabel } from "@chakra-ui/form-control";
 import BoxWrapper from "./BoxWrapper";
@@ -39,7 +45,7 @@ import { IoShareSocial } from "react-icons/io5";
 import { ArrowForwardIcon, InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
 
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
-import VoteStatProgressBar from "./VoteStatProgressBar";
+
 import VotingStatsBox from "./VotingStatsBox";
 import { BlockIcon } from "../utils/assets/icons";
 import ProposalStatusStepper from "./ProposalStatusStepper";
@@ -51,7 +57,10 @@ import useFetchVotersOnProposal from "../hooks/useFetchVotersOnProposal";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
 import { NoProposalIcon } from "../utils/assets/icons/NoProposalIcon";
-
+import { Formik } from "formik";
+import { useVoteContext } from "../contexts/voteContext";
+import useMinParticipationVotingStatsPerCommittee from "../hooks/useMinParticipationVotingStatsPerCommittee";
+import useThresholdVotingStatsPerCommittee from "../hooks/useThresholdVotingStatsPerCommittee";
 const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
   const {
     actions,
@@ -65,6 +74,7 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
     potentiallyExecutable,
     startDate,
     createdAt,
+    proposalType,
   } = proposal;
 
   const { description, resources, summary, title, media } = metadata;
@@ -79,11 +89,7 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
   //   peoplesHouseVoteListLength,
   // } = useVoteStats(pluginProposalId);
 
-  const { data: allVoters } = useFetchVotersOnProposal(
-    daoAddress,
-    pluginAddress,
-    pluginProposalId
-  );
+  const { data: allVoters } = useFetchVotersOnProposal(pluginProposalId);
 
   const handleVote = async () => {
     // const iterator = daofinClient?.methods.vote(
@@ -123,106 +129,7 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
     () => committeesList.map((item) => ({ ...item })),
     [committeesList]
   );
-  // const mnStats = useMinParticipationVotingStatsPerCommittee(
-  //   pluginProposalId,
-  //   MasterNodeCommittee
-  // );
 
-  // const judiciaryStats = useMinParticipationVotingStatsPerCommittee(
-  //   pluginProposalId,
-  //   JudiciaryCommittee
-  // );
-  // const peopleStats = useMinParticipationVotingStatsPerCommittee(
-  //   pluginProposalId,
-  //   PeoplesHouseCommittee
-  // );
-
-  // const convertCommitteeBytesToVotingStats = (
-  //   committee: string
-  // ):
-  //   | {
-  //       current: BigNumber;
-  //       minParticipations: BigNumber;
-  //       percentage: string;
-  //     }
-  //   | undefined => {
-  //   switch (committee) {
-  //     case MasterNodeCommittee:
-  //       return mnStats;
-  //     case PeoplesHouseCommittee:
-  //       return peopleStats
-  //         ? {
-  //             current: BigNumber.from(
-  //               parseInt(formatEther(peopleStats.current))
-  //             ),
-  //             percentage: peopleStats.percentage,
-  //             minParticipations: BigNumber.from(
-  //               parseInt(formatEther(peopleStats.minParticipations))
-  //             ),
-  //           }
-  //         : {
-  //             current: BigNumber.from(0),
-  //             minParticipations: BigNumber.from(0),
-  //             percentage: "0",
-  //           };
-  //     case JudiciaryCommittee:
-  //       return judiciaryStats;
-  //   }
-  // };
-
-  // const mnThresholdStats = useThresholdVotingStatsPerCommittee(
-  //   pluginProposalId,
-  //   MasterNodeCommittee
-  // );
-
-  // const judiciaryThresholdStats = useThresholdVotingStatsPerCommittee(
-  //   pluginProposalId,
-  //   JudiciaryCommittee
-  // );
-  // const peopleThresholdStats = useThresholdVotingStatsPerCommittee(
-  //   pluginProposalId,
-  //   PeoplesHouseCommittee
-  // );
-  // const convertCommitteeBytesToSupportTresholdStats = (
-  //   committee: string
-  // ):
-  //   | {
-  //       current: BigNumber;
-  //       supportThreshold: BigNumber;
-  //       percentage: string;
-  //     }
-  //   | undefined => {
-  //   switch (committee) {
-  //     case MasterNodeCommittee:
-  //       return mnThresholdStats;
-  //     case PeoplesHouseCommittee:
-  //       return peopleThresholdStats;
-  //     case JudiciaryCommittee:
-  //       return judiciaryThresholdStats;
-  //   }
-  // };
-  // const minParticipationStats = useMemo(
-  //   () =>
-  //     committeesList && peopleStats && mnStats && judiciaryStats
-  //       ? committeesList.map((committee) =>
-  //           convertCommitteeBytesToVotingStats(committee)
-  //         )
-  //       : [],
-  //   [committeesList, peopleStats, mnStats, judiciaryStats]
-  // );
-
-  // const supportThresholdStats = useMemo(
-  //   () =>
-  //     committeesList &&
-  //     peopleThresholdStats &&
-  //     mnThresholdStats &&
-  //     judiciaryThresholdStats
-  //       ? committeesList.map((committee) =>
-  //           convertCommitteeBytesToSupportTresholdStats(committee)
-  //         )
-  //       : [],
-  //   [committeesList, peopleStats, mnStats, judiciaryStats]
-  // );
   const voteOptionsList = useMemo(
     () =>
       Object.entries(VoteOption)
@@ -230,6 +137,7 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
         .slice(1),
     []
   );
+  const { handleToggleFormModal } = useVoteContext();
 
   return (
     <>
@@ -278,7 +186,9 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
               </Flex>
 
               <Flex alignItems={"center"}>
-                <Button colorScheme="blue">Vote Now</Button>
+                <Button colorScheme="blue" onClick={handleToggleFormModal}>
+                  Vote Now
+                </Button>
               </Flex>
             </Flex>
           </GridItem>
@@ -393,11 +303,11 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
               </HStack>
               <Tabs isFitted>
                 <TabList>
-                  {committeesListWithIcon.map(({ icon, id, name }) => (
+                  {committeesListWithIcon.map(({ Icon, id, name }) => (
                     <Tab key={id}>
                       <HStack>
                         <Box w={"25px"} h={"25px"}>
-                          {icon}
+                          {Icon && Icon}
                         </Box>
                         <Text
                           fontSize={"sm"}

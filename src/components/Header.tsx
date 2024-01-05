@@ -70,63 +70,64 @@ export default function Header() {
   }, []);
   return (
     <>
-      <Flex
+      <Box
+        w="full"
         py="1"
         px={"4"}
-        justifyContent={"space-around"}
         bgColor={useColorModeValue("blue.50", "blue.800")}
       >
-        <HStack>
-          <Box mx={"4"}>
-            {data ? (
-              <a
-                href={`${
-                  CHAIN_METADATA[network].explorer
-                }/blocks/${data.toString()}`}
-                target={"_blank"}
-              >
-                <HStack>
-                  <BlockIcon w={"20px"} />
+        <Flex justifyContent={"space-between"} w={"90%"} m={"auto"}>
+          <HStack>
+            <Box mx={"4"}>
+              {data ? (
+                <a
+                  href={`${
+                    CHAIN_METADATA[network].explorer
+                  }/blocks/${data.toString()}`}
+                  target={"_blank"}
+                >
+                  <HStack>
+                    <BlockIcon w={"20px"} />
 
-                  <Text fontWeight={"medium"}>{data.toString()}</Text>
-                </HStack>
-              </a>
-            ) : (
-              ""
-            )}
-          </Box>
-          <Box mx={"4"}>
-            <HStack>
-              <Box w={"25px"}>
-                <XdcIcon />
-              </Box>
-              <Text fontWeight={"medium"}>${tokenPrice.toFixed(4)}</Text>
-            </HStack>
-          </Box>
-        </HStack>
-        <HStack>
-          <Box mx={"4"}>
-            <Text fontWeight="semibold">
-              <a href={"https://xdc.dev"} target={"_blank"}>
-                XDC.DEV
-              </a>
-            </Text>
-          </Box>
-          <Box mx={"4"}>
-            <Text fontWeight="semibold">
-              <a href={"https://docs.xdc.community"} target={"_blank"}>
-                DOCS
-              </a>
-            </Text>
-          </Box>
-          <Box mx={"4"}>
-            <Switch
-              id="isChecked"
-              isChecked={colorMode === "dark"}
-              onChange={handleSwitchTheme}
-              size={"lg"}
-            />{" "}
-            {/* <Button
+                    <Text fontWeight={"medium"}>{data.toString()}</Text>
+                  </HStack>
+                </a>
+              ) : (
+                ""
+              )}
+            </Box>
+            <Box mx={"4"}>
+              <HStack>
+                <Box w={"25px"}>
+                  <XdcIcon />
+                </Box>
+                <Text fontWeight={"medium"}>${tokenPrice.toFixed(4)}</Text>
+              </HStack>
+            </Box>
+          </HStack>
+          <HStack>
+            <Box mx={"4"}>
+              <Text fontWeight="semibold">
+                <a href={"https://xdc.dev"} target={"_blank"}>
+                  XDC.DEV
+                </a>
+              </Text>
+            </Box>
+            <Box mx={"4"}>
+              <Text fontWeight="semibold">
+                <a href={"https://docs.xdc.community"} target={"_blank"}>
+                  DOCS
+                </a>
+              </Text>
+            </Box>
+            <Box mx={"4"}>
+              <Switch
+                id="isChecked"
+                isChecked={colorMode === "dark"}
+                onChange={handleSwitchTheme}
+                size={"lg"}
+              />{" "}
+              {/* <Button
               onClick={toggleColorMode}
               color={"darkcyan"}
               variant={"outline"}
@@ -137,9 +138,10 @@ export default function Header() {
                 <Icon as={MoonIcon} />
               )}
             </Button> */}
-          </Box>
-        </HStack>
-      </Flex>
+            </Box>
+          </HStack>
+        </Flex>
+      </Box>
 
       <Box px={4}>
         <Flex h={16} alignItems={"center"} justifyContent={"space-around"}>
@@ -210,7 +212,6 @@ export default function Header() {
           </Box>
         ) : null}
       </Box>
-      <WrongNetwork />
     </>
   );
 }

@@ -1,5 +1,12 @@
 import { DaoAction } from "@xinfin/osx-client-common";
-import React, { ComponentType, FC, useEffect, useMemo, useRef } from "react";
+import React, {
+  ComponentType,
+  FC,
+  ReactElement,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import useDaoProposals from "../hooks/useDaoProposals";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import { Proposal } from "../utils/types";
@@ -7,12 +14,12 @@ import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
 import { shortenAddress } from "../utils/networks";
 import { styled } from "styled-components";
 import { Button } from "@chakra-ui/button";
-import { HStack, VStack, Badge, Image } from "@chakra-ui/react";
+import { HStack, VStack, Badge, Image, Skeleton } from "@chakra-ui/react";
 import BaseTable from "./BaseTable";
 import ProposalTypeBadge from "./ProposalTypeBadge";
 import ProposalStatusBadge from "./ProposalStatusBadge";
 import { InfoIcon, InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
-import VoteStatProgressBar from "./VoteStatProgressBar";
+import DefaultProgressBar from "./DefaultProgressBar";
 import MasterNodeDelegateeSenateIcon from "../utils/assets/icons/MasterNodeDelegateeSenateIcon";
 import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
 import PeopleHouseIcon from "../utils/assets/icons/PeopleHouseIcon";
@@ -29,18 +36,18 @@ import {
 import { IoIdCardOutline } from "react-icons/io5";
 import { NoProposalIcon } from "../utils/assets/icons/NoProposalIcon";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
+import useVoteStats from "../hooks/useVoteStats";
 const jazzicon = require("@metamask/jazzicon");
 
 const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
   const navigate = useNavigate();
-  const date = useMemo(() => new Date(), []);
 
   return (
     <>
       {
         <BaseTable
           emptyText={"There is no proposal yet. Be the first to make change"}
-          data={proposals.map(
+          data={proposals?.map(
             ({
               metadata,
               pluginProposalId,
@@ -49,6 +56,7 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
               endDate,
               startDate,
               creationTxHash,
+              committeesVotes,
             }) => ({
               name: (
                 <ProposalSummary
@@ -64,45 +72,31 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
                 />
               ),
               threshold: (
-                <CommitteesVoteStatsProgressBar
-                  data={[
-                    {
-                      threshold: 23,
-                      Icon: MasterNodeDelegateeSenateIcon,
-                      percentage: 40,
-                    },
-                    {
-                      threshold: 23,
-                      Icon: JudiciariesIcon,
-                      percentage: 40,
-                    },
-                    {
-                      threshold: 50,
-                      Icon: PeopleHouseIcon,
-                      percentage: 10,
-                    },
-                  ]}
+                <CommitteesSupportThresholdVoteStatsProgressBar
+                  proposalId={pluginProposalId}
+                  // data={committeesVotes?.map(({ supportThreshold, Icon }) => ({
+                  //   threshold: supportThreshold?.supportThresholdPercentage
+                  //     ? +supportThreshold?.supportThresholdPercentage
+                  //     : 0,
+                  //   Icon: Icon ? Icon : <></>,
+                  //   percentage: supportThreshold?.numberOfVotesPercentage
+                  //     ? +supportThreshold?.numberOfVotesPercentage
+                  //     : 0,
+                  // }))}
                 />
               ),
               quorum: (
-                <CommitteesVoteStatsProgressBar
-                  data={[
-                    {
-                      threshold: 23,
-                      Icon: MasterNodeDelegateeSenateIcon,
-                      percentage: 40,
-                    },
-                    {
-                      threshold: 23,
-                      Icon: JudiciariesIcon,
-                      percentage: 40,
-                    },
-                    {
-                      threshold: 50,
-                      Icon: PeopleHouseIcon,
-                      percentage: 100,
-                    },
-                  ]}
+                <CommitteesMinParticipationVoteStatsProgressBar
+                  proposalId={pluginProposalId}
+                  // data={committeesVotes?.map(({ minParticipation, Icon }) => ({
+                  //   threshold: minParticipation?.minParticipationPercentage
+                  //     ? +minParticipation?.minParticipationPercentage
+                  //     : 0,
+                  //   Icon: Icon ? Icon : <></>,
+                  //   percentage: minParticipation?.numberOfVotesPercentage
+                  //     ? +minParticipation?.numberOfVotesPercentage
+                  //     : 0,
+                  // }))}
                 />
               ),
               action: (
@@ -196,27 +190,67 @@ const ProposalSummary: FC<ProposalSummaryProps> = ({
 };
 
 interface CommitteesVoteStatsProgressBarsProps {
-  data: {
+  proposalId: string;
+  data?: {
     percentage: number;
     threshold: number;
-    Icon: ComponentType;
+    Icon: ReactElement;
   }[];
 }
-const CommitteesVoteStatsProgressBar: FC<
+const CommitteesMinParticipationVoteStatsProgressBar: FC<
   CommitteesVoteStatsProgressBarsProps
-> = ({ data }) => {
+> = ({ data, proposalId }) => {
+  const stats = useVoteStats(proposalId);
   return (
     <Box>
-      {data.length > 0 &&
-        data.map(({ percentage, threshold, Icon }) => (
+      {stats?.length > 0 &&
+        stats.map(({ minParticipation, Icon }) => (
           <Box mb={1}>
-            <VoteStatProgressBar
-              percentage={percentage}
-              threshold={threshold}
+            <DefaultProgressBar
+              percentage={
+                minParticipation?.numberOfVotesPercentage
+                  ? +minParticipation?.numberOfVotesPercentage
+                  : 0
+              }
+              threshold={
+                minParticipation?.minParticipationPercentage
+                  ? +minParticipation?.minParticipationPercentage
+                  : 0
+              }
               Icon={Icon}
             />
           </Box>
         ))}
+    </Box>
+  );
+};
+const CommitteesSupportThresholdVoteStatsProgressBar: FC<
+  CommitteesVoteStatsProgressBarsProps
+> = ({ data, proposalId }) => {
+  const stats = useVoteStats(proposalId);
+  return (
+    <Box>
+      {stats?.length > 0 ? (
+        stats.map(({ supportThreshold, Icon }) => (
+          <Box mb={1}>
+            <DefaultProgressBar
+              percentage={
+                supportThreshold?.numberOfVotesPercentage
+                  ? +supportThreshold?.numberOfVotesPercentage
+                  : 0
+              }
+              threshold={
+                supportThreshold?.supportThresholdPercentage
+                  ? +supportThreshold?.supportThresholdPercentage
+                  : 0
+              }
+              Icon={Icon}
+            />
+          </Box>
+        ))
+      ) : (
+        <Skeleton />
+      )}
     </Box>
   );
 };

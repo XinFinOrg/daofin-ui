@@ -11,7 +11,12 @@ import {
 import { BigNumber, ethers } from "ethers";
 import { Page } from "../components";
 import { Skeleton } from "@chakra-ui/react";
+import { Formik } from "formik";
+import { VoteProvider } from "../contexts/voteContext";
 
+export type VoteFormType = {
+  voteOption: number;
+};
 const ProposalDetailsPage = () => {
   const { pluginAddress, daoAddress } = useAppGlobalConfig();
   const { proposalId } = useParams();
@@ -20,7 +25,18 @@ const ProposalDetailsPage = () => {
   );
 
   return (
-    <Page>{data ? <ProposalDetails proposal={data} /> : null}</Page>
+    <Page>
+      <Formik
+        initialValues={{
+          voteOption: "2",
+        }}
+        onSubmit={() => {}}
+      >
+        <VoteProvider proposalId={proposalId ? proposalId : ""}>
+          {data ? <ProposalDetails proposal={data} /> : null}
+        </VoteProvider>
+      </Formik>
+    </Page>
   );
 };
 

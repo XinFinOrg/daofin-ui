@@ -14,7 +14,7 @@ export type CommitteeGlobal = {
   name: string;
   link: string;
   bgGradient?: string;
-  icon?: ReactElement;
+  Icon?: ReactElement;
 };
 
 export function useCommitteeUtils() {
@@ -75,7 +75,7 @@ export function useCommitteeUtils() {
     () =>
       committeesList.map((item) => ({
         ...item,
-        icon: committeeIdToIcon(item.id),
+        Icon: committeeIdToIcon(item.id),
         bgGradient: committeeIdToBgGradient(item.id),
       })),
     []
