@@ -30,6 +30,7 @@ import {
   toStandardTimestamp,
 } from "../utils/date";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
+import { DefaultButton } from "../components/Button";
 
 const JudiciaryPage = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
@@ -67,7 +68,9 @@ const JudiciaryPage = () => {
             </HStack>
           </Box>
           <Box>
-            <Button colorScheme="blue">Modify Members</Button>
+            <DefaultButton colorScheme="blue" isDisabled={true}>
+              Modify Members
+            </DefaultButton>
           </Box>
         </HStack>
         <HStack>

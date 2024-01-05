@@ -23,19 +23,22 @@ import {
 } from "@chakra-ui/react";
 import { v4 as uuid } from "uuid";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
+import { DefaultBox } from "./Box";
 interface BaseTableProps<T> {
   data: T[];
-  columns: { label: string; tooltip?: ""; accessor: keyof T; w?: string }[];
+  columns: {
+    label: string;
+    tooltip?: "";
+    accessor: keyof T;
+    w?: string;
+    type?: "btn";
+  }[];
   emptyText?: string;
 }
 
 const BaseTable = <T,>({ columns, data, emptyText }: BaseTableProps<T>) => {
   return (
-    <TableContainer
-      boxShadow="sm"
-      borderRadius={"md"}
-      bgColor={useColorModeValue("gray.50", "gray.900")}
-    >
+    <TableContainer as={DefaultBox} p={'1'}>
       <Table variant="simple">
         <Thead>
           <Tr key={uuid()}>
@@ -56,6 +59,7 @@ const BaseTable = <T,>({ columns, data, emptyText }: BaseTableProps<T>) => {
                     w={col.w}
                     maxW={["100px", "300px"]}
                     overflow={"auto"}
+                    textAlign={col.type === "btn" ? "center" : "start"}
                   >
                     {row[col.accessor] as ReactNode}
                   </Td>

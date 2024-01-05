@@ -11,6 +11,8 @@ import {
   useColorMode,
   Switch,
   Image,
+  Spacer,
+  Divider,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -34,21 +36,18 @@ import {
 import { useBlockNumber } from "wagmi";
 import { CHAIN_METADATA } from "../utils/networks";
 import { useNetwork } from "../contexts/network";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { XdcIcon } from "../utils/assets/icons/XdcIcon";
 import { fetchTokenPrice } from "../services/prices";
 import { constants } from "ethers";
+import { DefaultBox } from "./Box";
 interface Props {
   children: React.ReactNode;
   href: string;
   asButton?: boolean;
 }
 
-const Links = [
-  { location: "/", name: "Dashboard", icon: <DashboardIcon /> },
-  { location: "/community", name: "Community", icon: <CommunityIcon /> },
-  { location: "/treasury", name: "Treasury", icon: <TreasuryIcon /> },
-];
+// const Links = ;
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -61,6 +60,14 @@ export default function Header() {
   const handleSwitchTheme = () => {
     toggleColorMode();
   };
+  const Links = useMemo(
+    () => [
+      { location: "/", name: "Dashboard", icon: <DashboardIcon /> },
+      { location: "/community", name: "Community", icon: <CommunityIcon /> },
+      { location: "/treasury", name: "Treasury", icon: <TreasuryIcon /> },
+    ],
+    []
+  );
   const [tokenPrice, setTokenPrice] = useState<number>(0);
   const bgColorModeLinks = useColorModeValue("blue.100", "blue.800");
   useEffect(() => {
@@ -70,12 +77,7 @@ export default function Header() {
   }, []);
   return (
     <>
-      <Box
-        w="full"
-        py="1"
-        px={"4"}
-        bgColor={useColorModeValue("blue.50", "blue.800")}
-      >
+      <DefaultBox w="full" py="1" px={"4"}>
         <Flex justifyContent={"space-between"} w={"90%"} m={"auto"}>
           <HStack>
             <Box mx={"4"}>
@@ -141,7 +143,7 @@ export default function Header() {
             </Box>
           </HStack>
         </Flex>
-      </Box>
+      </DefaultBox>
 
       <Box px={4}>
         <Flex h={16} alignItems={"center"} justifyContent={"space-around"}>
@@ -154,7 +156,8 @@ export default function Header() {
           />
           <HStack spacing={8} alignItems={"center"}>
             <Link to={""}>
-              <Heading>DAOFIN</Heading>
+              <Image src="/logo1.png" />
+              <Heading></Heading>
             </Link>
             <HStack
               as={"nav"}
@@ -184,7 +187,7 @@ export default function Header() {
             </HStack>
           </HStack>
           <HStack>
-            <IconButton
+            {/* <IconButton
               aria-label="FAQ"
               isRound
               icon={<InfoIcon />}
@@ -195,13 +198,13 @@ export default function Header() {
               isRound
               icon={<BellIcon />}
               bg="trasparent"
-            />
+            /> */}
 
             {/* <Web3Button balance='show' icon="hide"/> */}
             <ConnectButton chainStatus="icon" />
           </HStack>
         </Flex>
-
+        <Divider m={"auto"} w={"full"} />
         {isOpen ? (
           <Box pb={4} display={{ md: "none" }}>
             <Stack as={"nav"} spacing={4}>

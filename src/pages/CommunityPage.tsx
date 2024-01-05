@@ -55,6 +55,8 @@ import { NoProposalIcon } from "../utils/assets/icons/NoProposalIcon";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
 import CoinIcon from "../utils/assets/icons/CoinIcon";
 import useFetchDaoBalance from "../hooks/useFetchDaoBalance";
+import { DefaultBox } from "../components/Box";
+import { DefaultButton } from "../components/Button";
 
 const data = [
   {
@@ -99,222 +101,201 @@ const CommunityPage = () => {
       </Text>
 
       <Flex mb={4}>
-        <HStack
-          bgColor={useColorModeValue("gray.50", "gray.900")}
-          p={"6"}
-          mr={4}
-          borderRadius={"lg"}
-          border={"1px"}
-          borderColor={"blue.50"}
-          boxShadow={"sm"}
-          w={"50%"}
-          justifyContent={"space-between"}
-        >
-          <VStack alignItems={"flex-start"}>
-            <Text fontSize="sm" fontWeight={"normal"}>
-              Total Voters
-            </Text>
-            <Text fontSize="large" fontWeight={"bold"}>
-              904
-            </Text>
-          </VStack>
-        </HStack>
-        <HStack
-          bgColor={useColorModeValue("gray.50", "gray.900")}
-          p={"6"}
-          borderRadius={"lg"}
-          border={"1px"}
-          borderColor={"blue.50"}
-          boxShadow={"sm"}
-          w={"50%"}
-          justifyContent={"space-between"}
-        >
-          <VStack alignItems={"flex-start"}>
-            <Text fontSize="sm" fontWeight={"normal"}>
-              Balance in Treasury
-            </Text>
-            <Text fontSize="large" fontWeight={"bold"}>
-              {nativeBalanceOfDao
-                ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
-                : 0}{" "}
-            </Text>
-          </VStack>
-          <Box>
-            <Button variant="outline" colorScheme="blue">
-              + Add fund
-            </Button>
-          </Box>
-        </HStack>
+        <DefaultBox mr={4} w={"50%"}>
+          <HStack justifyContent={"space-between"}>
+            <VStack alignItems={"flex-start"}>
+              <Text fontSize="sm" fontWeight={"normal"}>
+                Total Voters
+              </Text>
+              <Text fontSize="large" fontWeight={"bold"}>
+                904
+              </Text>
+            </VStack>
+          </HStack>
+        </DefaultBox>
+        <DefaultBox mr={4} w={"50%"}>
+          <HStack justifyContent={"space-between"}>
+            <VStack alignItems={"flex-start"}>
+              <Text fontSize="sm" fontWeight={"normal"}>
+                Balance in Treasury
+              </Text>
+              <Text fontSize="large" fontWeight={"bold"}>
+                {nativeBalanceOfDao
+                  ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
+                  : 0}{" "}
+              </Text>
+            </VStack>
+            <Box>
+              <Button variant="outline" colorScheme="blue">
+                + Add fund
+              </Button>
+            </Box>
+          </HStack>
+        </DefaultBox>
       </Flex>
       <Flex mb={4}>
         <CommunityCards />
       </Flex>
-      <Flex
-        mb={4}
-        flexDirection={"column"}
-        p={"6"}
-        bgColor={useColorModeValue("gray.50", "gray.900")}
-        borderRadius={"md"}
-      >
-        <HStack w={"full"} justifyContent={"space-between"} mb={"4"}>
-          <Box>
-            <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
-              Judiciaries
-            </Text>
-            <Text>Lorem ipsum dolor sit amet consectetur,</Text>
-          </Box>
-          <Box display={"inline-flex"} alignItems={"center"}>
-            <Text>View all</Text>
-            <ArrowForwardIcon />
-          </Box>
-        </HStack>
-        <HStack flexWrap={"wrap"} justifyContent={"flex-start"}>
-          {juries.length > 0 &&
-            juries.map(({ member, creationDate }) => (
-              <Box w={"sm"}>
-                <WalletAddressCardWithDate
-                  address={member}
-                  date={new Date(toStandardTimestamp(creationDate.toString()))}
-                />
-              </Box>
-            ))}
-        </HStack>
-      </Flex>
-
-      <Flex
-        mb={4}
-        flexDirection={"column"}
-        p={"6"}
-        bgColor={useColorModeValue("gray.50", "gray.900")}
-        borderRadius={"md"}
-      >
-        <HStack alignItems={"start"} w={"full"}>
-          <VStack w={"50%"} alignItems={"flex-start"}>
-            <Box textAlign={"start"}>
+      <DefaultBox mb={4}>
+        <Flex flexDirection={"column"}>
+          <HStack w={"full"} justifyContent={"space-between"} mb={"4"}>
+            <Box>
               <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
-                People’s House
+                Judiciaries
               </Text>
-              <Text fontSize={"xs"} fontWeight={"normal"}>
-                This is the group of expert people who are selected during
-                initial deployment
-              </Text>
+              <Text>Lorem ipsum dolor sit amet consectetur,</Text>
             </Box>
-            <Box w={"100%"} px={6} py={4}>
-              <ResponsiveContainer width={"100%"} minHeight={300}>
-                <BarChart width={730} height={250} data={data}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  {/* <YAxis /> */}
-                  {/* <Legend /> */}
-                  <Bar dataKey="pv" fill="#8884d8" />
-                  <Bar dataKey="uv" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
+            <Box display={"inline-flex"} alignItems={"center"}>
+              <Text>View all</Text>
+              <ArrowForwardIcon />
             </Box>
-          </VStack>
-          <VStack alignItems={"flex-start"} w={"50%"}>
-            <Box textAlign={"start"}>
-              <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
-                Top Contributors
-              </Text>
-              <Text fontSize={"xs"} fontWeight={"normal"}>
-                People that has funded the DAO treasury the most
-              </Text>
-            </Box>
-            <VStack w={"full"}>
-              {people.length > 0 ? (
-                people.map(
-                  ({ amount, depositDate, snapshotBlock, id, voter }) => (
-                    <Box w={"full"}>
-                      <WalletAddressCardWithBalance
-                        address={voter}
-                        sm
-                        balance={weiBigNumberToFormattedNumber(amount)}
-                        symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
-                      />
-                    </Box>
-                  )
-                )
-              ) : (
-                <>
-                  <VStack
-                    w={"100%"}
-                    alignItems="center"
-                    alignSelf={"center"}
-                    p={6}
-                  >
-                    <CoinIcon />
-                    <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
-                      {"There is not enough data this month to showcase"}
-                    </Text>
-                  </VStack>
-                </>
-              )}
-            </VStack>
-            <VStack w={"full"}>
-              <Button variant={"ghost"} w={"full"} alignSelf={"end"}>
-                View All
-              </Button>
-              <Button colorScheme="blue" w={"full"} alignSelf={"end"}>
-                Join House
-              </Button>
-            </VStack>
-          </VStack>
-        </HStack>
-      </Flex>
-      <Flex
-        mb={4}
-        flexDirection={"column"}
-        p={"6"}
-        bgColor={useColorModeValue("gray.50", "gray.900")}
-        borderRadius={"md"}
-        w={"full"}
-      >
-        <HStack w={"full"} justifyContent={"space-between"} mb={"4"}>
-          <Box>
-            <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
-              Master Node Delegatee Senate
-            </Text>
-            <Text>Lorem ipsum dolor sit amet consectetur,</Text>
-          </Box>
-          <Box display={"inline-flex"} alignItems={"center"}>
-            <Text>View all</Text>
-            <ArrowForwardIcon />
-          </Box>
-        </HStack>
-        <HStack flexWrap={"wrap"} justifyContent={"flex-start"}>
-          {delegatees.length > 0 ? (
-            delegatees.map(
-              ({
-                creationDate,
-                masterNode,
-                member,
-                snapshotBlock,
-                txHash,
-                id,
-              }) => (
-                <Box w={["50%", "20%"]} key={id}>
-                  <MasterNodeSenateCard
+          </HStack>
+          <HStack flexWrap={"wrap"} justifyContent={"flex-start"}>
+            {juries.length > 0 &&
+              juries.map(({ member, creationDate }) => (
+                <Box w={"sm"}>
+                  <WalletAddressCardWithDate
                     address={member}
-                    blockNumber={parseInt(snapshotBlock.toString())}
-                    joinedDate={toNormalDate(creationDate.toString())}
-                    masterNodeAddress={masterNode}
+                    date={
+                      new Date(toStandardTimestamp(creationDate.toString()))
+                    }
                   />
                 </Box>
-              )
-            )
-          ) : (
-            <>
-              <VStack w={"100%"} alignItems="center" alignSelf={"center"} p={6}>
-                <EmptyBoxIcon />
-                <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
-                  {"No data"}
+              ))}
+          </HStack>
+        </Flex>
+      </DefaultBox>
+      <DefaultBox mb={4}>
+        <Flex flexDirection={"column"}>
+          <HStack alignItems={"start"} w={"full"}>
+            <VStack w={"50%"} alignItems={"flex-start"}>
+              <Box textAlign={"start"}>
+                <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
+                  People’s House
                 </Text>
+                <Text fontSize={"xs"} fontWeight={"normal"}>
+                  This is the group of expert people who are selected during
+                  initial deployment
+                </Text>
+              </Box>
+              <Box w={"100%"} px={6} py={4}>
+                <ResponsiveContainer width={"100%"} minHeight={300}>
+                  <BarChart width={730} height={250} data={data}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    {/* <YAxis /> */}
+                    {/* <Legend /> */}
+                    <Bar dataKey="pv" fill="#8884d8" />
+                    <Bar dataKey="uv" fill="#82ca9d" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </Box>
+            </VStack>
+            <VStack alignItems={"flex-start"} w={"50%"}>
+              <Box textAlign={"start"}>
+                <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
+                  Top Contributors
+                </Text>
+                <Text fontSize={"xs"} fontWeight={"normal"}>
+                  People that has funded the DAO treasury the most
+                </Text>
+              </Box>
+              <VStack w={"full"}>
+                {people.length > 0 ? (
+                  people.map(
+                    ({ amount, depositDate, snapshotBlock, id, voter }) => (
+                      <Box w={"full"}>
+                        <WalletAddressCardWithBalance
+                          address={voter}
+                          sm
+                          balance={weiBigNumberToFormattedNumber(amount)}
+                          symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
+                        />
+                      </Box>
+                    )
+                  )
+                ) : (
+                  <>
+                    <VStack
+                      w={"100%"}
+                      alignItems="center"
+                      alignSelf={"center"}
+                      p={6}
+                    >
+                      <CoinIcon />
+                      <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                        {"There is not enough data this month to showcase"}
+                      </Text>
+                    </VStack>
+                  </>
+                )}
               </VStack>
-            </>
-          )}
-        </HStack>
-      </Flex>
+              <VStack w={"full"}>
+                <DefaultButton variant={"ghost"} w={"full"} alignSelf={"end"}>
+                  View All
+                </DefaultButton>
+                <DefaultButton w={"full"} alignSelf={"end"}>
+                  Join House
+                </DefaultButton>
+              </VStack>
+            </VStack>
+          </HStack>
+        </Flex>
+      </DefaultBox>
+      <DefaultBox w={"full"} mb={4}>
+        <Flex flexDirection={"column"}>
+          <HStack w={"full"} justifyContent={"space-between"} mb={"4"}>
+            <Box>
+              <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
+                Master Node Delegatee Senate
+              </Text>
+              <Text>Lorem ipsum dolor sit amet consectetur,</Text>
+            </Box>
+            <Box display={"inline-flex"} alignItems={"center"}>
+              <Text>View all</Text>
+              <ArrowForwardIcon />
+            </Box>
+          </HStack>
+
+          <HStack flexWrap={"wrap"} justifyContent={"flex-start"}>
+            {delegatees.length > 0 ? (
+              delegatees.map(
+                ({
+                  creationDate,
+                  masterNode,
+                  member,
+                  snapshotBlock,
+                  txHash,
+                  id,
+                }) => (
+                  <Box w={["50%", "20%"]} key={id}>
+                    <MasterNodeSenateCard
+                      address={member}
+                      blockNumber={parseInt(snapshotBlock.toString())}
+                      joinedDate={toNormalDate(creationDate.toString())}
+                      masterNodeAddress={masterNode}
+                    />
+                  </Box>
+                )
+              )
+            ) : (
+              <>
+                <VStack
+                  w={"100%"}
+                  alignItems="center"
+                  alignSelf={"center"}
+                  p={6}
+                >
+                  <EmptyBoxIcon />
+                  <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                    {"No data"}
+                  </Text>
+                </VStack>
+              </>
+            )}
+          </HStack>
+        </Flex>
+      </DefaultBox>
     </Page>
   );
 };

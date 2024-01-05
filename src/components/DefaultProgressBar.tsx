@@ -6,6 +6,8 @@ import {
   HStack,
   Progress,
   ProgressProps,
+  useColorMode,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import React, {
   Component,
@@ -35,7 +37,7 @@ const DefaultProgressBar: FC<VoteStatProgressBarProps> = ({
     <HStack alignItems={"center"} w={"full"}>
       <Box w={"20%"}>
         {Icon ? (
-          <Box w={"5"} h={"5"}>
+          <Box w={"7"} h={"7"}>
             {Icon}
           </Box>
         ) : (
@@ -61,7 +63,8 @@ const DefaultProgressBar: FC<VoteStatProgressBarProps> = ({
           transform={`translateX(-${threshold}%)`}
           width="3px"
           height="100%"
-          bg="gray.900"
+          bg={useColorModeValue('black','white')}
+
         />
       </Progress>
     </HStack>

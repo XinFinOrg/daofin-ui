@@ -8,13 +8,15 @@ import JudiciaryPage from "./pages/JudiciaryPage";
 import CommitteesPage from "./pages/CommunityPage";
 import PeoplesHousePage from "./pages/PeoplesHousePage";
 import MasterNodeDelegatePage from "./pages/MasterNodeDelegatePage";
-import { Box } from "@chakra-ui/react";
+import { Box, useColorModeValue } from "@chakra-ui/react";
 import CommunityPage from "./pages/CommunityPage";
 import TreasuryPage from "./pages/TreasuryPage";
+import Footer from "./components/Footer";
 
 function App() {
   return (
-    <Box className="App">
+    <Box bgColor={useColorModeValue("#FFF", "#19262e")}>
+      <Header />
       <Routes>
         <Route path="/" element={<Dashboard />} />
       </Routes>
@@ -46,6 +48,9 @@ function App() {
           <Route path="/treasury" element={<TreasuryPage />} />
         </Route>
       </Routes>
+      <Box p={5}>
+        <Footer />
+      </Box>
     </Box>
   );
 }

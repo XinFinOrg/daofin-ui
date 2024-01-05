@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from "react";
 import useDaoProposals from "../hooks/useDaoProposals";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
@@ -14,7 +15,15 @@ import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
 import { shortenAddress } from "../utils/networks";
 import { styled } from "styled-components";
 import { Button } from "@chakra-ui/button";
-import { HStack, VStack, Badge, Image, Skeleton } from "@chakra-ui/react";
+import {
+  HStack,
+  VStack,
+  Badge,
+  Image,
+  Skeleton,
+  CircularProgress,
+  Progress,
+} from "@chakra-ui/react";
 import BaseTable from "./BaseTable";
 import ProposalTypeBadge from "./ProposalTypeBadge";
 import ProposalStatusBadge from "./ProposalStatusBadge";
@@ -115,7 +124,7 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
             {
               label: "Proposals",
               accessor: "name",
-              w: "50%",
+              w: "40%",
             },
             {
               label: "Threshold",
@@ -128,6 +137,7 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
             {
               label: "",
               accessor: "action",
+              type: "btn",
             },
           ]}
         />
@@ -201,9 +211,21 @@ const CommitteesMinParticipationVoteStatsProgressBar: FC<
   CommitteesVoteStatsProgressBarsProps
 > = ({ data, proposalId }) => {
   const stats = useVoteStats(proposalId);
+  const [isFetched, setIsFetched] = useState(false);
+  useEffect(() => {
+    if (
+      stats.length > 0 &&
+      stats.filter(
+        ({ minParticipation, supportThreshold }) =>
+          minParticipation !== undefined && supportThreshold !== undefined
+      ).length > 0
+    ) {
+      setIsFetched(true);
+    }
+  }, [stats]);
   return (
     <Box>
-      {stats?.length > 0 &&
+      {stats?.length > 0 && isFetched ? (
         stats.map(({ minParticipation, Icon }) => (
           <Box mb={1}>
             <DefaultProgressBar
@@ -220,7 +242,10 @@ const CommitteesMinParticipationVoteStatsProgressBar: FC<
               Icon={Icon}
             />
           </Box>
-        ))}
+        ))
+      ) : (
+        <ThreeLineSkeleton />
+      )}
     </Box>
   );
 };
@@ -228,9 +253,21 @@ const CommitteesSupportThresholdVoteStatsProgressBar: FC<
   CommitteesVoteStatsProgressBarsProps
 > = ({ data, proposalId }) => {
   const stats = useVoteStats(proposalId);
+  const [isFetched, setIsFetched] = useState(false);
+  useEffect(() => {
+    if (
+      stats.length > 0 &&
+      stats.filter(
+        ({ minParticipation, supportThreshold }) =>
+          minParticipation !== undefined && supportThreshold !== undefined
+      ).length > 0
+    ) {
+      setIsFetched(true);
+    }
+  }, [stats]);
   return (
     <Box>
-      {stats?.length > 0 ? (
+      {stats?.length > 0 && isFetched ? (
         stats.map(({ supportThreshold, Icon }) => (
           <Box mb={1}>
             <DefaultProgressBar
@@ -249,8 +286,18 @@ const CommitteesSupportThresholdVoteStatsProgressBar: FC<
           </Box>
         ))
       ) : (
-        <Skeleton />
+        <ThreeLineSkeleton />
       )}
+    </Box>
+  );
+};
+
+const ThreeLineSkeleton = () => {
+  return (
+    <Box>
+      <Skeleton height="15px" mb={"1"} />
+      <Skeleton height="15px" mb={"1"} />
+      <Skeleton height="15px" mb={"1"} />
     </Box>
   );
 };

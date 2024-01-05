@@ -48,6 +48,8 @@ import { fetchTokenPrice } from "../services/prices";
 import { useNetwork } from "../contexts/network";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
 import CoinIcon from "../utils/assets/icons/CoinIcon";
+import { WalletAuthorizedButton } from "../components/Button/AuthorizedButton";
+import { DefaultBox } from "../components/Box";
 const DashboardWrapper = styled.div.attrs({
   className: "grid grid-cols-12 grid-rows-12 gap-4",
 })``;
@@ -96,64 +98,48 @@ const Dashboard: FC = () => {
           Overview
         </Text>
       </HStack>
-      <Flex mb={4}>
-        <HStack
-          bgColor={useColorModeValue("gray.50", "gray.900")}
-          p={"6"}
-          mr={4}
-          borderRadius={"lg"}
-          border={"1px"}
-          borderColor={"blue.50"}
-          boxShadow={"sm"}
-          w={"50%"}
-          justifyContent={"space-between"}
-        >
-          <VStack alignItems={"flex-start"}>
-            <Text fontSize="sm" fontWeight={"normal"}>
-              Total Proposals
-            </Text>
+      <Flex mb={6}>
+        <DefaultBox mr={4} w={"50%"}>
+          <HStack justifyContent={"space-between"}>
+            <VStack alignItems={"flex-start"}>
+              <Text fontSize="sm" fontWeight={"normal"}>
+                Total Proposals
+              </Text>
 
-            <Text fontSize="large" fontWeight={"bold"}>
-              {proposals.length}
-            </Text>
-          </VStack>
-          <Box>
-            <Button
-              variant="outline"
-              colorScheme="blue"
-              onClick={() => onToggle()}
-            >
-              New Proposal
-            </Button>
-          </Box>
-        </HStack>
-        <HStack
-          bgColor={useColorModeValue("gray.50", "gray.900")}
-          p={"6"}
-          borderRadius={"lg"}
-          border={"1px"}
-          borderColor={"blue.50"}
-          boxShadow={"sm"}
-          w={"50%"}
-          justifyContent={"space-between"}
-        >
-          <VStack alignItems={"flex-start"}>
-            <Text fontSize="sm" fontWeight={"normal"}>
-              Balance in Treasury
-            </Text>
-            <Text fontSize="large" fontWeight={"bold"}>
-              {nativeBalanceOfDao
-                ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
-                : 0}{" "}
-              {CHAIN_METADATA[network].nativeCurrency.symbol}
-            </Text>
-          </VStack>
-          <Box>
-            <Button variant="outline" colorScheme="blue">
-              + Add fund
-            </Button>
-          </Box>
-        </HStack>
+              <Text fontSize="large" fontWeight={"bold"}>
+                {proposals.length}
+              </Text>
+            </VStack>
+            <Box>
+              <WalletAuthorizedButton
+                variant="outline"
+                onClick={() => onToggle()}
+              >
+                New Proposal
+              </WalletAuthorizedButton>
+            </Box>
+          </HStack>
+        </DefaultBox>
+        <DefaultBox w={"50%"}>
+          <HStack justifyContent={"space-between"}>
+            <VStack alignItems={"flex-start"}>
+              <Text fontSize="sm" fontWeight={"normal"}>
+                Balance in Treasury
+              </Text>
+              <Text fontSize="large" fontWeight={"bold"}>
+                {nativeBalanceOfDao
+                  ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
+                  : 0}{" "}
+                {CHAIN_METADATA[network].nativeCurrency.symbol}
+              </Text>
+            </VStack>
+            <Box>
+              <Button variant="outline" colorScheme="blue">
+                + Add fund
+              </Button>
+            </Box>
+          </HStack>
+        </DefaultBox>
       </Flex>
 
       <Flex mb={6}>
@@ -164,13 +150,9 @@ const Dashboard: FC = () => {
           <Text fontSize={"md"} fontWeight={"semibold"} mb={"4"}>
             🔥 Ready to Execute
           </Text>
-          <HStack
-            justifyContent={"space-between"}
-            p={"6"}
-            bgColor={useColorModeValue("gray.50", "gray.900")}
-            borderRadius={"md"}
-          >
-            {/* <VStack alignItems={"flex-start"}>
+          <DefaultBox borderStyle={"dashed"}>
+            <HStack justifyContent={"space-between"}>
+              {/* <VStack alignItems={"flex-start"}>
               <Text as={"h1"} fontSize={"sm"} fontWeight={"bold"}>
                 Lorem ipsum dolor sit amet consectetur ellus adipiscing
               </Text>
@@ -191,25 +173,22 @@ const Dashboard: FC = () => {
                 Execute Now
               </Button>
             </Box> */}
-            <VStack w={"100%"} alignItems="center" alignSelf={"center"} p={6}>
-              {/* <CoinIcon /> */}
-              <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
-                {"There is no proposal yet."}
-              </Text>
-            </VStack>
-          </HStack>
+
+              <VStack w={"100%"} alignItems="center" alignSelf={"center"} p={6}>
+                <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                  {"There is no proposal yet."}
+                </Text>
+              </VStack>
+            </HStack>
+          </DefaultBox>
         </Box>
         <Box w={"40%"} mb={"4"}>
           <Text fontSize={"md"} fontWeight={"semibold"} mb={"4"}>
             ✅ Executed Proposals
           </Text>
-          <HStack
-            justifyContent={"space-between"}
-            p={"6"}
-            bgColor={useColorModeValue("gray.50", "gray.900")}
-            borderRadius={"md"}
-          >
-            {/* <VStack alignItems={"flex-start"}>
+          <DefaultBox borderStyle={"dashed"}>
+            <HStack justifyContent={"space-between"}>
+              {/* <VStack alignItems={"flex-start"}>
               <Text as={"h1"} fontSize={"sm"} fontWeight={"bold"}>
                 Lorem ipsum dolor sit amet consectetur ellus adipiscing
               </Text>
@@ -225,13 +204,14 @@ const Dashboard: FC = () => {
                 </Text>
               </HStack>
             </VStack> */}
-            <VStack w={"100%"} alignItems="center" alignSelf={"center"} p={6}>
-              {/* <EmptyBoxIcon /> */}
-              <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
-                {"There is no proposal yet."}
-              </Text>
-            </VStack>
-          </HStack>
+              <VStack w={"100%"} alignItems="center" alignSelf={"center"} p={6}>
+                {/* <EmptyBoxIcon /> */}
+                <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                  {"There is no proposal yet."}
+                </Text>
+              </VStack>
+            </HStack>
+          </DefaultBox>
         </Box>
       </Flex>
 

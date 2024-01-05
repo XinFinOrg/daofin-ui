@@ -32,6 +32,10 @@ import { toNormalDate, toStandardTimestamp } from "../utils/date";
 import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
 import { MasterNodeCommittee } from "../utils/networks";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
+import {
+  MasterNodeAuthorizedButton,
+  WalletAuthorizedButton,
+} from "../components/Button/AuthorizedButton";
 
 export type UpdateOrJoinMasterNodeDelegateeType = {
   delegateeAddress: string;
@@ -223,9 +227,12 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
           </HStack>
         </Box>
         <Box>
-          <Button colorScheme="blue" onClick={handleToggleFormModal}>
+          <MasterNodeAuthorizedButton
+            colorScheme="blue"
+            onClick={handleToggleFormModal}
+          >
             Delegate a member
-          </Button>
+          </MasterNodeAuthorizedButton>
         </Box>
       </HStack>
       <HStack>

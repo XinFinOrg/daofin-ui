@@ -61,6 +61,10 @@ import {
 import { BigNumber } from "ethers";
 import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
+import {
+  PeopleButton,
+  WalletAuthorizedButton,
+} from "../components/Button/AuthorizedButton";
 export type JoinHouseFormType = {
   amount: string;
 };
@@ -311,9 +315,9 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
             </HStack>
           </Box>
           <Box>
-            <Button colorScheme="blue" onClick={handleToggleFormModal}>
+            <PeopleButton colorScheme="blue" onClick={handleToggleFormModal}>
               Join House
-            </Button>
+            </PeopleButton>
           </Box>
         </HStack>
         <HStack>
