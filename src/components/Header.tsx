@@ -41,6 +41,7 @@ import { XdcIcon } from "../utils/assets/icons/XdcIcon";
 import { fetchTokenPrice } from "../services/prices";
 import { constants } from "ethers";
 import { DefaultBox } from "./Box";
+import { useGlobalState } from "../contexts/GlobalStateContext";
 interface Props {
   children: React.ReactNode;
   href: string;
@@ -68,13 +69,9 @@ export default function Header() {
     ],
     []
   );
-  const [tokenPrice, setTokenPrice] = useState<number>(0);
+  const tokenPrice = useGlobalState().xdcPrice;
   const bgColorModeLinks = useColorModeValue("blue.100", "blue.800");
-  useEffect(() => {
-    fetchTokenPrice(constants.AddressZero, network)
-      .then((data) => data && setTokenPrice(data))
-      .catch(console.log);
-  }, []);
+
   return (
     <>
       <DefaultBox w="full" py="1" px={"4"}>
@@ -156,7 +153,7 @@ export default function Header() {
           />
           <HStack spacing={8} alignItems={"center"}>
             <Link to={""}>
-              <Image src="/logo1.png" />
+              <Image src="/logo1.svg" />
               <Heading></Heading>
             </Link>
             <HStack

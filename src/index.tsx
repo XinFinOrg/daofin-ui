@@ -18,6 +18,7 @@ import { Route, HashRouter as Router } from "react-router-dom";
 import { AppGlobalConfigProvider } from "./contexts/AppGlobalConfig";
 import { NetworkProvider } from "./contexts/network";
 import { theme } from "./utils/theme";
+import { GlobalStateProvider } from "./contexts/GlobalStateContext";
 
 // import 'tailwindcss/tailwind.css';
 const root = ReactDOM.createRoot(
@@ -33,17 +34,19 @@ root.render(
           <ChakraProvider theme={theme}>
             <WagmiProvider>
               <NetworkProvider>
-                <UseClientProvider>
-                  <WalletMenuProvider>
-                    <ProvidersProvider>
-                      <ApolloProvider
-                        client={client["apothem"] || apothemTestClient} //TODO remove fallback when all clients are defined
-                      >
-                        <App />
-                      </ApolloProvider>
-                    </ProvidersProvider>
-                  </WalletMenuProvider>
-                </UseClientProvider>
+                <GlobalStateProvider>
+                  <UseClientProvider>
+                    <WalletMenuProvider>
+                      <ProvidersProvider>
+                        <ApolloProvider
+                          client={client["apothem"] || apothemTestClient} //TODO remove fallback when all clients are defined
+                        >
+                          <App />
+                        </ApolloProvider>
+                      </ProvidersProvider>
+                    </WalletMenuProvider>
+                  </UseClientProvider>
+                </GlobalStateProvider>
               </NetworkProvider>
             </WagmiProvider>
           </ChakraProvider>

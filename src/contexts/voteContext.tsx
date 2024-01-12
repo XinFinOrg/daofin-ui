@@ -101,7 +101,6 @@ export const VoteProvider: FC<VoteProviderProps> = ({
       }
     } catch (e) {
       setCreationProcessState(TransactionState.ERROR);
-
       console.log(e);
     }
   };

@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { Proposal } from "../utils/types";
 import {
   Box,
@@ -43,7 +43,12 @@ import { parseEther, zeroAddress } from "viem";
 
 import ProposalTypeBadge from "./ProposalTypeBadge";
 import { IoShareSocial } from "react-icons/io5";
-import { ArrowForwardIcon, InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
+import {
+  ArrowForwardIcon,
+  CheckCircleIcon,
+  InfoOutlineIcon,
+  TimeIcon,
+} from "@chakra-ui/icons";
 
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 
@@ -66,77 +71,25 @@ import { useVoteContext } from "../contexts/voteContext";
 import { v4 as uuid } from "uuid";
 import { toEther, weiBigNumberToFormattedNumber } from "../utils/numbers";
 import { DefaultBox } from "./Box";
+import { useClient } from "../hooks/useClient";
+import { WalletAuthorizedButton } from "./Button/AuthorizedButton";
+import { useExecuteProposalContext } from "../contexts/ExecuteProposalContext";
+import { ViewGrantProposalType } from "./actions";
+import useFetchProposalStatus, {
+  FetchProposalStatusType,
+} from "../hooks/useFetchProposalStatus";
 
 const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
-  const {
-    actions,
-    creator,
-    dao,
-    endDate,
-    executed,
-    id,
-    metadata,
-    pluginProposalId,
-    potentiallyExecutable,
-    startDate,
-    createdAt,
-    proposalType,
-  } = proposal;
-
-  console.log({ actions });
+  const { actions, creator, metadata, pluginProposalId, createdAt } = proposal;
 
   const { description, resources, summary, title, media } = metadata;
-  const { isOpen, onClose, onOpen } = useDisclosure();
   const { network } = useNetwork();
-  const { address: voterAddress } = useWallet();
-  const { committeesListWithIcon, committeesList } = useCommitteeUtils();
-  const { daoAddress, pluginAddress } = useAppGlobalConfig();
-  // const {
-  //   judiciaryVoteListLength,
-  //   masterNodeVoteListLength,
-  //   peoplesHouseVoteListLength,
-  // } = useVoteStats(pluginProposalId);
+  const { committeesListWithIcon } = useCommitteeUtils();
+
+  const { handleToggleFormModal: onExecuteModalOpen } =
+    useExecuteProposalContext();
 
   const { data: allVoters } = useFetchVotersOnProposal(pluginProposalId);
-
-  const handleVote = async () => {
-    // const iterator = daofinClient?.methods.vote(
-    //   pluginProposalId,
-    //   voteOption,
-    //   false
-    // );
-    // if (!iterator) return;
-    // try {
-    //   for await (const step of iterator) {
-    //     switch (step.key) {
-    //       case VoteSteps.WAITING:
-    //         console.log("Key:", step.key);
-    //         console.log("Tx:", step.txHash);
-    //         break;
-    //       case VoteSteps.DONE:
-    //         console.log("Key:", step.key);
-    //         break;
-    //     }
-    //   }
-    // } catch (e) {
-    //   console.log(e);
-    // }
-  };
-
-  // const convertCommitteeBytesToVoteLength = (committee: string) => {
-  //   switch (committee) {
-  //     case MasterNodeCommittee:
-  //       return masterNodeVoteListLength;
-  //     case PeoplesHouseCommittee:
-  //       return peoplesHouseVoteListLength;
-  //     case JudiciaryCommittee:
-  //       return judiciaryVoteListLength;
-  //   }
-  // };
-  const committeePanelData = useMemo(
-    () => committeesList.map((item) => ({ ...item })),
-    [committeesList]
-  );
 
   const voteOptionsList = useMemo(
     () =>
@@ -146,6 +99,15 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
     []
   );
   const { handleToggleFormModal } = useVoteContext();
+
+  const [proposalStatus, setProposalStatus] =
+    useState<FetchProposalStatusType>();
+  const { makeCall } = useFetchProposalStatus();
+  useEffect(() => {
+    makeCall(pluginProposalId).then((data) => {
+      setProposalStatus(data);
+    });
+  }, [pluginProposalId]);
 
   return (
     <>
@@ -186,9 +148,22 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                 </Flex>
 
                 <Flex alignItems={"center"}>
-                  <Button colorScheme="blue" onClick={handleToggleFormModal}>
-                    Vote Now
-                  </Button>
+                  {proposalStatus?.canExecute ? (
+                    <WalletAuthorizedButton
+                      colorScheme="blue"
+                      onClick={onExecuteModalOpen}
+                    >
+                      Execute Now
+                    </WalletAuthorizedButton>
+                  ) : (
+                    <WalletAuthorizedButton
+                      colorScheme="blue"
+                      onClick={handleToggleFormModal}
+                    >
+                      Vote Now
+                    </WalletAuthorizedButton>
+                  )}
+                  {/* {proposal.executed && <CheckCircleIcon />} */}
                 </Flex>
               </Flex>
             </DefaultBox>
@@ -215,49 +190,8 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                     parameters are met
                   </Text>
                 </Box>
-                {actions.map(({ data, to, value }) => (
-                  <VStack p={5} alignItems={"flex-start"} key={uuid()}>
-                    <Box
-                      bgColor={"blue.100"}
-                      fontWeight={"semibold"}
-                      width={"full"}
-                      textAlign={"center"}
-                      p={4}
-                      borderRadius={"md"}
-                    >
-                      <HStack justifyContent={"center"}>
-                        <Box w={"20px"}>
-                          <XdcIcon />
-                        </Box>
-                        <Text>
-                          {weiBigNumberToFormattedNumber(value.toString())}{" "}
-                          {CHAIN_METADATA[network].nativeCurrency.symbol}
-                        </Text>
-                      </HStack>
-                    </Box>
-                    <HStack justifyContent={"start"} w={"full"}>
-                      <Box
-                        // bgColor={"blue.100"}
-                        p={2}
-                        width={"full"}
-                        borderRadius={"md"}
-                        justifySelf={"stretch"}
-                      >
-                        <WalletAddressCard sm address={daoAddress} />
-                      </Box>{" "}
-                      <Box>
-                        <ArrowForwardIcon />
-                      </Box>
-                      <Box
-                        // bgColor={"blue.100"}
-                        p={2}
-                        borderRadius={"md"}
-                        width={"full"}
-                      >
-                        <WalletAddressCard sm address={to} />
-                      </Box>
-                    </HStack>
-                  </VStack>
+                {actions.map((item) => (
+                  <ViewGrantProposalType {...item} />
                 ))}
               </DefaultBox>
             </GridItem>
@@ -297,7 +231,9 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                         <Tabs isFitted variant="soft-rounded">
                           <TabList>
                             {voteOptionsList.map(([key, value]) => (
-                              <Tab key={key}>{value}</Tab>
+                              <Tab key={key}>
+                                <Text>{value}</Text>
+                              </Tab>
                             ))}
                           </TabList>
                           <TabPanels>
@@ -372,10 +308,7 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
                 </HStack>
               </DefaultBox>
             </GridItem>
-            <GridItem
-              colSpan={1}
-              rowSpan={0}
-            >
+            <GridItem colSpan={1} rowSpan={0}>
               <DefaultBox>
                 <Box p={"5"}>
                   <Text mb={4} fontSize={"lg"} fontWeight={"bold"}>

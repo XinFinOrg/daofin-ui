@@ -7,7 +7,7 @@ type WalletCardBoxProps = PropsWithChildren & DefaultButtonProps & {};
 const WalletCardBox: FC<WalletCardBoxProps> = (props) => {
   return (
     <Box
-      bgColor={useColorModeValue("#FFF", "#12171A")}
+      bgColor={useColorModeValue("#FFF", "#151F29")}
       px={4}
       py={2}
       borderRadius={"lg"}

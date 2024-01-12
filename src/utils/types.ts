@@ -18,7 +18,10 @@ export type Proposal = {
   actions: DaoAction[];
   createdAt: string;
   executionTxHash: string;
+  executionBlockNumber: string;
+  executionDate: number;
   creationTxHash: string;
+  executedBy: string;
   proposalType: {
     id: string;
     txHash: string;

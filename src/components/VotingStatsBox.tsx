@@ -39,17 +39,17 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
 
   const { mapCommitteeToTotalNumber } = useTotalNumberOfVoters();
 
-  const data = useVoteStats(proposalId);
+  const stats = useVoteStats(proposalId);
   // useEffect(() => call(proposalId), []);
   const allVotersNumber = useMemo(
     () =>
-      data
-        ? data.reduce(
+      stats
+        ? stats.reduce(
             (acc, { voters }) => (voters ? acc + voters?.data.length : acc),
             0
           )
         : 0,
-    [data]
+    [stats]
   );
   return (
     <>
@@ -80,22 +80,22 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
         </TabList>
 
         <TabPanels>
-          {data.map(({ id, name, voters }) => (
+          {stats.map(({ id, name, voters }) => (
             <TabPanel key={id} p={"6"}>
               <HStack justifyContent={"space-between"} py={"4"}>
-                <Text fontWeight={"semibold"} textColor={"gray.600"}>
+                <Text fontWeight={"semibold"} >
                   <Text>
                     {
-                      data.find(({ id: committeeId }) => id === committeeId)
+                      stats.find(({ id: committeeId }) => id === committeeId)
                         ?.voters?.data.length
                     }{" "}
-                    <Text as="p" color="gray.500" display={"inline-block"}>
+                    <Text as="p" display={"inline-block"}>
                       Voted
                     </Text>{" "}
                   </Text>
                 </Text>
-                <HStack fontWeight={"semibold"} textColor={"gray.600"}>
-                  {data
+                <HStack fontWeight={"semibold"}>
+                  {stats
                     .find(({ id: committeeId }) => id === committeeId)
                     ?.options.map(({ value, text }) => (
                       <Text>
@@ -107,7 +107,7 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
                     ))}
                 </HStack>
               </HStack>
-              {data
+              {stats
                 .filter(({ id: committeeId }) => id === committeeId)
                 .map(({ minParticipation, supportThreshold }) => (
                   <VStack alignItems={"flex-start"}>
@@ -124,7 +124,7 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
                       }
                       height={"2"}
                       ProgressLabel={
-                        <Text fontWeight={"semibold"} color={"gray.600"}>
+                        <Text fontWeight={"normal"} >
                           Quorum
                         </Text>
                       }
@@ -141,7 +141,7 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
                           : 0
                       }
                       ProgressLabel={
-                        <Text fontWeight={"semibold"} color={"gray.600"}>
+                        <Text fontWeight={"normal"}>
                           Threshold
                         </Text>
                       }

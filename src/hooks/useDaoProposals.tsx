@@ -24,6 +24,9 @@ query ProposalsQuery($pluginId: ID!) {
     executed
     createdAt
     executionTxHash
+    executionBlockNumber
+    executionDate
+    executedBy
     creationTxHash
     actions {
       id

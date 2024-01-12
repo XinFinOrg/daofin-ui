@@ -14,10 +14,11 @@ import useIsUserDeposited from "../../hooks/useIsUserDeposited";
 import useIsJudiciaryMember from "../../hooks/useIsJudiciaryMember";
 import useIsMasterNodeDelegatee from "../../hooks/useIsMasterNodeDelegatee";
 
-type WalletAuthorizedButtonProps = PropsWithChildren & DefaultButtonProps & {};
+export type WalletAuthorizedButtonProps = PropsWithChildren &
+  DefaultButtonProps & {};
 
 const WalletAuthorizedButton: FC<WalletAuthorizedButtonProps> = (props) => {
-  const { address, isOnWrongNetwork } = useWallet();
+  const { address, isOnWrongNetwork, network } = useWallet();
   const [isDisabled, setIsDisabled] = useState(false);
   const [disabledMessage, setDisabledMessage] = useState("");
 
@@ -25,13 +26,13 @@ const WalletAuthorizedButton: FC<WalletAuthorizedButtonProps> = (props) => {
     if (!(address && isAddress(address)) || isOnWrongNetwork) {
       setIsDisabled(true);
     }
-  }, [address]);
+  }, [address, network]);
 
   useEffect(() => {
     setIsDisabled(!!props.isDisabled);
   }, [props.isDisabled]);
   return (
-    <DefaultButton isDisabled={isDisabled} colorScheme={'blue'} {...props}>
+    <DefaultButton isDisabled={isDisabled} colorScheme={"blue"} {...props}>
       {props.children}
     </DefaultButton>
   );

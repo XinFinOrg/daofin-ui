@@ -7,6 +7,7 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  Alert,
   Button,
   Text,
   useColorModeValue,
@@ -31,6 +32,8 @@ import {
 } from "../utils/date";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
 import { DefaultButton } from "../components/Button";
+import { DefaultBox } from "../components/Box";
+import { DefaultAlert } from "../components/Alerts";
 
 const JudiciaryPage = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
@@ -42,115 +45,104 @@ const JudiciaryPage = () => {
     useFetchTotalNumbersByCommittee(JudiciaryCommittee);
   return (
     <Page>
-      <VStack
-        boxShadow={"sm"}
-        bgColor={useColorModeValue("gray.50", "gray.900")}
-        borderRadius={"md"}
-        p={6}
-        mb={6}
-      >
-        <HStack justifyContent={"space-between"} w={"full"} mb={4}>
-          <Box>
-            <HStack>
-              <Box w={"40px"} flexShrink={1}>
-                <JudiciariesIcon />
-              </Box>
-              <Box>
-                <Text fontSize={"md"} fontWeight={"bold"}>
-                  {" "}
-                  Judiciaries
-                </Text>
-                <Text fontSize={"xs"}>
-                  This is the group of expert people who are selected during
-                  initial deployment
-                </Text>
-              </Box>
-            </HStack>
-          </Box>
-          <Box>
-            <DefaultButton colorScheme="blue" isDisabled={true}>
-              Modify Members
-            </DefaultButton>
-          </Box>
-        </HStack>
-        <HStack>
-          <VStack
-            borderRadius={"md"}
-            p={6}
-            w={["50%"]}
-            fontSize={"sm"}
-            border={"1px"}
-            borderColor={"gray.100"}
-            alignSelf={"normal"}
-            alignItems={"flex-start"}
-            justifyContent={"center"}
-          >
-            <Text>Total Judiciaries</Text>
-            <Text fontSize={"lg"} fontWeight={"bold"}>
-              {totalNumberOfJudiciaries?.toString()}
-            </Text>
-          </VStack>
-          <Box
-            borderRadius={"md"}
-            p={6}
-            w={["50%"]}
-            bg={"blue.100"}
-            fontSize={"sm"}
-          >
-            <Text fontWeight={"semibold"}>
-              How to modify one or multiple member?
-            </Text>
-            <Text>
-              Lorem ipsum dolor sit amet consectetur. Senectus elementum erat
-              pellentesque nisl nibh. Vitae diam dolor convallis porta lacus.
-              Rhoncus cursus a viverra cursus lobortis ut amet pulvinar. Sit
-              mauris lectus libero lectus...
-            </Text>
-          </Box>
-        </HStack>
-      </VStack>
-      <HStack>
-        <VStack w={["70%"]} alignSelf={"flex-start"}>
-          {juries.length > 0 ? (
-            juries.map(({ member, creationDate }) => (
-              <WalletAddressCardWithDate
-                address={member}
-                date={new Date(toStandardTimestamp(creationDate.toString()))}
-              />
-            ))
-          ) : (
-            <>
-              <VStack w={"100%"} alignItems="center" alignSelf={"center"} p={6}>
-                <EmptyBoxIcon />
-                <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
-                  {"There is no member yet."}
-                </Text>
-              </VStack>
-            </>
-          )}
-        </VStack>
-        <Box
-          alignSelf={"flex-start"}
-          boxShadow={"sm"}
-          bgColor={useColorModeValue("gray.50", "gray.900")}
-          opacity={0.9}
-          borderRadius={"md"}
-          p={6}
-        >
-          <Accordion>
-            <Box
+      <DefaultBox mb={6}>
+        <VStack>
+          <HStack justifyContent={"space-between"} w={"full"} mb={4}>
+            <Box>
+              <HStack>
+                <Box w={"40px"} flexShrink={1}>
+                  <JudiciariesIcon />
+                </Box>
+                <Box>
+                  <Text fontSize={"md"} fontWeight={"bold"}>
+                    {" "}
+                    Judiciaries
+                  </Text>
+                  <Text fontSize={"xs"}>
+                    This is the group of expert people who are selected during
+                    initial deployment
+                  </Text>
+                </Box>
+              </HStack>
+            </Box>
+            <Box>
+              <DefaultButton colorScheme="blue" isDisabled={true}>
+                Modify Members
+              </DefaultButton>
+            </Box>
+          </HStack>
+          <HStack>
+            <VStack
               borderRadius={"md"}
               p={6}
-              bg={"blue.100"}
+              w={["50%"]}
               fontSize={"sm"}
-              mb={4}
+              alignSelf={"normal"}
+              alignItems={"flex-start"}
+              justifyContent={"center"}
             >
-              <Text fontWeight={"semibold"}>Rules of Decisions</Text>
-              <Text>
-                This is where judiciaries can decide on how rules of decisions
-                are differentiated between various proposal types
+              <Text>Total Judiciaries</Text>
+              <Text fontSize={"lg"} fontWeight={"bold"}>
+                {totalNumberOfJudiciaries?.toString()}
               </Text>
+            </VStack>
+
+            <Box w={"50%"}>
+              <DefaultAlert>
+                <VStack alignItems={"flex-start"} fontSize={"sm"}>
+                  <Text fontWeight={"semibold"}>
+                    How to modify one or multiple member?
+                  </Text>
+                  <Text>
+                    Lorem ipsum dolor sit amet consectetur. Senectus elementum
+                    erat pellentesque nisl nibh. Vitae diam dolor convallis
+                    porta lacus. Rhoncus cursus a viverra cursus lobortis ut
+                    amet pulvinar. Sit mauris lectus libero lectus...
+                  </Text>
+                </VStack>
+              </DefaultAlert>
             </Box>
+          </HStack>
+        </VStack>
+      </DefaultBox>
+      <HStack>
+        <DefaultBox w={["70%"]} alignSelf={"flex-start"}>
+          <VStack>
+            {juries.length > 0 ? (
+              juries.map(({ member, creationDate }) => (
+                <WalletAddressCardWithDate
+                  address={member}
+                  date={new Date(toStandardTimestamp(creationDate.toString()))}
+                />
+              ))
+            ) : (
+              <>
+                <VStack
+                  w={"100%"}
+                  alignItems="center"
+                  alignSelf={"center"}
+                  p={6}
+                >
+                  <EmptyBoxIcon />
+                  <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                    {"There is no member yet."}
+                  </Text>
+                </VStack>
+              </>
+            )}
+          </VStack>
+        </DefaultBox>
+        <DefaultBox alignSelf={"flex-start"} opacity={0.9}>
+          <Accordion>
+            <DefaultAlert mb={4} p={4}>
+              <Box fontSize={"sm"}>
+                <Text fontWeight={"semibold"}>Rules of Decisions</Text>
+                <Text>
+                  This is where judiciaries can decide on how rules of decisions
+                  are differentiated between various proposal types
+                </Text>
+              </Box>
+            </DefaultAlert>
             <AccordionItem>
               <h2>
                 <AccordionButton>
@@ -208,7 +200,7 @@ const JudiciaryPage = () => {
               </AccordionPanel>
             </AccordionItem>
           </Accordion>
-        </Box>
+        </DefaultBox>
       </HStack>
     </Page>
   );

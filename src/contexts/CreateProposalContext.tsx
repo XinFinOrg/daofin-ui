@@ -17,7 +17,7 @@ import { TransactionReviewModal } from "../components/Modal";
 import { useDisclosure } from "@chakra-ui/react";
 import { BigNumberish, BigNumber } from "@ethersproject/bignumber";
 import { TransactionState } from "../utils/types";
-import { decodeAbiParameters, parseEther } from "viem";
+import { decodeAbiParameters, parseEther,zeroAddress } from "viem";
 import { ProposalCreationSteps } from "@xinfin/osx-sdk-client";
 import useTransactionModalDisclosure from "../hooks/useTransactionModalDisclosure";
 
@@ -137,7 +137,7 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
       proposalType: 0,
       allowFailureMap: 0,
       electionIndex: selectedElectionPeriod,
-      voteOption: 1,
+      voteOption: 0,
     });
   };
 

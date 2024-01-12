@@ -1,7 +1,7 @@
 import { Box, BoxProps, useColorModeValue } from "@chakra-ui/react";
 import { FC, PropsWithChildren } from "react";
 
-type DefaultBoxProps = PropsWithChildren & BoxProps & {};
+export type DefaultBoxProps = PropsWithChildren & BoxProps & {};
 
 const DefaultBox: FC<DefaultBoxProps> = (props) => {
   return (

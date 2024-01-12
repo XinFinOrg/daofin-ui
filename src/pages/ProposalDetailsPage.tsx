@@ -13,6 +13,7 @@ import { Page } from "../components";
 import { Skeleton } from "@chakra-ui/react";
 import { Formik } from "formik";
 import { VoteProvider } from "../contexts/voteContext";
+import { ExecuteProposalProvider } from "../contexts/ExecuteProposalContext";
 
 export type VoteFormType = {
   voteOption: number;
@@ -29,12 +30,17 @@ const ProposalDetailsPage = () => {
       <Formik
         initialValues={{
           voteOption: "2",
+          proposalId,
         }}
         onSubmit={() => {}}
       >
-        <VoteProvider proposalId={proposalId ? proposalId : ""}>
-          {data ? <ProposalDetails proposal={data} /> : null}
-        </VoteProvider>
+        {data ? (
+          <ExecuteProposalProvider proposal={data}>
+            <VoteProvider proposalId={proposalId ? proposalId : ""}>
+              <ProposalDetails proposal={data} />
+            </VoteProvider>
+          </ExecuteProposalProvider>
+        ) : null}
       </Formik>
     </Page>
   );

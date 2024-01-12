@@ -3,6 +3,7 @@ import {
   Button,
   HStack,
   Text,
+  Tooltip,
   VStack,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -11,46 +12,222 @@ import { useNetwork } from "../contexts/network";
 import { ArrowForwardIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { TreasuryIcon } from "../utils/assets/icons";
 import { XdcIcon } from "../utils/assets/icons/XdcIcon";
-import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
-import { Link } from "react-router-dom";
-
-import { zeroAddress } from "viem";
-import { WalletAddressCardWithBalance } from "../components/WalletAddressCard";
+import { Cell, Pie, PieChart } from "recharts";
 import useFetchDaoBalance from "../hooks/useFetchDaoBalance";
-import { weiBigNumberToFormattedNumber } from "../utils/numbers";
+import {
+  toEther,
+  toWei,
+  weiBigNumberToFormattedNumber,
+} from "../utils/numbers";
 import { CHAIN_METADATA } from "../utils/networks";
+import { DefaultBox } from "../components/Box";
+import { FC, useEffect, useMemo, useState } from "react";
+import { useGlobalState } from "../contexts/GlobalStateContext";
+import CoinIcon from "../utils/assets/icons/CoinIcon";
+import { useClient } from "../hooks/useClient";
+import {
+  DaoTreasuryProvider,
+  useDaoTreasury,
+} from "../contexts/DaoTreasuryContext";
+import { DefaultButton } from "../components/Button";
+import { Formik } from "formik";
+import { AddFund } from "../components/Button/AddFundButton";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
+import { Transfer } from "@xinfin/osx-sdk-client";
+import { WalletAddressCardWithBalance } from "../components/WalletAddressCard";
 
-const data = [
-  { name: "Group A", value: 400 },
-  { name: "Group B", value: 300 },
-  { name: "Group C", value: 300 },
-  { name: "Group D", value: 200 },
-];
+const data = [{ name: "Group A", value: 100 }];
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+
 const TreasuryPage = () => {
   const nativeBalanceOfDao = useFetchDaoBalance();
-
+  const { client } = useClient();
+  const { daoAddress } = useAppGlobalConfig();
+  const [addfunds, setAddFunds] = useState<Transfer[]>();
   const { network } = useNetwork();
+  const xdcPrice = useGlobalState().xdcPrice;
+
+  useEffect(() => {
+    client?.methods
+      .getDaoTransfers({ daoAddressOrEns: daoAddress })
+      .then((data) => {
+        setAddFunds(data ? data : []);
+      })
+      .catch(console.log);
+
+  }, []);
+
+
+
+  const usdValueOfDao = useMemo(() => {
+    return nativeBalanceOfDao
+      ? weiBigNumberToFormattedNumber(
+          toWei(xdcPrice.toString()).mul(
+            parseInt(toEther(nativeBalanceOfDao.toString()))
+          )
+        )
+      : 0;
+  }, [xdcPrice, nativeBalanceOfDao]);
+  // const { handleOpenPublishModal } = useDaoTreasury();
   return (
     <Page>
+      <Formik
+        initialValues={{
+          depositAmount: "",
+        }}
+        onSubmit={() => {}}
+      >
+        <DaoTreasuryProvider>
+          <TreasuryPageHeader
+            nativeBalanceOfDao={
+              nativeBalanceOfDao ? nativeBalanceOfDao.toString() : "0"
+            }
+          />
+          <DefaultBox mr={4} w={"full"} mb={"4"}>
+            <HStack>
+              <VStack w={"50%"}>
+                <DefaultBox w={"full"} mr={4}>
+                  <HStack justifyContent={"space-between"}>
+                    <HStack>
+                      <Box w={"35px"}>
+                        <XdcIcon />
+                      </Box>
+                      <Text fontSize={"md"} fontWeight={"semibold"}>
+                        XDC
+                        <Text fontSize={"xs"} fontWeight={"normal"}>
+                          $ {xdcPrice}
+                        </Text>
+                      </Text>
+                    </HStack>
+
+                    <Box>
+                      <Text>
+                        {nativeBalanceOfDao
+                          ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
+                          : 0}{" "}
+                        XDC
+                      </Text>
+                      <Text>$ {usdValueOfDao?.toString()}</Text>
+                    </Box>
+                  </HStack>
+                </DefaultBox>
+              </VStack>
+              <HStack w={"50%"} justifyContent={"center"}>
+                <PieChart width={200} height={200}>
+                  <Pie
+                    data={data}
+                    innerRadius={60}
+                    outerRadius={80}
+                    fill="#fffff"
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {data.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </HStack>
+            </HStack>
+          </DefaultBox>
+          <HStack alignItems={"start"}>
+            <DefaultBox mr={4} w={"50%"} mb={"4"}>
+              <HStack justifyContent={"space-between"} mb={4}>
+                <HStack>
+                  <Box></Box>
+                  <Box>
+                    <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
+                      Add Fund
+                    </Text>
+                    <Text fontSize={"xs"} fontWeight={"normal"}>
+                      The history of all deposit activities
+                    </Text>
+                  </Box>
+                </HStack>
+                <HStack>
+                  <Text cursor={"pointer"}>
+                    View All <ArrowForwardIcon />
+                  </Text>
+                </HStack>
+              </HStack>
+              {addfunds && addfunds.length > 0 ? (
+                addfunds?.map(
+                  ({
+                    creationDate,
+                    from,
+                    to,
+                    tokenType,
+                    transactionId,
+                    type,
+                  }) => (
+                    <WalletAddressCardWithBalance
+                      balance={0}
+                      symbol=""
+                      address={to}
+                    />
+                  )
+                )
+              ) : (
+                <VStack>
+                  <CoinIcon />
+                  <Text>You have not added any fund to yet</Text>
+                </VStack>
+              )}
+            </DefaultBox>
+            <DefaultBox w={"50%"} mb={"4"}>
+              <HStack justifyContent={"space-between"} mb={4}>
+                <HStack>
+                  <Box></Box>
+                  <Box>
+                    <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
+                      Withdrawals
+                    </Text>
+                    <Text fontSize={"xs"} fontWeight={"normal"}>
+                      The history of all withdrawal activities
+                    </Text>
+                  </Box>
+                </HStack>
+                <HStack>
+                  <Text cursor={"pointer"}>
+                    View All <ArrowForwardIcon />
+                  </Text>
+                </HStack>
+              </HStack>
+
+              <VStack>
+                <CoinIcon />
+                <Text>You have not withdrawn any fund to yet</Text>
+              </VStack>
+            </DefaultBox>
+          </HStack>
+        </DaoTreasuryProvider>
+      </Formik>
+    </Page>
+  );
+};
+interface TreasuryPageHeaderProps {
+  nativeBalanceOfDao: string;
+}
+const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
+  nativeBalanceOfDao,
+}) => {
+  const { network } = useNetwork();
+  const { handleOpenPublishModal } = useDaoTreasury();
+  return (
+    <>
       <Text fontWeight={"semibold"} fontSize={"lg"}>
         Treasury
       </Text>
 
-      <Box
-        bgColor={useColorModeValue("gray.50", "gray.900")}
-        p={"6"}
-        mr={4}
-        borderRadius={"lg"}
-        border={"1px"}
-        borderColor={"blue.50"}
-        boxShadow={"sm"}
-        w={"full"}
-        mb={"4"}
-      >
+      <DefaultBox mr={4} w={"full"} mb={"4"}>
         <HStack justifyContent={"space-between"} mb={4}>
           <HStack>
-            <Box></Box>
+            <Box>
+              <TreasuryIcon />
+            </Box>
             <Box>
               <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
                 Governor Assets
@@ -80,161 +257,18 @@ const TreasuryPage = () => {
               Total Value
             </Text>
             <Text fontSize={"lg"} fontWeight={"bold"} mb={"1"}>
-              {nativeBalanceOfDao
-                ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
-                : 0}{" "}
+              {weiBigNumberToFormattedNumber(nativeBalanceOfDao)}
+
               {CHAIN_METADATA[network].nativeCurrency.symbol}
             </Text>
           </Box>
           <HStack>
-            <Button variant={"outline"}>Withdraw</Button>
-            <Button colorScheme="blue">+ Add Fund</Button>
+            <DefaultButton variant={"outline"}>Withdraw</DefaultButton>
+            <AddFund />
           </HStack>
         </HStack>
-      </Box>
-      <Box
-        bgColor={useColorModeValue("blue.50", "gray.900")}
-        p={"6"}
-        mr={4}
-        borderRadius={"lg"}
-        border={"1px"}
-        borderColor={"blue.50"}
-        boxShadow={"sm"}
-        w={"full"}
-        mb={"4"}
-      >
-        <HStack>
-          <VStack w={"50%"}>
-            <HStack
-              bgColor={useColorModeValue("gray.50", "gray.900")}
-              p={"6"}
-              mr={4}
-              borderRadius={"lg"}
-              border={"1px"}
-              borderColor={"blue.50"}
-              boxShadow={"sm"}
-              w={"full"}
-              justifyContent={"space-between"}
-            >
-              <HStack>
-                <Box w={"35px"}>
-                  <XdcIcon />
-                </Box>
-                <Text fontSize={"md"} fontWeight={"semibold"}>
-                  XDC
-                  <Text fontSize={"xs"} fontWeight={"normal"}>
-                    $ 0.23
-                  </Text>
-                </Text>
-              </HStack>
-
-              <Box>
-                <Text>100 XDC</Text>
-                <Text>$ 1.023</Text>
-              </Box>
-            </HStack>
-          </VStack>
-          <HStack w={"50%"} justifyContent={"center"}>
-            <PieChart width={200} height={200}>
-              <Pie
-                data={data}
-                innerRadius={60}
-                outerRadius={80}
-                fill="#fffff"
-                paddingAngle={5}
-                dataKey="value"
-              >
-                {data.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-            </PieChart>
-          </HStack>
-        </HStack>
-      </Box>
-      <HStack>
-        <Box
-          bgColor={useColorModeValue("gray.50", "gray.900")}
-          p={"6"}
-          mr={4}
-          borderRadius={"lg"}
-          border={"1px"}
-          borderColor={"blue.50"}
-          boxShadow={"sm"}
-          w={"50%"}
-          mb={"4"}
-        >
-          <HStack justifyContent={"space-between"} mb={4}>
-            <HStack>
-              <Box></Box>
-              <Box>
-                <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
-                  Add Fund
-                </Text>
-                <Text fontSize={"xs"} fontWeight={"normal"}>
-                  The history of all deposit activities
-                </Text>
-              </Box>
-            </HStack>
-            <HStack>
-              <Text cursor={"pointer"}>
-                View All <ArrowForwardIcon />
-              </Text>
-            </HStack>
-          </HStack>
-
-          <VStack>
-            <WalletAddressCardWithBalance
-              sm
-              symbol="XDC"
-              address={zeroAddress}
-              balance={0}
-            />
-          </VStack>
-        </Box>
-        <Box
-          bgColor={useColorModeValue("gray.50", "gray.900")}
-          p={"6"}
-          borderRadius={"lg"}
-          border={"1px"}
-          borderColor={"blue.50"}
-          boxShadow={"sm"}
-          w={"50%"}
-          mb={"4"}
-        >
-          <HStack justifyContent={"space-between"} mb={4}>
-            <HStack>
-              <Box></Box>
-              <Box>
-                <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
-                  Withdrawals
-                </Text>
-                <Text fontSize={"xs"} fontWeight={"normal"}>
-                  The history of all withdrawal activities
-                </Text>
-              </Box>
-            </HStack>
-            <HStack>
-              <Text cursor={"pointer"}>
-                View All <ArrowForwardIcon />
-              </Text>
-            </HStack>
-          </HStack>
-
-          <VStack>
-            <WalletAddressCardWithBalance
-              sm
-              symbol="XDC"
-              address={zeroAddress}
-              balance={0}
-            />
-          </VStack>
-        </Box>
-      </HStack>
-    </Page>
+      </DefaultBox>
+    </>
   );
 };
 

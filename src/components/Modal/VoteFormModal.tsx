@@ -86,9 +86,6 @@ const VoteFormModal: FC<VoteFormModalProps> = ({
         <Button colorScheme="blue" w={"full"} onClick={handleOpenPublishModal}>
           Vote now
         </Button>
-        <Button variant="outline" w={"full"}>
-          Cancel
-        </Button>
       </VStack>
     </Modal>
   );

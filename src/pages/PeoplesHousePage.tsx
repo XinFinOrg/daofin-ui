@@ -115,12 +115,6 @@ const PeoplesHousePage = () => {
     //   console.log(error);
     // }
   };
-
-  const handleOnChange = (e: any) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    // setValue(name, value);
-  };
   const totalDeposits = useMemo(
     () =>
       deposits && deposits.length > 0

@@ -45,8 +45,13 @@ const CommunityCards = () => {
           <Box w={"50px"} flexShrink={1}>
             {Icon && Icon}
           </Box>
-          <VStack flexGrow="1" alignSelf={"stretch"} alignItems={"start"} color={'black'}>
-            <Text fontSize={"sm"} fontWeight={"normal"} >
+          <VStack
+            flexGrow="1"
+            alignSelf={"stretch"}
+            alignItems={"start"}
+            color={"black"}
+          >
+            <Text fontSize={"sm"} fontWeight={"normal"}>
               Number of {name}
             </Text>
             <Text fontSize={"lg"} fontWeight={"bold"}>
@@ -56,7 +61,7 @@ const CommunityCards = () => {
           <IconButton
             aria-label=""
             variant={"unstyled"}
-            icon={<ArrowForwardIcon />}
+            icon={<ArrowForwardIcon color={"black"} />}
             onClick={() => {
               navigate(link);
             }}

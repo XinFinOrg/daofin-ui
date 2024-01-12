@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import DaoHeader from "../components/DaoHeader";
 import { styled } from "styled-components";
 import useDaoProposals from "../hooks/useDaoProposals";
@@ -9,7 +9,9 @@ import usePeoplesHouseDeposits from "../hooks/useDeposits";
 import {
   CHAIN_METADATA,
   getPluginInstallationId,
+  makeBlockScannerHashUrl,
   shortenAddress,
+  shortenTxHash,
 } from "../utils/networks";
 import { Box } from "@chakra-ui/layout";
 import ManageJudiciary from "../components/ManageJudiciary";
@@ -27,6 +29,7 @@ import {
   Container,
   useColorModeValue,
   Skeleton,
+  IconButton,
 } from "@chakra-ui/react";
 import { Modal, Page } from "../components";
 import { v4 as uuid } from "uuid";
@@ -39,6 +42,7 @@ import {
   CheckCircleIcon,
   CheckIcon,
   ExternalLinkIcon,
+  TimeIcon,
 } from "@chakra-ui/icons";
 import { zeroAddress } from "viem";
 import { IoBarChart } from "react-icons/io5";
@@ -50,9 +54,17 @@ import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
 import CoinIcon from "../utils/assets/icons/CoinIcon";
 import { WalletAuthorizedButton } from "../components/Button/AuthorizedButton";
 import { DefaultBox } from "../components/Box";
-const DashboardWrapper = styled.div.attrs({
-  className: "grid grid-cols-12 grid-rows-12 gap-4",
-})``;
+import AddFundButton, { AddFund } from "../components/Button/AddFundButton";
+import { timestampToStandardFormatString } from "../utils/date";
+import Jazzicon from "react-jazzicon/dist/Jazzicon";
+import { jsNumberForAddress } from "react-jazzicon";
+import useFetchProposalStatus from "../hooks/useFetchProposalStatus";
+import { DefaultBoxProps } from "../components/Box/DefaultBox";
+import {
+  ReadyToExecuteProposalType,
+  ReadyToExecuteProposals,
+} from "../components/ReadyToExecuteProposal";
+import { Proposal } from "../utils/types";
 
 const Dashboard: FC = () => {
   const { daofinClient, client } = useClient();
@@ -89,6 +101,41 @@ const Dashboard: FC = () => {
   ]);
   const { committeesListWithIcon } = useCommitteeUtils();
   const { network } = useNetwork();
+
+  const executedProposals = useMemo(
+    () => proposals.filter(({ executed }) => executed),
+    [proposals]
+  );
+  const { makeCall } = useFetchProposalStatus();
+
+  const [readyToExecutedProposals, setReadyToExecutedProposals] =
+    useState<Proposal[]>();
+
+  const readyToExecutedProposalsCallback = useCallback(
+    async () =>
+      Promise.all(
+        proposals.map(async (item) => {
+          const { executed, pluginProposalId } = item;
+          const { canExecute } = await makeCall(pluginProposalId);
+          // console.log("1", canExecute && !executed);
+          // console.log("2", canExecute, !executed);
+
+          return {
+            ...item,
+            canExecute,
+          };
+        })
+      ),
+    [proposals, makeCall]
+  );
+  useEffect(() => {
+    readyToExecutedProposalsCallback().then((data) => {
+      setReadyToExecutedProposals([
+        ...data.filter(({ canExecute, executed }) => canExecute && !executed),
+      ]);
+    });
+  }, [readyToExecutedProposalsCallback]);
+
   return (
     <Page>
       <HStack>
@@ -134,9 +181,8 @@ const Dashboard: FC = () => {
               </Text>
             </VStack>
             <Box>
-              <Button variant="outline" colorScheme="blue">
-                + Add fund
-              </Button>
+              <AddFund />
+              {/* <AddFundButton variant="outline">+ Add fund</AddFundButton> */}
             </Box>
           </HStack>
         </DefaultBox>
@@ -150,68 +196,101 @@ const Dashboard: FC = () => {
           <Text fontSize={"md"} fontWeight={"semibold"} mb={"4"}>
             🔥 Ready to Execute
           </Text>
-          <DefaultBox borderStyle={"dashed"}>
-            <HStack justifyContent={"space-between"}>
-              {/* <VStack alignItems={"flex-start"}>
-              <Text as={"h1"} fontSize={"sm"} fontWeight={"bold"}>
-                Lorem ipsum dolor sit amet consectetur ellus adipiscing
-              </Text>
-              <HStack justifyContent={"space-between"}>
-                <Text fontSize={"xs"}>
-                  <CheckCircleIcon color={"green"} mr={"1"} />
-                  {new Date().toISOString()}
-                </Text>
-                <Text fontSize={"xs"}>ID: 12</Text>
-                <Text fontSize={"xs"}>
-                  Published by: {shortenAddress(zeroAddress)}{" "}
-                  <ExternalLinkIcon />
-                </Text>
-              </HStack>
-            </VStack>
-            <Box>
-              <Button variant={"outline"} colorScheme="blue" size={"sm"}>
-                Execute Now
-              </Button>
-            </Box> */}
-
-              <VStack w={"100%"} alignItems="center" alignSelf={"center"} p={6}>
-                <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
-                  {"There is no proposal yet."}
-                </Text>
-              </VStack>
-            </HStack>
-          </DefaultBox>
+          {/* <DefaultBox borderStyle={"dashed"}>  */}
+          <VStack alignItems={"flex-start"}>
+            <Skeleton
+              isLoaded={!isLoading && !!readyToExecutedProposals}
+              minH={"50px"}
+              w={"full"}
+            >
+              {readyToExecutedProposals && (
+                <ReadyToExecuteProposals data={readyToExecutedProposals} />
+              )}
+            </Skeleton>
+          </VStack>
+          {/* </DefaultBox> */}
         </Box>
         <Box w={"40%"} mb={"4"}>
           <Text fontSize={"md"} fontWeight={"semibold"} mb={"4"}>
             ✅ Executed Proposals
           </Text>
-          <DefaultBox borderStyle={"dashed"}>
-            <HStack justifyContent={"space-between"}>
-              {/* <VStack alignItems={"flex-start"}>
-              <Text as={"h1"} fontSize={"sm"} fontWeight={"bold"}>
-                Lorem ipsum dolor sit amet consectetur ellus adipiscing
-              </Text>
-              <HStack justifyContent={"space-between"}>
-                <Text fontSize={"xs"}>
-                  <CheckCircleIcon color={"green"} mr={"1"} />
-                  {new Date().toISOString()}
-                </Text>
-                <Text fontSize={"xs"}>ID: 12</Text>
-                <Text fontSize={"xs"}>
-                  Published by: {shortenAddress(zeroAddress)}{" "}
-                  <ExternalLinkIcon />
-                </Text>
-              </HStack>
-            </VStack> */}
-              <VStack w={"100%"} alignItems="center" alignSelf={"center"} p={6}>
-                {/* <EmptyBoxIcon /> */}
-                <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
-                  {"There is no proposal yet."}
-                </Text>
-              </VStack>
-            </HStack>
-          </DefaultBox>
+          {/* <DefaultBox borderStyle={"dashed"} w={"full"}> */}
+          <HStack justifyContent={"space-between"}>
+            <Skeleton isLoaded={!isLoading} minH={"50px"} w={"full"}>
+              {executedProposals.length > 0 ? (
+                executedProposals.map(
+                  ({
+                    executed,
+                    executionTxHash,
+                    executionBlockNumber,
+                    creationTxHash,
+                    pluginProposalId,
+                    executionDate,
+                    executedBy,
+                    metadata,
+                  }) => (
+                    <GreenDefaultBox w={"full"} mb={2}>
+                      <HStack>
+                        <Box minW={"20px"}>
+                          <Jazzicon
+                            diameter={40}
+                            seed={jsNumberForAddress(creationTxHash)}
+                          />
+                        </Box>
+                        <VStack alignItems={"flex-start"}>
+                          <Text as={"h1"} fontSize={"sm"} fontWeight={"bold"}>
+                            {metadata.title}
+                          </Text>
+                          <HStack justifyContent={"space-between"}>
+                            <Text fontSize={"xs"}>
+                              <TimeIcon mr={"1"} />
+                              {timestampToStandardFormatString(executionDate)}
+                            </Text>
+                            <Text fontSize={"xs"}>ID: {pluginProposalId}</Text>
+                            <Text fontSize={"xs"}>
+                              <CheckCircleIcon color={"green"} mr={"1"} />
+                              Hash: {shortenTxHash(executionTxHash)}{" "}
+                              <a
+                                target="_blank"
+                                href={makeBlockScannerHashUrl(
+                                  network,
+                                  executionTxHash
+                                )}
+                              >
+                                <ExternalLinkIcon />
+                              </a>
+                            </Text>
+                          </HStack>
+                        </VStack>
+                        <IconButton
+                          aria-label=""
+                          variant={"unstyled"}
+                          flexGrow={1}
+                          textAlign={"end"}
+                          icon={<ArrowForwardIcon color={"black"} />}
+                          onClick={() => {
+                            navigate(`/proposals/${pluginProposalId}/details`);
+                          }}
+                        />
+                      </HStack>
+                    </GreenDefaultBox>
+                  )
+                )
+              ) : (
+                <DefaultBox
+                  textAlign={"center"}
+                  borderStyle={"dashed"}
+                  w={"full"}
+                  mb={2}
+                >
+                  <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                    {"There is no proposal yet."}
+                  </Text>
+                </DefaultBox>
+              )}
+            </Skeleton>
+          </HStack>
+          {/* </DefaultBox> */}
         </Box>
       </Flex>
 
@@ -268,6 +347,21 @@ const Dashboard: FC = () => {
         </Modal>
       )}
     </Page>
+  );
+};
+const GreenDefaultBox: FC<DefaultBoxProps> = (props) => {
+  return (
+    <Box
+      bgColor={useColorModeValue("#BFEED1", "#02441C")}
+      p={"6"}
+      borderRadius={"lg"}
+      border={"1px"}
+      borderColor={useColorModeValue("#D7DEE4", "#1F2E3D")}
+      boxShadow={"sm"}
+      {...props}
+    >
+      {props.children}
+    </Box>
   );
 };
 export default Dashboard;
