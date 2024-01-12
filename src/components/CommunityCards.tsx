@@ -32,16 +32,18 @@ const CommunityCards = () => {
   const { mapCommitteeToTotalNumber, isLoading } = useTotalNumberOfVoters();
 
   return (
-    <HStack w={"full"}>
+    <HStack w={"full"} flexDirection={["column", "column", "column", "row"]}>
       {committeesListWithIcon.map(({ bgGradient, Icon, id, name, link }) => (
         <HStack
           key={id}
-          w={"full"}
+          w={["100%", "100%", "100%", "33%"]}
           boxShadow={"sm"}
           bgGradient={bgGradient}
           opacity={0.9}
+          flexWrap={"wrap"}
           borderRadius={"md"}
           p={4}
+          mb={4}
         >
           <Box w={"50px"} flexShrink={1}>
             {Icon && Icon}

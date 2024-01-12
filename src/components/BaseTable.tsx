@@ -57,7 +57,7 @@ const BaseTable = <T,>({ columns, data, emptyText }: BaseTableProps<T>) => {
                   <Td
                     key={uuid()}
                     w={col.w}
-                    maxW={["100px", "300px"]}
+                    maxW={["100px", "400px"]}
                     overflow={"auto"}
                     textAlign={col.type === "btn" ? "center" : "start"}
                   >

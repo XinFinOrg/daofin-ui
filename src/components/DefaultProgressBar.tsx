@@ -37,7 +37,7 @@ const DefaultProgressBar: FC<VoteStatProgressBarProps> = ({
     <HStack alignItems={"center"} w={"full"}>
       <Box w={"20%"}>
         {Icon ? (
-          <Box w={"7"} h={"7"}>
+          <Box w={["4", "4", "5", "7"]} h={["4", "4","5", "7"]}>
             {Icon}
           </Box>
         ) : (
@@ -51,7 +51,7 @@ const DefaultProgressBar: FC<VoteStatProgressBarProps> = ({
       </Box>
 
       <Progress
-        w={"full"}
+        w={["full"]}
         size={size}
         value={Number(percentage)}
         borderRadius={"md"}

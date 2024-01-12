@@ -129,10 +129,12 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
             {
               label: "Threshold",
               accessor: "threshold",
+              w: "20%",
             },
             {
               label: "Quorum",
               accessor: "quorum",
+              w: "20%",
             },
             {
               label: "",

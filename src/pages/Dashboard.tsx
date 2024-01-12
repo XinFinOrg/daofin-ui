@@ -139,15 +139,20 @@ const Dashboard: FC = () => {
   const onHoverBgColor = useColorModeValue("#D7DEE4", "#1F2E3D");
   return (
     <Page>
-      <HStack>
+      <HStack mb={6}>
         <IoBarChart />
 
         <Text fontWeight={"semibold"} fontSize={"lg"}>
           Overview
         </Text>
       </HStack>
-      <Flex mb={6}>
-        <Skeleton isLoaded={!isLoading} mr={4} w={"50%"}>
+      <Flex mb={6} flexDirection={["column", "column", "column", "row"]}>
+        <Skeleton
+          isLoaded={!isLoading}
+          mr={4}
+          mb={4}
+          w={["100%", "100%", "100%", "50%"]}
+        >
           <DefaultBox>
             <HStack justifyContent={"space-between"}>
               <VStack alignItems={"flex-start"}>
@@ -170,7 +175,12 @@ const Dashboard: FC = () => {
             </HStack>
           </DefaultBox>
         </Skeleton>
-        <Skeleton isLoaded={!isLoadingNativeBalanceOfDao} mr={4} w={"50%"}>
+        <Skeleton
+          isLoaded={!isLoadingNativeBalanceOfDao}
+          mr={4}
+          mb={4}
+          w={["100%", "100%", "100%", "50%"]}
+        >
           <DefaultBox>
             <HStack justifyContent={"space-between"}>
               <VStack alignItems={"flex-start"}>
@@ -196,17 +206,24 @@ const Dashboard: FC = () => {
       <Flex mb={6}>
         <CommunityCards />
       </Flex>
-      <Flex mb={4} justifyContent={"space-between"}>
-        <Box w={["100%", "60%"]} mr={"6"}>
+      <Flex
+        mb={4}
+        justifyContent={"space-between"}
+        flexDirection={["column", "column", "column", "row"]}
+      >
+        <Box w={["100%", "100%", "100%", "60%"]} mr={"6"}>
           <Text fontSize={"md"} fontWeight={"semibold"} mb={"4"}>
             🔥 Ready to Execute
           </Text>
           {/* <DefaultBox borderStyle={"dashed"}>  */}
-          <VStack alignItems={"flex-start"}>
+          <VStack
+            alignItems={"flex-start"}
+            flexDirection={["column", "column", "column", "row"]}
+          >
             <Skeleton
               isLoaded={!isLoading && !!readyToExecutedProposals}
               minH={"50px"}
-              w={"full"}
+              w={["full"]}
             >
               {readyToExecutedProposals && (
                 <ReadyToExecuteProposals data={readyToExecutedProposals} />
@@ -215,7 +232,7 @@ const Dashboard: FC = () => {
           </VStack>
           {/* </DefaultBox> */}
         </Box>
-        <Box w={"40%"} mb={"4"}>
+        <Box w={["100%", "100%", "100%", "40%"]} mb={"4"}>
           <Text fontSize={"md"} fontWeight={"semibold"} mb={"4"}>
             ✅ Executed Proposals
           </Text>

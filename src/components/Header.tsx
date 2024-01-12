@@ -13,6 +13,7 @@ import {
   Image,
   Spacer,
   Divider,
+  useBreakpoint,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -71,11 +72,23 @@ export default function Header() {
   );
   const tokenPrice = useGlobalState().xdcPrice;
   const bgColorModeLinks = useColorModeValue("blue.100", "blue.800");
+  const breakpoint = useBreakpoint();
+  console.log(breakpoint);
 
   return (
     <>
-      <DefaultBox w="full" py="1" px={"4"}>
-        <Flex justifyContent={"space-between"} w={"90%"} m={"auto"}>
+      <DefaultBox
+        w={["0", "0", "100%"]}
+        py={["0", "0", "1"]}
+        px={["0", "0", "4"]}
+        overflowX={["hidden", "hidden", "visible"]}
+        overflowY={["hidden", "hidden", "visible"]}
+      >
+        <Flex
+          justifyContent={"space-between"}
+          w={["0", "0", "100%"]}
+          m={"auto"}
+        >
           <HStack>
             <Box mx={"4"}>
               {data ? (
@@ -174,7 +187,7 @@ export default function Header() {
                       bgColor: bgColorModeLinks,
                     }}
                   >
-                    <HStack alignItems={'center'}>
+                    <HStack alignItems={"center"}>
                       <>{link.icon}</>
                       <Text>{link.name}</Text>
                     </HStack>
