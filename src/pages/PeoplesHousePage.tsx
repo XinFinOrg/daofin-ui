@@ -33,6 +33,7 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  Skeleton,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -65,6 +66,10 @@ import {
   PeopleButton,
   WalletAuthorizedButton,
 } from "../components/Button/AuthorizedButton";
+import { DefaultBox } from "../components/Box";
+import RulesOfDecisions from "../components/RulesOfDecisions";
+import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTypeDetails";
+import { DefaultAlert } from "../components/Alerts";
 export type JoinHouseFormType = {
   amount: string;
 };
@@ -84,37 +89,8 @@ const PeoplesHousePage = () => {
 
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  // const { setValue, getValues, register, watch } = useForm({
-  //   defaultValues: {
-  //     depositAmount: "",
-  //   },
-  // });
-  // const depositAmount = watch(["depositAmount"]);
-
   const { data: deposits } = usePeoplesHouseDeposits();
-  const globalSettings = useDaoGlobalSettings();
-  const handleDeposit = async () => {
-    // const { depositAmount } = getValues();
-    // const parsedAmount = depositAmount;
-    // const depositIterator = daofinClient?.methods.deposit(parsedAmount);
-    // if (!depositIterator) return;
-    // try {
-    //   for await (const step of depositIterator) {
-    //     switch (step.key) {
-    //       case DepositSteps.DEPOSITING:
-    //         console.log(step.txHash);
-    //         break;
-    //       case DepositSteps.DONE: {
-    //         console.log("DONE", step.key, step.key);
-    //         onClose();
-    //         break;
-    //       }
-    //     }
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
-  };
+
   const totalDeposits = useMemo(
     () =>
       deposits && deposits.length > 0
@@ -124,7 +100,10 @@ const PeoplesHousePage = () => {
         : BigNumber.from(0),
     []
   );
-  const bgColor = useColorModeValue("gray.50", "gray.900");
+  const communityName = PeoplesHouseCommittee;
+
+  const { data: proposalTypes, isLoading: isLoadingProposalTypes } =
+    useFetchPluginProposalTypeDetails();
   return (
     <Page>
       <Formik
@@ -164,103 +143,31 @@ const PeoplesHousePage = () => {
                   )
                 ) : (
                   <>
-                    <VStack
-                      p={"6"}
-                      bgColor={bgColor}
-                      borderRadius={"md"}
-                      w={"100%"}
-                      alignItems="center"
-                      alignSelf={"center"}
-                    >
-                      <EmptyBoxIcon />
-                      <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
-                        {"There is no member yet."}
-                      </Text>
-                    </VStack>
+                    <DefaultBox w={"100%"}>
+                      <VStack alignItems="center" alignSelf={"center"}>
+                        <EmptyBoxIcon />
+                        <Text
+                          fontSize={"xs"}
+                          fontWeight={"500"}
+                          opacity={"0.5"}
+                        >
+                          {"There is no member yet."}
+                        </Text>
+                      </VStack>
+                    </DefaultBox>
                   </>
                 )}
               </VStack>
-              <Box
-                alignSelf={"flex-start"}
-                boxShadow={"sm"}
-                bgColor={useColorModeValue("gray.50", "gray.900")}
-                opacity={0.9}
-                borderRadius={"md"}
-                p={6}
-              >
-                <Accordion>
-                  <Box
-                    borderRadius={"md"}
-                    p={6}
-                    bg={"blue.100"}
-                    fontSize={"sm"}
-                    mb={4}
-                  >
-                    <Text fontWeight={"semibold"}>Rules of Decisions</Text>
-                    <Text>
-                      This is where judiciaries can decide on how rules of
-                      decisions are differentiated between various proposal
-                      types
-                    </Text>
-                  </Box>
-                  <AccordionItem>
-                    <h2>
-                      <AccordionButton>
-                        <Box as="span" flex="1" textAlign="left">
-                          <Text fontWeight={"semibold"}>Grant</Text>
-                        </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
-                    </h2>
-                    <AccordionPanel pb={4}>
-                      <HStack justifyContent={"space-between"}>
-                        <DefaultProgressBar
-                          percentage={10}
-                          threshold={50}
-                          ProgressLabel={<Text fontSize={"sm"}>Threshold</Text>}
-                        />
-                        <Text fontSize={"sm"}>10%</Text>
-                      </HStack>
-                      <HStack>
-                        <DefaultProgressBar
-                          percentage={60}
-                          threshold={50}
-                          ProgressLabel={<Text fontSize={"sm"}>Pass Rate</Text>}
-                        />
-                        <Text fontSize={"sm"}>60%</Text>
-                      </HStack>
-                    </AccordionPanel>
-                  </AccordionItem>
-                  <AccordionItem>
-                    <h2>
-                      <AccordionButton>
-                        <Box as="span" flex="1" textAlign="left">
-                          <Text fontWeight={"semibold"}>Update Settings</Text>
-                        </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
-                    </h2>
-                    <AccordionPanel pb={4}>
-                      <HStack justifyContent={"space-between"}>
-                        <DefaultProgressBar
-                          percentage={50}
-                          threshold={60}
-                          ProgressLabel={<Text fontSize={"sm"}>Threshold</Text>}
-                        />
-                        <Text fontSize={"sm"}>50%</Text>
-                      </HStack>
-                      <HStack>
-                        <DefaultProgressBar
-                          percentage={80}
-                          threshold={70}
-                          ProgressLabel={<Text fontSize={"sm"}>Pass Rate</Text>}
-                        />
-                        <Text fontSize={"sm"}>80%</Text>
-                      </HStack>
-                    </AccordionPanel>
-                  </AccordionItem>
-                </Accordion>
-              </Box>
+
+              {
+                <DefaultBox alignSelf={"flex-start"} w={["40%"]}>
+                  <RulesOfDecisions
+                    communityName={communityName}
+                    summary={"All below info demostrate how voting rules work."}
+                    proposalTypes={proposalTypes}
+                  />
+                </DefaultBox>
+              }
             </HStack>
           </PeoplesHouseProvider>
         </>
@@ -283,107 +190,90 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
   const { network } = useNetwork();
   return (
     <>
-      <VStack
-        boxShadow={"sm"}
-        bgColor={useColorModeValue("gray.50", "gray.900")}
-        borderRadius={"md"}
-        p={6}
-        mb={6}
-      >
-        <HStack justifyContent={"space-between"} w={"full"} mb={4}>
-          <Box>
-            <HStack>
-              <Box w={"40px"} flexShrink={1}>
-                <JudiciariesIcon />
-              </Box>
-              <Box>
-                <Text fontSize={"md"} fontWeight={"bold"}>
-                  {" "}
-                  People’s House
-                </Text>
-                <Text fontSize={"xs"}>
-                  This is the group of expert people who are selected during
-                  initial deployment
-                </Text>
-              </Box>
-            </HStack>
-          </Box>
-          <Box>
-            <PeopleButton colorScheme="blue" onClick={handleToggleFormModal}>
-              Join House
-            </PeopleButton>
-          </Box>
-        </HStack>
-        <HStack>
-          <HStack w={"70%"}>
-            <VStack
-              borderRadius={"md"}
-              p={6}
-              w={["50%"]}
-              fontSize={"sm"}
-              border={"1px"}
-              borderColor={"gray.100"}
-              alignSelf={"normal"}
-              alignItems={"flex-start"}
-              justifyContent={"center"}
-            >
-              <Text>Deposited Tokens</Text>
-              <Text fontSize={"lg"} fontWeight={"bold"}>
-                {totalDeposits} {CHAIN_METADATA[network].nativeCurrency.symbol}
-              </Text>
-            </VStack>
-            <VStack
-              borderRadius={"md"}
-              p={6}
-              w={["50%"]}
-              fontSize={"sm"}
-              border={"1px"}
-              borderColor={"gray.100"}
-              alignSelf={"normal"}
-              alignItems={"flex-start"}
-              justifyContent={"center"}
-            >
-              <Text>Total Supply</Text>
-              <Text fontSize={"lg"} fontWeight={"bold"} whiteSpace={"nowrap"}>
-                {totalSupply} {CHAIN_METADATA[network].nativeCurrency.symbol}
-              </Text>
-            </VStack>{" "}
-            <VStack
-              borderRadius={"md"}
-              p={6}
-              w={["50%"]}
-              fontSize={"sm"}
-              border={"1px"}
-              borderColor={"gray.100"}
-              alignSelf={"normal"}
-              alignItems={"flex-start"}
-              justifyContent={"center"}
-            >
-              <Text>House Members</Text>
-              <Text fontSize={"lg"} fontWeight={"bold"}>
-                {numberWithCommaSeparate(totalMembers)}
-              </Text>
-            </VStack>
+      <DefaultBox mb={6}>
+        <VStack w={"full"}>
+          <HStack justifyContent={"space-between"} w={"full"} mb={4}>
+            <Box>
+              <HStack>
+                <Box w={"50px"} flexShrink={1}>
+                  <JudiciariesIcon />
+                </Box>
+                <Box>
+                  <Text fontSize={"xl"} fontWeight={"bold"}>
+                    {" "}
+                    People’s House
+                  </Text>
+                  <Text fontSize={"xs"}>
+                    This is the group of expert people who are selected during
+                    initial deployment
+                  </Text>
+                </Box>
+              </HStack>
+            </Box>
+            <Box>
+              <PeopleButton colorScheme="blue" onClick={handleToggleFormModal}>
+                Join House
+              </PeopleButton>
+            </Box>
           </HStack>
-          <Box
-            borderRadius={"md"}
-            p={6}
-            w={["50%"]}
-            bg={"blue.100"}
-            fontSize={"sm"}
-          >
-            <Text fontWeight={"semibold"}>
-              How to modify one or multiple member?
-            </Text>
-            <Text>
-              Lorem ipsum dolor sit amet consectetur. Senectus elementum erat
-              pellentesque nisl nibh. Vitae diam dolor convallis porta lacus.
-              Rhoncus cursus a viverra cursus lobortis ut amet pulvinar. Sit
-              mauris lectus libero lectus...
-            </Text>
-          </Box>
-        </HStack>
-      </VStack>
+          <HStack justifyContent={"space-between"} w={"full"}>
+            <HStack w={"60%"} justifyContent={"flex-start"}>
+              <DefaultBox w={["33%"]}>
+                <VStack
+                  fontSize={"sm"}
+                  alignSelf={"normal"}
+                  alignItems={"flex-start"}
+                  justifyContent={"center"}
+                >
+                  <Text>Deposited Tokens</Text>
+                  <Text fontSize={"lg"} fontWeight={"bold"}>
+                    {totalDeposits}{" "}
+                    {CHAIN_METADATA[network].nativeCurrency.symbol}
+                  </Text>
+                </VStack>
+              </DefaultBox>
+              <DefaultBox w={["33%"]}>
+                <VStack
+                  alignSelf={"normal"}
+                  alignItems={"flex-start"}
+                  justifyContent={"center"}
+                >
+                  <Text>Total Supply</Text>
+                  <Text
+                    fontSize={"lg"}
+                    fontWeight={"bold"}
+                    whiteSpace={"nowrap"}
+                  >
+                    {totalSupply}{" "}
+                    {CHAIN_METADATA[network].nativeCurrency.symbol}
+                  </Text>
+                </VStack>
+              </DefaultBox>{" "}
+              <DefaultBox w={["33%"]} alignSelf={"normal"}>
+                <VStack
+                  fontSize={"sm"}
+                  alignItems={"flex-start"}
+                  justifyContent={"center"}
+                >
+                  <Text>House Members</Text>
+                  <Text fontSize={"lg"} fontWeight={"bold"}>
+                    {numberWithCommaSeparate(totalMembers)}
+                  </Text>
+                </VStack>
+              </DefaultBox>
+            </HStack>
+
+            <DefaultAlert w={["40%"]}>
+              <Box fontSize={"sm"}>
+                <Text fontWeight={"semibold"}>
+                  How to modify one or multiple member?
+                </Text>
+                <Text>Lorem ipsum dolor sit amet consectetur.</Text>
+              </Box>
+            </DefaultAlert>
+          </HStack>
+        </VStack>
+      </DefaultBox>
     </>
   );
 };

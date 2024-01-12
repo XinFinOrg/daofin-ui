@@ -30,6 +30,7 @@ import {
   useColorModeValue,
   Skeleton,
   IconButton,
+  Divider,
 } from "@chakra-ui/react";
 import { Modal, Page } from "../components";
 import { v4 as uuid } from "uuid";
@@ -65,9 +66,9 @@ import {
   ReadyToExecuteProposals,
 } from "../components/ReadyToExecuteProposal";
 import { Proposal } from "../utils/types";
+import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTypeDetails";
 
 const Dashboard: FC = () => {
-  const { daofinClient, client } = useClient();
   const navigate = useNavigate();
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
   const {
@@ -77,14 +78,15 @@ const Dashboard: FC = () => {
   } = useDaoProposals(daoAddress, pluginAddress);
 
   const { isOpen, onClose, onToggle } = useDisclosure();
-  const nativeBalanceOfDao = useFetchDaoBalance();
+  const { data: nativeBalanceOfDao, isLoading: isLoadingNativeBalanceOfDao } =
+    useFetchDaoBalance();
   const [proposalTypes, setProposalTypes] = useState([
     {
       id: uuid(),
       name: "Grant",
       description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
       isComingSoon: false,
-      proposalId: 1,
+      proposalId: 0,
     },
     {
       id: uuid(),
@@ -101,7 +103,6 @@ const Dashboard: FC = () => {
   ]);
   const { committeesListWithIcon } = useCommitteeUtils();
   const { network } = useNetwork();
-
   const executedProposals = useMemo(
     () => proposals.filter(({ executed }) => executed),
     [proposals]
@@ -135,7 +136,7 @@ const Dashboard: FC = () => {
       ]);
     });
   }, [readyToExecutedProposalsCallback]);
-
+  const onHoverBgColor = useColorModeValue("#D7DEE4", "#1F2E3D");
   return (
     <Page>
       <HStack>
@@ -146,46 +147,50 @@ const Dashboard: FC = () => {
         </Text>
       </HStack>
       <Flex mb={6}>
-        <DefaultBox mr={4} w={"50%"}>
-          <HStack justifyContent={"space-between"}>
-            <VStack alignItems={"flex-start"}>
-              <Text fontSize="sm" fontWeight={"normal"}>
-                Total Proposals
-              </Text>
+        <Skeleton isLoaded={!isLoading} mr={4} w={"50%"}>
+          <DefaultBox>
+            <HStack justifyContent={"space-between"}>
+              <VStack alignItems={"flex-start"}>
+                <Text fontSize="sm" fontWeight={"normal"}>
+                  Total Proposals
+                </Text>
 
-              <Text fontSize="large" fontWeight={"bold"}>
-                {proposals.length}
-              </Text>
-            </VStack>
-            <Box>
-              <WalletAuthorizedButton
-                variant="outline"
-                onClick={() => onToggle()}
-              >
-                New Proposal
-              </WalletAuthorizedButton>
-            </Box>
-          </HStack>
-        </DefaultBox>
-        <DefaultBox w={"50%"}>
-          <HStack justifyContent={"space-between"}>
-            <VStack alignItems={"flex-start"}>
-              <Text fontSize="sm" fontWeight={"normal"}>
-                Balance in Treasury
-              </Text>
-              <Text fontSize="large" fontWeight={"bold"}>
-                {nativeBalanceOfDao
-                  ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
-                  : 0}{" "}
-                {CHAIN_METADATA[network].nativeCurrency.symbol}
-              </Text>
-            </VStack>
-            <Box>
-              <AddFund />
-              {/* <AddFundButton variant="outline">+ Add fund</AddFundButton> */}
-            </Box>
-          </HStack>
-        </DefaultBox>
+                <Text fontSize="large" fontWeight={"bold"}>
+                  {proposals.length}
+                </Text>
+              </VStack>
+              <Box>
+                <WalletAuthorizedButton
+                  variant="outline"
+                  onClick={() => onToggle()}
+                >
+                  New Proposal
+                </WalletAuthorizedButton>
+              </Box>
+            </HStack>
+          </DefaultBox>
+        </Skeleton>
+        <Skeleton isLoaded={!isLoadingNativeBalanceOfDao} mr={4} w={"50%"}>
+          <DefaultBox>
+            <HStack justifyContent={"space-between"}>
+              <VStack alignItems={"flex-start"}>
+                <Text fontSize="sm" fontWeight={"normal"}>
+                  Balance in Treasury
+                </Text>
+                <Text fontSize="large" fontWeight={"bold"}>
+                  {nativeBalanceOfDao
+                    ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
+                    : 0}{" "}
+                  {CHAIN_METADATA[network].nativeCurrency.symbol}
+                </Text>
+              </VStack>
+              <Box>
+                <AddFund />
+                {/* <AddFundButton variant="outline">+ Add fund</AddFundButton> */}
+              </Box>
+            </HStack>
+          </DefaultBox>
+        </Skeleton>
       </Flex>
 
       <Flex mb={6}>
@@ -317,30 +322,36 @@ const Dashboard: FC = () => {
           title="What would like to propose?"
           isOpen={isOpen}
           onClose={onClose}
-          size="lg"
+          size="sm"
         >
           <VStack w={"full"}>
             {proposalTypes.map(
               ({ name, description, isComingSoon, id, proposalId }) => (
-                <Flex
-                  className={
-                    "transition hover:ease-in duration-300 hover:opacity-80	"
-                  }
-                  direction={"column"}
-                  p={2}
-                  cursor={"pointer"}
-                  w={"full"}
-                  onClick={() => {
-                    if (isComingSoon) return;
-                    navigate(`/create/${proposalId}`);
-                  }}
-                >
-                  <Text fontWeight={"bold"}>
-                    {name} {isComingSoon && <Badge>Coming Soon</Badge>}
-                  </Text>
+                <Box key={uuid()}>
+                  <Flex
+                    _hover={{
+                      bgColor: onHoverBgColor,
+                    }}
+                    transition={"ease-in background-color .1s"}
+                    borderRadius={"md"}
+                    direction={"column"}
+                    p={2}
+                    mb={2}
+                    cursor={!isComingSoon ? "pointer" : "not-allowed"}
+                    w={"full"}
+                    onClick={() => {
+                      if (isComingSoon) return;
+                      navigate(`/create/${proposalId}`);
+                    }}
+                  >
+                    <Text fontWeight={"bold"}>
+                      {name} {isComingSoon && <Badge>Coming Soon</Badge>}
+                    </Text>
 
-                  <Text>{description}</Text>
-                </Flex>
+                    <Text fontSize={"sm"}>{description}</Text>
+                  </Flex>
+                  <Divider />
+                </Box>
               )
             )}
           </VStack>

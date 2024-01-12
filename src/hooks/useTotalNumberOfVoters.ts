@@ -11,8 +11,10 @@ const useTotalNumberOfVoters = () => {
   const judiciariesTotalMembers =
     useFetchTotalNumbersByCommittee(JudiciaryCommittee);
 
-  const { data: delegatees, isLoading } = useFetchMasterNodeDelegatee();
-  const { data: deposits } = usePeoplesHouseDeposits();
+  const { data: delegatees, isLoading: isLoadingDelegatees } =
+    useFetchMasterNodeDelegatee();
+  const { data: deposits, isLoading: isLoadingDeposits } =
+    usePeoplesHouseDeposits();
 
   const mapCommitteeToTotalNumber = (committeeName: string) => {
     switch (committeeName) {
@@ -27,6 +29,9 @@ const useTotalNumberOfVoters = () => {
         return "0";
     }
   };
-  return { mapCommitteeToTotalNumber };
+  return {
+    mapCommitteeToTotalNumber,
+    isLoading: isLoadingDeposits && isLoadingDelegatees,
+  };
 };
 export default useTotalNumberOfVoters;

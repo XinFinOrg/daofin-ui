@@ -12,6 +12,7 @@ function useFetchGlobalCommitteeToVotingSettings(
   committee: string,
   proposalId: string
 ): CommitteeVotingSettings | undefined {
+
   const [committeeSettings, setCommitteeSettings] =
     useState<CommitteeVotingSettings>();
   const { daofinClient, client } = useClient();
@@ -20,9 +21,9 @@ function useFetchGlobalCommitteeToVotingSettings(
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!daofinClient || !proposalId) return;
+    if (!daofinClient ||!proposalId) return;
     setIsLoading(true);
-
+    
     daofinClient.methods
       .getCommitteesToVotingSettings(proposalId, committee)
       .then((data) => {

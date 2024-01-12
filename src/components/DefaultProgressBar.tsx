@@ -21,7 +21,7 @@ import { IconBase } from "react-icons/lib";
 
 interface VoteStatProgressBarProps extends ProgressProps {
   percentage: number;
-  threshold: number;
+  threshold: number | null;
   Icon?: ReactElement;
   ProgressLabel?: ReactElement;
 }
@@ -56,19 +56,28 @@ const DefaultProgressBar: FC<VoteStatProgressBarProps> = ({
         value={Number(percentage)}
         borderRadius={"md"}
       >
-        <Box
-          position="absolute"
-          top="0"
-          left={`${threshold}%`}
-          transform={`translateX(-${threshold}%)`}
-          width="3px"
-          height="100%"
-          bg={useColorModeValue('black','white')}
-
-        />
+        {threshold !== null && <ThresholdLine threshold={threshold} />}
       </Progress>
     </HStack>
   );
 };
 
+const ThresholdLine: FC<Pick<VoteStatProgressBarProps, "threshold">> = ({
+  threshold,
+}) => {
+  return (
+    <>
+      {" "}
+      <Box
+        position="absolute"
+        top="0"
+        left={`${threshold}%`}
+        transform={`translateX(-${threshold}%)`}
+        width="3px"
+        height="100%"
+        bg={useColorModeValue("black", "white")}
+      />
+    </>
+  );
+};
 export default DefaultProgressBar;

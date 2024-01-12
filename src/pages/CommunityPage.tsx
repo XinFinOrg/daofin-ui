@@ -92,7 +92,7 @@ const CommunityPage = () => {
 
   const { data: people } = usePeoplesHouseDeposits();
   const { data: delegatees } = useFetchMasterNodeDelegatee();
-  const nativeBalanceOfDao = useFetchDaoBalance();
+  const { data: nativeBalanceOfDao } = useFetchDaoBalance();
 
   return (
     <Page>

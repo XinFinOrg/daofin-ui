@@ -1,15 +1,25 @@
-import { Box, Button, Text, useDisclosure } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  IconButton,
+  Image,
+  Text,
+  VStack,
+  useClipboard,
+  useDisclosure,
+} from "@chakra-ui/react";
 import {
   FC,
   PropsWithChildren,
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useState,
 } from "react";
 import { DefaultInput, Modal } from "../components";
 import { DefaultButton } from "../components/Button";
-import { CHAIN_METADATA } from "../utils/networks";
+import { CHAIN_METADATA, shortenAddress } from "../utils/networks";
 import { useNetwork } from "./network";
 import { useClient } from "../hooks/useClient";
 import { useFormikContext } from "formik";
@@ -22,6 +32,8 @@ import { TransactionReviewModal } from "../components/Modal";
 import { TransactionState } from "../utils/types";
 import { ModalActionButtonType } from "../components/Modal/TransactionReviewModal";
 import { usePollGasFee } from "../hooks/usePollGasfee";
+import { DefaultBox } from "../components/Box";
+import { CheckIcon, CopyIcon } from "@chakra-ui/icons";
 export interface DaoTreasuryContextType {
   handleSendTx: () => void;
   handleOpenPublishModal: () => void;
@@ -126,6 +138,22 @@ const DaoTreasuryProvider: FC<PropsWithChildren> = ({ children }) => {
     txReviewOpen();
     setCreationProcessState(TransactionState.LOADING);
   };
+  const { onCopy, hasCopied } = useClipboard(daoAddress);
+  const [clicked, setClicked] = useState(false);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setClicked(false);
+    }, 1000);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [hasCopied]);
+
+  const handleCopyClick = () => {
+    onCopy();
+    setClicked(true);
+  };
   return (
     <DaoTreasuryContext.Provider
       value={{
@@ -145,6 +173,34 @@ const DaoTreasuryProvider: FC<PropsWithChildren> = ({ children }) => {
           title="Deposit to Treasury"
         >
           <>
+            <VStack>
+              <Image src="/treasury.png" w={'200px'} />
+              <DefaultBox p={2}  textAlign={"center"}>
+                {shortenAddress(daoAddress)}{" "}
+                {clicked ? (
+                  <IconButton
+                    bgColor="unset"
+                    color="unset"
+                    size={"xs"}
+                    as={CheckIcon}
+                    aria-label=""
+                    w={"5"}
+                    h={"5"}
+                  />
+                ) : (
+                  <IconButton
+                    w={"5"}
+                    h={"5"}
+                    bgColor="unset"
+                    color="unset"
+                    size={"xs"}
+                    as={CopyIcon}
+                    aria-label=""
+                    onClick={handleCopyClick}
+                  />
+                )}
+              </DefaultBox>
+            </VStack>
             <DefaultInput
               name="amount"
               rightAddon={`${CHAIN_METADATA[network].nativeCurrency.symbol}`}

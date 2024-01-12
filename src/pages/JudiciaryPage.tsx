@@ -34,6 +34,8 @@ import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
 import { DefaultButton } from "../components/Button";
 import { DefaultBox } from "../components/Box";
 import { DefaultAlert } from "../components/Alerts";
+import RulesOfDecisions from "../components/RulesOfDecisions";
+import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTypeDetails";
 
 const JudiciaryPage = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
@@ -41,8 +43,11 @@ const JudiciaryPage = () => {
     daoAddress,
     pluginAddress
   );
+  const communityName = JudiciaryCommittee;
   const totalNumberOfJudiciaries =
     useFetchTotalNumbersByCommittee(JudiciaryCommittee);
+
+  const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
   return (
     <Page>
       <DefaultBox mb={6}>
@@ -50,11 +55,11 @@ const JudiciaryPage = () => {
           <HStack justifyContent={"space-between"} w={"full"} mb={4}>
             <Box>
               <HStack>
-                <Box w={"40px"} flexShrink={1}>
+                <Box w={"50px"} flexShrink={1}>
                   <JudiciariesIcon />
                 </Box>
                 <Box>
-                  <Text fontSize={"md"} fontWeight={"bold"}>
+                  <Text fontSize={"xl"} fontWeight={"bold"}>
                     {" "}
                     Judiciaries
                   </Text>
@@ -106,7 +111,7 @@ const JudiciaryPage = () => {
         </VStack>
       </DefaultBox>
       <HStack>
-        <DefaultBox w={["70%"]} alignSelf={"flex-start"}>
+        <DefaultBox w={["60%"]} alignSelf={"flex-start"}>
           <VStack>
             {juries.length > 0 ? (
               juries.map(({ member, creationDate }) => (
@@ -132,75 +137,15 @@ const JudiciaryPage = () => {
             )}
           </VStack>
         </DefaultBox>
-        <DefaultBox alignSelf={"flex-start"} opacity={0.9}>
-          <Accordion>
-            <DefaultAlert mb={4} p={4}>
-              <Box fontSize={"sm"}>
-                <Text fontWeight={"semibold"}>Rules of Decisions</Text>
-                <Text>
-                  This is where judiciaries can decide on how rules of decisions
-                  are differentiated between various proposal types
-                </Text>
-              </Box>
-            </DefaultAlert>
-            <AccordionItem>
-              <h2>
-                <AccordionButton>
-                  <Box as="span" flex="1" textAlign="left">
-                    <Text fontWeight={"semibold"}>Grant</Text>
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-              </h2>
-              <AccordionPanel pb={4}>
-                <HStack justifyContent={"space-between"}>
-                  <DefaultProgressBar
-                    percentage={10}
-                    threshold={50}
-                    ProgressLabel={<Text fontSize={"sm"}>Threshold</Text>}
-                  />
-                  <Text fontSize={"sm"}>10%</Text>
-                </HStack>
-                <HStack>
-                  <DefaultProgressBar
-                    percentage={60}
-                    threshold={50}
-                    ProgressLabel={<Text fontSize={"sm"}>Pass Rate</Text>}
-                  />
-                  <Text fontSize={"sm"}>60%</Text>
-                </HStack>
-              </AccordionPanel>
-            </AccordionItem>
-            <AccordionItem>
-              <h2>
-                <AccordionButton>
-                  <Box as="span" flex="1" textAlign="left">
-                    <Text fontWeight={"semibold"}>Update Settings</Text>
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-              </h2>
-              <AccordionPanel pb={4}>
-                <HStack justifyContent={"space-between"}>
-                  <DefaultProgressBar
-                    percentage={50}
-                    threshold={60}
-                    ProgressLabel={<Text fontSize={"sm"}>Threshold</Text>}
-                  />
-                  <Text fontSize={"sm"}>50%</Text>
-                </HStack>
-                <HStack>
-                  <DefaultProgressBar
-                    percentage={80}
-                    threshold={70}
-                    ProgressLabel={<Text fontSize={"sm"}>Pass Rate</Text>}
-                  />
-                  <Text fontSize={"sm"}>80%</Text>
-                </HStack>
-              </AccordionPanel>
-            </AccordionItem>
-          </Accordion>
-        </DefaultBox>
+        {proposalTypes && proposalTypes?.length > 0 && (
+          <DefaultBox w={["40%"]} alignSelf={"flex-start"}>
+            <RulesOfDecisions
+              communityName={communityName}
+              summary={"All below info demostrate how voting rules work."}
+              proposalTypes={proposalTypes}
+            />
+          </DefaultBox>
+        )}
       </HStack>
     </Page>
   );

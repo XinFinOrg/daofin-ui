@@ -1,6 +1,6 @@
 import Big from "big.js";
 import { utils, BigNumberish, BigNumber } from "ethers";
-
+import { v4 as uuidV4 } from "uuid";
 export function toEther(value: string) {
   return utils.formatEther(value);
 }
@@ -20,8 +20,9 @@ export function weiBigNumberToFormattedNumber(value: BigNumberish) {
 }
 // percentageBase: Up to 10^6
 export function toStandardPercentage(percentage: string) {
-  return BigNumber.from(percentage)
-    .mul(100)
-    .div(1000000)
-    .toString();
+  return BigNumber.from(percentage).mul(100).div(1000000).toString();
+}
+
+export function uuid() {
+  return uuidV4();
 }

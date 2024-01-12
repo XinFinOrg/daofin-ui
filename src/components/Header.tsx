@@ -174,7 +174,7 @@ export default function Header() {
                       bgColor: bgColorModeLinks,
                     }}
                   >
-                    <HStack>
+                    <HStack alignItems={'center'}>
                       <>{link.icon}</>
                       <Text>{link.name}</Text>
                     </HStack>

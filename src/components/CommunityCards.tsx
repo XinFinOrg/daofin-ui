@@ -3,6 +3,7 @@ import {
   Box,
   HStack,
   IconButton,
+  Skeleton,
   Text,
   VStack,
   useColorModeValue,
@@ -28,7 +29,7 @@ const CommunityCards = () => {
   const navigate = useNavigate();
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
   const { committeesListWithIcon } = useCommitteeUtils();
-  const { mapCommitteeToTotalNumber } = useTotalNumberOfVoters();
+  const { mapCommitteeToTotalNumber, isLoading } = useTotalNumberOfVoters();
 
   return (
     <HStack w={"full"}>

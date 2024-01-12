@@ -16,8 +16,10 @@ function useFetchDaoBalance() {
     if (!client) return;
     setIsLoading(true);
 
-    client.web3.getProvider().getBalance(daoAddress)
-      
+    client.web3
+      .getProvider()
+      .getBalance(daoAddress)
+
       .then((data) => {
         setIsLoading(false);
         if (!data) return;
@@ -30,6 +32,6 @@ function useFetchDaoBalance() {
       });
   }, [daofinClient]);
 
-  return amount;
+  return { data: amount, isLoading };
 }
 export default useFetchDaoBalance;

@@ -1,7 +1,11 @@
 import { DaoAction, ProposalMetadata } from "@xinfin/osx-client-common";
-import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
+import {
+  CommitteeVotingSettings,
+  VoteOption,
+} from "@xinfin/osx-daofin-sdk-client";
 import { BigNumberish } from "ethers";
 import { VoteStatsType } from "../hooks/useVoteStats";
+import { CommitteeGlobal } from "../hooks/useCommitteeUtils";
 
 export type Proposal = {
   id: string;
@@ -77,3 +81,18 @@ export type VoterOnProposal = {
   creationDate: BigNumberish;
   snapshotBlock: BigNumberish;
 };
+
+export type ProposalType = {
+  id: string;
+  txHash: string;
+  proposalTypeId: string;
+  creationDate: BigNumberish;
+  settings: CommitteeVotingSettings[];
+};
+export enum ProposalTypeEnum {
+  Grant = 0,
+  NewProposalType = 1,
+  UpdateSettings = 2,
+  UpdateElectionPeriods = 3,
+  UpdateJudiciary = 4,
+}

@@ -2,6 +2,9 @@ import {
   Box,
   Button,
   HStack,
+  Heading,
+  Icon,
+  Image,
   Text,
   Tooltip,
   VStack,
@@ -35,12 +38,13 @@ import { AddFund } from "../components/Button/AddFundButton";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import { Transfer } from "@xinfin/osx-sdk-client";
 import { WalletAddressCardWithBalance } from "../components/WalletAddressCard";
+import { Link } from "react-router-dom";
 
 const data = [{ name: "Group A", value: 100 }];
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 const TreasuryPage = () => {
-  const nativeBalanceOfDao = useFetchDaoBalance();
+  const { data: nativeBalanceOfDao } = useFetchDaoBalance();
   const { client } = useClient();
   const { daoAddress } = useAppGlobalConfig();
   const [addfunds, setAddFunds] = useState<Transfer[]>();
@@ -54,10 +58,7 @@ const TreasuryPage = () => {
         setAddFunds(data ? data : []);
       })
       .catch(console.log);
-
   }, []);
-
-
 
   const usdValueOfDao = useMemo(() => {
     return nativeBalanceOfDao
@@ -85,7 +86,26 @@ const TreasuryPage = () => {
           />
           <DefaultBox mr={4} w={"full"} mb={"4"}>
             <HStack>
-              <VStack w={"50%"}>
+              <HStack w={"50%"} justifyContent={"center"}>
+                <PieChart width={200} height={200}>
+                  <Pie
+                    data={data}
+                    innerRadius={60}
+                    outerRadius={80}
+                    fill="#fffff"
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {data.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={COLORS[index % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </HStack>
+              <VStack w={"50%"} alignSelf={"flex-start"}>
                 <DefaultBox w={"full"} mr={4}>
                   <HStack justifyContent={"space-between"}>
                     <HStack>
@@ -110,27 +130,28 @@ const TreasuryPage = () => {
                       <Text>$ {usdValueOfDao?.toString()}</Text>
                     </Box>
                   </HStack>
+                </DefaultBox>{" "}
+                <DefaultBox w={"full"} mr={4}>
+                  <HStack justifyContent={"space-between"}>
+                    <HStack>
+                      <Box w={"35px"}>
+                        <Icon />
+                      </Box>
+                      <Text fontSize={"md"} fontWeight={"semibold"}>
+                        FXD
+                        <Text fontSize={"xs"} fontWeight={"normal"}>
+                          $ {1}
+                        </Text>
+                      </Text>
+                    </HStack>
+
+                    <Box>
+                      <Text>0 FXD</Text>
+                      <Text>$ {1}</Text>
+                    </Box>
+                  </HStack>
                 </DefaultBox>
               </VStack>
-              <HStack w={"50%"} justifyContent={"center"}>
-                <PieChart width={200} height={200}>
-                  <Pie
-                    data={data}
-                    innerRadius={60}
-                    outerRadius={80}
-                    fill="#fffff"
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {data.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </HStack>
             </HStack>
           </DefaultBox>
           <HStack alignItems={"start"}>
@@ -226,12 +247,12 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
         <HStack justifyContent={"space-between"} mb={4}>
           <HStack>
             <Box>
-              <TreasuryIcon />
+            <Image src="/treasury.png" w={'50px'} />
             </Box>
             <Box>
-              <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
+              <Heading fontSize={"xl"} fontWeight={"semibold"} mb={"1"}>
                 Governor Assets
-              </Text>
+              </Heading>
               <Text fontSize={"xs"} fontWeight={"normal"}>
                 Value of all assets funded in governer smart contract
               </Text>
@@ -256,14 +277,15 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
             <Text fontSize={"xs"} fontWeight={"normal"}>
               Total Value
             </Text>
-            <Text fontSize={"lg"} fontWeight={"bold"} mb={"1"}>
-              {weiBigNumberToFormattedNumber(nativeBalanceOfDao)}
-
+            <Heading fontSize={"2xl"} fontWeight={"bold"} mb={"1"}>
+              {weiBigNumberToFormattedNumber(nativeBalanceOfDao)}{" "}
               {CHAIN_METADATA[network].nativeCurrency.symbol}
-            </Text>
+            </Heading>
           </Box>
           <HStack>
-            <DefaultButton variant={"outline"}>Withdraw</DefaultButton>
+            <Link to={`/create/0`}>
+              <DefaultButton variant={"outline"}>Withdraw</DefaultButton>
+            </Link>
             <AddFund />
           </HStack>
         </HStack>
