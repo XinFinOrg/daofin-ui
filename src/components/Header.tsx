@@ -72,8 +72,6 @@ export default function Header() {
   );
   const tokenPrice = useGlobalState().xdcPrice;
   const bgColorModeLinks = useColorModeValue("blue.100", "blue.800");
-  const breakpoint = useBreakpoint();
-  console.log(breakpoint);
 
   return (
     <>
@@ -183,7 +181,9 @@ export default function Header() {
           <HStack
             visibility={["hidden", "visible"]}
             overflow={["hidden", "visible"]}
-          ></HStack>
+          >
+            <ConnectButton chainStatus="icon" />
+          </HStack>
         </Flex>
         <Divider m={"auto"} w={"full"} />
         {isOpen ? (
@@ -191,7 +191,7 @@ export default function Header() {
             <Stack as={"nav"} spacing={4} mb={"4"}>
               {Links.map((link) => (
                 <Link to={link.location}>
-                  <Text fontWeight={'semibold'}>{link.name}</Text>
+                  <Text fontWeight={"semibold"}>{link.name}</Text>
                 </Link>
               ))}
             </Stack>
