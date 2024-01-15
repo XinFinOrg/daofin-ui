@@ -57,6 +57,7 @@ import CoinIcon from "../utils/assets/icons/CoinIcon";
 import useFetchDaoBalance from "../hooks/useFetchDaoBalance";
 import { DefaultBox } from "../components/Box";
 import { DefaultButton } from "../components/Button";
+import { AddFund } from "../components/Button/AddFundButton";
 
 const data = [
   {
@@ -100,8 +101,8 @@ const CommunityPage = () => {
         Community
       </Text>
 
-      <Flex mb={4}>
-        <DefaultBox mr={4} w={"50%"}>
+      <Flex mb={6} flexDirection={["column", "column", "column", "row"]}>
+        <DefaultBox mr={4} mb={4} w={["100%", "100%", "100%", "50%"]}>
           <HStack justifyContent={"space-between"}>
             <VStack alignItems={"flex-start"}>
               <Text fontSize="sm" fontWeight={"normal"}>
@@ -113,7 +114,7 @@ const CommunityPage = () => {
             </VStack>
           </HStack>
         </DefaultBox>
-        <DefaultBox mr={4} w={"50%"}>
+        <DefaultBox mr={4} mb={4} w={["100%", "100%", "100%", "50%"]}>
           <HStack justifyContent={"space-between"}>
             <VStack alignItems={"flex-start"}>
               <Text fontSize="sm" fontWeight={"normal"}>
@@ -126,9 +127,7 @@ const CommunityPage = () => {
               </Text>
             </VStack>
             <Box>
-              <Button variant="outline" colorScheme="blue">
-                + Add fund
-              </Button>
+              <AddFund />
             </Box>
           </HStack>
         </DefaultBox>
@@ -139,14 +138,14 @@ const CommunityPage = () => {
       <DefaultBox mb={4}>
         <Flex flexDirection={"column"}>
           <HStack w={"full"} justifyContent={"space-between"} mb={"4"}>
-            <Box>
-              <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
+            <Box fontSize={["sm", "md"]}>
+              <Text fontWeight={"semibold"} mb={"1"}>
                 Judiciaries
               </Text>
               <Text>Lorem ipsum dolor sit amet consectetur,</Text>
             </Box>
             <Box display={"inline-flex"} alignItems={"center"}>
-              <Text>View all</Text>
+              <Text fontSize={["sm", "md"]}>View all</Text>
               <ArrowForwardIcon />
             </Box>
           </HStack>
@@ -168,7 +167,12 @@ const CommunityPage = () => {
       <DefaultBox mb={4}>
         <Flex flexDirection={"column"}>
           <HStack alignItems={"start"} w={"full"}>
-            <VStack w={"50%"} alignItems={"flex-start"}>
+            <VStack
+              w={["0", "50%"]}
+              alignItems={"flex-start"}
+              visibility={["hidden", "visible"]}
+              overflow={["hidden", "visible"]}
+            >
               <Box textAlign={"start"}>
                 <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
                   People’s House
@@ -191,7 +195,7 @@ const CommunityPage = () => {
                 </ResponsiveContainer>
               </Box>
             </VStack>
-            <VStack alignItems={"flex-start"} w={"50%"}>
+            <VStack alignItems={"flex-start"} w={["100%", "50%"]}>
               <Box textAlign={"start"}>
                 <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
                   Top Contributors
@@ -231,12 +235,16 @@ const CommunityPage = () => {
                 )}
               </VStack>
               <VStack w={"full"}>
-                <DefaultButton variant={"ghost"} w={"full"} alignSelf={"end"}>
-                  View All
-                </DefaultButton>
-                <DefaultButton w={"full"} alignSelf={"end"}>
-                  Join House
-                </DefaultButton>
+                <Link to={"/community/peoples-house"}>
+                  <DefaultButton variant={"ghost"} w={"full"} alignSelf={"end"}>
+                    View All
+                  </DefaultButton>
+                </Link>
+                <Link to={"/community/peoples-house"}>
+                  <DefaultButton w={"full"} alignSelf={"end"}>
+                    Join House
+                  </DefaultButton>
+                </Link>
               </VStack>
             </VStack>
           </HStack>
@@ -244,15 +252,22 @@ const CommunityPage = () => {
       </DefaultBox>
       <DefaultBox w={"full"} mb={4}>
         <Flex flexDirection={"column"}>
-          <HStack w={"full"} justifyContent={"space-between"} mb={"4"}>
+          <HStack
+            w={"full"}
+            justifyContent={"space-between"}
+            mb={"4"}
+            fontSize={["sm", "md"]}
+          >
             <Box>
-              <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
+              <Text fontWeight={"semibold"} mb={"1"}>
                 Master Node Delegatee Senate
               </Text>
               <Text>Lorem ipsum dolor sit amet consectetur,</Text>
             </Box>
             <Box display={"inline-flex"} alignItems={"center"}>
-              <Text>View all</Text>
+              <Link to={"/community/masternode-delegatee-senate"}>
+                <Text>View all</Text>
+              </Link>
               <ArrowForwardIcon />
             </Box>
           </HStack>

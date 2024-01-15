@@ -252,7 +252,10 @@ const Dashboard: FC = () => {
                     metadata,
                   }) => (
                     <GreenDefaultBox w={"full"} mb={2}>
-                      <HStack>
+                      <HStack
+                        flexDirection={["column", "row"]}
+                        alignItems={"flex-start"}
+                      >
                         <Box minW={"20px"}>
                           <Jazzicon
                             diameter={40}
@@ -263,7 +266,11 @@ const Dashboard: FC = () => {
                           <Text as={"h1"} fontSize={"sm"} fontWeight={"bold"}>
                             {metadata.title}
                           </Text>
-                          <HStack justifyContent={"space-between"}>
+                          <HStack
+                            justifyContent={"space-between"}
+                            flexDirection={["column", "row"]}
+                            alignItems={"flex-start"}
+                          >
                             <Text fontSize={"xs"}>
                               <TimeIcon mr={"1"} />
                               {timestampToStandardFormatString(executionDate)}

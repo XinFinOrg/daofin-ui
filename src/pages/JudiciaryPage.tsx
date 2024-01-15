@@ -52,14 +52,19 @@ const JudiciaryPage = () => {
     <Page>
       <DefaultBox mb={6}>
         <VStack>
-          <HStack justifyContent={"space-between"} w={"full"} mb={4}>
+          <HStack
+            justifyContent={"space-between"}
+            w={"full"}
+            mb={4}
+            flexDirection={["column", "column", "column", "row"]}
+          >
             <Box>
               <HStack>
-                <Box w={"50px"} flexShrink={1}>
+                <Box w={["60px", "50px"]} flexShrink={1}>
                   <JudiciariesIcon />
                 </Box>
                 <Box>
-                  <Text fontSize={"xl"} fontWeight={"bold"}>
+                  <Text fontSize={["lg", "xl"]} fontWeight={"bold"}>
                     {" "}
                     Judiciaries
                   </Text>
@@ -70,48 +75,48 @@ const JudiciaryPage = () => {
                 </Box>
               </HStack>
             </Box>
-            <Box>
-              <DefaultButton colorScheme="blue" isDisabled={true}>
+            <Box w={["full", "full", "fit-content"]}>
+              <DefaultButton
+                w={["full", "full", "fit-content"]}
+                isDisabled={true}
+              >
                 Modify Members
               </DefaultButton>
             </Box>
           </HStack>
-          <HStack>
-            <VStack
-              borderRadius={"md"}
-              p={6}
-              w={["50%"]}
-              fontSize={"sm"}
-              alignSelf={"normal"}
-              alignItems={"flex-start"}
-              justifyContent={"center"}
-            >
-              <Text>Total Judiciaries</Text>
-              <Text fontSize={"lg"} fontWeight={"bold"}>
-                {totalNumberOfJudiciaries?.toString()}
-              </Text>
-            </VStack>
-
-            <Box w={"50%"}>
-              <DefaultAlert>
-                <VStack alignItems={"flex-start"} fontSize={"sm"}>
-                  <Text fontWeight={"semibold"}>
-                    How to modify one or multiple member?
-                  </Text>
-                  <Text>
-                    Lorem ipsum dolor sit amet consectetur. Senectus elementum
-                    erat pellentesque nisl nibh. Vitae diam dolor convallis
-                    porta lacus. Rhoncus cursus a viverra cursus lobortis ut
-                    amet pulvinar. Sit mauris lectus libero lectus...
-                  </Text>
-                </VStack>
-              </DefaultAlert>
-            </Box>
+          <HStack flexDirection={["column", "column", "column", "row"]}>
+            <DefaultBox w={["full", "full", "50%"]}>
+              <VStack
+                w={["50%"]}
+                fontSize={"sm"}
+                alignSelf={"normal"}
+                alignItems={"flex-start"}
+                justifyContent={"center"}
+              >
+                <Text>Total Judiciaries</Text>
+                <Text fontSize={"lg"} fontWeight={"bold"}>
+                  {totalNumberOfJudiciaries?.toString()}
+                </Text>
+              </VStack>
+            </DefaultBox>
+            <DefaultAlert w={["full", "full", "50%"]}>
+              <VStack alignItems={"flex-start"} fontSize={"sm"}>
+                <Text fontWeight={"semibold"}>
+                  How to modify one or multiple member?
+                </Text>
+                <Text>
+                  Lorem ipsum dolor sit amet consectetur. Senectus elementum
+                  erat pellentesque nisl nibh. Vitae diam dolor convallis porta
+                  lacus. Rhoncus cursus a viverra cursus lobortis ut amet
+                  pulvinar. Sit mauris lectus libero lectus...
+                </Text>
+              </VStack>
+            </DefaultAlert>
           </HStack>
         </VStack>
       </DefaultBox>
-      <HStack>
-        <DefaultBox w={["60%"]} alignSelf={"flex-start"}>
+      <HStack flexDirection={["column", "column", "column", "row"]}>
+        <DefaultBox w={["full", "full", "60%"]} alignSelf={"flex-start"}>
           <VStack>
             {juries.length > 0 ? (
               juries.map(({ member, creationDate }) => (
@@ -138,7 +143,7 @@ const JudiciaryPage = () => {
           </VStack>
         </DefaultBox>
         {proposalTypes && proposalTypes?.length > 0 && (
-          <DefaultBox w={["40%"]} alignSelf={"flex-start"}>
+          <DefaultBox w={["full", "full", "40%"]} alignSelf={"flex-start"}>
             <RulesOfDecisions
               communityName={communityName}
               summary={"All below info demostrate how voting rules work."}

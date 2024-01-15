@@ -121,8 +121,8 @@ const PeoplesHousePage = () => {
                 totalSupply ? totalSupply : 0
               )}
             />
-            <HStack>
-              <VStack w={["70%"]} alignSelf={"flex-start"}>
+            <HStack flexDirection={["column", "column", "column", "row"]}>
+              <VStack w={["full", "full", "60%"]} alignSelf={"flex-start"}>
                 {deposits && deposits.length > 0 ? (
                   deposits.map(
                     ({
@@ -159,15 +159,18 @@ const PeoplesHousePage = () => {
                 )}
               </VStack>
 
-              {
-                <DefaultBox alignSelf={"flex-start"} w={["40%"]}>
+              {proposalTypes && proposalTypes?.length > 0 && (
+                <DefaultBox
+                  w={["full", "full", "40%"]}
+                  alignSelf={"flex-start"}
+                >
                   <RulesOfDecisions
                     communityName={communityName}
                     summary={"All below info demostrate how voting rules work."}
                     proposalTypes={proposalTypes}
                   />
                 </DefaultBox>
-              }
+              )}
             </HStack>
           </PeoplesHouseProvider>
         </>
@@ -192,14 +195,19 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
     <>
       <DefaultBox mb={6}>
         <VStack w={"full"}>
-          <HStack justifyContent={"space-between"} w={"full"} mb={4}>
+          <HStack
+            justifyContent={"space-between"}
+            w={"full"}
+            mb={4}
+            flexDirection={["column", "column", "column", "row"]}
+          >
             <Box>
               <HStack>
-                <Box w={"50px"} flexShrink={1}>
+                <Box w={["60px", "50px"]} flexShrink={1}>
                   <JudiciariesIcon />
                 </Box>
                 <Box>
-                  <Text fontSize={"xl"} fontWeight={"bold"}>
+                  <Text fontSize={["lg", "xl"]} fontWeight={"bold"}>
                     {" "}
                     People’s House
                   </Text>
@@ -210,15 +218,27 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
                 </Box>
               </HStack>
             </Box>
-            <Box>
-              <PeopleButton colorScheme="blue" onClick={handleToggleFormModal}>
+            <Box w={["full", "full", "fit-content"]}>
+              <PeopleButton
+                colorScheme="blue"
+                w={["full", "full", "inherit"]}
+                onClick={handleToggleFormModal}
+              >
                 Join House
               </PeopleButton>
             </Box>
           </HStack>
-          <HStack justifyContent={"space-between"} w={"full"}>
-            <HStack w={"60%"} justifyContent={"flex-start"}>
-              <DefaultBox w={["33%"]}>
+          <HStack
+            justifyContent={"space-between"}
+            w={"full"}
+            flexDirection={["column", "column", "column", "row"]}
+          >
+            <HStack
+              w={["full", "full", "60%"]}
+              justifyContent={"flex-start"}
+              flexDirection={["column", "column", "column", "row"]}
+            >
+              <DefaultBox w={["full", "full", "full", "33%"]}>
                 <VStack
                   fontSize={"sm"}
                   alignSelf={"normal"}
@@ -232,7 +252,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
                   </Text>
                 </VStack>
               </DefaultBox>
-              <DefaultBox w={["33%"]}>
+              <DefaultBox w={["full", "full", "full", "33%"]}>
                 <VStack
                   alignSelf={"normal"}
                   alignItems={"flex-start"}
@@ -249,7 +269,10 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
                   </Text>
                 </VStack>
               </DefaultBox>{" "}
-              <DefaultBox w={["33%"]} alignSelf={"normal"}>
+              <DefaultBox
+                w={["full", "full", "full", "33%"]}
+                alignSelf={"normal"}
+              >
                 <VStack
                   fontSize={"sm"}
                   alignItems={"flex-start"}
@@ -263,7 +286,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
               </DefaultBox>
             </HStack>
 
-            <DefaultAlert w={["40%"]}>
+            <DefaultAlert w={["full", "full", "40%"]}>
               <Box fontSize={"sm"}>
                 <Text fontWeight={"semibold"}>
                   How to modify one or multiple member?

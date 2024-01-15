@@ -84,11 +84,7 @@ export default function Header() {
         overflowX={["hidden", "hidden", "visible"]}
         overflowY={["hidden", "hidden", "visible"]}
       >
-        <Flex
-          justifyContent={"space-between"}
-          w={["0", "0", "100%"]}
-          m={"auto"}
-        >
+        <Flex justifyContent={"space-between"} w={["0", "0", "90%"]} m={"auto"}>
           <HStack>
             <Box mx={"4"}>
               {data ? (
@@ -139,17 +135,6 @@ export default function Header() {
                 onChange={handleSwitchTheme}
                 size={"lg"}
               />{" "}
-              {/* <Button
-              onClick={toggleColorMode}
-              color={"darkcyan"}
-              variant={"outline"}
-            >
-              {colorMode === "light" ? (
-                <Icon as={SunIcon} />
-              ) : (
-                <Icon as={MoonIcon} />
-              )}
-            </Button> */}
             </Box>
           </HStack>
         </Flex>
@@ -167,7 +152,6 @@ export default function Header() {
           <HStack spacing={8} alignItems={"center"}>
             <Link to={""}>
               <Image src="/logo1.svg" />
-              <Heading></Heading>
             </Link>
             <HStack
               as={"nav"}
@@ -196,32 +180,29 @@ export default function Header() {
               ))}
             </HStack>
           </HStack>
-          <HStack>
-            {/* <IconButton
-              aria-label="FAQ"
-              isRound
-              icon={<InfoIcon />}
-              bg="trasparent"
-            />
-            <IconButton
-              aria-label="Search database"
-              isRound
-              icon={<BellIcon />}
-              bg="trasparent"
-            /> */}
-
-            {/* <Web3Button balance='show' icon="hide"/> */}
-            <ConnectButton chainStatus="icon" />
-          </HStack>
+          <HStack
+            visibility={["hidden", "visible"]}
+            overflow={["hidden", "visible"]}
+          ></HStack>
         </Flex>
         <Divider m={"auto"} w={"full"} />
         {isOpen ? (
           <Box pb={4} display={{ md: "none" }}>
-            <Stack as={"nav"} spacing={4}>
+            <Stack as={"nav"} spacing={4} mb={"4"}>
               {Links.map((link) => (
-                <Link to={link.location}>{link.name}</Link>
+                <Link to={link.location}>
+                  <Text fontWeight={'semibold'}>{link.name}</Text>
+                </Link>
               ))}
             </Stack>
+            <Switch
+              id="isChecked"
+              isChecked={colorMode === "dark"}
+              onChange={handleSwitchTheme}
+              size={"lg"}
+              mb={4}
+            />
+            <ConnectButton chainStatus="icon" />
           </Box>
         ) : null}
       </Box>

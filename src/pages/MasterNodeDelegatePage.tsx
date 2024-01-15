@@ -51,8 +51,8 @@ const MasterNodeDelegatePage = () => {
                 )}
               </VStack>
             </DefaultBox>
-            <HStack>
-              <DefaultBox w={["60%"]} alignSelf={"flex-start"}>
+            <HStack flexDirection={["column", "column", "column", "row"]}>
+              <DefaultBox w={["full", "full", "60%"]} alignSelf={"flex-start"}>
                 <VStack>
                   {delegatees.length > 0 ? (
                     delegatees.map(
@@ -97,7 +97,7 @@ const MasterNodeDelegatePage = () => {
                 </VStack>
               </DefaultBox>
               {proposalTypes && proposalTypes?.length > 0 && (
-                <DefaultBox w={["40%"]} alignSelf={"flex-start"}>
+                <DefaultBox w={["full", "full", "40%"]} alignSelf={"flex-start"}>
                   <RulesOfDecisions
                     communityName={communityName}
                     summary={"All below info demostrate how voting rules work."}
@@ -124,14 +124,19 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
 
   return (
     <>
-      <HStack justifyContent={"space-between"} w={"full"} mb={4}>
+      <HStack
+        justifyContent={"space-between"}
+        w={"full"}
+        mb={4}
+        flexDirection={["column", "column", "column", "row"]}
+      >
         <Box>
           <HStack>
-            <Box w={"50px"} flexShrink={1}>
+            <Box w={["60px", "50px"]} flexShrink={1}>
               <MasterNodeDelegateeSenateIcon />
             </Box>
             <Box>
-              <Text fontSize={"xl"} fontWeight={"bold"}>
+              <Text fontSize={["lg", "xl"]} fontWeight={"bold"}>
                 {" "}
                 Master Nodes Delegatee Senate
               </Text>
@@ -142,8 +147,9 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
             </Box>
           </HStack>
         </Box>
-        <Box>
+        <Box w={["full", "fit-content"]}>
           <MasterNodeAuthorizedButton
+            w={["full", "inherit"]}
             colorScheme="blue"
             onClick={handleToggleFormModal}
           >
@@ -151,8 +157,8 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
           </MasterNodeAuthorizedButton>
         </Box>
       </HStack>
-      <HStack>
-        <DefaultBox w={["25%"]}>
+      <HStack flexDirection={["column", "column", "column", "row"]}>
+        <DefaultBox w={["full", "50%", "25%", "25%"]}>
           <VStack
             fontSize={"sm"}
             alignSelf={"normal"}
@@ -165,7 +171,7 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
             </Text>
           </VStack>
         </DefaultBox>{" "}
-        <DefaultBox w={["25%"]}>
+        <DefaultBox w={["full", "50%", "25%", "25%"]}>
           <VStack
             fontSize={"sm"}
             alignSelf={"normal"}
@@ -178,7 +184,7 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
             </Text>
           </VStack>
         </DefaultBox>
-        <DefaultAlert w={["50%"]} p={4}>
+        <DefaultAlert w={["full", "50%"]} p={4}>
           <Box fontSize={"sm"}>
             <Text fontWeight={"semibold"}>
               How to modify one or multiple member?
