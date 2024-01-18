@@ -22,7 +22,11 @@ import {
   toWei,
   weiBigNumberToFormattedNumber,
 } from "../utils/numbers";
-import { CHAIN_METADATA } from "../utils/networks";
+import {
+  CHAIN_METADATA,
+  makeBlockScannerAddressUrl,
+  makeBlockScannerHashUrl,
+} from "../utils/networks";
 import { DefaultBox } from "../components/Box";
 import { FC, useEffect, useMemo, useState } from "react";
 import { useGlobalState } from "../contexts/GlobalStateContext";
@@ -84,9 +88,14 @@ const TreasuryPage = () => {
               nativeBalanceOfDao ? nativeBalanceOfDao.toString() : "0"
             }
           />
-          <DefaultBox mr={4} w={"full"} mb={"4"}>
+          <DefaultBox mr={4} w={"full"} mb={"6"}>
             <HStack>
-              <HStack w={"50%"} justifyContent={"center"}>
+              <HStack
+                w={["0", "0", "50%"]}
+                justifyContent={"center"}
+                visibility={["hidden", "hidden", "visible"]}
+                overflow={["hidden", "hidden", "visible"]}
+              >
                 <PieChart width={200} height={200}>
                   <Pie
                     data={data}
@@ -105,7 +114,7 @@ const TreasuryPage = () => {
                   </Pie>
                 </PieChart>
               </HStack>
-              <VStack w={"50%"} alignSelf={"flex-start"}>
+              <VStack w={["100%", "100%", "50%"]} alignSelf={"flex-start"}>
                 <DefaultBox w={"full"} mr={4}>
                   <HStack justifyContent={"space-between"}>
                     <HStack>
@@ -154,8 +163,11 @@ const TreasuryPage = () => {
               </VStack>
             </HStack>
           </DefaultBox>
-          <HStack alignItems={"start"}>
-            <DefaultBox mr={4} w={"50%"} mb={"4"}>
+          <HStack
+            alignItems={"start"}
+            flexDirection={["column", "column", "column", "row"]}
+          >
+            <DefaultBox mr={"4"} w={["100%", "100%", "100%", "50%"]} mb={"4"}>
               <HStack justifyContent={"space-between"} mb={4}>
                 <HStack>
                   <Box></Box>
@@ -198,7 +210,7 @@ const TreasuryPage = () => {
                 </VStack>
               )}
             </DefaultBox>
-            <DefaultBox w={"50%"} mb={"4"}>
+            <DefaultBox w={["100%", "100%", "100%", "50%"]} mb={"4"}>
               <HStack justifyContent={"space-between"} mb={4}>
                 <HStack>
                   <Box></Box>
@@ -237,20 +249,25 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
 }) => {
   const { network } = useNetwork();
   const { handleOpenPublishModal } = useDaoTreasury();
+  const { daoAddress, pluginAddress } = useAppGlobalConfig();
   return (
     <>
-      <Text fontWeight={"semibold"} fontSize={"lg"}>
+      <Text fontWeight={"semibold"} fontSize={"lg"} mb={"6"}>
         Treasury
       </Text>
 
-      <DefaultBox mr={4} w={"full"} mb={"4"}>
-        <HStack justifyContent={"space-between"} mb={4}>
+      <DefaultBox mr={4} w={"full"} mb={"6"}>
+        <HStack
+          justifyContent={"space-between"}
+          mb={4}
+          flexDirection={["column", "column", "column", "row"]}
+        >
           <HStack>
             <Box>
-            <Image src="/treasury.png" w={'50px'} />
+              <Image src="/treasury.png" w={["60px", "50px"]} />
             </Box>
             <Box>
-              <Heading fontSize={"xl"} fontWeight={"semibold"} mb={"1"}>
+              <Heading fontSize={["lg", "xl"]} fontWeight={"semibold"} mb={"1"}>
                 Governor Assets
               </Heading>
               <Text fontSize={"xs"} fontWeight={"normal"}>
@@ -259,20 +276,26 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
             </Box>
           </HStack>
           <HStack>
-            <a href="">
+            <a href={"https://github.com/XinFinOrg/osx-daofin"} target="_blank">
               <Text fontSize={"xs"} fontWeight={"normal"}>
                 View contract <ExternalLinkIcon />
               </Text>
             </a>
-            <a href="">
+            <a
+              href={makeBlockScannerAddressUrl(network, daoAddress)}
+              target="_blank"
+            >
               <Text fontSize={"xs"} fontWeight={"normal"}>
-                View on explorer <ExternalLinkIcon />
+                View Treasury on explorer <ExternalLinkIcon />
               </Text>
             </a>
           </HStack>
         </HStack>
 
-        <HStack justifyContent={"space-between"}>
+        <HStack
+          justifyContent={"space-between"}
+          flexDirection={["column", "row"]}
+        >
           <Box>
             <Text fontSize={"xs"} fontWeight={"normal"}>
               Total Value
@@ -282,11 +305,17 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
               {CHAIN_METADATA[network].nativeCurrency.symbol}
             </Heading>
           </Box>
-          <HStack>
-            <Link to={`/create/0`}>
-              <DefaultButton variant={"outline"}>Withdraw</DefaultButton>
-            </Link>
-            <AddFund />
+          <HStack flexDirection={["column", "row"]} w={["full", "initial"]}>
+            <Box w={["full", "initial"]}>
+              <Link to={`/create/0`}>
+                <DefaultButton w={["full", "initial"]} variant={"outline"}>
+                  Withdraw
+                </DefaultButton>
+              </Link>
+            </Box>
+            <Box w={["full", "initial"]}>
+              <AddFund />
+            </Box>
           </HStack>
         </HStack>
       </DefaultBox>

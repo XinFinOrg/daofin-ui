@@ -27,6 +27,7 @@ import useIsUserDeposited from "../hooks/useIsUserDeposited";
 import { useWallet } from "../hooks/useWallet";
 import useIsJudiciaryMember from "../hooks/useIsJudiciaryMember";
 import { ModalActionButtonType } from "../components/Modal/TransactionReviewModal";
+import { DefaultAlert } from "../components/Alerts";
 
 interface PeoplesHouseContextType {
   handleSendTx: () => void;
@@ -143,26 +144,22 @@ export const PeoplesHouseProvider: FC<PropsWithChildren> = ({ children }) => {
       {isOpen && (
         <Modal isOpen={isOpen} onClose={handleCloseModal} title="Join House">
           <>
-            <Box
-              borderRadius={"md"}
-              p={6}
-              w={["100%"]}
-              bg={"blue.100"}
-              fontSize={"sm"}
-              mb={"4"}
-            >
-              <Text fontWeight={"semibold"}>How to Join House?</Text>
-              <Text>
-                Adding{" "}
-                {settings
-                  ? weiBigNumberToFormattedNumber(
-                      settings?.houseMinAmount.toString()
-                    )
-                  : ""}{" "}
-                {CHAIN_METADATA[network].nativeCurrency.symbol} to Treasury will
-                make you a member of People's House
-              </Text>
-            </Box>
+            <DefaultAlert>
+              <Box>
+                {" "}
+                <Text fontWeight={"semibold"}>How to Join House?</Text>
+                <Text>
+                  Adding{" "}
+                  {settings
+                    ? weiBigNumberToFormattedNumber(
+                        settings?.houseMinAmount.toString()
+                      )
+                    : ""}{" "}
+                  {CHAIN_METADATA[network].nativeCurrency.symbol} to Treasury
+                  will make you a member of People's House
+                </Text>
+              </Box>
+            </DefaultAlert>
             <DefaultInput
               name="amount"
               rightAddon={`${CHAIN_METADATA[network].nativeCurrency.symbol}`}

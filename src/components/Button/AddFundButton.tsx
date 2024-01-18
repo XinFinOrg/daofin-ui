@@ -21,7 +21,7 @@ export const AddFund: FC<PropsWithChildren> = (props) => {
       onSubmit={() => {}}
     >
       <DaoTreasuryProvider>
-        <AddFundButton variant="outline">+ Add fund</AddFundButton>
+        <AddFundButton variant="outline" w={'full'}>+ Add fund</AddFundButton>
       </DaoTreasuryProvider>
     </Formik>
   );

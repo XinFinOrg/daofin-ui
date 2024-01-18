@@ -53,14 +53,19 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
   );
   return (
     <>
-      <HStack justifyContent={"space-between"} mb={"6"} p={"6"}>
+      <HStack
+        justifyContent={["space-between"]}
+        mb={"6"}
+        p={"6"}
+        flexDirection={["column", "column", "row"]}
+      >
         <Text fontSize={"lg"} fontWeight={"bold"}>
           Voting
         </Text>
         <Text>Current voters {numberWithCommaSeparate(allVotersNumber)}</Text>
       </HStack>
       <Tabs isFitted>
-        <TabList>
+        <TabList flexDirection={["column", "column", "row"]} gap={4}>
           {committeesListWithIcon.map(({ Icon, id, name }) => (
             <Tab key={id}>
               <HStack>
@@ -82,8 +87,13 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
         <TabPanels>
           {stats.map(({ id, name, voters }) => (
             <TabPanel key={id} p={"6"}>
-              <HStack justifyContent={"space-between"} py={"4"}>
-                <Text fontWeight={"semibold"} >
+              <HStack
+                justifyContent={"space-between"}
+                alignItems={"flex-start"}
+                py={"4"}
+                flexDirection={["column", "column", "row"]}
+              >
+                <Text fontWeight={"semibold"}>
                   <Text>
                     {
                       stats.find(({ id: committeeId }) => id === committeeId)
@@ -94,7 +104,11 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
                     </Text>{" "}
                   </Text>
                 </Text>
-                <HStack fontWeight={"semibold"}>
+                <HStack
+                  fontWeight={"semibold"}
+                  alignItems={"flex-start"}
+                  flexDirection={["column", "column", "row"]}
+                >
                   {stats
                     .find(({ id: committeeId }) => id === committeeId)
                     ?.options.map(({ value, text }) => (
@@ -124,7 +138,10 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
                       }
                       height={"2"}
                       ProgressLabel={
-                        <Text fontWeight={"normal"} >
+                        <Text
+                          fontSize={["xs", "sm", "md"]}
+                          fontWeight={"normal"}
+                        >
                           Quorum
                         </Text>
                       }
@@ -141,7 +158,10 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
                           : 0
                       }
                       ProgressLabel={
-                        <Text fontWeight={"normal"}>
+                        <Text
+                          fontWeight={"normal"}
+                          fontSize={["xs", "sm", "md"]}
+                        >
                           Threshold
                         </Text>
                       }

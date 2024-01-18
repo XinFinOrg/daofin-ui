@@ -8,6 +8,9 @@ export function toEther(value: string) {
 export function toWei(value: string) {
   return utils.parseEther(value);
 }
+export function toGwei(value: string) {
+  return utils.parseUnits(value, "gwei");
+}
 
 export function numberWithCommaSeparate(value: number | string) {
   return typeof value === "number"

@@ -60,7 +60,10 @@ import {
   WalletAddressCard,
   WalletAddressCardWithBalance,
 } from "./WalletAddressCard";
-import { timestampToStandardFormatString } from "../utils/date";
+import {
+  timestampToStandardFormatString,
+  toStandardTimestamp,
+} from "../utils/date";
 import useVoteStats from "../hooks/useVoteStats";
 import useFetchVotersOnProposal from "../hooks/useFetchVotersOnProposal";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
@@ -80,7 +83,15 @@ import useFetchProposalStatus, {
 } from "../hooks/useFetchProposalStatus";
 
 const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
-  const { actions, creator, metadata, pluginProposalId, createdAt } = proposal;
+  const {
+    actions,
+    creator,
+    metadata,
+    pluginProposalId,
+    createdAt,
+    startDate,
+    endDate,
+  } = proposal;
 
   const { description, resources, summary, title, media } = metadata;
   const { network } = useNetwork();
@@ -112,218 +123,266 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
   return (
     <>
       {
-        <Grid
-          templateColumns="repeat(2, 1fr)"
-          // templateRows={"repeat(1, 1fr)"}
-          gap={6}
-          // w={"full"}
-        >
-          <GridItem w="full" colSpan={2}>
-            <DefaultBox>
-              <Flex justifyContent={"space-between"}>
-                <Flex flexDirection={"column"} w={"50%"}>
-                  <Box>
-                    <ProposalTypeBadge title="Grant" />
-                  </Box>
-                  <Box my={"4"}>
-                    <Text as={"h1"} fontSize={"xl"} fontWeight={"bold"}>
-                      {title}
-                    </Text>
-                  </Box>
-                  <Flex fontSize={"sm"} justifyContent={"space-between"}>
-                    <Text>Published By: {shortenAddress(creator)}</Text>
-                    <HStack>
-                      <TimeIcon />
-                      <Text> {timestampToStandardFormatString(createdAt)}</Text>
-                    </HStack>
-                    <Text>
-                      <InfoOutlineIcon mr={1} />
-                      ID: {pluginProposalId}
-                    </Text>
-                    <HStack>
-                      <IoShareSocial />
-                      <Text>Share</Text>
-                    </HStack>
+        <Box w={"full"}>
+          <Grid
+            templateColumns={"repeat(2, 1fr)"}
+            // templateRows={"repeat(1, 1fr)"}
+            gap={[4, 6]}
+          >
+            <GridItem colSpan={2}>
+              <DefaultBox w={"100%"}>
+                <Flex
+                  justifyContent={"space-between"}
+                  flexDirection={["column", "column", "row"]}
+                >
+                  <Flex
+                    flexDirection={"column"}
+                    w={["100%", "100%", "50%"]}
+                    mb={4}
+                  >
+                    <Box>
+                      <ProposalTypeBadge title="Grant" />
+                    </Box>
+                    <Box my={"4"}>
+                      <Text as={"h1"} fontSize={"xl"} fontWeight={"bold"}>
+                        {title}
+                      </Text>
+                      <Text as={"h1"} fontSize={"sm"} fontWeight={"normal"}>
+                        {summary}
+                      </Text>
+                    </Box>
+                    <Flex
+                      fontSize={"sm"}
+                      justifyContent={"space-between"}
+                      flexDirection={["column", "column", "row"]}
+                      gap={1}
+                    >
+                      <Text>Published By: {shortenAddress(creator)}</Text>
+                      <HStack>
+                        <TimeIcon />
+                        <Text>
+                          {" "}
+                          {timestampToStandardFormatString(createdAt)}
+                        </Text>
+                      </HStack>
+                      <Text>
+                        <InfoOutlineIcon mr={1} />
+                        ID: {pluginProposalId}
+                      </Text>
+                      <HStack>
+                        <IoShareSocial />
+                        <Text>Share</Text>
+                      </HStack>
+                    </Flex>
+                  </Flex>
+
+                  <Flex alignItems={"center"} w={["full", "full", "initial"]}>
+                    {proposalStatus?.isOpen ? (
+                      proposalStatus?.canExecute ? (
+                        <WalletAuthorizedButton
+                          colorScheme="blue"
+                          w={"full"}
+                          onClick={onExecuteModalOpen}
+                        >
+                          Execute Now
+                        </WalletAuthorizedButton>
+                      ) : (
+                        <WalletAuthorizedButton
+                          colorScheme="blue"
+                          w={"full"}
+                          onClick={handleToggleFormModal}
+                        >
+                          Vote Now
+                        </WalletAuthorizedButton>
+                      )
+                    ) : proposalStatus?.executed ? (
+                      <WalletAuthorizedButton isDisabled={true} w={"full"}>
+                        Executed{" "}
+                      </WalletAuthorizedButton>
+                    ) : (
+                      <WalletAuthorizedButton isDisabled={true} w={"full"}>
+                        Not Open{" "}
+                      </WalletAuthorizedButton>
+                    )}
+
+                    {/* {proposal.executed && <CheckCircleIcon />} */}
                   </Flex>
                 </Flex>
-
-                <Flex alignItems={"center"}>
-                  {proposalStatus?.canExecute ? (
-                    <WalletAuthorizedButton
-                      colorScheme="blue"
-                      onClick={onExecuteModalOpen}
-                    >
-                      Execute Now
-                    </WalletAuthorizedButton>
-                  ) : (
-                    <WalletAuthorizedButton
-                      colorScheme="blue"
-                      onClick={handleToggleFormModal}
-                    >
-                      Vote Now
-                    </WalletAuthorizedButton>
+              </DefaultBox>
+            </GridItem>
+            <GridItem colSpan={[2, 2, 1]}>
+              <GridItem w="100%" h={"min-content"} mb={4}>
+                <DefaultBox>
+                  <VotingStatsBox proposalId={pluginProposalId} />
+                </DefaultBox>
+              </GridItem>
+              <GridItem colSpan={[2, 2, 1]} h={"min-content"} mb={4}>
+                <DefaultBox>
+                  {proposalStatus && (
+                    <ProposalStatusStepper
+                      proposalId={pluginProposalId}
+                      startDate={startDate}
+                      endDate={endDate}
+                      status={proposalStatus}
+                      createdAt={toStandardTimestamp(createdAt)}
+                    />
                   )}
-                  {/* {proposal.executed && <CheckCircleIcon />} */}
-                </Flex>
-              </Flex>
-            </DefaultBox>
-          </GridItem>
-          <GridItem colSpan={1} w="full">
-            <GridItem w="100%" h={"min-content"} mb={4}>
-              <DefaultBox>
-                <VotingStatsBox proposalId={pluginProposalId} />
-              </DefaultBox>
-            </GridItem>
-            <GridItem colSpan={1} w="100%" h={"min-content"} mb={4}>
-              <DefaultBox>
-                <ProposalStatusStepper />
-              </DefaultBox>
-            </GridItem>
-            <GridItem colSpan={1} w="100%">
-              <DefaultBox>
-                <Box p={5}>
-                  <Text fontSize={"lg"} fontWeight={"bold"}>
-                    Executing Actions
-                  </Text>
-                  <Text fontSize={"sm"} fontWeight={"normal"}>
-                    These actions can be executed only once the governance
-                    parameters are met
-                  </Text>
-                </Box>
-                {actions.map((item) => (
-                  <ViewGrantProposalType {...item} />
-                ))}
-              </DefaultBox>
-            </GridItem>
-          </GridItem>
-
-          <GridItem colSpan={1} colStart={2} colEnd={2}>
-            <GridItem h={"min-content"} mb={4}>
-              <DefaultBox>
-                <HStack justifyContent={"space-between"} mb={"6"} p={"6"}>
-                  <Text fontSize={"lg"} fontWeight={"bold"}>
-                    Voter
-                  </Text>
-                </HStack>
-                <Tabs isFitted>
-                  <TabList>
-                    {committeesListWithIcon.map(({ Icon, id, name }) => (
-                      <Tab key={id}>
-                        <HStack>
-                          <Box w={"25px"} h={"25px"}>
-                            {Icon && Icon}
-                          </Box>
-                          <Text
-                            fontSize={"sm"}
-                            fontWeight={"semibold"}
-                            whiteSpace={"nowrap"}
-                          >
-                            {name}
-                          </Text>
-                        </HStack>
-                      </Tab>
-                    ))}
-                  </TabList>
-
-                  <TabPanels>
-                    {committeesListWithIcon.map(({ id, name }) => (
-                      <TabPanel p={"6"}>
-                        <Tabs isFitted variant="soft-rounded">
-                          <TabList>
-                            {voteOptionsList.map(([key, value]) => (
-                              <Tab key={key}>
-                                <Text>{value}</Text>
-                              </Tab>
-                            ))}
-                          </TabList>
-                          <TabPanels>
-                            {voteOptionsList.map(([key, value]) => (
-                              <TabPanel w={"full"}>
-                                <VStack spacing={"1"} alignItems={"start"}>
-                                  {allVoters.filter(
-                                    (item) =>
-                                      item.committee === id &&
-                                      item.option === +key
-                                  ).length > 0 ? (
-                                    allVoters
-                                      .filter(
-                                        (item) =>
-                                          item.committee === id &&
-                                          item.option === +key
-                                      )
-                                      .map(({ voter, txHash }) => (
-                                        <HStack w={"full"}>
-                                          <WalletAddressCard address={voter} />
-                                          <a
-                                            href={makeBlockScannerHashUrl(
-                                              network,
-                                              txHash
-                                            )}
-                                            target="_blank"
-                                          >
-                                            <BlockIcon w={"5"} h={"5"} />
-                                          </a>
-                                        </HStack>
-                                      ))
-                                  ) : (
-                                    <VStack alignSelf={"center"} p={6}>
-                                      <NoProposalIcon />
-                                      <Text>
-                                        No {name} has voted yet! Be the first!
-                                      </Text>
-                                      <Button variant={"outline"}>
-                                        Vote now!
-                                      </Button>
-                                    </VStack>
-                                  )}
-                                </VStack>
-                              </TabPanel>
-                            ))}
-                          </TabPanels>
-                        </Tabs>
-                      </TabPanel>
-                    ))}
-                  </TabPanels>
-                </Tabs>
-              </DefaultBox>
-            </GridItem>
-            <GridItem colSpan={1} h={"fit-content"} mb={4}>
-              <DefaultBox>
-                <Text p={"5"} fontSize={"lg"} fontWeight={"bold"}>
-                  Discussions & References
-                </Text>
-                <HStack p={"6"}>
-                  {resources.map(({ name, url }) => (
-                    <a href={url} target="_blank">
-                      <Badge
-                        p={2}
-                        borderRadius={"md"}
-                        bgColor={"blue.100"}
-                        textColor={"blue.300"}
-                      >
-                        {name}
-                      </Badge>
-                    </a>
+                </DefaultBox>
+              </GridItem>
+              <GridItem colSpan={[2, 2, 1]}>
+                <DefaultBox>
+                  <Box p={5}>
+                    <Text fontSize={"lg"} fontWeight={"bold"}>
+                      Executing Actions
+                    </Text>
+                    <Text fontSize={"sm"} fontWeight={"normal"}>
+                      These actions can be executed only once the governance
+                      parameters are met
+                    </Text>
+                  </Box>
+                  {actions.map((item) => (
+                    <ViewGrantProposalType {...item} />
                   ))}
-                </HStack>
-              </DefaultBox>
+                </DefaultBox>
+              </GridItem>
             </GridItem>
-            <GridItem colSpan={1} rowSpan={0}>
-              <DefaultBox>
-                <Box p={"5"}>
-                  <Text mb={4} fontSize={"lg"} fontWeight={"bold"}>
-                    Details
+
+            <GridItem colSpan={[2, 2, 1]}>
+              <GridItem h={"min-content"} mb={4}>
+                <DefaultBox>
+                  <HStack justifyContent={"space-between"} mb={"6"} p={"6"}>
+                    <Text fontSize={"lg"} fontWeight={"bold"}>
+                      Voter
+                    </Text>
+                  </HStack>
+                  <Tabs isFitted>
+                    <TabList
+                      flexDirection={["column", "column", "row"]}
+                      gap={4}
+                    >
+                      {committeesListWithIcon.map(({ Icon, id, name }) => (
+                        <Tab key={id}>
+                          <HStack>
+                            <Box w={"25px"} h={"25px"}>
+                              {Icon && Icon}
+                            </Box>
+                            <Text
+                              fontSize={"sm"}
+                              fontWeight={"semibold"}
+                              whiteSpace={"nowrap"}
+                            >
+                              {name}
+                            </Text>
+                          </HStack>
+                        </Tab>
+                      ))}
+                    </TabList>
+
+                    <TabPanels>
+                      {committeesListWithIcon.map(({ id, name }) => (
+                        <TabPanel p={"6"}>
+                          <Tabs isFitted variant="soft-rounded">
+                            <TabList
+                              flexDirection={["column", "column", "row"]}
+                              gap={4}
+                            >
+                              {voteOptionsList.map(([key, value]) => (
+                                <Tab key={key}>
+                                  <Text>{value}</Text>
+                                </Tab>
+                              ))}
+                            </TabList>
+                            <TabPanels>
+                              {voteOptionsList.map(([key, value]) => (
+                                <TabPanel w={"full"}>
+                                  <VStack spacing={"1"} alignItems={"start"}>
+                                    {allVoters.filter(
+                                      (item) =>
+                                        item.committee === id &&
+                                        item.option === +key
+                                    ).length > 0 ? (
+                                      allVoters
+                                        .filter(
+                                          (item) =>
+                                            item.committee === id &&
+                                            item.option === +key
+                                        )
+                                        .map(({ voter, txHash }) => (
+                                          <HStack w={"full"}>
+                                            <WalletAddressCard
+                                              address={voter}
+                                            />
+                                            <a
+                                              href={makeBlockScannerHashUrl(
+                                                network,
+                                                txHash
+                                              )}
+                                              target="_blank"
+                                            >
+                                              <BlockIcon w={"5"} h={"5"} />
+                                            </a>
+                                          </HStack>
+                                        ))
+                                    ) : (
+                                      <VStack alignSelf={"center"} p={6}>
+                                        <NoProposalIcon />
+                                        <Text>
+                                          No {name} has voted yet! Be the first!
+                                        </Text>
+                                        <Button variant={"outline"}>
+                                          Vote now!
+                                        </Button>
+                                      </VStack>
+                                    )}
+                                  </VStack>
+                                </TabPanel>
+                              ))}
+                            </TabPanels>
+                          </Tabs>
+                        </TabPanel>
+                      ))}
+                    </TabPanels>
+                  </Tabs>
+                </DefaultBox>
+              </GridItem>
+              <GridItem colSpan={[2, 2, 1]} h={"fit-content"} mb={4}>
+                <DefaultBox>
+                  <Text p={"5"} fontSize={"lg"} fontWeight={"bold"}>
+                    Discussions & References
                   </Text>
-                  <Text
-                    dangerouslySetInnerHTML={{
-                      __html: description,
-                    }}
-                  ></Text>
-                </Box>
-              </DefaultBox>
+                  <HStack p={"6"}>
+                    {resources.map(({ name, url }) => (
+                      <a href={url} target="_blank">
+                        <Badge
+                          p={2}
+                          borderRadius={"md"}
+                          bgColor={"blue.100"}
+                          textColor={"blue.300"}
+                        >
+                          {name}
+                        </Badge>
+                      </a>
+                    ))}
+                  </HStack>
+                </DefaultBox>
+              </GridItem>
+              <GridItem colSpan={[2, 2, 1]} rowSpan={0}>
+                <DefaultBox>
+                  <Box p={"5"}>
+                    <Text mb={4} fontSize={"lg"} fontWeight={"bold"}>
+                      Details
+                    </Text>
+                    <Text
+                      dangerouslySetInnerHTML={{
+                        __html: description,
+                      }}
+                    ></Text>
+                  </Box>
+                </DefaultBox>
+              </GridItem>
             </GridItem>
-          </GridItem>
-        </Grid>
+          </Grid>
+        </Box>
       }
     </>
   );

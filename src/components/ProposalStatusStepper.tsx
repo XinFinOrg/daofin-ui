@@ -13,21 +13,83 @@ import {
   Text,
   useSteps,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { BlockIcon } from "../utils/assets/icons";
+import { toStandardFormatString } from "../utils/date";
+import useFetchProposalStatus, {
+  FetchProposalStatusType,
+} from "../hooks/useFetchProposalStatus";
+import { uuid } from "../utils/numbers";
+import { TimeIcon } from "@chakra-ui/icons";
 
-interface ProposalStatusStepperProps {}
-const ProposalStatusStepper = () => {
+interface ProposalStatusStepperProps {
+  proposalId: string;
+  status: FetchProposalStatusType;
+  startDate: number;
+  endDate: number;
+  createdAt: number;
+}
+const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
+  proposalId,
+  status,
+  endDate,
+  startDate,
+  createdAt,
+}) => {
   const [steps, setSteps] = useState([
-    { title: "Proposal published onchain", description: "Contact Info" },
-    { title: "Open to vote", description: "Date & Time" },
-    { title: "Threshold’s Reached", description: "Select Rooms" },
-    { title: "Proposal’s executed", description: "Select Rooms" },
+    {
+      id: uuid(),
+      title: "Proposal published onchain",
+      description: "Contact Info",
+      date: new Date(createdAt),
+    },
+    {
+      id: uuid(),
+      title: "Open to vote",
+      description: "Date & Time",
+      date: new Date(startDate),
+    },
+    {
+      id: uuid(),
+      title: "Closing vote",
+      description: "Date & Time",
+      date: new Date(endDate),
+    },
+    {
+      id: uuid(),
+      title: "Threshold’s Reached",
+      description: "Select Rooms",
+      date: null,
+    },
+    {
+      id: uuid(),
+      title: "Proposal’s executed",
+      description: "Select Rooms",
+      date: null,
+    },
   ]);
-  const { activeStep } = useSteps({
+
+  const { activeStep, setActiveStep } = useSteps({
     index: 1,
     count: steps.length,
   });
+  useEffect(() => {
+    if (status) {
+      if (status.isOpen) {
+        setActiveStep(2);
+      }
+      if (!status.isOpen && Date.now() > endDate) {
+        setActiveStep(3);
+      }
+      if (status.canExecute) {
+        setActiveStep(4);
+      }
+      if (status.executed) {
+        setActiveStep(5);
+      }
+    }
+  }, [status]);
+
   return (
     <>
       <Box p={"5"} fontSize={"lg"} fontWeight={"bold"}>
@@ -51,11 +113,15 @@ const ProposalStatusStepper = () => {
               </StepIndicator>
 
               <Box flexShrink="0" w={"full"}>
-                <StepTitle>{step.title}</StepTitle>
+                <StepTitle>
+                  <Text fontSize={["md", "lg"]}>{step.title}</Text>
+                </StepTitle>
                 <StepDescription>
                   <HStack justifyContent={"start"}>
-                    <BlockIcon w={"5"} h={"5"} />
-                    <Text>{new Date().toISOString()}</Text>
+                    <TimeIcon w={"3"} />
+                    <Text fontSize={["sm", "md"]}>
+                      {step.date ? toStandardFormatString(step.date) : "-"}
+                    </Text>
                   </HStack>
                 </StepDescription>
               </Box>

@@ -26,8 +26,6 @@ const RulesOfDecisions: FC<RulesOfDecisionsType> = ({
   summary,
   communityName,
 }) => {
-  console.log({ proposalTypes });
-
   const mapProposalTypeIdToItsName = (proposalTypeId: number) => {
     console.log(proposalTypeId);
 
@@ -42,6 +40,8 @@ const RulesOfDecisions: FC<RulesOfDecisionsType> = ({
         return "Change Judiciaries";
       case ProposalTypeEnum.UpdateSettings:
         return "Update Voting Settings";
+      case ProposalTypeEnum.UpdateProposalCosts:
+        return "Update Proposal Costs";
       default:
         return "N/A";
     }

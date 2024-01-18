@@ -4,6 +4,8 @@ export type FetchProposalStatusType = {
   canExecute: boolean;
   isMinParticipationReached: boolean;
   isThresholdReached: boolean;
+  isOpen: boolean;
+  executed: boolean;
 };
 const useFetchProposalStatus = () => {
   const { daofinClient } = useClient();
@@ -14,6 +16,8 @@ const useFetchProposalStatus = () => {
         daofinClient?.methods.isMinParticipationReached(pluginProposalId),
         daofinClient?.methods.isThresholdReached(pluginProposalId),
         daofinClient?.methods.canExecute(pluginProposalId),
+        daofinClient?.methods.isOpenProposal(pluginProposalId),
+        daofinClient?.methods.isExecutedProposal(pluginProposalId),
       ]),
     []
   );
@@ -26,6 +30,8 @@ const useFetchProposalStatus = () => {
       isMinParticipationReached: !!res[0],
       isThresholdReached: !!res[1],
       canExecute: !!res[2],
+      isOpen: !!res[3],
+      executed: !!res[4],
     } as FetchProposalStatusType;
   }, []);
   return { makeCall, isLoading };

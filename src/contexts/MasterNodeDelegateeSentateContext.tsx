@@ -18,6 +18,7 @@ import { usePollGasFee } from "../hooks/usePollGasfee";
 import { UpdateOrJoinMasterNodeDelegateeSteps } from "@xinfin/osx-daofin-sdk-client";
 import useTransactionModalDisclosure from "../hooks/useTransactionModalDisclosure";
 import { ModalActionButtonType } from "../components/Modal/TransactionReviewModal";
+import { DefaultAlert } from "../components/Alerts";
 
 interface MasterNodeDelegateeSentateContextType {
   handleSendTx: () => void;
@@ -125,20 +126,16 @@ export const MasterNodeDelegateeSentateProvider: FC<PropsWithChildren> = ({
             title="Delegate a member"
           >
             <>
-              <Box
-                borderRadius={"md"}
-                p={6}
-                w={["100%"]}
-                bg={"blue.100"}
-                fontSize={"sm"}
-                mb={"4"}
-              >
-                <Text fontWeight={"semibold"}>How to delegate a member?</Text>
-                <Text>
-                  Lorem ipsum dolor sit amet consectetur. Senectus elementum
-                  erat pellentesque nisl nibh.
-                </Text>
-              </Box>
+              <DefaultAlert p={6}>
+                <Box>
+                  {" "}
+                  <Text fontWeight={"semibold"}>How to delegate a member?</Text>
+                  <Text>
+                    Lorem ipsum dolor sit amet consectetur. Senectus elementum
+                    erat pellentesque nisl nibh.
+                  </Text>
+                </Box>
+              </DefaultAlert>
               <DefaultInput
                 name="delegateeAddress"
                 rightAddon="Paste"

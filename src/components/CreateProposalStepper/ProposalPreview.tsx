@@ -22,6 +22,7 @@ import useDaoElectionPeriods, {
 import { v4 as uuid } from "uuid";
 import { CHAIN_METADATA } from "../../utils/networks";
 import { useNetwork } from "../../contexts/network";
+import { DefaultAlert } from "../Alerts";
 
 const HeadText: FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -68,7 +69,7 @@ const ProposalPreview: FC = () => {
       <Box mb={"3"}>
         <HeadText>Resources</HeadText>
         <Flex>
-          {values.metaData.resources.map(({ name,url }) => (
+          {values.metaData.resources.map(({ name, url }) => (
             <Box mr={"1"}>
               <a href={url} target="_blank">
                 <Badge
@@ -88,20 +89,22 @@ const ProposalPreview: FC = () => {
       <Box mb={"3"}>
         <HeadText>Recipient</HeadText>
 
-        <Box bg={"blue.50"} p={4}>
+        <DefaultAlert p={4}>
           <Text>{values.action.recipient}</Text>
-        </Box>
+        </DefaultAlert>
       </Box>
       <Box mb={"3"}>
         <HeadText>Amount</HeadText>
 
-        <Flex bg={"blue.50"} p={4} justifyContent={"space-between"}>
-          <Text>Requested Amount</Text>
-          <Text>
-            {values.action.amount}{" "}
-            {CHAIN_METADATA[network].nativeCurrency.symbol}
-          </Text>
-        </Flex>
+        <DefaultAlert p={4}>
+          <Flex justifyContent={"space-between"} w={'full'}>
+            <Text>Requested Amount</Text>
+            <Text >
+              {values.action.amount}{" "}
+              {CHAIN_METADATA[network].nativeCurrency.symbol}
+            </Text>
+          </Flex>
+        </DefaultAlert>
       </Box>
     </Flex>
   );

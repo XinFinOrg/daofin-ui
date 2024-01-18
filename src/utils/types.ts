@@ -95,4 +95,5 @@ export enum ProposalTypeEnum {
   UpdateSettings = 2,
   UpdateElectionPeriods = 3,
   UpdateJudiciary = 4,
+  UpdateProposalCosts = 5,
 }

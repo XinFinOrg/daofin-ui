@@ -36,7 +36,8 @@ const ViewGrantProposalType: FC<DaoAction> = ({ data, to, value }) => {
               </Text>
             </HStack>
           </DefaultAlert>
-          <HStack justifyContent={"start"} w={"full"}>
+          <HStack justifyContent={"start"} w={"full"}
+          flexDirection={['column','column','row',]}>
             <Box
               // bgColor={"blue.100"}
               p={2}
@@ -50,7 +51,6 @@ const ViewGrantProposalType: FC<DaoAction> = ({ data, to, value }) => {
               <ArrowForwardIcon />
             </Box>
             <Box
-              // bgColor={"blue.100"}
               p={2}
               borderRadius={"md"}
               width={"full"}

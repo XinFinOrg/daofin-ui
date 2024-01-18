@@ -61,6 +61,7 @@ function useFetchPluginProposalTypeDetails(): {
       .then(({ pluginProposalTypes }) => {
         setProposalTypes(pluginProposalTypes as unknown as ProposalType[]);
         setIsLoading(false);
+        console.log({ pluginProposalTypes });
       })
       .catch((e) => {
         setIsLoading(false);

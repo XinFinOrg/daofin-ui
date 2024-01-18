@@ -29,6 +29,9 @@ import { TransactionState } from "../../utils/types";
 import { useNetwork } from "../../contexts/network";
 import { Link } from "react-router-dom";
 import { numberWithCommaSeparate } from "../../utils/numbers";
+import { DefaultAlert } from "../Alerts";
+import { DefaultBox } from "../Box";
+import { WalletAuthorizedButton } from "../Button/AuthorizedButton";
 
 export type ModalActionButtonType = {
   goTo: string;
@@ -89,7 +92,7 @@ const TransactionReviewModal = <T extends any | undefined>({
           <Box mb={4}>
             <Image src={GasEstimation}></Image>
           </Box>
-          <Box bgColor={"blue.50"} p={"4"} mb={4}>
+          <DefaultBox p={"4"} mb={4}>
             <Flex flexDirection={"column"}>
               {data &&
                 data.map(({ title, tooltip, value }) => (
@@ -112,9 +115,9 @@ const TransactionReviewModal = <T extends any | undefined>({
                   </Flex>
                 ))}
             </Flex>
-          </Box>
+          </DefaultBox>
 
-          <Box bgColor={"blue.50"} p={"4"} mb={4}>
+          <DefaultBox mb={4}>
             <Flex flexDirection={"column"}>
               {totalCosts && (
                 <Flex justifyContent={"space-between"}>
@@ -141,23 +144,23 @@ const TransactionReviewModal = <T extends any | undefined>({
                 </Flex>
               )}
             </Flex>
-          </Box>
+          </DefaultBox>
           <Box>
-            <Text as="p" fontSize={"sm"} my={4}>
+            {/* <Text as="p" fontSize={"sm"} my={4}>
               Estimation will last 29 seconds...
-            </Text>
+            </Text> */}
           </Box>
           <Box>
             <Flex flexDirection={"row"} justifyContent={"end"}>
               <Flex>
-                <Button
+                <WalletAuthorizedButton
                   type="submit"
                   colorScheme="blue"
                   m={1}
                   onClick={onSubmitClick}
                 >
                   Ok, Submit
-                </Button>
+                </WalletAuthorizedButton>
               </Flex>
             </Flex>
           </Box>

@@ -5,6 +5,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -14,12 +15,18 @@ import { usePollGasFee } from "../hooks/usePollGasfee";
 import { useClient } from "../hooks/useClient";
 import { CreateProposalParams } from "@xinfin/osx-daofin-sdk-client";
 import { TransactionReviewModal } from "../components/Modal";
-import { useDisclosure } from "@chakra-ui/react";
+import {
+  useBreakpoint,
+  useBreakpointValue,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { BigNumberish, BigNumber } from "@ethersproject/bignumber";
 import { TransactionState } from "../utils/types";
-import { decodeAbiParameters, parseEther,zeroAddress } from "viem";
+import { decodeAbiParameters, parseEther, zeroAddress } from "viem";
 import { ProposalCreationSteps } from "@xinfin/osx-sdk-client";
 import useTransactionModalDisclosure from "../hooks/useTransactionModalDisclosure";
+import { DefaultAlert } from "../components/Alerts";
+import { toEther } from "../utils/numbers";
 
 export type CreateProposalContextType = {
   handlePublishProposal: () => void;
@@ -34,7 +41,7 @@ const CreateProposalContext = createContext<CreateProposalContextType | null>(
 const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
   const [proposalCreationData, setProposalCreationData] =
     useState<CreateProposalParams>();
-
+  const breakpoint = useBreakpoint();
   const { values, resetForm } = useFormikContext<CreateProposalFormData>();
   const { action, metaData, selectedElectionPeriod } = values;
 
@@ -64,9 +71,21 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
       );
   }, [daofinClient?.estimation, proposalCreationData]);
 
+  const [proposalCosts, setProposalCosts] = useState<BigNumberish>(0);
+
+  const [isLoading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    daofinClient?.methods.getProposalCosts().then((data) => {
+      setProposalCosts(data);
+      setLoading(false);
+    });
+  }, []);
   const { stopPolling, txCosts, txFees } = usePollGasFee(
     estimateCreationFees,
-    shouldPoll
+    shouldPoll,
+    toEther(proposalCosts.toString())
   );
 
   const handlePublishProposal = async () => {
@@ -140,6 +159,7 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
       voteOption: 0,
     });
   };
+  console.log({ breakpoint });
 
   return (
     <CreateProposalContext.Provider
@@ -149,22 +169,35 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
         isOpenPublishModal: isOpen,
       }}
     >
-      <CreateProposalWrapper>{children}</CreateProposalWrapper>
+      {breakpoint === "base" ||
+      breakpoint === "xs" ||
+      breakpoint === "sm" ||
+      breakpoint === "md" ? (
+        <>
+          <DefaultAlert status="warning" textAlign={"center"}>
+            Please use Desktop screen
+          </DefaultAlert>
+        </>
+      ) : (
+        <>
+          <CreateProposalWrapper>{children}</CreateProposalWrapper>
 
-      {isOpen && (
-        <TransactionReviewModal
-          isOpen={isOpen}
-          onClose={() =>
-            onClose(() => {
-              stopPolling();
-            })
-          }
-          data={txFees}
-          totalCosts={txCosts}
-          onSubmitClick={handlePublishProposal}
-          status={creationProcessState}
-          txData={publishedTxData}
-        />
+          {isOpen && (
+            <TransactionReviewModal
+              isOpen={isOpen}
+              onClose={() =>
+                onClose(() => {
+                  stopPolling();
+                })
+              }
+              data={txFees}
+              totalCosts={txCosts}
+              onSubmitClick={handlePublishProposal}
+              status={creationProcessState}
+              txData={publishedTxData}
+            />
+          )}
+        </>
       )}
     </CreateProposalContext.Provider>
   );

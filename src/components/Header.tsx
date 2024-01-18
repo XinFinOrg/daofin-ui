@@ -148,9 +148,11 @@ export default function Header() {
             onClick={isOpen ? onClose : onOpen}
           />
           <HStack spacing={8} alignItems={"center"}>
-            <Link to={""}>
-              <Image src="/logo1.svg" />
-            </Link>
+            <Box ml={"4"}>
+              <Link to={""}>
+                <Image src="/logo1.svg" />
+              </Link>
+            </Box>
             <HStack
               as={"nav"}
               spacing={4}
@@ -168,6 +170,7 @@ export default function Header() {
                     _hover={{
                       bgColor: bgColorModeLinks,
                     }}
+                    
                   >
                     <HStack alignItems={"center"}>
                       <>{link.icon}</>
@@ -190,7 +193,7 @@ export default function Header() {
           <Box pb={4} display={{ md: "none" }}>
             <Stack as={"nav"} spacing={4} mb={"4"}>
               {Links.map((link) => (
-                <Link to={link.location}>
+                <Link to={link.location}  onClick={() => onClose()}>
                   <Text fontWeight={"semibold"}>{link.name}</Text>
                 </Link>
               ))}

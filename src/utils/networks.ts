@@ -461,3 +461,9 @@ export function makeBlockScannerHashUrl(
 ) {
   return `${CHAIN_METADATA[network].explorer}/txs/${hash}`;
 }
+export function makeBlockScannerAddressUrl(
+  network: SupportedNetworks,
+  address: string
+) {
+  return `${CHAIN_METADATA[network].explorer}/address/${address}`;
+}
