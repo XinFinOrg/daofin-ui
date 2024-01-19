@@ -2,7 +2,7 @@ import React, { FC, PropsWithChildren } from "react";
 import { useWallet } from "../hooks/useWallet";
 
 const WithConnectedWallet: FC<PropsWithChildren> = ({ children }) => {
-  const { address, isOnWrongNetwork } = useWallet();
+  const { address } = useWallet();
   return <>{address ? children : ""}</>;
 };
 

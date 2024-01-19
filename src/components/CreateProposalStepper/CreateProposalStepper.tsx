@@ -49,6 +49,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { GasFeeEstimation } from "@xinfin/osx-client-common";
 import { useCreateProposalContext } from "../../contexts/CreateProposalContext";
 import { TransactionState } from "../../utils/types";
+import { DefaultBox } from "../Box";
 type CreateProposalStepperProps = {
   proposalType?: Number;
 };
@@ -152,6 +153,7 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({}) => {
           </GridItem>
           <GridItem colSpan={5} colStart={7}>
             <Card shadow={"2xl"}>
+            <DefaultBox p={0}>
               <CardHeader>
                 <Badge mb={"4"}>GRANT</Badge>
                 <Heading size="md">{grantsSteps[activeStep].title}</Heading>
@@ -186,6 +188,7 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({}) => {
                   Proceed
                 </Button>
               </CardFooter>
+              </DefaultBox>
             </Card>
           </GridItem>
         </Grid>

@@ -47,14 +47,12 @@ const determineNetwork = (
   chainId: number,
   status: "disconnected" | "connecting" | "connected"
 ): SupportedNetworks | "unsupported" => {
-  console.log("test1");
   if (networkUrlSegment) {
     // NETWORK from url
     return toSupportedNetwork(networkUrlSegment);
   } else if (status === "connected") {
     if (isSupportedChainId(chainId)) {
       // NETWORK from wallet chain
-      console.log("test1");
 
       return Object.entries(CHAIN_METADATA).find(
         ([, v]) => v.id === chainId
@@ -120,7 +118,7 @@ export function NetworkProvider({ children }: NetworkProviderProps) {
       navigate("./not-found", { replace: true });
     }
   }, [networkState, navigate, networkUrlSegment]);
-  
+
   return (
     <NetworkContext.Provider
       value={{

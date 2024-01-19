@@ -5,10 +5,14 @@ import {
   CommitteeVotingSettings,
   GlobalSettings,
 } from "@xinfin/osx-daofin-sdk-client";
+import useDaoProposal from "./useDaoProposal";
+import { getPluginInstallationId } from "../utils/networks";
 
 function useFetchGlobalCommitteeToVotingSettings(
-  committee: string
+  committee: string,
+  proposalId: string
 ): CommitteeVotingSettings | undefined {
+
   const [committeeSettings, setCommitteeSettings] =
     useState<CommitteeVotingSettings>();
   const { daofinClient, client } = useClient();
@@ -17,11 +21,11 @@ function useFetchGlobalCommitteeToVotingSettings(
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!daofinClient) return;
+    if (!daofinClient ||!proposalId) return;
     setIsLoading(true);
-
+    
     daofinClient.methods
-      .getCommitteesToVotingSettings("", committee)
+      .getCommitteesToVotingSettings(proposalId, committee)
       .then((data) => {
         setIsLoading(false);
         setCommitteeSettings(data);

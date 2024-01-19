@@ -1,10 +1,10 @@
 import { Box, FormControl, useClipboard } from "@chakra-ui/react";
 import { Form, useFormikContext } from "formik";
 import React from "react";
-import { DefaultInput } from "..";
-import { CreateProposalFormData } from "../../pages/CreateProposal";
-import { CHAIN_METADATA } from "../../utils/networks";
-import { useNetwork } from "../../contexts/network";
+import { DefaultInput } from "../..";
+import { CreateProposalFormData } from "../../../pages/CreateProposal";
+import { CHAIN_METADATA } from "../../../utils/networks";
+import { useNetwork } from "../../../contexts/network";
 
 const GrantsProposalTypeForm = () => {
   const { values, setFieldValue } = useFormikContext<CreateProposalFormData>();
@@ -15,7 +15,7 @@ const GrantsProposalTypeForm = () => {
         <Box className="mb-4">
           <DefaultInput
             name="action.recipient"
-            label="Recipient"
+            label="Recipient Address"
             isRequired={true}
             rightAddon="Paste"
             onClickRightAddon={async (e: any) => {

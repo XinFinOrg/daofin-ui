@@ -35,6 +35,17 @@ query ProposalQuery($id: ID!) {
       creationBlockNumber
       failureMap 
       pluginProposalId
+      creationTxHash
+      proposalType {
+        id
+        txHash
+        settings {
+          id
+          supportThreshold
+          minParticipation
+          minVotingPower
+        }
+      }
     }
   }
 `;

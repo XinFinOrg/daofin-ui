@@ -9,7 +9,15 @@ import {
 } from "../utils/networks";
 
 import { BigNumber, ethers } from "ethers";
+import { Page } from "../components";
+import { Skeleton } from "@chakra-ui/react";
+import { Formik } from "formik";
+import { VoteProvider } from "../contexts/voteContext";
+import { ExecuteProposalProvider } from "../contexts/ExecuteProposalContext";
 
+export type VoteFormType = {
+  voteOption: number;
+};
 const ProposalDetailsPage = () => {
   const { pluginAddress, daoAddress } = useAppGlobalConfig();
   const { proposalId } = useParams();
@@ -17,11 +25,24 @@ const ProposalDetailsPage = () => {
     getPluginProposalId(pluginAddress, proposalId ? parseInt(proposalId) : 0)
   );
 
-  
   return (
-    <>
-      {data && !error && !isLoading && <ProposalDetails proposal={data} />}
-    </>
+    <Page>
+      <Formik
+        initialValues={{
+          voteOption: "2",
+          proposalId,
+        }}
+        onSubmit={() => {}}
+      >
+        {data ? (
+          <ExecuteProposalProvider proposal={data}>
+            <VoteProvider proposalId={proposalId ? proposalId : ""}>
+              <ProposalDetails proposal={data} />
+            </VoteProvider>
+          </ExecuteProposalProvider>
+        ) : null}
+      </Formik>
+    </Page>
   );
 };
 

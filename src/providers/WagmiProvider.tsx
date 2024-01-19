@@ -4,7 +4,7 @@ import {
 } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { FC, PropsWithChildren } from "react";
-import { configureChains, createConfig, WagmiConfig,  } from "wagmi";
+import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { xdcTestnet, xdc } from "wagmi/chains";
 import {
   injectedWallet,
@@ -34,7 +34,6 @@ const WagmiProvider: FC<PropsWithChildren> = ({ children }) => {
     connectors,
     publicClient,
   });
-
 
   return (
     <WagmiConfig config={wagmiConfig}>

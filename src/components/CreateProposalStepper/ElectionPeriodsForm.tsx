@@ -18,6 +18,10 @@ import useDaoElectionPeriods, {
   ElectionPeriod,
 } from "../../hooks/useDaoElectionPeriods";
 import { v4 as uuid } from "uuid";
+import {
+  timestampToStandardFormatString,
+  toStandardFormatString,
+} from "../../utils/date";
 const ElectionPeriodsForm: FC<{ periods: ElectionPeriod[] }> = ({
   periods,
 }) => {
@@ -32,6 +36,7 @@ const ElectionPeriodsForm: FC<{ periods: ElectionPeriod[] }> = ({
   const handleRadioChange = (value: any) => {
     setFieldValue("selectedElectionPeriod", value);
   };
+  console.log(filteredPeriods);
 
   return (
     <Box>
@@ -45,14 +50,20 @@ const ElectionPeriodsForm: FC<{ periods: ElectionPeriod[] }> = ({
               {filteredPeriods &&
                 filteredPeriods.map(({ startDate, endDate }, index) => (
                   <Box key={uuid()}>
-                    <Text onClick={() => handleRadioChange(index.toString())}>
+                    <Text onClick={() => handleRadioChange(index.toString())} mb={2}>
                       <Radio value={index.toString()}>
                         {index === 0
                           ? "Upcoming voting period"
                           : "Next voting period"}
                       </Radio>
                     </Text>
-                    <Flex w={"full"} textAlign={"center"} mb={1}>
+                    <Flex
+                      w={"full"}
+                      justifyContent="center"
+                      textAlign={"center"}
+                      mb={1}
+                      fontSize={"sm"}
+                    >
                       <Box
                         bgColor={"blue.50"}
                         margin={"1"}
@@ -60,7 +71,7 @@ const ElectionPeriodsForm: FC<{ periods: ElectionPeriod[] }> = ({
                         borderRadius="md"
                       >
                         <Text color={"gray"}>
-                          From {new Date(startDate).toString()}
+                          From: {toStandardFormatString(new Date(startDate))}
                         </Text>
                       </Box>
                       <Box
@@ -70,7 +81,7 @@ const ElectionPeriodsForm: FC<{ periods: ElectionPeriod[] }> = ({
                         borderRadius="md"
                       >
                         <Text color={"gray"}>
-                          To {new Date(endDate).toString()}
+                          To: {toStandardFormatString(new Date(endDate))}
                         </Text>
                       </Box>
                     </Flex>

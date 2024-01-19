@@ -7,8 +7,8 @@ import { ethers } from "ethers";
 import { getPluginInstallationId } from "../utils/networks";
 import { ProposalBase, ProposalMetadata } from "@xinfin/osx-client-common";
 import { Proposal } from "../utils/types";
-import { SubgraphProposalBase } from "@xinfin/osx-daofin-sdk-client";
 import { resolveIpfsCid } from "@xinfin/osx-sdk-common";
+import useVoteStats from "./useVoteStats";
 const ProposalsQueries = `
 query ProposalsQuery($pluginId: ID!) {
   pluginProposals(where: { plugin: $pluginId }) {
@@ -22,6 +22,12 @@ query ProposalsQuery($pluginId: ID!) {
     creationBlockNumber
     snapshotBlock
     executed
+    createdAt
+    executionTxHash
+    executionBlockNumber
+    executionDate
+    executedBy
+    creationTxHash
     actions {
       id
       to
@@ -34,6 +40,20 @@ query ProposalsQuery($pluginId: ID!) {
   }
 }
 `;
+
+export type SubgraphProposalBase = {
+  id: string;
+  dao: {
+    id: string;
+  };
+  creator: string;
+  metadata: string;
+  startDate: string;
+  endDate: string;
+  executed: boolean;
+  pluginProposalId: string;
+  potentiallyExecutable: boolean;
+};
 function useDaoProposals(
   daoAddress: string,
   pluginAddress: string
@@ -62,16 +82,18 @@ function useDaoProposals(
               metadataCid
             );
             const metadata = JSON.parse(metadataString) as ProposalMetadata;
+
             return {
               ...item,
               metadata,
+              // committeesVotes: [...stats],
             };
           })
-        )
+        );
       })
       .then((data) => {
-
         setProposals(data as unknown as Proposal[]);
+        setIsLoading(false);
       })
       .catch((e) => {
         setIsLoading(false);
