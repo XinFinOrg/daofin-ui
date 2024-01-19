@@ -132,19 +132,35 @@ export default function Header() {
                 </Text>
               </Box>
               <Box ml={"4"}>
-                <Switch
-                  id="isChecked"
-                  isChecked={colorMode === "dark"}
-                  onChange={handleSwitchTheme}
-                  size={"lg"}
-                />{" "}
+                  <Switch
+                    isChecked={colorMode === "dark"}
+                    onChange={handleSwitchTheme}
+                    size="lg"
+                  />
+                {/* <Box position="relative" display="inline-block">
+                  <Box
+                    position="absolute"
+                    top="50%"
+                    left={colorMode === "dark" ? "30%" : "70%"}
+                    transform="translate(-50%, -50%)"
+                    pointerEvents="none"
+                  >
+                    {colorMode === "dark" ? <MoonIcon /> : <SunIcon />}
+                  </Box>
+                </Box> */}
+                {/* <IconButton
+                    aria-label=""
+                    onClick={handleSwitchTheme}
+                    variant={'ghost'}
+                    icon={colorMode === "dark" ? <MoonIcon /> : <SunIcon />}
+                  /> */}
               </Box>
             </HStack>
           </Flex>
         </Box>
       </DefaultBox>
       <Box w={"100%"}>
-        <Box px={4} w={["full",null, "90%"]} m={"auto"}>
+        <Box px={4} w={["full", null, "90%"]} m={"auto"}>
           <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
             <IconButton
               size={"md"}
