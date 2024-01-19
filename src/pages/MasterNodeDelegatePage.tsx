@@ -76,9 +76,6 @@ const MasterNodeDelegatePage = () => {
                   ) : (
                     <>
                       <VStack
-                        p={"6"}
-                        bgColor={bgColor}
-                        borderRadius={"md"}
                         w={"100%"}
                         alignItems="center"
                         alignSelf={"center"}
@@ -97,7 +94,10 @@ const MasterNodeDelegatePage = () => {
                 </VStack>
               </DefaultBox>
               {proposalTypes && proposalTypes?.length > 0 && (
-                <DefaultBox w={["full", "full", "40%"]} alignSelf={"flex-start"}>
+                <DefaultBox
+                  w={["full", "full", "40%"]}
+                  alignSelf={"flex-start"}
+                >
                   <RulesOfDecisions
                     communityName={communityName}
                     summary={"All below info demostrate how voting rules work."}
@@ -141,8 +141,8 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
                 Master Nodes Delegatee Senate
               </Text>
               <Text fontSize={"xs"}>
-                This is the group of expert people who are selected during
-                initial deployment
+                The set of Master Nodes who have joined DAOFIN by delegation
+                mechanism.
               </Text>
             </Box>
           </HStack>
@@ -192,8 +192,6 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
             <Text>
               Lorem ipsum dolor sit amet consectetur. Senectus elementum erat
               pellentesque nisl nibh. Vitae diam dolor convallis porta lacus.
-              Rhoncus cursus a viverra cursus lobortis ut amet pulvinar. Sit
-              mauris lectus libero lectus...
             </Text>
           </Box>
         </DefaultAlert>

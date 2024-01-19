@@ -35,7 +35,7 @@ const ExecuteProposalContext = createContext<ExecuteProposalContextType | null>(
 );
 
 const ExecuteProposalProvider: FC<
-  PropsWithChildren & { proposal: Proposal }
+  PropsWithChildren & { proposal: Proposal|undefined }
 > = ({ children, proposal }) => {
   const {
     isOpen: isOpenExecuteModal,
@@ -136,7 +136,7 @@ const ExecuteProposalProvider: FC<
         >
           <>
             {/* {proposal.actions()} */}
-            {proposal.actions.map((item) => (
+            {proposal?.actions.map((item) => (
               <ViewGrantProposalType {...item} />
             ))}
 

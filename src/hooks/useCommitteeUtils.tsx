@@ -55,12 +55,12 @@ export function useCommitteeUtils() {
     () => [
       {
         id: PeoplesHouseCommittee,
-        name: "People's House",
+        name: "House",
         link: "/community/peoples-house",
       },
       {
         id: MasterNodeCommittee,
-        name: "Master Node Senate",
+        name: "Senate",
         link: "/community/masternode-delegatee-senate",
       },
       {

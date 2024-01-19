@@ -17,7 +17,7 @@ const WagmiProvider: FC<PropsWithChildren> = ({ children }) => {
   const projectId = process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID as string;
 
   // 2. Create wagmiConfig
-  const chains = [xdcTestnet, xdc];
+  const chains = [xdcTestnet];
   const { publicClient } = configureChains(chains, [publicProvider()]);
 
   const connectors = connectorsForWallets([

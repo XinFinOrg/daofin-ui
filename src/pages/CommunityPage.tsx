@@ -7,7 +7,7 @@ import {
   HStack,
   VStack,
 } from "@chakra-ui/layout";
-import React from "react";
+import React, { useMemo } from "react";
 import { styled } from "styled-components";
 import { v4 as uuid } from "uuid";
 import BoxWrapper from "../components/BoxWrapper";
@@ -50,7 +50,11 @@ import { toNormalDate, toStandardTimestamp } from "../utils/date";
 import { useMasterNodeDelegateeSentateContext } from "../contexts/MasterNodeDelegateeSentateContext";
 import useFetchMasterNodeDelegatee from "../hooks/useFetchMasterNodeDelegatee";
 import usePeoplesHouseDeposits from "../hooks/useDeposits";
-import { weiBigNumberToFormattedNumber } from "../utils/numbers";
+import {
+  toEther,
+  toWei,
+  weiBigNumberToFormattedNumber,
+} from "../utils/numbers";
 import { NoProposalIcon } from "../utils/assets/icons/NoProposalIcon";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
 import CoinIcon from "../utils/assets/icons/CoinIcon";
@@ -58,6 +62,8 @@ import useFetchDaoBalance from "../hooks/useFetchDaoBalance";
 import { DefaultBox } from "../components/Box";
 import { DefaultButton } from "../components/Button";
 import { AddFund } from "../components/Button/AddFundButton";
+import useTotalNumberOfVoters from "../hooks/useTotalNumberOfVoters";
+import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 
 const data = [
   {
@@ -84,6 +90,7 @@ const CommunityPage = () => {
   const { network } = useNetwork();
 
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
+  const { committeesList } = useCommitteeUtils();
   const { data: juries, error } = useFetchJudiciaries(
     daoAddress,
     pluginAddress
@@ -95,9 +102,18 @@ const CommunityPage = () => {
   const { data: delegatees } = useFetchMasterNodeDelegatee();
   const { data: nativeBalanceOfDao } = useFetchDaoBalance();
 
+  const { mapCommitteeToTotalNumber } = useTotalNumberOfVoters();
+  const totalVoters = useMemo(
+    () =>
+      committeesList.reduce((acc, { id }) => {
+        return acc.add(toWei(mapCommitteeToTotalNumber(id).toString()));
+      }, toWei("0")),
+    [mapCommitteeToTotalNumber]
+  );
+
   return (
     <Page>
-      <Text fontWeight={"semibold"} fontSize={"lg"}>
+      <Text fontWeight={"semibold"} fontSize={"lg"} mb={'4'}>
         Community
       </Text>
 
@@ -109,7 +125,7 @@ const CommunityPage = () => {
                 Total Voters
               </Text>
               <Text fontSize="large" fontWeight={"bold"}>
-                904
+                {+toEther(totalVoters.toString())}
               </Text>
             </VStack>
           </HStack>
@@ -142,16 +158,20 @@ const CommunityPage = () => {
               <Text fontWeight={"semibold"} mb={"1"}>
                 Judiciaries
               </Text>
-              <Text>Lorem ipsum dolor sit amet consectetur,</Text>
+              <Text fontWeight={"normal"} fontSize={"xs"}>
+                A set of pre-selected well-known community leaders.
+              </Text>
             </Box>
             <Box display={"inline-flex"} alignItems={"center"}>
-              <Text fontSize={["sm", "md"]}>View all</Text>
+              <Link to={"/community/judiciary"}>
+                <Text fontSize={["sm", "md"]}>View all</Text>
+              </Link>
               <ArrowForwardIcon />
             </Box>
           </HStack>
           <HStack flexWrap={"wrap"} justifyContent={"flex-start"}>
             {juries.length > 0 &&
-              juries.map(({ member, creationDate }) => (
+              juries.slice(0, 5).map(({ member, creationDate }) => (
                 <Box w={"sm"}>
                   <WalletAddressCardWithDate
                     address={member}
@@ -178,8 +198,8 @@ const CommunityPage = () => {
                   People’s House
                 </Text>
                 <Text fontSize={"xs"} fontWeight={"normal"}>
-                  This is the group of expert people who are selected during
-                  initial deployment
+                  This is the group of Token Holders who have deposited their
+                  tokens into DAO Treasury.
                 </Text>
               </Box>
               <Box w={"100%"} px={6} py={4}>
@@ -200,9 +220,9 @@ const CommunityPage = () => {
                 <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
                   Top Contributors
                 </Text>
-                <Text fontSize={"xs"} fontWeight={"normal"}>
+                {/* <Text fontSize={"xs"} fontWeight={"normal"}>
                   People that has funded the DAO treasury the most
-                </Text>
+                </Text> */}
               </Box>
               <VStack w={"full"}>
                 {people.length > 0 ? (
@@ -262,7 +282,10 @@ const CommunityPage = () => {
               <Text fontWeight={"semibold"} mb={"1"}>
                 Master Node Delegatee Senate
               </Text>
-              <Text>Lorem ipsum dolor sit amet consectetur,</Text>
+              <Text fontWeight={"normal"} fontSize={"xs"}>
+                The set of Master Nodes who have joined DAOFIN by delegation
+                mechanism.
+              </Text>
             </Box>
             <Box display={"inline-flex"} alignItems={"center"}>
               <Link to={"/community/masternode-delegatee-senate"}>
@@ -274,25 +297,27 @@ const CommunityPage = () => {
 
           <HStack flexWrap={"wrap"} justifyContent={"flex-start"}>
             {delegatees.length > 0 ? (
-              delegatees.map(
-                ({
-                  creationDate,
-                  masterNode,
-                  member,
-                  snapshotBlock,
-                  txHash,
-                  id,
-                }) => (
-                  <Box w={["50%", "20%"]} key={id}>
-                    <MasterNodeSenateCard
-                      address={member}
-                      blockNumber={parseInt(snapshotBlock.toString())}
-                      joinedDate={toNormalDate(creationDate.toString())}
-                      masterNodeAddress={masterNode}
-                    />
-                  </Box>
+              delegatees
+                .slice(0, 5)
+                .map(
+                  ({
+                    creationDate,
+                    masterNode,
+                    member,
+                    snapshotBlock,
+                    txHash,
+                    id,
+                  }) => (
+                    <Box w={["50%", "20%"]} key={id}>
+                      <MasterNodeSenateCard
+                        address={member}
+                        blockNumber={parseInt(snapshotBlock.toString())}
+                        joinedDate={toNormalDate(creationDate.toString())}
+                        masterNodeAddress={masterNode}
+                      />
+                    </Box>
+                  )
                 )
-              )
             ) : (
               <>
                 <VStack

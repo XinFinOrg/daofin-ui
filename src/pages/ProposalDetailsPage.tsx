@@ -34,13 +34,13 @@ const ProposalDetailsPage = () => {
         }}
         onSubmit={() => {}}
       >
-        {data ? (
+        {
           <ExecuteProposalProvider proposal={data}>
             <VoteProvider proposalId={proposalId ? proposalId : ""}>
-              <ProposalDetails proposal={data} />
+              <ProposalDetails proposal={data} isLoading={isLoading} />
             </VoteProvider>
           </ExecuteProposalProvider>
-        ) : null}
+        }
       </Formik>
     </Page>
   );

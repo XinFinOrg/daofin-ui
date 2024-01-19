@@ -146,7 +146,13 @@ const Dashboard: FC = () => {
           Overview
         </Text>
       </HStack>
-      <Flex mb={6} flexDirection={["column", "column", "column", "row"]}>
+      <Flex
+        w="full"
+        mx="auto"
+        mb={6}
+        flexDirection={["column", "column", "column", "row"]}
+        justifyContent={"space-between"}
+      >
         <Skeleton
           isLoaded={!isLoading}
           mr={4}
@@ -177,9 +183,8 @@ const Dashboard: FC = () => {
         </Skeleton>
         <Skeleton
           isLoaded={!isLoadingNativeBalanceOfDao}
-          mr={4}
-          mb={4}
           w={["100%", "100%", "100%", "50%"]}
+          mb={4}
         >
           <DefaultBox>
             <HStack justifyContent={"space-between"}>

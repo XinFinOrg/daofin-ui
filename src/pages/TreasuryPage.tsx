@@ -5,6 +5,7 @@ import {
   Heading,
   Icon,
   Image,
+  Skeleton,
   Text,
   Tooltip,
   VStack,
@@ -48,7 +49,8 @@ const data = [{ name: "Group A", value: 100 }];
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 const TreasuryPage = () => {
-  const { data: nativeBalanceOfDao } = useFetchDaoBalance();
+  const { data: nativeBalanceOfDao, isLoading: isDaoBalanceLoading } =
+    useFetchDaoBalance();
   const { client } = useClient();
   const { daoAddress } = useAppGlobalConfig();
   const [addfunds, setAddFunds] = useState<Transfer[]>();
@@ -87,6 +89,7 @@ const TreasuryPage = () => {
             nativeBalanceOfDao={
               nativeBalanceOfDao ? nativeBalanceOfDao.toString() : "0"
             }
+            isDaoBalanceLoading={isDaoBalanceLoading}
           />
           <DefaultBox mr={4} w={"full"} mb={"6"}>
             <HStack>
@@ -130,12 +133,14 @@ const TreasuryPage = () => {
                     </HStack>
 
                     <Box>
-                      <Text>
-                        {nativeBalanceOfDao
-                          ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
-                          : 0}{" "}
-                        XDC
-                      </Text>
+                      <Skeleton isLoaded={!isDaoBalanceLoading}>
+                        <Text>
+                          {nativeBalanceOfDao
+                            ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
+                            : 0}{" "}
+                          XDC
+                        </Text>
+                      </Skeleton>
                       <Text>$ {usdValueOfDao?.toString()}</Text>
                     </Box>
                   </HStack>
@@ -243,9 +248,11 @@ const TreasuryPage = () => {
 };
 interface TreasuryPageHeaderProps {
   nativeBalanceOfDao: string;
+  isDaoBalanceLoading: boolean;
 }
 const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
   nativeBalanceOfDao,
+  isDaoBalanceLoading,
 }) => {
   const { network } = useNetwork();
   const { handleOpenPublishModal } = useDaoTreasury();
@@ -300,10 +307,12 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
             <Text fontSize={"xs"} fontWeight={"normal"}>
               Total Value
             </Text>
-            <Heading fontSize={"2xl"} fontWeight={"bold"} mb={"1"}>
-              {weiBigNumberToFormattedNumber(nativeBalanceOfDao)}{" "}
-              {CHAIN_METADATA[network].nativeCurrency.symbol}
-            </Heading>
+            <Skeleton isLoaded={!isDaoBalanceLoading}>
+              <Heading fontSize={"2xl"} fontWeight={"bold"} mb={"1"}>
+                {weiBigNumberToFormattedNumber(nativeBalanceOfDao)}{" "}
+                {CHAIN_METADATA[network].nativeCurrency.symbol}
+              </Heading>
+            </Skeleton>
           </Box>
           <HStack flexDirection={["column", "row"]} w={["full", "initial"]}>
             <Box w={["full", "initial"]}>
