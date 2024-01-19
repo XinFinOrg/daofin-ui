@@ -19,16 +19,10 @@ import {
   makeBlockScannerHashUrl,
   shortenAddress,
 } from "../utils/networks";
-import { styled } from "styled-components";
-import { FormLabel } from "@chakra-ui/form-control";
-import BoxWrapper from "./BoxWrapper";
-import { formatEther } from "@ethersproject/units";
-import { useNetwork } from "../contexts/network";
-import useIsUserDeposited from "../hooks/useIsUserDeposited";
-import { useWallet } from "../hooks/useWallet";
-import { Button } from "@chakra-ui/button";
 
-import { useDisclosure } from "@chakra-ui/hooks";
+import { useNetwork } from "../contexts/network";
+
+import { Button } from "@chakra-ui/button";
 import {
   Skeleton,
   Tab,
@@ -39,24 +33,14 @@ import {
   Tag,
   useSteps,
 } from "@chakra-ui/react";
-
-import { parseEther, zeroAddress } from "viem";
-
 import ProposalTypeBadge from "./ProposalTypeBadge";
 import { IoShareSocial } from "react-icons/io5";
-import {
-  ArrowForwardIcon,
-  CheckCircleIcon,
-  InfoOutlineIcon,
-  TimeIcon,
-} from "@chakra-ui/icons";
-
+import { InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 
 import VotingStatsBox from "./VotingStatsBox";
 import { BlockIcon } from "../utils/assets/icons";
 import ProposalStatusStepper from "./ProposalStatusStepper";
-import { XdcIcon } from "../utils/assets/icons/XdcIcon";
 import {
   WalletAddressCard,
   WalletAddressCardWithBalance,
@@ -72,13 +56,10 @@ import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
 import { NoProposalIcon } from "../utils/assets/icons/NoProposalIcon";
 import { Formik } from "formik";
 import { useVoteContext } from "../contexts/voteContext";
-import { v4 as uuid } from "uuid";
-import { toEther, weiBigNumberToFormattedNumber } from "../utils/numbers";
 import { DefaultBox } from "./Box";
-import { useClient } from "../hooks/useClient";
 import { WalletAuthorizedButton } from "./Button/AuthorizedButton";
 import { useExecuteProposalContext } from "../contexts/ExecuteProposalContext";
-import { ViewGrantProposalType } from "./actions";
+import ViewGrantProposalType from "./actions/views/ViewGrantProposalType";
 import useFetchProposalStatus, {
   FetchProposalStatusType,
 } from "../hooks/useFetchProposalStatus";

@@ -56,7 +56,11 @@ import CoinIcon from "../utils/assets/icons/CoinIcon";
 import { WalletAuthorizedButton } from "../components/Button/AuthorizedButton";
 import { DefaultBox } from "../components/Box";
 import AddFundButton, { AddFund } from "../components/Button/AddFundButton";
-import { timestampToStandardFormatString } from "../utils/date";
+import {
+  timestampToStandardFormatString,
+  toNormalDate,
+  toStandardFormatString,
+} from "../utils/date";
 import Jazzicon from "react-jazzicon/dist/Jazzicon";
 import { jsNumberForAddress } from "react-jazzicon";
 import useFetchProposalStatus from "../hooks/useFetchProposalStatus";
@@ -67,6 +71,7 @@ import {
 } from "../components/ReadyToExecuteProposal";
 import { Proposal } from "../utils/types";
 import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTypeDetails";
+import useDaoElectionPeriods from "../hooks/useDaoElectionPeriods";
 
 const Dashboard: FC = () => {
   const navigate = useNavigate();
@@ -137,6 +142,9 @@ const Dashboard: FC = () => {
     });
   }, [readyToExecutedProposalsCallback]);
   const onHoverBgColor = useColorModeValue("#D7DEE4", "#1F2E3D");
+
+  const periods = useDaoElectionPeriods();
+
   return (
     <Page>
       <HStack mb={6}>
@@ -211,6 +219,60 @@ const Dashboard: FC = () => {
       <Flex mb={6}>
         <CommunityCards />
       </Flex>
+      <Box mb={6}>
+        <HStack mb={4}>
+          <Text fontWeight={"semibold"} fontSize={"lg"}>
+            Election Periods
+          </Text>
+        </HStack>
+        <VStack
+          w={["full", "full", "80%", "60%", "50%"]}
+          alignItems={"flex-start"}
+        >
+          {periods?.map(({ startDate, endDate }, index) => (
+            <DefaultBox key={uuid()} p={2} w="full">
+              <Flex
+                w={"full"}
+                justifyContent="space-around"
+                alignItems={"center"}
+                textAlign={"center"}
+                mb={1}
+                fontSize={["xs", "xs", "xs", "sm"]}
+              >
+                <Text p={"1"}>{index + 1}- </Text>
+                <HStack
+                  margin={"1"}
+                  p={"1"}
+                  borderRadius="md"
+                  w={"45%"}
+                  justifyContent={"center"}
+                  flexDirection={["column", "column", "row"]}
+                >
+                  <Text fontWeight={"semibold"}>
+                    {timestampToStandardFormatString(startDate)}
+                  </Text>
+                </HStack>
+                <Box>
+                  <ArrowForwardIcon />
+                </Box>
+                <HStack
+                  margin={"1"}
+                  p={"1"}
+                  borderRadius="md"
+                  w={"45%"}
+                  justifyContent={"center"}
+                  flexDirection={["column", "column", "row"]}
+                >
+                  <Text fontWeight={"semibold"}>
+                    {toStandardFormatString(toNormalDate(endDate))}
+                  </Text>
+                </HStack>
+              </Flex>
+            </DefaultBox>
+          ))}
+        </VStack>
+      </Box>
+
       <Flex
         mb={4}
         justifyContent={"space-between"}

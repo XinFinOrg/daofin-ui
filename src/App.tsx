@@ -14,9 +14,9 @@ import TreasuryPage from "./pages/TreasuryPage";
 import Footer from "./components/Footer";
 import { ScrollRestoration } from "react-router-dom";
 import { useEffect } from "react";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
-
   return (
     <Box bgColor={useColorModeValue("#FFF", "#19262e")}>
       <Header />
@@ -49,6 +49,11 @@ function App() {
         </Route>
         <Route path="/treasury">
           <Route path="/treasury" element={<TreasuryPage />} />
+        </Route>
+      </Routes>
+      <Routes>
+        <Route path="/not-found">
+          <Route path="/not-found" element={<NotFoundPage />} />
         </Route>
       </Routes>
       <Box p={5}>

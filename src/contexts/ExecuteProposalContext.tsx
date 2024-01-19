@@ -20,7 +20,7 @@ import { ExecuteSteps } from "@xinfin/osx-daofin-sdk-client";
 import { DefaultInput, Modal } from "../components";
 import { DefaultButton } from "../components/Button";
 import { CHAIN_METADATA } from "../utils/networks";
-import { ViewGrantProposalType } from "../components/actions";
+import ViewGrantProposalType from "../components/actions/views/ViewGrantProposalType";
 
 interface ExecuteProposalContextType {
   handleSendTx: () => void;
@@ -35,7 +35,7 @@ const ExecuteProposalContext = createContext<ExecuteProposalContextType | null>(
 );
 
 const ExecuteProposalProvider: FC<
-  PropsWithChildren & { proposal: Proposal|undefined }
+  PropsWithChildren & { proposal: Proposal | undefined }
 > = ({ children, proposal }) => {
   const {
     isOpen: isOpenExecuteModal,

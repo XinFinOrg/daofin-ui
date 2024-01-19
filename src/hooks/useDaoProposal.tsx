@@ -7,13 +7,19 @@ import { ethers } from "ethers";
 import { formatDate, getPluginInstallationId } from "../utils/networks";
 import { ProposalBase, ProposalMetadata } from "@xinfin/osx-client-common";
 import { Proposal } from "../utils/types";
-import { SubgraphProposalBase } from "@xinfin/osx-daofin-sdk-client";
 import {
   decodeProposalId,
   encodeProposalId,
   getExtendedProposalId,
   resolveIpfsCid,
 } from "@xinfin/osx-sdk-common";
+import { useNavigate } from "react-router-dom";
+import {
+  toNormalDate,
+  toStandardFormatString,
+  toStandardTimestamp,
+} from "../utils/date";
+import { SubgraphProposalBase } from "./useDaoProposals";
 const ProposalQueries = `
 query ProposalQuery($id: ID!) {
     pluginProposal(id: $id) {
@@ -59,7 +65,7 @@ function useDaoProposal(pluginId: string): {
   const [proposals, setProposals] = useState<Proposal>();
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (!daofinClient) return;
     setIsLoading(true);
@@ -71,12 +77,14 @@ function useDaoProposal(pluginId: string): {
         },
       })
       .then(async ({ pluginProposal }) => {
+        if (pluginProposal === null) navigate("/not-found");
         const metadataCid = resolveIpfsCid(pluginProposal.metadata);
         const metadataString = await daofinClient.ipfs.fetchString(metadataCid);
         const metadata = JSON.parse(metadataString) as ProposalMetadata;
 
-        const startDate = +pluginProposal.startDate * 1000;
-        const endDate = +pluginProposal.endDate * 1000;
+        const startDate = toStandardTimestamp(+pluginProposal.startDate);
+        const endDate = toStandardTimestamp(+pluginProposal.endDate);
+
         return {
           ...pluginProposal,
           metadata,
