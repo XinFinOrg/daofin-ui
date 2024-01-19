@@ -9,11 +9,12 @@ import {
   Text,
   Heading,
   useColorMode,
-  Switch,
+  // Switch,
   Image,
   Spacer,
   Divider,
   useBreakpoint,
+  Switch,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -43,6 +44,7 @@ import { fetchTokenPrice } from "../services/prices";
 import { constants } from "ethers";
 import { DefaultBox } from "./Box";
 import { useGlobalState } from "../contexts/GlobalStateContext";
+
 interface Props {
   children: React.ReactNode;
   href: string;
@@ -81,133 +83,138 @@ export default function Header() {
         px={["0", "0", "4"]}
         overflowX={["hidden", "hidden", "visible"]}
         overflowY={["hidden", "hidden", "visible"]}
+        borderEndRadius={0}
+        borderStartRadius={0}
       >
-        <Flex justifyContent={"space-between"} w={["0", "0", "90%"]} m={"auto"}>
-          <HStack>
-            <Box mx={"4"}>
-              {data ? (
-                <a
-                  href={`${
-                    CHAIN_METADATA[network].explorer
-                  }/blocks/${data.toString()}`}
-                  target={"_blank"}
-                >
-                  <HStack>
-                    <BlockIcon w={"20px"} />
+        <Box w={["0", "0", "90%"]} margin={"auto"}>
+          <Flex justifyContent={"space-between"}>
+            <HStack>
+              <Box mr={"4"}>
+                {data ? (
+                  <a
+                    href={`${
+                      CHAIN_METADATA[network].explorer
+                    }/blocks/${data.toString()}`}
+                    target={"_blank"}
+                  >
+                    <HStack>
+                      <BlockIcon w={"20px"} />
 
-                    <Text fontWeight={"medium"}>{data.toString()}</Text>
-                  </HStack>
-                </a>
-              ) : (
-                ""
-              )}
-            </Box>
-            <Box mx={"4"}>
-              <HStack>
-                <Box w={"25px"}>
-                  <XdcIcon />
-                </Box>
-                <Text fontWeight={"medium"}>${tokenPrice.toFixed(4)}</Text>
+                      <Text fontWeight={"medium"}>{data.toString()}</Text>
+                    </HStack>
+                  </a>
+                ) : (
+                  ""
+                )}
+              </Box>
+              <Box mx={"4"}>
+                <HStack>
+                  <Box w={"25px"}>
+                    <XdcIcon />
+                  </Box>
+                  <Text fontWeight={"medium"}>${tokenPrice.toFixed(4)}</Text>
+                </HStack>
+              </Box>
+            </HStack>
+            <HStack>
+              <Box mx={"4"}>
+                <Text fontWeight="semibold">
+                  <a href={"https://xdc.dev"} target={"_blank"}>
+                    XDC.DEV
+                  </a>
+                </Text>
+              </Box>
+              <Box mx={"4"}>
+                <Text fontWeight="semibold">
+                  <a href={"https://docs.xdc.community"} target={"_blank"}>
+                    DOCS
+                  </a>
+                </Text>
+              </Box>
+              <Box ml={"4"}>
+                <Switch
+                  id="isChecked"
+                  isChecked={colorMode === "dark"}
+                  onChange={handleSwitchTheme}
+                  size={"lg"}
+                />{" "}
+              </Box>
+            </HStack>
+          </Flex>
+        </Box>
+      </DefaultBox>
+      <Box w={"100%"}>
+        <Box px={4} w={["full",null, "90%"]} m={"auto"}>
+          <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
+            <IconButton
+              size={"md"}
+              icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+              aria-label={"Open Menu"}
+              display={{ md: "none" }}
+              onClick={isOpen ? onClose : onOpen}
+            />
+            <HStack spacing={8} alignItems={"center"}>
+              <Box ml={[0, 0, 0, "auto"]}>
+                <Link to={""}>
+                  <Image src="/logo1.svg" />
+                </Link>
+              </Box>
+              <HStack
+                as={"nav"}
+                spacing={4}
+                display={{ base: "none", md: "flex" }}
+              >
+                {Links.map((link) => (
+                  <Link to={link.location}>
+                    <Box
+                      fontSize={"md"}
+                      fontWeight={"bold"}
+                      px={3}
+                      py={1}
+                      borderRadius={"md"}
+                      transition="background-color .1s ease-in-out"
+                      _hover={{
+                        bgColor: bgColorModeLinks,
+                      }}
+                    >
+                      <HStack alignItems={"center"}>
+                        <>{link.icon}</>
+                        <Text>{link.name}</Text>
+                      </HStack>
+                    </Box>
+                  </Link>
+                ))}
               </HStack>
-            </Box>
-          </HStack>
-          <HStack>
-            <Box mx={"4"}>
-              <Text fontWeight="semibold">
-                <a href={"https://xdc.dev"} target={"_blank"}>
-                  XDC.DEV
-                </a>
-              </Text>
-            </Box>
-            <Box mx={"4"}>
-              <Text fontWeight="semibold">
-                <a href={"https://docs.xdc.community"} target={"_blank"}>
-                  DOCS
-                </a>
-              </Text>
-            </Box>
-            <Box mx={"4"}>
+            </HStack>
+            <HStack
+              visibility={["hidden", "visible"]}
+              overflow={["hidden", "visible"]}
+            >
+              <ConnectButton chainStatus="icon" />
+            </HStack>
+          </Flex>
+          <Divider m={"auto"} w={"full"} />
+          {isOpen ? (
+            <Box pb={4} display={{ md: "none" }}>
+              <Stack as={"nav"} spacing={4} mb={"4"}>
+                {Links.map((link) => (
+                  <Link to={link.location} onClick={() => onClose()}>
+                    <Text fontWeight={"semibold"}>{link.name}</Text>
+                  </Link>
+                ))}
+              </Stack>
+
               <Switch
                 id="isChecked"
                 isChecked={colorMode === "dark"}
                 onChange={handleSwitchTheme}
                 size={"lg"}
-              />{" "}
+                mb={4}
+              />
+              <ConnectButton chainStatus="icon" />
             </Box>
-          </HStack>
-        </Flex>
-      </DefaultBox>
-
-      <Box px={4}>
-        <Flex h={16} alignItems={"center"} justifyContent={"space-around"}>
-          <IconButton
-            size={"md"}
-            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-            aria-label={"Open Menu"}
-            display={{ md: "none" }}
-            onClick={isOpen ? onClose : onOpen}
-          />
-          <HStack spacing={8} alignItems={"center"}>
-            <Box ml={"4"}>
-              <Link to={""}>
-                <Image src="/logo1.svg" />
-              </Link>
-            </Box>
-            <HStack
-              as={"nav"}
-              spacing={4}
-              display={{ base: "none", md: "flex" }}
-            >
-              {Links.map((link) => (
-                <Link to={link.location}>
-                  <Box
-                    fontSize={"md"}
-                    fontWeight={"bold"}
-                    px={3}
-                    py={1}
-                    borderRadius={"md"}
-                    transition="background-color .1s ease-in-out"
-                    _hover={{
-                      bgColor: bgColorModeLinks,
-                    }}
-                    
-                  >
-                    <HStack alignItems={"center"}>
-                      <>{link.icon}</>
-                      <Text>{link.name}</Text>
-                    </HStack>
-                  </Box>
-                </Link>
-              ))}
-            </HStack>
-          </HStack>
-          <HStack
-            visibility={["hidden", "visible"]}
-            overflow={["hidden", "visible"]}
-          >
-            <ConnectButton chainStatus="icon" />
-          </HStack>
-        </Flex>
-        <Divider m={"auto"} w={"full"} />
-        {isOpen ? (
-          <Box pb={4} display={{ md: "none" }}>
-            <Stack as={"nav"} spacing={4} mb={"4"}>
-              {Links.map((link) => (
-                <Link to={link.location}  onClick={() => onClose()}>
-                  <Text fontWeight={"semibold"}>{link.name}</Text>
-                </Link>
-              ))}
-            </Stack>
-            <Switch
-              id="isChecked"
-              isChecked={colorMode === "dark"}
-              onChange={handleSwitchTheme}
-              size={"lg"}
-              mb={4}
-            />
-            <ConnectButton chainStatus="icon" />
-          </Box>
-        ) : null}
+          ) : null}
+        </Box>
       </Box>
     </>
   );

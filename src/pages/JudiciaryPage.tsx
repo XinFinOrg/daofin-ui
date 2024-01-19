@@ -69,8 +69,7 @@ const JudiciaryPage = () => {
                     Judiciaries
                   </Text>
                   <Text fontSize={"xs"}>
-                    This is the group of expert people who are selected during
-                    initial deployment
+                    A set of pre-selected well-known community leaders.
                   </Text>
                 </Box>
               </HStack>

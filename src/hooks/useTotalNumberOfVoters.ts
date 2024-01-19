@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import {
   JudiciaryCommittee,
   MasterNodeCommittee,
@@ -16,22 +17,45 @@ const useTotalNumberOfVoters = () => {
   const { data: deposits, isLoading: isLoadingDeposits } =
     usePeoplesHouseDeposits();
 
-  const mapCommitteeToTotalNumber = (committeeName: string) => {
-    switch (committeeName) {
-      case JudiciaryCommittee:
-        return judiciariesTotalMembers?.toString();
-      case MasterNodeCommittee:
-        return delegatees.length;
+  const mapCommitteeToTotalNumber = useCallback(
+    (committeeName: string) => {
+      switch (committeeName) {
+        case JudiciaryCommittee:
+          return judiciariesTotalMembers
+            ? +judiciariesTotalMembers.toString()
+            : 0;
+        case MasterNodeCommittee:
+          return delegatees.length;
 
-      case PeoplesHouseCommittee:
-        return deposits.length;
-      default:
-        return "0";
-    }
-  };
+        case PeoplesHouseCommittee:
+          return deposits.length;
+        default:
+          return 0;
+      }
+    },
+    [delegatees, deposits, judiciariesTotalMembers]
+  );
+
+  const mapCommitteeToTotalNumberLoadings = useCallback(
+    (committeeName: string) => {
+      switch (committeeName) {
+        case JudiciaryCommittee:
+          return false;
+        case MasterNodeCommittee:
+          return isLoadingDelegatees;
+
+        case PeoplesHouseCommittee:
+          return isLoadingDeposits;
+        default:
+          return false;
+      }
+    },
+    [isLoadingDelegatees, isLoadingDeposits]
+  );
   return {
     mapCommitteeToTotalNumber,
-    isLoading: isLoadingDeposits && isLoadingDelegatees,
+    mapCommitteeToTotalNumberLoadings,
+    isLoading: isLoadingDeposits || isLoadingDelegatees,
   };
 };
 export default useTotalNumberOfVoters;

@@ -12,8 +12,11 @@ import { Box, useColorModeValue } from "@chakra-ui/react";
 import CommunityPage from "./pages/CommunityPage";
 import TreasuryPage from "./pages/TreasuryPage";
 import Footer from "./components/Footer";
+import { ScrollRestoration } from "react-router-dom";
+import { useEffect } from "react";
 
 function App() {
+
   return (
     <Box bgColor={useColorModeValue("#FFF", "#19262e")}>
       <Header />

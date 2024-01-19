@@ -122,28 +122,28 @@ const PeoplesHousePage = () => {
               )}
             />
             <HStack flexDirection={["column", "column", "column", "row"]}>
-              <VStack w={["full", "full", "60%"]} alignSelf={"flex-start"}>
-                {deposits && deposits.length > 0 ? (
-                  deposits.map(
-                    ({
-                      amount,
-                      id,
-                      snapshotBlock,
-                      voter,
-                      depositDate,
-                      txHash,
-                    }) => (
-                      <WalletAddressCardWithBalance
-                        address={voter}
-                        // date={new Date(toStandardTimestamp(depositDate))}
-                        balance={weiBigNumberToFormattedNumber(amount)}
-                        symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
-                      />
+              <DefaultBox w={["full", "full", "60%"]} alignSelf={"flex-start"}>
+                <VStack>
+                  {deposits && deposits.length > 0 ? (
+                    deposits.map(
+                      ({
+                        amount,
+                        id,
+                        snapshotBlock,
+                        voter,
+                        depositDate,
+                        txHash,
+                      }) => (
+                        <WalletAddressCardWithBalance
+                          address={voter}
+                          // date={new Date(toStandardTimestamp(depositDate))}
+                          balance={weiBigNumberToFormattedNumber(amount)}
+                          symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
+                        />
+                      )
                     )
-                  )
-                ) : (
-                  <>
-                    <DefaultBox w={"100%"}>
+                  ) : (
+                    <>
                       <VStack alignItems="center" alignSelf={"center"}>
                         <EmptyBoxIcon />
                         <Text
@@ -154,10 +154,10 @@ const PeoplesHousePage = () => {
                           {"There is no member yet."}
                         </Text>
                       </VStack>
-                    </DefaultBox>
-                  </>
-                )}
-              </VStack>
+                    </>
+                  )}
+                </VStack>
+              </DefaultBox>
 
               {proposalTypes && proposalTypes?.length > 0 && (
                 <DefaultBox
@@ -212,8 +212,8 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
                     People’s House
                   </Text>
                   <Text fontSize={"xs"}>
-                    This is the group of expert people who are selected during
-                    initial deployment
+                    This is the group of Token Holders who have deposited their
+                    tokens into DAO Treasury.
                   </Text>
                 </Box>
               </HStack>
@@ -291,7 +291,11 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
                 <Text fontWeight={"semibold"}>
                   How to modify one or multiple member?
                 </Text>
-                <Text>Lorem ipsum dolor sit amet consectetur.</Text>
+                <Text>
+                  Lorem ipsum dolor sit amet consectetur. Senectus elementum
+                  erat pellentesque nisl nibh. Vitae diam dolor convallis porta
+                  lacus.
+                </Text>
               </Box>
             </DefaultAlert>
           </HStack>

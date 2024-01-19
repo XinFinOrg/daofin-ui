@@ -30,6 +30,7 @@ import { Button } from "@chakra-ui/button";
 
 import { useDisclosure } from "@chakra-ui/hooks";
 import {
+  Skeleton,
   Tab,
   TabList,
   TabPanel,
@@ -82,25 +83,19 @@ import useFetchProposalStatus, {
   FetchProposalStatusType,
 } from "../hooks/useFetchProposalStatus";
 
-const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
-  const {
-    actions,
-    creator,
-    metadata,
-    pluginProposalId,
-    createdAt,
-    startDate,
-    endDate,
-  } = proposal;
-
-  const { description, resources, summary, title, media } = metadata;
+const ProposalDetails: FC<{
+  proposal: Proposal | undefined;
+  isLoading: boolean;
+}> = ({ proposal, isLoading }) => {
   const { network } = useNetwork();
   const { committeesListWithIcon } = useCommitteeUtils();
 
   const { handleToggleFormModal: onExecuteModalOpen } =
     useExecuteProposalContext();
 
-  const { data: allVoters } = useFetchVotersOnProposal(pluginProposalId);
+  const { data: allVoters } = useFetchVotersOnProposal(
+    proposal ? proposal.pluginProposalId : ""
+  );
 
   const voteOptionsList = useMemo(
     () =>
@@ -115,10 +110,12 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
     useState<FetchProposalStatusType>();
   const { makeCall } = useFetchProposalStatus();
   useEffect(() => {
-    makeCall(pluginProposalId).then((data) => {
-      setProposalStatus(data);
-    });
-  }, [pluginProposalId]);
+    if (proposal?.pluginProposalId) {
+      makeCall(proposal.pluginProposalId).then((data) => {
+        setProposalStatus(data);
+      });
+    }
+  }, [proposal?.pluginProposalId]);
 
   return (
     <>
@@ -130,255 +127,283 @@ const ProposalDetails: FC<{ proposal: Proposal }> = ({ proposal }) => {
             gap={[4, 6]}
           >
             <GridItem colSpan={2}>
-              <DefaultBox w={"100%"}>
-                <Flex
-                  justifyContent={"space-between"}
-                  flexDirection={["column", "column", "row"]}
-                >
+              <Skeleton isLoaded={!isLoading}>
+                <DefaultBox w={"100%"}>
                   <Flex
-                    flexDirection={"column"}
-                    w={["100%", "100%", "50%"]}
-                    mb={4}
+                    justifyContent={"space-between"}
+                    flexDirection={["column", "column", "row"]}
                   >
-                    <Box>
-                      <ProposalTypeBadge title="Grant" />
-                    </Box>
-                    <Box my={"4"}>
-                      <Text as={"h1"} fontSize={"xl"} fontWeight={"bold"}>
-                        {title}
-                      </Text>
-                      <Text as={"h1"} fontSize={"sm"} fontWeight={"normal"}>
-                        {summary}
-                      </Text>
-                    </Box>
-                    <Flex
-                      fontSize={"sm"}
-                      justifyContent={"space-between"}
-                      flexDirection={["column", "column", "row"]}
-                      gap={1}
-                    >
-                      <Text>Published By: {shortenAddress(creator)}</Text>
-                      <HStack>
-                        <TimeIcon />
-                        <Text>
-                          {" "}
-                          {timestampToStandardFormatString(createdAt)}
-                        </Text>
-                      </HStack>
-                      <Text>
-                        <InfoOutlineIcon mr={1} />
-                        ID: {pluginProposalId}
-                      </Text>
-                      <HStack>
-                        <IoShareSocial />
-                        <Text>Share</Text>
-                      </HStack>
-                    </Flex>
-                  </Flex>
-
-                  <Flex alignItems={"center"} w={["full", "full", "initial"]}>
-                    {proposalStatus?.isOpen ? (
-                      proposalStatus?.canExecute ? (
-                        <WalletAuthorizedButton
-                          colorScheme="blue"
-                          w={"full"}
-                          onClick={onExecuteModalOpen}
+                    {proposal && proposal?.metadata && (
+                      <Flex
+                        flexDirection={"column"}
+                        w={["100%", "100%", "50%"]}
+                        mb={4}
+                      >
+                        <Box>
+                          <ProposalTypeBadge title="Grant" />
+                        </Box>
+                        <Box my={"4"}>
+                          <Text as={"h1"} fontSize={"xl"} fontWeight={"bold"}>
+                            {proposal.metadata.title}
+                          </Text>
+                          <Text as={"h1"} fontSize={"sm"} fontWeight={"normal"}>
+                            {proposal.metadata.summary}
+                          </Text>
+                        </Box>
+                        <Flex
+                          fontSize={"sm"}
+                          justifyContent={"space-between"}
+                          flexDirection={["column", "column", "row"]}
+                          gap={1}
                         >
-                          Execute Now
-                        </WalletAuthorizedButton>
-                      ) : (
-                        <WalletAuthorizedButton
-                          colorScheme="blue"
-                          w={"full"}
-                          onClick={handleToggleFormModal}
-                        >
-                          Vote Now
-                        </WalletAuthorizedButton>
-                      )
-                    ) : proposalStatus?.executed ? (
-                      <WalletAuthorizedButton isDisabled={true} w={"full"}>
-                        Executed{" "}
-                      </WalletAuthorizedButton>
-                    ) : (
-                      <WalletAuthorizedButton isDisabled={true} w={"full"}>
-                        Not Open{" "}
-                      </WalletAuthorizedButton>
-                    )}
-
-                    {/* {proposal.executed && <CheckCircleIcon />} */}
-                  </Flex>
-                </Flex>
-              </DefaultBox>
-            </GridItem>
-            <GridItem colSpan={[2, 2, 1]}>
-              <GridItem w="100%" h={"min-content"} mb={4}>
-                <DefaultBox>
-                  <VotingStatsBox proposalId={pluginProposalId} />
-                </DefaultBox>
-              </GridItem>
-              <GridItem colSpan={[2, 2, 1]} h={"min-content"} mb={4}>
-                <DefaultBox>
-                  {proposalStatus && (
-                    <ProposalStatusStepper
-                      proposalId={pluginProposalId}
-                      startDate={startDate}
-                      endDate={endDate}
-                      status={proposalStatus}
-                      createdAt={toStandardTimestamp(createdAt)}
-                    />
-                  )}
-                </DefaultBox>
-              </GridItem>
-              <GridItem colSpan={[2, 2, 1]}>
-                <DefaultBox>
-                  <Box p={5}>
-                    <Text fontSize={"lg"} fontWeight={"bold"}>
-                      Executing Actions
-                    </Text>
-                    <Text fontSize={"sm"} fontWeight={"normal"}>
-                      These actions can be executed only once the governance
-                      parameters are met
-                    </Text>
-                  </Box>
-                  {actions.map((item) => (
-                    <ViewGrantProposalType {...item} />
-                  ))}
-                </DefaultBox>
-              </GridItem>
-            </GridItem>
-
-            <GridItem colSpan={[2, 2, 1]}>
-              <GridItem h={"min-content"} mb={4}>
-                <DefaultBox>
-                  <HStack justifyContent={"space-between"} mb={"6"} p={"6"}>
-                    <Text fontSize={"lg"} fontWeight={"bold"}>
-                      Voter
-                    </Text>
-                  </HStack>
-                  <Tabs isFitted>
-                    <TabList
-                      flexDirection={["column", "column", "row"]}
-                      gap={4}
-                    >
-                      {committeesListWithIcon.map(({ Icon, id, name }) => (
-                        <Tab key={id}>
+                          <Text>
+                            Published By: {shortenAddress(proposal.creator)}
+                          </Text>
                           <HStack>
-                            <Box w={"25px"} h={"25px"}>
-                              {Icon && Icon}
-                            </Box>
-                            <Text
-                              fontSize={"sm"}
-                              fontWeight={"semibold"}
-                              whiteSpace={"nowrap"}
-                            >
-                              {name}
+                            <TimeIcon />
+                            <Text>
+                              {" "}
+                              {timestampToStandardFormatString(
+                                proposal.createdAt
+                              )}
                             </Text>
                           </HStack>
-                        </Tab>
-                      ))}
-                    </TabList>
+                          <Text>
+                            <InfoOutlineIcon mr={1} />
+                            ID: {proposal.pluginProposalId}
+                          </Text>
+                          <HStack>
+                            <IoShareSocial />
+                            <Text>Share</Text>
+                          </HStack>
+                        </Flex>
+                      </Flex>
+                    )}
 
-                    <TabPanels>
-                      {committeesListWithIcon.map(({ id, name }) => (
-                        <TabPanel p={"6"}>
-                          <Tabs isFitted variant="soft-rounded">
-                            <TabList
-                              flexDirection={["column", "column", "row"]}
-                              gap={4}
-                            >
-                              {voteOptionsList.map(([key, value]) => (
-                                <Tab key={key}>
-                                  <Text>{value}</Text>
-                                </Tab>
-                              ))}
-                            </TabList>
-                            <TabPanels>
-                              {voteOptionsList.map(([key, value]) => (
-                                <TabPanel w={"full"}>
-                                  <VStack spacing={"1"} alignItems={"start"}>
-                                    {allVoters.filter(
-                                      (item) =>
-                                        item.committee === id &&
-                                        item.option === +key
-                                    ).length > 0 ? (
-                                      allVoters
-                                        .filter(
-                                          (item) =>
-                                            item.committee === id &&
-                                            item.option === +key
-                                        )
-                                        .map(({ voter, txHash }) => (
-                                          <HStack w={"full"}>
-                                            <WalletAddressCard
-                                              address={voter}
-                                            />
-                                            <a
-                                              href={makeBlockScannerHashUrl(
-                                                network,
-                                                txHash
-                                              )}
-                                              target="_blank"
-                                            >
-                                              <BlockIcon w={"5"} h={"5"} />
-                                            </a>
-                                          </HStack>
-                                        ))
-                                    ) : (
-                                      <VStack alignSelf={"center"} p={6}>
-                                        <NoProposalIcon />
-                                        <Text>
-                                          No {name} has voted yet! Be the first!
-                                        </Text>
-                                        <Button variant={"outline"}>
-                                          Vote now!
-                                        </Button>
-                                      </VStack>
-                                    )}
-                                  </VStack>
-                                </TabPanel>
-                              ))}
-                            </TabPanels>
-                          </Tabs>
-                        </TabPanel>
-                      ))}
-                    </TabPanels>
-                  </Tabs>
+                    <Flex alignItems={"center"} w={["full", "full", "initial"]}>
+                      {proposal && !isLoading && proposalStatus?.isOpen ? (
+                        proposalStatus?.canExecute ? (
+                          <WalletAuthorizedButton
+                            colorScheme="blue"
+                            w={"full"}
+                            onClick={onExecuteModalOpen}
+                          >
+                            Execute Now
+                          </WalletAuthorizedButton>
+                        ) : (
+                          <WalletAuthorizedButton
+                            colorScheme="blue"
+                            w={"full"}
+                            onClick={handleToggleFormModal}
+                          >
+                            Vote Now
+                          </WalletAuthorizedButton>
+                        )
+                      ) : proposalStatus?.executed ? (
+                        <WalletAuthorizedButton isDisabled={true} w={"full"}>
+                          Executed{" "}
+                        </WalletAuthorizedButton>
+                      ) : (
+                        <WalletAuthorizedButton isDisabled={true} w={"full"}>
+                          Not Open{" "}
+                        </WalletAuthorizedButton>
+                      )}
+
+                      {/* {proposal.executed && <CheckCircleIcon />} */}
+                    </Flex>
+                  </Flex>
                 </DefaultBox>
+              </Skeleton>
+            </GridItem>
+            <GridItem colSpan={[2, 2, 1]}>
+              <Skeleton isLoaded={!isLoading} minH={"300px"} mb={6}>
+                <GridItem mb={6} w="100%" h={"min-content"}>
+                  <DefaultBox>
+                    {proposal?.pluginProposalId && (
+                      <VotingStatsBox proposalId={proposal.pluginProposalId} />
+                    )}
+                  </DefaultBox>
+                </GridItem>
+              </Skeleton>
+              <GridItem colSpan={[2, 2, 1]} h={"min-content"} mb={6}>
+                <Skeleton
+                  isLoaded={!isLoading && !!proposalStatus}
+                  minH={"250px"}
+                >
+                  <DefaultBox>
+                    {proposalStatus && proposal && !isLoading && (
+                      <ProposalStatusStepper
+                        proposalId={proposal.pluginProposalId}
+                        startDate={proposal.startDate}
+                        endDate={proposal.endDate}
+                        status={proposalStatus}
+                        createdAt={toStandardTimestamp(proposal.createdAt)}
+                      />
+                    )}
+                  </DefaultBox>
+                </Skeleton>
               </GridItem>
-              <GridItem colSpan={[2, 2, 1]} h={"fit-content"} mb={4}>
-                <DefaultBox>
-                  <Text p={"5"} fontSize={"lg"} fontWeight={"bold"}>
-                    Discussions & References
-                  </Text>
-                  <HStack p={"6"}>
-                    {resources.map(({ name, url }) => (
-                      <a href={url} target="_blank">
-                        <Badge
-                          p={2}
-                          borderRadius={"md"}
-                          bgColor={"blue.100"}
-                          textColor={"blue.300"}
-                        >
-                          {name}
-                        </Badge>
-                      </a>
+              <GridItem colSpan={[2, 2, 1]}>
+                <Skeleton isLoaded={!isLoading} minH={"200px"} mb={6}>
+                  <DefaultBox>
+                    <Box p={5}>
+                      <Text fontSize={"lg"} fontWeight={"bold"}>
+                        Executing Actions
+                      </Text>
+                      <Text fontSize={"sm"} fontWeight={"normal"}>
+                        These actions can be executed only once the governance
+                        parameters are met
+                      </Text>
+                    </Box>
+                    {proposal?.actions.map((item) => (
+                      <ViewGrantProposalType {...item} />
                     ))}
-                  </HStack>
-                </DefaultBox>
+                  </DefaultBox>
+                </Skeleton>
+              </GridItem>
+            </GridItem>
+
+            <GridItem colSpan={[2, 2, 1]}>
+              <GridItem h={"min-content"} mb={6}>
+                <Skeleton isLoaded={!isLoading} minH={"150px"} mb={6}>
+                  <DefaultBox>
+                    <HStack justifyContent={"space-between"} mb={"6"} p={"6"}>
+                      <Text fontSize={"lg"} fontWeight={"bold"}>
+                        Voter
+                      </Text>
+                    </HStack>
+                    <Tabs isFitted>
+                      <TabList
+                        flexDirection={["column", "column", "row"]}
+                        gap={4}
+                      >
+                        {committeesListWithIcon.map(({ Icon, id, name }) => (
+                          <Tab key={id}>
+                            <HStack>
+                              <Box w={"25px"} h={"25px"}>
+                                {Icon && Icon}
+                              </Box>
+                              <Text
+                                fontSize={"sm"}
+                                fontWeight={"semibold"}
+                                whiteSpace={"nowrap"}
+                              >
+                                {name}
+                              </Text>
+                            </HStack>
+                          </Tab>
+                        ))}
+                      </TabList>
+
+                      <TabPanels>
+                        {committeesListWithIcon.map(({ id, name }) => (
+                          <TabPanel p={"6"}>
+                            <Tabs isFitted variant="soft-rounded">
+                              <TabList
+                                flexDirection={["column", "column", "row"]}
+                                gap={4}
+                              >
+                                {voteOptionsList.map(([key, value]) => (
+                                  <Tab key={key}>
+                                    <Text>{value}</Text>
+                                  </Tab>
+                                ))}
+                              </TabList>
+                              <TabPanels>
+                                {voteOptionsList.map(([key, value]) => (
+                                  <TabPanel w={"full"}>
+                                    <VStack spacing={"1"} alignItems={"start"}>
+                                      {allVoters.filter(
+                                        (item) =>
+                                          item.committee === id &&
+                                          item.option === +key
+                                      ).length > 0 ? (
+                                        allVoters
+                                          .filter(
+                                            (item) =>
+                                              item.committee === id &&
+                                              item.option === +key
+                                          )
+                                          .map(({ voter, txHash }) => (
+                                            <HStack w={"full"}>
+                                              <WalletAddressCard
+                                                address={voter}
+                                              />
+                                              <a
+                                                href={makeBlockScannerHashUrl(
+                                                  network,
+                                                  txHash
+                                                )}
+                                                target="_blank"
+                                              >
+                                                <BlockIcon w={"5"} h={"5"} />
+                                              </a>
+                                            </HStack>
+                                          ))
+                                      ) : (
+                                        <VStack alignSelf={"center"} p={6}>
+                                          <NoProposalIcon />
+                                          <Text>
+                                            No {name} has voted yet! Be the
+                                            first!
+                                          </Text>
+                                          <Button variant={"outline"}>
+                                            Vote now!
+                                          </Button>
+                                        </VStack>
+                                      )}
+                                    </VStack>
+                                  </TabPanel>
+                                ))}
+                              </TabPanels>
+                            </Tabs>
+                          </TabPanel>
+                        ))}
+                      </TabPanels>
+                    </Tabs>
+                  </DefaultBox>
+                </Skeleton>
+              </GridItem>
+              <GridItem colSpan={[2, 2, 1]} h={"fit-content"} mb={6}>
+                <Skeleton isLoaded={!isLoading} minH={"100px"} mb={6}>
+                  <DefaultBox>
+                    <Text p={"5"} fontSize={"lg"} fontWeight={"bold"}>
+                      Discussions & References
+                    </Text>
+                    <HStack p={"6"}>
+                      {proposal?.metadata?.resources.map(({ name, url }) => (
+                        <a href={url} target="_blank">
+                          <Badge
+                            p={2}
+                            borderRadius={"md"}
+                            bgColor={"blue.100"}
+                            textColor={"blue.300"}
+                          >
+                            {name}
+                          </Badge>
+                        </a>
+                      ))}
+                    </HStack>
+                  </DefaultBox>
+                </Skeleton>
               </GridItem>
               <GridItem colSpan={[2, 2, 1]} rowSpan={0}>
-                <DefaultBox>
-                  <Box p={"5"}>
-                    <Text mb={4} fontSize={"lg"} fontWeight={"bold"}>
-                      Details
-                    </Text>
-                    <Text
-                      dangerouslySetInnerHTML={{
-                        __html: description,
-                      }}
-                    ></Text>
-                  </Box>
-                </DefaultBox>
+                <Skeleton isLoaded={!isLoading} minH={"100px"} mb={6}>
+                  {proposal?.metadata?.description && (
+                    <DefaultBox>
+                      <Box p={"5"}>
+                        <Text mb={4} fontSize={"lg"} fontWeight={"bold"}>
+                          Details
+                        </Text>
+                        <Text
+                          dangerouslySetInnerHTML={{
+                            __html: proposal.metadata.description,
+                          }}
+                        ></Text>
+                      </Box>
+                    </DefaultBox>
+                  )}
+                </Skeleton>
               </GridItem>
             </GridItem>
           </Grid>

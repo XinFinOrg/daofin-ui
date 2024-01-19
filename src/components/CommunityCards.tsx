@@ -29,14 +29,21 @@ const CommunityCards = () => {
   const navigate = useNavigate();
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
   const { committeesListWithIcon } = useCommitteeUtils();
-  const { mapCommitteeToTotalNumber, isLoading } = useTotalNumberOfVoters();
+  const {
+    mapCommitteeToTotalNumber,
+    mapCommitteeToTotalNumberLoadings,
+    isLoading,
+  } = useTotalNumberOfVoters();
 
   return (
     <HStack w={"full"} flexDirection={["column", "column", "column", "row"]}>
       {committeesListWithIcon.map(({ bgGradient, Icon, id, name, link }) => (
+        // <Skeleton
+        //   isLoaded={!mapCommitteeToTotalNumberLoadings(id) && !isLoading}
+        //   w={["100%", "100%", "100%", "33%"]}
+        // >
         <HStack
           key={id}
-          w={["100%", "100%", "100%", "33%"]}
           boxShadow={"sm"}
           bgGradient={bgGradient}
           opacity={0.9}
@@ -44,6 +51,7 @@ const CommunityCards = () => {
           borderRadius={"md"}
           p={4}
           mb={4}
+          w={["100%", "100%", "100%", "33%"]}
         >
           <Box w={"50px"} flexShrink={1}>
             {Icon && Icon}
@@ -70,6 +78,7 @@ const CommunityCards = () => {
             }}
           />
         </HStack>
+        // </Skeleton>
       ))}
     </HStack>
   );
