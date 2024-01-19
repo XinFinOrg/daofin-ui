@@ -35,7 +35,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { InfoIcon } from "@chakra-ui/icons";
-import { GrantsProposalTypeForm } from "../actions";
+import GrantsProposalTypeForm from "../actions/forms/GrantsProposalTypeForm";
 import ElectionPeriodsForm from "./ElectionPeriodsForm";
 import useDaoElectionPeriods from "../../hooks/useDaoElectionPeriods";
 import Preview from "./ProposalPreview";
@@ -153,41 +153,41 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({}) => {
           </GridItem>
           <GridItem colSpan={5} colStart={7}>
             <Card shadow={"2xl"}>
-            <DefaultBox p={0}>
-              <CardHeader>
-                <Badge mb={"4"}>GRANT</Badge>
-                <Heading size="md">{grantsSteps[activeStep].title}</Heading>
-              </CardHeader>
+              <DefaultBox p={0}>
+                <CardHeader>
+                  <Badge mb={"4"}>GRANT</Badge>
+                  <Heading size="md">{grantsSteps[activeStep].title}</Heading>
+                </CardHeader>
 
-              <CardBody>
-                <Stack divider={<StackDivider />} spacing="4">
-                  {activeStep === 0 && <CreateMetaData />}
-                  {activeStep === 1 && <GrantsProposalTypeForm />}
-                  {activeStep === 2 && periods && (
-                    <ElectionPeriodsForm periods={periods} />
-                  )}
-                  {activeStep === 3 && <Preview />}
-                  {activeStep === 4 && <ProposalCosts />}
-                </Stack>
-              </CardBody>
-              <CardFooter justifyContent={"space-between"}>
-                <Button
-                  isDisabled={activeStep === 0}
-                  onClick={() => goToPrevious()}
-                  variant={"unstyled"}
-                >
-                  {"<-"} Back
-                </Button>
+                <CardBody>
+                  <Stack divider={<StackDivider />} spacing="4">
+                    {activeStep === 0 && <CreateMetaData />}
+                    {activeStep === 1 && <GrantsProposalTypeForm />}
+                    {activeStep === 2 && periods && (
+                      <ElectionPeriodsForm periods={periods} />
+                    )}
+                    {activeStep === 3 && <Preview />}
+                    {activeStep === 4 && <ProposalCosts />}
+                  </Stack>
+                </CardBody>
+                <CardFooter justifyContent={"space-between"}>
+                  <Button
+                    isDisabled={activeStep === 0}
+                    onClick={() => goToPrevious()}
+                    variant={"unstyled"}
+                  >
+                    {"<-"} Back
+                  </Button>
 
-                <Button
-                  isDisabled={isDisabledProceedButton}
-                  onClick={handleProceedButton}
-                  colorScheme={"blue"}
-                  mx={1}
-                >
-                  Proceed
-                </Button>
-              </CardFooter>
+                  <Button
+                    isDisabled={isDisabledProceedButton}
+                    onClick={handleProceedButton}
+                    colorScheme={"blue"}
+                    mx={1}
+                  >
+                    Proceed
+                  </Button>
+                </CardFooter>
               </DefaultBox>
             </Card>
           </GridItem>

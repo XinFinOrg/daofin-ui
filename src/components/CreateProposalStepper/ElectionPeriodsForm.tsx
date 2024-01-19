@@ -2,6 +2,7 @@ import {
   Box,
   Flex,
   FormControl,
+  HStack,
   Radio,
   RadioGroup,
   Stack,
@@ -20,8 +21,11 @@ import useDaoElectionPeriods, {
 import { v4 as uuid } from "uuid";
 import {
   timestampToStandardFormatString,
+  toNormalDate,
   toStandardFormatString,
 } from "../../utils/date";
+import { ArrowForwardIcon } from "@chakra-ui/icons";
+import { DefaultBox } from "../Box";
 const ElectionPeriodsForm: FC<{ periods: ElectionPeriod[] }> = ({
   periods,
 }) => {
@@ -49,8 +53,11 @@ const ElectionPeriodsForm: FC<{ periods: ElectionPeriod[] }> = ({
             <Stack spacing={5} direction="column">
               {filteredPeriods &&
                 filteredPeriods.map(({ startDate, endDate }, index) => (
-                  <Box key={uuid()}>
-                    <Text onClick={() => handleRadioChange(index.toString())} mb={2}>
+                  <DefaultBox key={uuid()}>
+                    <Text
+                      onClick={() => handleRadioChange(index.toString())}
+                      mb={2}
+                    >
                       <Radio value={index.toString()}>
                         {index === 0
                           ? "Upcoming voting period"
@@ -59,33 +66,42 @@ const ElectionPeriodsForm: FC<{ periods: ElectionPeriod[] }> = ({
                     </Text>
                     <Flex
                       w={"full"}
-                      justifyContent="center"
+                      justifyContent="space-around"
+                      alignItems={"center"}
                       textAlign={"center"}
                       mb={1}
-                      fontSize={"sm"}
+                      fontSize={["xs", "xs", "xs", "sm"]}
                     >
-                      <Box
-                        bgColor={"blue.50"}
+                      {/* <Text p={"1"}>{index + 1}- </Text> */}
+                      <HStack
                         margin={"1"}
                         p={"1"}
                         borderRadius="md"
+                        w={"45%"}
+                        justifyContent={"center"}
+                        flexDirection={["column", "column", "row"]}
                       >
-                        <Text color={"gray"}>
-                          From: {toStandardFormatString(new Date(startDate))}
+                        <Text fontWeight={"semibold"}>
+                          {toStandardFormatString(toNormalDate(startDate))}
                         </Text>
+                      </HStack>
+                      <Box>
+                        <ArrowForwardIcon />
                       </Box>
-                      <Box
-                        bgColor={"blue.50"}
+                      <HStack
                         margin={"1"}
                         p={"1"}
                         borderRadius="md"
+                        w={"45%"}
+                        justifyContent={"center"}
+                        flexDirection={["column", "column", "row"]}
                       >
-                        <Text color={"gray"}>
-                          To: {toStandardFormatString(new Date(endDate))}
+                        <Text fontWeight={"semibold"}>
+                          {toStandardFormatString(toNormalDate(endDate))}
                         </Text>
-                      </Box>
+                      </HStack>
                     </Flex>
-                  </Box>
+                  </DefaultBox>
                 ))}
             </Stack>
           </RadioGroup>

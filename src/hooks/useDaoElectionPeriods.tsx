@@ -3,6 +3,7 @@ import { useClient } from "./useClient";
 import { useNetwork } from "../contexts/network";
 import { GlobalSettings } from "@xinfin/osx-daofin-sdk-client";
 import { DaofinPlugin } from "@xinfin/osx-daofin-contracts-ethers";
+import { toStandardTimestamp } from "../utils/date";
 export type ElectionPeriod = { startDate: number; endDate: number };
 function useDaoElectionPeriods() {
   const [electionPeriods, setElectionPeriods] = useState<ElectionPeriod[]>();
@@ -21,8 +22,8 @@ function useDaoElectionPeriods() {
         setIsLoading(false);
         const modifiedData = data.map((item) => ({
           ...item,
-          startDate: +item.startDate.toString() * 1000,
-          endDate: +item.endDate.toString() * 1000,
+          startDate: toStandardTimestamp(item.startDate.toString()),
+          endDate: toStandardTimestamp(item.endDate.toString()),
         }));
         setElectionPeriods(modifiedData as unknown as ElectionPeriod[]);
       })

@@ -50,6 +50,7 @@ export type SubgraphProposalBase = {
   metadata: string;
   startDate: string;
   endDate: string;
+  createdAt: string;
   executed: boolean;
   pluginProposalId: string;
   potentiallyExecutable: boolean;
