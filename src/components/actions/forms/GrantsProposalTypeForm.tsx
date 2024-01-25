@@ -2,9 +2,9 @@ import { Box, FormControl, useClipboard } from "@chakra-ui/react";
 import { Form, useFormikContext } from "formik";
 import React from "react";
 import { DefaultInput } from "../..";
-import { CreateProposalFormData } from "../../../pages/CreateProposal";
 import { CHAIN_METADATA } from "../../../utils/networks";
 import { useNetwork } from "../../../contexts/network";
+import { CreateProposalFormData } from "../../../pages/CreateProposal";
 
 const GrantsProposalTypeForm = () => {
   const { values, setFieldValue } = useFormikContext<CreateProposalFormData>();
@@ -27,7 +27,6 @@ const GrantsProposalTypeForm = () => {
         <Box>
           <DefaultInput
             rightAddon={CHAIN_METADATA[network].nativeCurrency.symbol}
-            noErrorMessage
             type="number"
             name="action.amount"
             label="Requested amount"

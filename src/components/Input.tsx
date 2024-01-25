@@ -29,24 +29,27 @@ const Input: React.FC<InputProps & ChakraInputProps> = ({
   isRequired,
   value,
   noErrorMessage,
+  name,
   ...props
 }) => {
-  const [field, meta] = useField(props);
+  const [field, meta] = useField(name);
 
   return (
     <FormControl
       isRequired={isRequired}
       isInvalid={Boolean(meta.touched && meta.error)}
     >
-      <FormLabel>{label && label}</FormLabel>
+      <FormLabel fontSize={["sm", "sm", "md"]}>{label && label}</FormLabel>
 
       <InputGroup>
-        {leftAddon && <InputLeftAddon children={leftAddon} />}
+        {leftAddon && (
+          <InputLeftAddon fontSize={["sm", "sm", "md"]} children={leftAddon} />
+        )}
         <Field
           as={ChakraInput}
           {...field}
           {...props}
-          id={props.id || props.name}
+          id={props.id || name}
           placeholder={props.placeholder || ""}
         />
         {rightAddon && (

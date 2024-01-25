@@ -14,7 +14,6 @@ import {
 import { Form, useField, useFormikContext } from "formik";
 import { FC, PropsWithChildren, useMemo } from "react";
 import { DefaultInput } from "..";
-import { CreateProposalFormData } from "../../pages/CreateProposal";
 
 import useDaoElectionPeriods, {
   ElectionPeriod,
@@ -23,6 +22,7 @@ import { v4 as uuid } from "uuid";
 import { CHAIN_METADATA } from "../../utils/networks";
 import { useNetwork } from "../../contexts/network";
 import { DefaultAlert } from "../Alerts";
+import { CreateProposalFormData } from "../../pages/CreateProposal";
 
 const HeadText: FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -97,9 +97,9 @@ const ProposalPreview: FC = () => {
         <HeadText>Amount</HeadText>
 
         <DefaultAlert p={4}>
-          <Flex justifyContent={"space-between"} w={'full'}>
+          <Flex justifyContent={"space-between"} w={"full"}>
             <Text>Requested Amount</Text>
-            <Text >
+            <Text>
               {values.action.amount}{" "}
               {CHAIN_METADATA[network].nativeCurrency.symbol}
             </Text>

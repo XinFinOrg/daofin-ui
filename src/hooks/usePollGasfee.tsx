@@ -5,7 +5,7 @@ import { useNetwork } from "../contexts/network";
 import { fetchTokenPrice } from "../services/prices";
 import { GasFeeEstimation } from "@aragon/sdk-client-common";
 import Big from "big.js";
-import { toGwei } from "../utils/numbers";
+import { toEther, toGwei } from "../utils/numbers";
 
 /**
  * This hook returns the gas estimation for a particular transaction and
@@ -47,9 +47,7 @@ export const usePollGasFee = (
   const txCosts = useMemo(() => {
     return averageFee && tokenPrice && txFees
       ? {
-          tokenValue: Big(averageFee.toString())
-            .add(toGwei(txFees[0].value.toString()).toString())
-            .toString(),
+          tokenValue: averageFee.toString(),
           usdValue: tokenPrice.toString(),
         }
       : undefined;

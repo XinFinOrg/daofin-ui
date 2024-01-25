@@ -12,14 +12,58 @@ import { Box, useColorModeValue } from "@chakra-ui/react";
 import CommunityPage from "./pages/CommunityPage";
 import TreasuryPage from "./pages/TreasuryPage";
 import Footer from "./components/Footer";
-import { ScrollRestoration } from "react-router-dom";
+import { ScrollRestoration, createBrowserRouter } from "react-router-dom";
 import { useEffect } from "react";
 import NotFoundPage from "./pages/NotFoundPage";
-
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Dashboard />,
+  },
+  {
+    path: "/create/:type",
+    element: <CreateProposal />,
+  },
+  {
+    path: "/proposals",
+    children: [
+      {
+        path: "/proposals",
+        element: <ProposalsPage />,
+      },
+      {
+        path: "/proposals/:proposalId/details",
+        element: <ProposalDetailsPage />,
+      },
+    ],
+  },
+  {
+    path: "/community",
+    children: [
+      {
+        path: "/community",
+        element: <CommunityPage />,
+      },
+      {
+        path: "/community/judiciary",
+        element: <JudiciaryPage />,
+      },
+      {
+        path: "/community/peoples-house",
+        element: <PeoplesHousePage />,
+      },
+      {
+        path: "/community/masternode-delegatee-senate",
+        element: <MasterNodeDelegatePage />,
+      },
+    ],
+  },
+]);
 function App() {
   return (
     <Box bgColor={useColorModeValue("#FFF", "#19262e")}>
       <Header />
+      {/* <RouterProvider router={router} /> */}
       <Routes>
         <Route path="/" element={<Dashboard />} />
       </Routes>
