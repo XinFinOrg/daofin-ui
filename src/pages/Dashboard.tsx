@@ -150,7 +150,7 @@ const Dashboard: FC = () => {
 
   return (
     <Page>
-      <HStack mb={6}>
+      <HStack mb={2}>
         <IoBarChart />
 
         <Text fontWeight={"semibold"} fontSize={"lg"}>
@@ -160,14 +160,14 @@ const Dashboard: FC = () => {
       <Flex
         w="full"
         mx="auto"
-        mb={6}
+        mb={2}
         flexDirection={["column", "column", "column", "row"]}
         justifyContent={"space-between"}
       >
         <Skeleton
           isLoaded={!isLoading}
           mr={4}
-          mb={4}
+          mb={2}
           w={["100%", "100%", "100%", "50%"]}
         >
           <DefaultBox>
@@ -195,7 +195,7 @@ const Dashboard: FC = () => {
         <Skeleton
           isLoaded={!isLoadingNativeBalanceOfDao}
           w={["100%", "100%", "100%", "50%"]}
-          mb={4}
+          mb={2}
         >
           <DefaultBox>
             <HStack justifyContent={"space-between"}>
@@ -219,11 +219,11 @@ const Dashboard: FC = () => {
         </Skeleton>
       </Flex>
 
-      <Flex mb={6}>
+      <Flex mb={1}>
         <CommunityCards />
       </Flex>
-      <Box mb={6}>
-        <HStack mb={4}>
+      <Box mb={4}>
+        <HStack mb={2}>
           <Text fontWeight={"semibold"} fontSize={"lg"}>
             Election Periods
           </Text>
@@ -282,7 +282,7 @@ const Dashboard: FC = () => {
         flexDirection={["column", "column", "column", "row"]}
       >
         <Box w={["100%", "100%", "100%", "60%"]} mr={"6"}>
-          <Text fontSize={"md"} fontWeight={"semibold"} mb={"4"}>
+          <Text fontSize={"lg"} fontWeight={"semibold"} mb={"2"}>
             🔥 Ready to Execute
           </Text>
           {/* <DefaultBox borderStyle={"dashed"}>  */}
@@ -302,8 +302,8 @@ const Dashboard: FC = () => {
           </VStack>
           {/* </DefaultBox> */}
         </Box>
-        <Box w={["100%", "100%", "100%", "40%"]} mb={"4"}>
-          <Text fontSize={"md"} fontWeight={"semibold"} mb={"4"}>
+        <Box w={["100%", "100%", "100%", "40%"]}>
+          <Text fontSize={"lg"} fontWeight={"semibold"} mb={"2"}>
             ✅ Executed Proposals
           </Text>
           {/* <DefaultBox borderStyle={"dashed"} w={"full"}> */}
@@ -396,9 +396,9 @@ const Dashboard: FC = () => {
       <VStack w={"full"}>
         <Text
           alignSelf={"flex-start"}
-          fontSize={"md"}
+          fontSize={"lg"}
           fontWeight={"semibold"}
-          mb={"4"}
+          mb={"2"}
         >
           Most Recent Proposals
         </Text>
