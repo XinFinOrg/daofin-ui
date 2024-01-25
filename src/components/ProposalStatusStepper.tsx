@@ -122,9 +122,9 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
             <Step key={index}>
               <StepIndicator>
                 <StepStatus
-                  complete={<StepIcon />}
+                  complete={<StepNumber />}
                   incomplete={<StepNumber />}
-                  active={<StepNumber />}
+                  // active={<StepNumber />}
                 />
               </StepIndicator>
 

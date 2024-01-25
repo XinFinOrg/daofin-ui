@@ -108,9 +108,9 @@ const TransactionReviewModal = <T extends any | undefined>({
                       <Text mr={1}>
                         {numberWithCommaSeparate(value.toString())}
                       </Text>
-                      <Box w={"20px"}>
+                      {/* <Box w={"20px"}>
                         <XdcIcon />
-                      </Box>
+                      </Box> */}
                     </Flex>
                   </Flex>
                 ))}

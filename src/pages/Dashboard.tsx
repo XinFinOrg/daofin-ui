@@ -65,7 +65,7 @@ import {
 import Jazzicon from "react-jazzicon/dist/Jazzicon";
 import { jsNumberForAddress } from "react-jazzicon";
 import useFetchProposalStatus from "../hooks/useFetchProposalStatus";
-import { DefaultBoxProps } from "../components/Box/DefaultBox";
+import { DarkGrayBox, DefaultBoxProps, WhiteBox } from "../components/Box/DefaultBox";
 import {
   ReadyToExecuteProposalType,
   ReadyToExecuteProposals,
@@ -228,9 +228,9 @@ const Dashboard: FC = () => {
             Election Periods
           </Text>
         </HStack>
-        <VStack w={["full", "full", "70%"]} alignItems={"flex-start"}>
+        <VStack w={["full", "full", "50%"]} alignItems={"flex-start"}>
           {periods?.map(({ startDate, endDate }, index) => (
-            <DefaultBox key={uuid()} p={2} w="full">
+            <WhiteBox key={uuid()} p={2} w="full">
               <Flex
                 w={"full"}
                 justifyContent="flex-start"
@@ -243,9 +243,9 @@ const Dashboard: FC = () => {
                 <HStack
                   margin={"1"}
                   p={"1"}
+                  maxW={"40%"}
                   borderRadius="md"
-                  w={"45%"}
-                  justifyContent={"center"}
+                  justifyContent={"flex-start"}
                   flexDirection={["column", "column", "row"]}
                 >
                   <Text fontWeight={"semibold"}>
@@ -259,7 +259,6 @@ const Dashboard: FC = () => {
                   margin={"1"}
                   p={"1"}
                   borderRadius="md"
-                  w={"45%"}
                   justifyContent={"center"}
                   flexDirection={["column", "column", "row"]}
                 >
@@ -267,11 +266,17 @@ const Dashboard: FC = () => {
                     {toStandardFormatString(toDate(endDate))}
                   </Text>
                 </HStack>
-                <ProposalStatusBadge
-                  title={proposalTimeStatus(toDate(startDate), toDate(endDate))}
-                />
+                <Box>
+                  <ProposalStatusBadge
+                    variant={"subtle"}
+                    title={proposalTimeStatus(
+                      toDate(startDate),
+                      toDate(endDate)
+                    )}
+                  />
+                </Box>
               </Flex>
-            </DefaultBox>
+            </WhiteBox>
           ))}
         </VStack>
       </Box>
