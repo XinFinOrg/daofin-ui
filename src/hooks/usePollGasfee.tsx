@@ -6,6 +6,7 @@ import { fetchTokenPrice } from "../services/prices";
 import { GasFeeEstimation } from "@aragon/sdk-client-common";
 import Big from "big.js";
 import { toEther, toGwei } from "../utils/numbers";
+import { CHAIN_METADATA } from "../utils/networks";
 
 /**
  * This hook returns the gas estimation for a particular transaction and
@@ -33,7 +34,11 @@ export const usePollGasFee = (
   const txFees = useMemo(() => {
     return maxFee && averageFee
       ? [
-          { title: "Value (Ether)", tooltip: "", value },
+          {
+            title: `Value(${CHAIN_METADATA[network].nativeCurrency.symbol})`,
+            tooltip: "",
+            value,
+          },
           {
             title: "Estimated Gas fee (Gwei)",
             tooltip: "",
