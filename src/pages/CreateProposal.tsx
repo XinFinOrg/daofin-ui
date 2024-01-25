@@ -17,7 +17,7 @@ import { TransactionState } from "../utils/types";
 import { decodeProposalId } from "@xinfin/osx-sdk-common";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { Button } from "@chakra-ui/button";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Link } from "react-router-dom";
 import {
   CHAIN_METADATA,
@@ -36,8 +36,10 @@ import {
 import { CreateProposalProvider } from "../contexts/CreateProposalContext";
 import {
   CreationFormSchema,
+  GrantActionSchema,
   MetaDataSchema,
 } from "../schemas/createProposalSchema";
+import { useSteps } from "@chakra-ui/stepper";
 const CreateProposalWrapper = styled.div.attrs({
   className: "min-h-screen",
 })``;
@@ -57,7 +59,6 @@ export interface CreateProposalFormData {
     title: string;
     summary: string;
     description: string;
-    resource: { name: string; url: string };
     resources: { name: string; url: string }[];
   };
   action: {
@@ -65,77 +66,17 @@ export interface CreateProposalFormData {
     amount: string;
   };
   selectedElectionPeriod: string;
+  proposalTypeId?: string;
 }
 const CreateProposal = () => {
-  // const methods = useForm({
-  //   defaultValues: {
-  //     metaData: {
-  //       title: "",
-  //       summary: "",
-  //       description: "",
-  //       resources: [],
-  //       resource: {
-  //         name: "",
-  //         url: "",
-  //       },
-  //     },
-  //     withdrawAction: {
-  //       to: "",
-  //       value: 0,
-  //       data: "",
-  //     },
-  //     electionPeriodIndex: 0,
-  //   },
-  // });
-  // 0 - NOT_STAR
-  const [proposalState, setProposalState] = useState<{
-    key: TransactionState;
-    proposalId?: number;
-    txHash?: string;
-    error: boolean;
-  }>({
-    key: TransactionState.NONE,
-    txHash: "",
-    proposalId: -1,
-    error: false,
-  });
-  const { daofinClient, client } = useClient();
-  const navigate = useNavigate();
-  const resetProposalState = () => {
-    setProposalState({
-      key: TransactionState.NONE,
-      txHash: "",
-      proposalId: -1,
-      error: false,
-    });
-  };
- 
-  const initvalues: CreateProposalFormData = {
-    metaData: {
-      title: "",
-      summary: "",
-      description: "",
-      resource: { name: "", url: "" },
-      resources: [{ name: "", url: "" }],
-    },
-    action: { amount: "", recipient: "" },
-    selectedElectionPeriod: "0",
-  };
+  const params = useParams();
+  console.log(params);
+
   return (
     <Page>
-      <Formik
-        initialValues={initvalues}
-        validate={(values) => {}}
-        validationSchema={CreationFormSchema}
-        validateOnChange={true}
-        onSubmit={() => {}}
-      >
-        {(props: FormikProps<CreateProposalFormData>) => (
-          <CreateProposalProvider>
-            <CreateProposalStepper />
-          </CreateProposalProvider>
-        )}
-      </Formik>
+      <CreateProposalProvider>
+        <CreateProposalStepper proposalTypeId={params.type} />
+      </CreateProposalProvider>
     </Page>
   );
 };

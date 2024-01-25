@@ -97,3 +97,14 @@ export enum ProposalTypeEnum {
   UpdateJudiciary = 4,
   UpdateProposalCosts = 5,
 }
+export enum ProposalStatus {
+  ACTIVE = "Active",
+  PUBLISHED = "Published",
+  PENDING = "Pending",
+  SUCCEEDED = "Succeeded",
+  EXECUTED = "Executed",
+  DEFEATED = "Defeated",
+  REACHED = "Reached",
+  NOT_STARTED = "Not Started",
+  EXPIRED = "Expired",
+}

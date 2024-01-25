@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import useDaoProposals from "../hooks/useDaoProposals";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
-import { Proposal } from "../utils/types";
+import { Proposal, ProposalStatus } from "../utils/types";
 import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
 import { shortenAddress } from "../utils/networks";
 import { styled } from "styled-components";
@@ -38,6 +38,7 @@ import { jsNumberForAddress } from "react-jazzicon";
 import { zeroAddress } from "viem";
 import {
   expirationDistance,
+  proposalTimeStatus,
   toNormalDate,
   toStandardFormatString,
   toStandardTimestamp,
@@ -73,7 +74,10 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
                   proposalId={parseInt(pluginProposalId)}
                   type="Grant"
                   publishedDate={toNormalDate(createdAt)}
-                  status="Open to vote"
+                  status={proposalTimeStatus(
+                    toNormalDate(startDate),
+                    toNormalDate(endDate)
+                  )}
                   creatorAddress={creator}
                   startDate={toNormalDate(startDate)}
                   endDate={toNormalDate(endDate)}
@@ -153,7 +157,7 @@ interface ProposalSummaryProps {
   type: string;
   publishedDate: Date;
   proposalId: number;
-  status: string;
+  status: ProposalStatus;
   creatorAddress: string;
   creationTxHash: string;
   startDate: Date;
@@ -189,12 +193,27 @@ const ProposalSummary: FC<ProposalSummaryProps> = ({
         <HStack alignItems={"center"}>
           <ProposalTypeBadge title={type} />
           <ProposalStatusBadge title={status} />
-          <Box color={"orange"} fontSize={"sm"}>
+          {/* <Box color={"orange"} fontSize={"sm"}>
             <TimeIcon display={"inline-block"} mr={"2"} />
             <Text display={"inline-block"}>
-              Expired in {expirationDistance(new Date(), endDate)}{" "}
+              {new Date(Date.now()) > startDate &&
+                new Date(Date.now()) < endDate &&
+                `Expired in ${expirationDistance(
+                  new Date(Date.now()),
+                  endDate
+                )}`}
+              {new Date(Date.now()) < startDate &&
+                new Date(Date.now()) < endDate &&
+                `Starts in ${expirationDistance(
+                  new Date(Date.now()),
+                  startDate
+                )}`}
+
+              {new Date(Date.now()) > startDate &&
+                new Date(Date.now()) > endDate &&
+                `Already Expired`}
             </Text>
-          </Box>
+          </Box> */}
         </HStack>
       </Flex>
     </HStack>

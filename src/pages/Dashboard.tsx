@@ -57,6 +57,7 @@ import { WalletAuthorizedButton } from "../components/Button/AuthorizedButton";
 import { DefaultBox } from "../components/Box";
 import AddFundButton, { AddFund } from "../components/Button/AddFundButton";
 import {
+  proposalTimeStatus,
   timestampToStandardFormatString,
   toNormalDate,
   toStandardFormatString,
@@ -72,6 +73,8 @@ import {
 import { Proposal } from "../utils/types";
 import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTypeDetails";
 import useDaoElectionPeriods from "../hooks/useDaoElectionPeriods";
+import { toDate } from "date-fns";
+import ProposalStatusBadge from "../components/ProposalStatusBadge";
 
 const Dashboard: FC = () => {
   const navigate = useNavigate();
@@ -225,15 +228,12 @@ const Dashboard: FC = () => {
             Election Periods
           </Text>
         </HStack>
-        <VStack
-          w={["full", "full", "80%", "60%", "50%"]}
-          alignItems={"flex-start"}
-        >
+        <VStack w={["full", "full", "70%"]} alignItems={"flex-start"}>
           {periods?.map(({ startDate, endDate }, index) => (
             <DefaultBox key={uuid()} p={2} w="full">
               <Flex
                 w={"full"}
-                justifyContent="space-around"
+                justifyContent="flex-start"
                 alignItems={"center"}
                 textAlign={"center"}
                 mb={1}
@@ -249,7 +249,7 @@ const Dashboard: FC = () => {
                   flexDirection={["column", "column", "row"]}
                 >
                   <Text fontWeight={"semibold"}>
-                    {timestampToStandardFormatString(startDate)}
+                    {toStandardFormatString(toDate(startDate))}
                   </Text>
                 </HStack>
                 <Box>
@@ -264,9 +264,12 @@ const Dashboard: FC = () => {
                   flexDirection={["column", "column", "row"]}
                 >
                   <Text fontWeight={"semibold"}>
-                    {toStandardFormatString(toNormalDate(endDate))}
+                    {toStandardFormatString(toDate(endDate))}
                   </Text>
                 </HStack>
+                <ProposalStatusBadge
+                  title={proposalTimeStatus(toDate(startDate), toDate(endDate))}
+                />
               </Flex>
             </DefaultBox>
           ))}

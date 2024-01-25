@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Flex,
   FormControl,
@@ -13,39 +14,41 @@ import {
 import { Form, useField, useFormikContext } from "formik";
 import { FC, useMemo } from "react";
 import { DefaultInput } from "..";
-import { CreateProposalFormData } from "../../pages/CreateProposal";
 
 import useDaoElectionPeriods, {
   ElectionPeriod,
 } from "../../hooks/useDaoElectionPeriods";
 import { v4 as uuid } from "uuid";
 import {
+  expirationDistance,
   timestampToStandardFormatString,
+  toDate,
   toNormalDate,
   toStandardFormatString,
 } from "../../utils/date";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import { DefaultBox } from "../Box";
+import { CreateProposalFormData } from "../../pages/CreateProposal";
+import { DarkGrayBox } from "../Box/DefaultBox";
 const ElectionPeriodsForm: FC<{ periods: ElectionPeriod[] }> = ({
   periods,
 }) => {
   const { values, setFieldValue } = useFormikContext<CreateProposalFormData>();
   const filteredPeriods = useMemo(
-    () =>
-      periods.length > 0
-        ? periods.filter(({ startDate }) => Date.now() <= startDate).slice(0, 2)
-        : [],
+    () => periods,
+    // .length > 0
+    //   ? periods.filter(({ endDate }) => Date.now() >= endDate)
+    //   : []
     [periods]
   );
   const handleRadioChange = (value: any) => {
     setFieldValue("selectedElectionPeriod", value);
   };
-  console.log(filteredPeriods);
 
   return (
     <Box>
       <Form>
-        <Box className="mb-4">
+        <Box mb={4}>
           <RadioGroup
             name="selectedElectionPeriod"
             value={values.selectedElectionPeriod.toString()}
@@ -53,53 +56,74 @@ const ElectionPeriodsForm: FC<{ periods: ElectionPeriod[] }> = ({
             <Stack spacing={5} direction="column">
               {filteredPeriods &&
                 filteredPeriods.map(({ startDate, endDate }, index) => (
-                  <DefaultBox key={uuid()}>
-                    <Text
-                      onClick={() => handleRadioChange(index.toString())}
-                      mb={2}
-                    >
+                  <DefaultBox
+                    key={uuid()}
+                    onClick={() => handleRadioChange(index.toString())}
+                  >
+                    <Text mb={2}>
                       <Radio value={index.toString()}>
-                        {index === 0
-                          ? "Upcoming voting period"
-                          : "Next voting period"}
+                        <HStack>
+                          <Text>
+                            {index === 0
+                              ? "Upcoming voting period"
+                              : "Next voting period"}
+                          </Text>
+
+                          <Badge
+                            textTransform={"initial"}
+                            fontWeight={"normal"}
+                            fontSize={"xs"}
+                            borderRadius={"lg"}
+                          >
+                            Fixed duration -{" "}
+                            {expirationDistance(
+                              toDate(startDate),
+                              toDate(endDate)
+                            )}
+                          </Badge>
+                        </HStack>
                       </Radio>
                     </Text>
                     <Flex
                       w={"full"}
-                      justifyContent="space-around"
+                      justifyContent="flex-start"
                       alignItems={"center"}
                       textAlign={"center"}
                       mb={1}
                       fontSize={["xs", "xs", "xs", "sm"]}
                     >
                       {/* <Text p={"1"}>{index + 1}- </Text> */}
-                      <HStack
-                        margin={"1"}
-                        p={"1"}
-                        borderRadius="md"
-                        w={"45%"}
-                        justifyContent={"center"}
-                        flexDirection={["column", "column", "row"]}
-                      >
-                        <Text fontWeight={"semibold"}>
-                          {toStandardFormatString(toNormalDate(startDate))}
-                        </Text>
-                      </HStack>
-                      <Box>
+                      <DarkGrayBox py={2} w={"45%"}>
+                        <HStack
+                          borderRadius="md"
+                          justifyContent={"center"}
+                          flexDirection={["column", "column", "column"]}
+                        >
+                          <Text fontWeight={"normal"} alignSelf={"flex-start"}>
+                            From
+                          </Text>
+                          <Text fontWeight={"semibold"}>
+                            {toStandardFormatString(toDate(startDate))}
+                          </Text>
+                        </HStack>
+                      </DarkGrayBox>
+                      <Box w={"10%"}>
                         <ArrowForwardIcon />
                       </Box>
-                      <HStack
-                        margin={"1"}
-                        p={"1"}
-                        borderRadius="md"
-                        w={"45%"}
-                        justifyContent={"center"}
-                        flexDirection={["column", "column", "row"]}
-                      >
-                        <Text fontWeight={"semibold"}>
-                          {toStandardFormatString(toNormalDate(endDate))}
-                        </Text>
-                      </HStack>
+                      <DarkGrayBox py={2} w={"45%"}>
+                        <HStack
+                          borderRadius="md"
+                          justifyContent={"center"}
+                          flexDirection={["column", "column", "column"]}
+                        >
+                          <Text fontWeight={"normal"} alignSelf={"flex-start"}>
+                            To
+                          </Text>
+                          <Text fontWeight={"semibold"}>
+                            {toStandardFormatString(toDate(endDate))}
+                          </Text>
+                        </HStack>
+                      </DarkGrayBox>
                     </Flex>
                   </DefaultBox>
                 ))}

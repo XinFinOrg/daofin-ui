@@ -26,7 +26,7 @@ const Input: React.FC<InputProps & ChakraTextareaProps> = ({
       isRequired={isRequired}
       isInvalid={Boolean(meta.touched && meta.error)}
     >
-      <FormLabel>
+      <FormLabel fontSize={["sm", "sm", "md"]}>
         {label && <label htmlFor={props.id || props.name}>{label}</label>}
       </FormLabel>
       <ChakraTextarea

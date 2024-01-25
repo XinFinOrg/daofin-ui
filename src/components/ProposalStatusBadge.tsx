@@ -1,8 +1,9 @@
 import { Badge, useColorMode, useColorModeValue } from "@chakra-ui/react";
 import React, { FC } from "react";
+import { ProposalStatus } from "../utils/types";
 
 interface ProposalStatusBadgeProps {
-  title: string;
+  title: ProposalStatus;
 }
 const ProposalStatusBadge: FC<ProposalStatusBadgeProps> = ({ title }) => {
   return (

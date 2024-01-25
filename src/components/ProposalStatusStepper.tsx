@@ -21,6 +21,7 @@ import useFetchProposalStatus, {
 } from "../hooks/useFetchProposalStatus";
 import { uuid } from "../utils/numbers";
 import { TimeIcon } from "@chakra-ui/icons";
+import { ProposalStatus } from "../utils/types";
 
 interface ProposalStatusStepperProps {
   proposalId: string;
@@ -39,33 +40,45 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
   const [steps, setSteps] = useState([
     {
       id: uuid(),
+      status: ProposalStatus.PUBLISHED,
       title: "Proposal published onchain",
       description: "Contact Info",
       date: new Date(createdAt),
     },
     {
       id: uuid(),
+      status: ProposalStatus.NOT_STARTED,
+      title: "Voting not started yet",
+      description: "Contact Info",
+      date: new Date(),
+    },
+    {
+      id: uuid(),
+      status: ProposalStatus.ACTIVE,
       title: "Open to vote",
       description: "Date & Time",
       date: new Date(startDate),
     },
     {
       id: uuid(),
+      status: ProposalStatus.EXPIRED,
       title: "Closing vote",
       description: "Date & Time",
       date: new Date(endDate),
     },
     {
       id: uuid(),
+      status: ProposalStatus.REACHED,
       title: "Threshold’s Reached",
       description: "Select Rooms",
       date: null,
     },
     {
       id: uuid(),
+      status: ProposalStatus.EXECUTED,
       title: "Proposal’s executed",
       description: "Select Rooms",
-      date: null,
+      date: undefined,
     },
   ]);
 
@@ -76,16 +89,19 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
   useEffect(() => {
     if (status) {
       if (status.isOpen) {
-        setActiveStep(2);
-      }
-      if (!status.isOpen && Date.now() > endDate) {
         setActiveStep(3);
       }
-      if (status.canExecute) {
+      if (!status.isOpen && Date.now() > endDate) {
         setActiveStep(4);
       }
-      if (status.executed) {
+      if (status.canExecute) {
         setActiveStep(5);
+      }
+      if (status.executed) {
+        setActiveStep(6);
+      }
+
+      if (!status.executed && !status.canExecute && !status.isOpen) {
       }
     }
   }, [status]);
@@ -99,7 +115,7 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
         <Stepper
           index={activeStep}
           orientation="vertical"
-          height="300px"
+          height="400px"
           gap="0"
         >
           {steps.map((step, index) => (
@@ -114,13 +130,15 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
 
               <Box flexShrink="0" w={"full"}>
                 <StepTitle>
-                  <Text fontSize={["md", "lg"]}>{step.title}</Text>
+                  <Text fontSize={["md"]}>{step.title}</Text>
                 </StepTitle>
                 <StepDescription>
                   <HStack justifyContent={"start"}>
                     <TimeIcon w={"3"} />
                     <Text fontSize={["sm", "md"]}>
-                      {step.date ? toStandardFormatString(step.date) : "-"}
+                      {step.date !== undefined && step.date !== null
+                        ? toStandardFormatString(step.date)
+                        : "-"}
                     </Text>
                   </HStack>
                 </StepDescription>

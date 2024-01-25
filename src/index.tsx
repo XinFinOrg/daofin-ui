@@ -34,18 +34,18 @@ root.render(
           <ChakraProvider theme={theme}>
             <WagmiProvider>
               <NetworkProvider>
-                <GlobalStateProvider>
-                  <UseClientProvider>
-                    <WalletMenuProvider>
-                      <ProvidersProvider>
-                        <ApolloProvider
-                          client={client["apothem"] || apothemTestClient} //TODO remove fallback when all clients are defined
-                        >
-                          <App />
-                        </ApolloProvider>
-                      </ProvidersProvider>
-                    </WalletMenuProvider>
-                  </UseClientProvider>
+              <GlobalStateProvider>
+                <UseClientProvider>
+                  <WalletMenuProvider>
+                    <ProvidersProvider>
+                      <ApolloProvider
+                        client={client["apothem"] || apothemTestClient} //TODO remove fallback when all clients are defined
+                      >
+                        <App />
+                      </ApolloProvider>
+                    </ProvidersProvider>
+                  </WalletMenuProvider>
+                </UseClientProvider>
                 </GlobalStateProvider>
               </NetworkProvider>
             </WagmiProvider>

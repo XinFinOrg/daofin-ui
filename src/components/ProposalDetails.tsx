@@ -186,7 +186,7 @@ const ProposalDetails: FC<{
                         </WalletAuthorizedButton>
                       ) : (
                         <WalletAuthorizedButton isDisabled={true} w={"full"}>
-                          Not Open{" "}
+                          Voting isn't started{" "}
                         </WalletAuthorizedButton>
                       )}
 

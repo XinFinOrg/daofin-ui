@@ -18,7 +18,6 @@ import {
 import { Form, useField, useFormikContext } from "formik";
 import { FC, useEffect, useMemo, useState } from "react";
 import { DefaultInput } from "..";
-import { CreateProposalFormData } from "../../pages/CreateProposal";
 
 import useDaoElectionPeriods, {
   ElectionPeriod,
@@ -30,6 +29,7 @@ import { ProposalCostIcon } from "../../utils/assets/icons";
 import { useClient } from "../../hooks/useClient";
 import { BigNumberish } from "ethers";
 import { toEther } from "../../utils/numbers";
+import { CreateProposalFormData } from "../../pages/CreateProposal";
 const ProposalCosts: FC = () => {
   const { values, setFieldValue } = useFormikContext<CreateProposalFormData>();
   const [proposalCosts, setProposalCosts] = useState<BigNumberish>(0);
@@ -57,11 +57,10 @@ const ProposalCosts: FC = () => {
         </Box>
         <Box>
           <Skeleton isLoaded={!isLoading}>
-          <Heading size={"md"}>
-            {toEther(proposalCosts?.toString())} <sup>{coinSymbol}</sup>
-          </Heading>
+            <Heading size={"md"}>
+              {toEther(proposalCosts?.toString())} <sup>{coinSymbol}</sup>
+            </Heading>
           </Skeleton>
-         
         </Box>
       </Flex>
       <Box m="4">
@@ -73,8 +72,9 @@ const ProposalCosts: FC = () => {
         >
           <AlertIcon />
           <AlertDescription maxWidth="sm">
-            A fixed proposal cost at {toEther(proposalCosts?.toString())} {coinSymbol} is to prevent proposal
-            spam. Proposal cost is NOT refundable.
+            A fixed proposal cost at {toEther(proposalCosts?.toString())}{" "}
+            {coinSymbol} is to prevent proposal spam. Proposal cost is NOT
+            refundable.
           </AlertDescription>
         </Alert>
       </Box>

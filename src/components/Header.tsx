@@ -44,6 +44,7 @@ import { fetchTokenPrice } from "../services/prices";
 import { constants } from "ethers";
 import { DefaultBox } from "./Box";
 import { useGlobalState } from "../contexts/GlobalStateContext";
+import { uuid } from "../utils/numbers";
 
 interface Props {
   children: React.ReactNode;
@@ -132,11 +133,11 @@ export default function Header() {
                 </Text>
               </Box>
               <Box ml={"4"}>
-                  <Switch
-                    isChecked={colorMode === "dark"}
-                    onChange={handleSwitchTheme}
-                    size="lg"
-                  />
+                <Switch
+                  isChecked={colorMode === "dark"}
+                  onChange={handleSwitchTheme}
+                  size="lg"
+                />
                 {/* <Box position="relative" display="inline-block">
                   <Box
                     position="absolute"
@@ -181,7 +182,7 @@ export default function Header() {
                 display={{ base: "none", md: "flex" }}
               >
                 {Links.map((link) => (
-                  <Link to={link.location}>
+                  <Link to={link.location} key={uuid()}>
                     <Box
                       fontSize={"md"}
                       fontWeight={"bold"}
@@ -214,7 +215,11 @@ export default function Header() {
             <Box pb={4} display={{ md: "none" }}>
               <Stack as={"nav"} spacing={4} mb={"4"}>
                 {Links.map((link) => (
-                  <Link to={link.location} onClick={() => onClose()}>
+                  <Link
+                    key={uuid()}
+                    to={link.location}
+                    onClick={() => onClose()}
+                  >
                     <Text fontWeight={"semibold"}>{link.name}</Text>
                   </Link>
                 ))}
