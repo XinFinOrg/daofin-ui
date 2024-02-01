@@ -19,13 +19,13 @@ function useDaoElectionPeriods() {
     daofinClient.methods
       .getElectionPeriods()
       .then((data) => {
-        setIsLoading(false);
         const modifiedData = data.map((item) => ({
           ...item,
           startDate: toStandardTimestamp(item.startDate.toString()),
           endDate: toStandardTimestamp(item.endDate.toString()),
         }));
         setElectionPeriods(modifiedData as unknown as ElectionPeriod[]);
+        setIsLoading(false);
       })
       .catch((e) => {
         setIsLoading(false);
@@ -33,6 +33,6 @@ function useDaoElectionPeriods() {
       });
   }, [daofinClient]);
 
-  return electionPeriods;
+  return { data: electionPeriods, isLoading };
 }
 export default useDaoElectionPeriods;

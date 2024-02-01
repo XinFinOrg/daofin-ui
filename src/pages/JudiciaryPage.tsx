@@ -50,7 +50,7 @@ const JudiciaryPage = () => {
   const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
   return (
     <Page>
-      <DefaultBox mb={6}>
+      <DefaultBox mb={4}>
         <VStack>
           <HStack
             justifyContent={"space-between"}
@@ -83,7 +83,11 @@ const JudiciaryPage = () => {
               </DefaultButton>
             </Box>
           </HStack>
-          <HStack flexDirection={["column", "column", "column", "row"]}>
+          <HStack
+            flexDirection={["column", "column", "column", "row"]}
+            w={"full"}
+            justifyContent={"flex-start"}
+          >
             <DefaultBox w={["full", "full", "50%"]}>
               <VStack
                 w={["50%"]}
@@ -105,9 +109,7 @@ const JudiciaryPage = () => {
                 </Text>
                 <Text>
                   Lorem ipsum dolor sit amet consectetur. Senectus elementum
-                  erat pellentesque nisl nibh. Vitae diam dolor convallis porta
-                  lacus. Rhoncus cursus a viverra cursus lobortis ut amet
-                  pulvinar. Sit mauris lectus libero lectus...
+                  erat pellentesque nisl nibh. nisl nibh. nisl nibh.
                 </Text>
               </VStack>
             </DefaultAlert>
@@ -115,7 +117,7 @@ const JudiciaryPage = () => {
         </VStack>
       </DefaultBox>
       <HStack flexDirection={["column", "column", "column", "row"]}>
-        <DefaultBox w={["full", "full", "60%"]} alignSelf={"flex-start"}>
+        <DefaultBox w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={2}>
           <VStack>
             {juries.length > 0 ? (
               juries.map(({ member, creationDate }) => (

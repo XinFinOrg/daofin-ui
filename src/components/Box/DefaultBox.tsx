@@ -57,7 +57,7 @@ export const WhiteBox: FC<DefaultBoxProps> = (props) => {
       p={"6"}
       borderRadius={"lg"}
       border={"1px"}
-      borderColor={useColorModeValue("#D7DEE4", "#1F2E3D")}
+      borderColor={useColorModeValue("#D7DEE4", "#2d3a47")}
       boxShadow={"sm"}
       {...props}
     >

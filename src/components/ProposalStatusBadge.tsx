@@ -17,12 +17,15 @@ const ProposalStatusBadge: FC<ProposalStatusBadgeProps> = ({
 }) => {
   const notStarted = useColorModeValue("#D7DEE4", "#151F29");
   const active = useColorModeValue("#BFEED1", "#04AA46");
+  const expired = useColorModeValue("#FAD6D6", "#ad2727");
   const mapProposalStatusToBadge = (title: ProposalStatus) => {
     switch (title) {
-      case ProposalStatus.EXPIRED:
+      case ProposalStatus.NOT_STARTED:
         return notStarted;
-        case ProposalStatus.ACTIVE:
+      case ProposalStatus.ACTIVE:
         return active;
+      case ProposalStatus.EXPIRED:
+        return expired;
 
       default:
         break;
@@ -36,6 +39,7 @@ const ProposalStatusBadge: FC<ProposalStatusBadgeProps> = ({
       bgColor={mapProposalStatusToBadge(title)}
       px={"2"}
       py={"0.5"}
+      color={""}
       textTransform={"uppercase"}
     >
       {title}

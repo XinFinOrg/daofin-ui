@@ -113,12 +113,12 @@ const CommunityPage = () => {
 
   return (
     <Page>
-      <Text fontWeight={"semibold"} fontSize={"lg"} mb={'4'}>
+      <Text fontWeight={"semibold"} fontSize={"lg"} mb={"2"}>
         Community
       </Text>
 
-      <Flex mb={6} flexDirection={["column", "column", "column", "row"]}>
-        <DefaultBox mr={4} mb={4} w={["100%", "100%", "100%", "50%"]}>
+      <Flex mb={4} flexDirection={["column", "column", "column", "row"]}>
+        <DefaultBox mr={4} w={["100%", "100%", "100%", "50%"]}>
           <HStack justifyContent={"space-between"}>
             <VStack alignItems={"flex-start"}>
               <Text fontSize="sm" fontWeight={"normal"}>
@@ -130,7 +130,7 @@ const CommunityPage = () => {
             </VStack>
           </HStack>
         </DefaultBox>
-        <DefaultBox mr={4} mb={4} w={["100%", "100%", "100%", "50%"]}>
+        <DefaultBox mr={4} w={["100%", "100%", "100%", "50%"]}>
           <HStack justifyContent={"space-between"}>
             <VStack alignItems={"flex-start"}>
               <Text fontSize="sm" fontWeight={"normal"}>
@@ -148,7 +148,7 @@ const CommunityPage = () => {
           </HStack>
         </DefaultBox>
       </Flex>
-      <Flex mb={4}>
+      <Flex>
         <CommunityCards />
       </Flex>
       <DefaultBox mb={4}>
@@ -270,7 +270,7 @@ const CommunityPage = () => {
           </HStack>
         </Flex>
       </DefaultBox>
-      <DefaultBox w={"full"} mb={4}>
+      <DefaultBox w={"full"} mb={2}>
         <Flex flexDirection={"column"}>
           <HStack
             w={"full"}

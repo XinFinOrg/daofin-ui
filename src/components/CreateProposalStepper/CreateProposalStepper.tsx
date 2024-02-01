@@ -59,7 +59,7 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
   const { activeStep, goToPrevious, goToNext } = steps;
 
   const lastStep = defaultSteps.length - 2;
-  const periods = useDaoElectionPeriods();
+  const { data: periods } = useDaoElectionPeriods();
 
   const { daofinClient } = useClient();
   const handleProceedButton = () => {

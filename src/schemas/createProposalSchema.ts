@@ -21,12 +21,12 @@ export const MetaDataSchema = Yup.object().shape({
 
 export const GrantActionSchema = Yup.object().shape({
   amount: Yup.number()
-    .min(10, "Must be greater that 10")
+    .min(1, "Must be greater that 10")
     .max(1000000, "Must be less that 1000000")
     .required("Must not be empty"),
   recipient: Yup.string()
-    .matches(ethereumAddressRegex, "Invalid Ethereum address")
-    .required("Ethereum address is required"),
+    .matches(ethereumAddressRegex, "Invalid address")
+    .required("Address is required"),
 });
 export const CreationFormSchema = Yup.object().shape({
   metaData: MetaDataSchema,
