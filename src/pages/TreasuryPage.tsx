@@ -91,7 +91,7 @@ const TreasuryPage = () => {
             }
             isDaoBalanceLoading={isDaoBalanceLoading}
           />
-          <DefaultBox mr={4} w={"full"} mb={"6"}>
+          <DefaultBox mr={4} w={"full"} mb={""}>
             <HStack>
               <HStack
                 w={["0", "0", "50%"]}
@@ -256,14 +256,14 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
 }) => {
   const { network } = useNetwork();
   const { handleOpenPublishModal } = useDaoTreasury();
-  const { daoAddress, pluginAddress } = useAppGlobalConfig();
+  const { daoAddress } = useAppGlobalConfig();
   return (
     <>
-      <Text fontWeight={"semibold"} fontSize={"lg"} mb={"6"}>
+      <Text fontWeight={"semibold"} fontSize={"lg"} mb={2}>
         Treasury
       </Text>
 
-      <DefaultBox mr={4} w={"full"} mb={"6"}>
+      <DefaultBox mr={4} w={"full"} mb={"4"}>
         <HStack
           justifyContent={"space-between"}
           mb={4}

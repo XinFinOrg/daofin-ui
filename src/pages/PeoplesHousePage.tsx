@@ -122,7 +122,11 @@ const PeoplesHousePage = () => {
               )}
             />
             <HStack flexDirection={["column", "column", "column", "row"]}>
-              <DefaultBox w={["full", "full", "60%"]} alignSelf={"flex-start"}>
+              <DefaultBox
+                w={["full", "full", "60%"]}
+                alignSelf={"flex-start"}
+                mr={2}
+              >
                 <VStack>
                   {deposits && deposits.length > 0 ? (
                     deposits.map(
@@ -193,7 +197,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
   const { network } = useNetwork();
   return (
     <>
-      <DefaultBox mb={6}>
+      <DefaultBox mb={4}>
         <VStack w={"full"}>
           <HStack
             justifyContent={"space-between"}

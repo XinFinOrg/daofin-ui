@@ -41,7 +41,7 @@ const MasterNodeDelegatePage = () => {
       >
         <MasterNodeDelegateeSentateProvider>
           <>
-            <DefaultBox mb={6}>
+            <DefaultBox mb={4}>
               <VStack>
                 {totalMasterNodes != undefined && (
                   <MasterNodeDelegateeHeader
@@ -52,7 +52,11 @@ const MasterNodeDelegatePage = () => {
               </VStack>
             </DefaultBox>
             <HStack flexDirection={["column", "column", "column", "row"]}>
-              <DefaultBox w={["full", "full", "60%"]} alignSelf={"flex-start"}>
+              <DefaultBox
+                w={["full", "full", "60%"]}
+                alignSelf={"flex-start"}
+                mr={2}
+              >
                 <VStack>
                   {delegatees.length > 0 ? (
                     delegatees.map(
@@ -157,7 +161,7 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
           </MasterNodeAuthorizedButton>
         </Box>
       </HStack>
-      <HStack flexDirection={["column", "column", "column", "row"]}>
+      <HStack flexDirection={["column", "column", "column", "row"]} w={"full"}>
         <DefaultBox w={["full", "50%", "25%", "25%"]}>
           <VStack
             fontSize={"sm"}
