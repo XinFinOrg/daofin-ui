@@ -22,7 +22,7 @@ import {
 
 import { useNetwork } from "../contexts/network";
 
-import { Button } from "@chakra-ui/button";
+import { Button, IconButton } from "@chakra-ui/button";
 import {
   Skeleton,
   Tab,
@@ -31,11 +31,12 @@ import {
   TabPanels,
   Tabs,
   Tag,
+  useClipboard,
   useSteps,
 } from "@chakra-ui/react";
 import ProposalTypeBadge from "./ProposalTypeBadge";
 import { IoShareSocial } from "react-icons/io5";
-import { InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
+import { CopyIcon, InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 
 import VotingStatsBox from "./VotingStatsBox";
@@ -63,6 +64,8 @@ import ViewGrantProposalType from "./actions/views/ViewGrantProposalType";
 import useFetchProposalStatus, {
   FetchProposalStatusType,
 } from "../hooks/useFetchProposalStatus";
+import { DefaultButton } from "./Button";
+import { ExpandableText } from "./ExpandableText";
 
 const ProposalDetails: FC<{
   proposal: Proposal | undefined;
@@ -97,6 +100,7 @@ const ProposalDetails: FC<{
       });
     }
   }, [proposal?.pluginProposalId]);
+  const { setValue, onCopy } = useClipboard("");
 
   return (
     <>
@@ -370,20 +374,19 @@ const ProposalDetails: FC<{
               </GridItem>
               <GridItem colSpan={[2, 2, 1]} rowSpan={0}>
                 <Skeleton isLoaded={!isLoading} minH={"100px"} mb={6}>
-                  {proposal?.metadata?.description && (
-                    <DefaultBox>
-                      <Box p={"5"}>
+                  <DefaultBox>
+                    <Box p={"5"}>
+                      <HStack alignItems={"baseline"}>
                         <Text mb={4} fontSize={"lg"} fontWeight={"bold"}>
                           Details
                         </Text>
-                        <Text
-                          dangerouslySetInnerHTML={{
-                            __html: proposal.metadata.description,
-                          }}
-                        ></Text>
-                      </Box>
-                    </DefaultBox>
-                  )}
+                      </HStack>
+
+                      {proposal?.metadata?.description && (
+                        <ExpandableText text={proposal.metadata.description} />
+                      )}
+                    </Box>
+                  </DefaultBox>
                 </Skeleton>
               </GridItem>
             </GridItem>

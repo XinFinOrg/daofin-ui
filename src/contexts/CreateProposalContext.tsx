@@ -34,6 +34,8 @@ import {
   GrantActionSchema,
   MetaDataSchema,
 } from "../schemas/createProposalSchema";
+import { useFeeData } from "wagmi";
+import { addPrefix } from "../utils/url";
 
 export type CreateProposalContextType = {
   handlePublishProposal: () => void;
@@ -97,9 +99,9 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
     },
     action: { amount: "", recipient: "" },
     selectedElectionPeriod: "0",
+    proposalTypeId: "0",
   });
   const [schemas, setSchemas] = useState([MetaDataSchema, GrantActionSchema]);
-  console.log({ formData });
 
   const { isOpen, onClose, onOpen } = useTransactionModalDisclosure();
 
@@ -107,7 +109,6 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
     values: CreateProposalFormData,
     actions: FormikHelpers<CreateProposalFormData>
   ) => {
-    console.log("submit");
     if (activeStep === defaultSteps.length - 2) {
       await handleOpenPublishModal();
     } else {
@@ -164,9 +165,6 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
     toEther(proposalCosts.toString())
   );
 
-  console.log({ proposalCreationData });
-  console.log({ proposalCosts });
-
   const handlePublishProposal = async () => {
     if (!proposalCreationData) return;
     const proposalIterator =
@@ -209,20 +207,22 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
+  console.log({ formData });
+
   const handleOpenPublishModal = async () => {
     onOpen(() => {
       setCreationProcessState(TransactionState.LOADING);
     });
     let metadaIpfsHash;
 
-    formData.metaData.resources.map(({ name, url }) => ({
-      name,
-      url: url.startsWith(`https://`) ? url : `https://${url}`,
-    }));
     try {
-      metadaIpfsHash = await daofinClient?.methods.pinMetadata(
-        formData.metaData
-      );
+      metadaIpfsHash = await daofinClient?.methods.pinMetadata({
+        ...formData.metaData,
+        resources: formData.metaData.resources.map(({ name, url }) => ({
+          name,
+          url: addPrefix(url),
+        })),
+      });
     } catch {
       throw Error("Could not pin metadata on IPFS");
     }
@@ -237,7 +237,7 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
           value: BigInt(parseEther(formData.action.amount.toString())),
         },
       ],
-      proposalType: 0,
+      proposalType: formData.proposalTypeId,
       allowFailureMap: 0,
       electionIndex: formData.selectedElectionPeriod,
       voteOption: 0,

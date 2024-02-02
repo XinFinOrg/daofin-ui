@@ -66,11 +66,10 @@ export interface CreateProposalFormData {
     amount: string;
   };
   selectedElectionPeriod: string;
-  proposalTypeId?: string;
+  proposalTypeId: string;
 }
 const CreateProposal = () => {
   const params = useParams();
-  console.log(params);
 
   return (
     <Page>
