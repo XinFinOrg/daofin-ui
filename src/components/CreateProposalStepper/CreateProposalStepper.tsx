@@ -70,7 +70,6 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
     }
     window.scrollTo(0, 0);
   };
-  const [schema, setSchema] = useState(MetaDataSchema);
 
   const getCurrentSchema = (activeStep: number) => {
     switch (activeStep) {
@@ -103,7 +102,7 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
           },
           action: { amount: "", recipient: "" },
           selectedElectionPeriod: "0",
-          // proposalTypeId: proposalTypeId ? proposalTypeId.toString() : "0",
+          proposalTypeId: proposalTypeId ? proposalTypeId.toString() : "0",
         }}
         validationSchema={getCurrentSchema(activeStep)}
         validateOnChange={true}

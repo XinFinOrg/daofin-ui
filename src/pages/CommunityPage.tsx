@@ -17,6 +17,7 @@ import { IoBarChart } from "react-icons/io5";
 import {
   Button,
   IconButton,
+  Skeleton,
   Tooltip,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -91,16 +92,18 @@ const CommunityPage = () => {
 
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
   const { committeesList } = useCommitteeUtils();
-  const { data: juries, error } = useFetchJudiciaries(
-    daoAddress,
-    pluginAddress
-  );
-  const totalNumberOfJudiciaries =
-    useFetchTotalNumbersByCommittee(JudiciaryCommittee);
+  const {
+    data: juries,
+    error,
+    isLoading: isLoadingJuries,
+  } = useFetchJudiciaries(daoAddress, pluginAddress);
 
-  const { data: people } = usePeoplesHouseDeposits();
-  const { data: delegatees } = useFetchMasterNodeDelegatee();
-  const { data: nativeBalanceOfDao } = useFetchDaoBalance();
+  const { data: people, isLoading: isLoadingPeople } =
+    usePeoplesHouseDeposits();
+  const { data: delegatees, isLoading: isLoadingDelegatee } =
+    useFetchMasterNodeDelegatee();
+  const { data: nativeBalanceOfDao, isLoading: isLoadingDaoBalance } =
+    useFetchDaoBalance();
 
   const { mapCommitteeToTotalNumber } = useTotalNumberOfVoters();
   const totalVoters = useMemo(
@@ -118,35 +121,46 @@ const CommunityPage = () => {
       </Text>
 
       <Flex mb={4} flexDirection={["column", "column", "column", "row"]}>
-        <DefaultBox mr={4} w={["100%", "100%", "100%", "50%"]}>
-          <HStack justifyContent={"space-between"}>
-            <VStack alignItems={"flex-start"}>
-              <Text fontSize="sm" fontWeight={"normal"}>
-                Total Voters
-              </Text>
-              <Text fontSize="large" fontWeight={"bold"}>
-                {+toEther(totalVoters.toString())}
-              </Text>
-            </VStack>
-          </HStack>
-        </DefaultBox>
-        <DefaultBox mr={4} w={["100%", "100%", "100%", "50%"]}>
-          <HStack justifyContent={"space-between"}>
-            <VStack alignItems={"flex-start"}>
-              <Text fontSize="sm" fontWeight={"normal"}>
-                Balance in Treasury
-              </Text>
-              <Text fontSize="large" fontWeight={"bold"}>
-                {nativeBalanceOfDao
-                  ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
-                  : 0}{" "}
-              </Text>
-            </VStack>
-            <Box>
-              <AddFund />
-            </Box>
-          </HStack>
-        </DefaultBox>
+        <Skeleton
+          mr={4}
+          w={["100%", "100%", "100%", "50%"]}
+          isLoaded={!isLoadingDaoBalance}
+        >
+          <DefaultBox>
+            <HStack justifyContent={"space-between"}>
+              <VStack alignItems={"flex-start"}>
+                <Text fontSize="sm" fontWeight={"normal"}>
+                  Total Voters
+                </Text>
+                <Text fontSize="large" fontWeight={"bold"}>
+                  {+toEther(totalVoters.toString())}
+                </Text>
+              </VStack>
+            </HStack>
+          </DefaultBox>
+        </Skeleton>
+        <Skeleton
+          w={["100%", "100%", "100%", "50%"]}
+          isLoaded={!isLoadingDaoBalance}
+        >
+          <DefaultBox>
+            <HStack justifyContent={"space-between"}>
+              <VStack alignItems={"flex-start"}>
+                <Text fontSize="sm" fontWeight={"normal"}>
+                  Balance in Treasury
+                </Text>
+                <Text fontSize="large" fontWeight={"bold"}>
+                  {nativeBalanceOfDao
+                    ? weiBigNumberToFormattedNumber(nativeBalanceOfDao)
+                    : 0}{" "}
+                </Text>
+              </VStack>
+              <Box>
+                <AddFund />
+              </Box>
+            </HStack>
+          </DefaultBox>
+        </Skeleton>
       </Flex>
       <Flex>
         <CommunityCards />
@@ -169,19 +183,29 @@ const CommunityPage = () => {
               <ArrowForwardIcon />
             </Box>
           </HStack>
-          <HStack flexWrap={"wrap"} justifyContent={"flex-start"}>
-            {juries.length > 0 &&
-              juries.slice(0, 5).map(({ member, creationDate }) => (
-                <Box w={"sm"}>
-                  <WalletAddressCardWithDate
-                    address={member}
-                    date={
-                      new Date(toStandardTimestamp(creationDate.toString()))
-                    }
-                  />
-                </Box>
-              ))}
-          </HStack>
+          {!error ? (
+            <Skeleton
+              isLoaded={!isLoadingJuries}
+              flexWrap={"wrap"}
+              justifyContent={"flex-start"}
+            >
+              <HStack>
+                {juries.length > 0 &&
+                  juries.slice(0, 5).map(({ member, creationDate }) => (
+                    <Box w={"sm"}>
+                      <WalletAddressCardWithDate
+                        address={member}
+                        date={
+                          new Date(toStandardTimestamp(creationDate.toString()))
+                        }
+                      />
+                    </Box>
+                  ))}
+              </HStack>
+            </Skeleton>
+          ) : (
+            "error"
+          )}
         </Flex>
       </DefaultBox>
       <DefaultBox mb={4}>

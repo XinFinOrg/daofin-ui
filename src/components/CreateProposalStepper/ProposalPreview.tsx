@@ -3,7 +3,9 @@ import {
   Box,
   Flex,
   FormControl,
+  HStack,
   Heading,
+  IconButton,
   Radio,
   RadioGroup,
   Stack,
@@ -12,7 +14,7 @@ import {
   useRadio,
 } from "@chakra-ui/react";
 import { Form, useField, useFormikContext } from "formik";
-import { FC, PropsWithChildren, useMemo } from "react";
+import { FC, PropsWithChildren, useMemo, useState } from "react";
 import { DefaultInput } from "..";
 
 import useDaoElectionPeriods, {
@@ -23,6 +25,10 @@ import { CHAIN_METADATA } from "../../utils/networks";
 import { useNetwork } from "../../contexts/network";
 import { DefaultAlert } from "../Alerts";
 import { CreateProposalFormData } from "../../pages/CreateProposal";
+import { addPrefix } from "../../utils/url";
+import { DefaultButton } from "../Button";
+import { ExpandableText } from "../ExpandableText";
+import { CopyIcon } from "@chakra-ui/icons";
 
 const HeadText: FC<PropsWithChildren> = ({ children }) => {
   return (
@@ -40,6 +46,7 @@ const HeadText: FC<PropsWithChildren> = ({ children }) => {
 const ProposalPreview: FC = () => {
   const { values, setFieldValue } = useFormikContext<CreateProposalFormData>();
   const { network } = useNetwork();
+  const [noOfLines, setoOfLines] = useState<number | undefined>(7);
   return (
     <Flex flexDirection={"column"}>
       <Box mb={"10"}>
@@ -58,12 +65,7 @@ const ProposalPreview: FC = () => {
       </Box>
       <Box mb={"3"}>
         <HeadText>Description</HeadText>
-        <Text
-          size={"md"}
-          dangerouslySetInnerHTML={{
-            __html: values.metaData.description,
-          }}
-        ></Text>
+        <ExpandableText text={values.metaData.description} />
       </Box>
 
       <Box mb={"3"}>
@@ -71,7 +73,7 @@ const ProposalPreview: FC = () => {
         <Flex>
           {values.metaData.resources.map(({ name, url }) => (
             <Box mr={"1"}>
-              <a href={url} target="_blank">
+              <a href={addPrefix(url)} target="_blank">
                 <Badge
                   colorScheme="blue"
                   textColor={"blue.500"}
