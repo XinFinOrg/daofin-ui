@@ -52,7 +52,7 @@ const MasterNodeDelegatePage = () => {
               </VStack>
             </DefaultBox>
             <HStack flexDirection={["column", "column", "column", "row"]}>
-              <DefaultBox
+              <Box
                 w={["full", "full", "60%"]}
                 alignSelf={"flex-start"}
                 mr={2}
@@ -96,7 +96,7 @@ const MasterNodeDelegatePage = () => {
                     </>
                   )}
                 </VStack>
-              </DefaultBox>
+              </Box>
               {proposalTypes && proposalTypes?.length > 0 && (
                 <DefaultBox
                   w={["full", "full", "40%"]}

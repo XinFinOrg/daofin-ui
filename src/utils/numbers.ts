@@ -11,11 +11,16 @@ export function toWei(value: string) {
 export function toGwei(value: string) {
   return utils.parseUnits(value, "gwei");
 }
+export function weiToGwei(value: string) {
+  return utils.parseUnits(value, "wei");
+}
 
-export function numberWithCommaSeparate(value: number | string) {
+export function numberWithCommaSeparate(
+  value: number | string
+) {
   return typeof value === "number"
     ? value.toLocaleString("en-US")
-    : parseFloat(value).toLocaleString("en-US");
+    : parseFloat(value).toLocaleString();
 }
 
 export function weiBigNumberToFormattedNumber(value: BigNumberish) {

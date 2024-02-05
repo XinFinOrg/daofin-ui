@@ -47,7 +47,7 @@ export const VoteProvider: FC<VoteProviderProps> = ({
 
   const [publishedTxData, setPublishedTxData] = useState<{
     hash: string;
-    data: ModalActionButtonType;
+    data: ModalActionButtonType | undefined;
   }>();
 
   const shouldPoll =
@@ -78,7 +78,7 @@ export const VoteProvider: FC<VoteProviderProps> = ({
       false
     );
     console.log(values.voteOption);
-    
+
     if (!iterator) return;
     setCreationProcessState(TransactionState.WAITING);
     try {
@@ -87,10 +87,7 @@ export const VoteProvider: FC<VoteProviderProps> = ({
           case VoteSteps.WAITING:
             setPublishedTxData({
               hash: step.txHash,
-              data: {
-                goTo: `/proposals/${proposalId}/details`,
-                text: "Go to Proposal",
-              },
+              data: undefined,
             });
             break;
           case VoteSteps.DONE:

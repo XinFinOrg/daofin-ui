@@ -32,7 +32,7 @@ import DefaultProgressBar from "./DefaultProgressBar";
 import MasterNodeDelegateeSenateIcon from "../utils/assets/icons/MasterNodeDelegateeSenateIcon";
 import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
 import PeopleHouseIcon from "../utils/assets/icons/PeopleHouseIcon";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Jazzicon from "react-jazzicon/dist/Jazzicon";
 import { jsNumberForAddress } from "react-jazzicon";
 import { zeroAddress } from "viem";
@@ -180,7 +180,9 @@ const ProposalSummary: FC<ProposalSummaryProps> = ({
         <Jazzicon diameter={50} seed={jsNumberForAddress(creationTxHash)} />
       </Box>
       <Flex flexDirection={"column"}>
-        <Text fontWeight={"semibold"}>{title}</Text>
+        <Text fontWeight={"semibold"}>
+          <Link to={`/proposals/${proposalId}/details`}>{title}</Link>
+        </Text>
         <HStack fontSize={"sm"} my={"2"}>
           <Text>
             <TimeIcon /> {toStandardFormatString(publishedDate)}

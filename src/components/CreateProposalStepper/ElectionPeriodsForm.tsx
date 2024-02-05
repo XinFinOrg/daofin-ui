@@ -55,13 +55,13 @@ const ElectionPeriodsForm: FC<{ periods: ElectionPeriod[] }> = ({
           >
             <Stack spacing={5} direction="column">
               {filteredPeriods &&
-                filteredPeriods.map(({ startDate, endDate }, index) => (
+                filteredPeriods.map(({ startDate, endDate, id }, index) => (
                   <DefaultBox
                     key={uuid()}
-                    onClick={() => handleRadioChange(index.toString())}
+                    onClick={() => handleRadioChange(id.toString())}
                   >
                     <Text mb={2}>
-                      <Radio value={index.toString()}>
+                      <Radio value={id.toString()}>
                         <HStack>
                           <Text>
                             {index === 0
