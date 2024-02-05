@@ -58,7 +58,7 @@ export type TransactionReviewModalProps<T> = Pick<
   status?: TransactionState | undefined;
   txData?: {
     hash: string;
-    data: ModalActionButtonType;
+    data: ModalActionButtonType | undefined;
   };
 };
 const TransactionReviewModal = <T extends any | undefined>({
@@ -131,13 +131,14 @@ const TransactionReviewModal = <T extends any | undefined>({
                       alignItems={"center"}
                     >
                       <Text mr={1}>
-                        {numberWithCommaSeparate(totalCosts.tokenValue)}
+                        {totalCosts.tokenValue}
                       </Text>
                       <Box w={"20px"}>
                         <XdcIcon />
                       </Box>
                     </Flex>
                     <Text fontSize={"sm"} fontWeight={"semibold"}>
+                      {/* ${numberWithCommaSeparate(totalCosts.usdValue)} */}
                       ${totalCosts.usdValue}
                     </Text>
                   </Flex>
@@ -235,17 +236,17 @@ const TransactionReviewModal = <T extends any | undefined>({
 
             <Box mb={4} w={"full"}>
               {/* <Link to={`/proposals/${txData?.proposalId}/details`}> */}
-              <Link to={`${txData?.data.goTo}`}>
-                <Button w={"full"} colorScheme="blue" mb={2}>
-                  {txData?.data.text}
-                </Button>
-              </Link>
+              {txData?.data && (
+                <Link to={`${txData?.data.goTo}`}>
+                  <Button w={"full"} colorScheme="blue" mb={2}>
+                    {txData?.data.text}
+                  </Button>
+                </Link>
+              )}
 
-              <Link to={`/`}>
-                <Button w={"full"} variant={"outline"}>
-                  Dashboard
-                </Button>
-              </Link>
+              <Button w={"full"} variant={"outline"} onClick={onClose}>
+                Close
+              </Button>
             </Box>
           </Flex>
         </Box>

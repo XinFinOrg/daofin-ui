@@ -31,7 +31,7 @@ function useFetchVotersOnProposal(proposalId: string): {
   isLoading: boolean;
 } {
   const { daofinClient } = useClient();
-  const { daoAddress, pluginAddress, pluginRepoAddress } = useAppGlobalConfig();
+  const { daoAddress, pluginAddress } = useAppGlobalConfig();
   const [voters, setVoters] = useState<VoterOnProposal[]>([]);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -50,13 +50,14 @@ function useFetchVotersOnProposal(proposalId: string): {
       })
       .then((data) => {
         setVoters(data.pluginProposalVotes as unknown as VoterOnProposal[]);
+        setIsLoading(true);
       })
       .catch((e) => {
         setIsLoading(false);
         setError(e);
         console.log("error", e);
       });
-  }, [daofinClient]);
+  }, [daofinClient, proposalId]);
 
   return { data: voters, error: error, isLoading };
 }

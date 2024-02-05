@@ -6,6 +6,7 @@ import {
   Stack,
   Text,
   VStack,
+  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import Modal from "./Modal";
@@ -14,6 +15,7 @@ import SafeIcon from "../../utils/assets/icons/SafeIcon";
 import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
 import { useFormik, useFormikContext } from "formik";
 import { VoteFormType } from "../../pages/ProposalDetailsPage";
+import { DefaultBox } from "../Box";
 
 interface VoteFormModalProps extends PropsWithChildren {
   isOpen: boolean;
@@ -47,6 +49,7 @@ const VoteFormModal: FC<VoteFormModalProps> = ({
         return "";
     }
   };
+  const highlightVoteOption = useColorModeValue("blue.50", "blue.800");
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Cast your vote">
       <Box w={"20px"} mb={4}>
@@ -61,13 +64,10 @@ const VoteFormModal: FC<VoteFormModalProps> = ({
         >
           <Stack direction="column" w={"full"}>
             {voteOptionsList.map(([key, text]) => (
-              <Box
+              <DefaultBox
                 key={key}
-                border={"1px"}
-                borderColor={"gray.200"}
-                borderRadius={"md"}
                 bgColor={
-                  values.voteOption.toString() === key ? "blue.50" : undefined
+                  values.voteOption.toString() === key ? highlightVoteOption : undefined
                 }
                 w={"full"}
                 px={6}
@@ -79,7 +79,7 @@ const VoteFormModal: FC<VoteFormModalProps> = ({
                     {convertVoteOptionText(+key)}
                   </Text>
                 </Radio>
-              </Box>
+              </DefaultBox>
             ))}
           </Stack>
         </RadioGroup>

@@ -99,8 +99,7 @@ const ProposalDetails: FC<{
         setProposalStatus(data);
       });
     }
-  }, [proposal?.pluginProposalId]);
-  const { setValue, onCopy } = useClipboard("");
+  }, [makeCall, proposal?.pluginProposalId]);
 
   return (
     <>
@@ -190,7 +189,7 @@ const ProposalDetails: FC<{
                         </WalletAuthorizedButton>
                       ) : (
                         <WalletAuthorizedButton isDisabled={true} w={"full"}>
-                          Voting isn't started{" "}
+                          Vote{" "}
                         </WalletAuthorizedButton>
                       )}
 
@@ -296,7 +295,7 @@ const ProposalDetails: FC<{
                               </TabList>
                               <TabPanels>
                                 {voteOptionsList.map(([key, value]) => (
-                                  <TabPanel w={"full"}>
+                                  <TabPanel w={"full"} key={key}>
                                     <VStack spacing={"1"} alignItems={"start"}>
                                       {allVoters.filter(
                                         (item) =>
@@ -309,8 +308,8 @@ const ProposalDetails: FC<{
                                               item.committee === id &&
                                               item.option === +key
                                           )
-                                          .map(({ voter, txHash }) => (
-                                            <HStack w={"full"}>
+                                          .map(({ voter, txHash }, index) => (
+                                            <HStack w={"full"} key={index}>
                                               <WalletAddressCard
                                                 address={voter}
                                               />

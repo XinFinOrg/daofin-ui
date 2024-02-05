@@ -117,7 +117,7 @@ const JudiciaryPage = () => {
         </VStack>
       </DefaultBox>
       <HStack flexDirection={["column", "column", "column", "row"]}>
-        <DefaultBox w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={2}>
+        <Box w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={2}>
           <VStack>
             {juries.length > 0 ? (
               juries.map(({ member, creationDate }) => (
@@ -142,7 +142,7 @@ const JudiciaryPage = () => {
               </>
             )}
           </VStack>
-        </DefaultBox>
+        </Box>
         {proposalTypes && proposalTypes?.length > 0 && (
           <DefaultBox w={["full", "full", "40%"]} alignSelf={"flex-start"}>
             <RulesOfDecisions

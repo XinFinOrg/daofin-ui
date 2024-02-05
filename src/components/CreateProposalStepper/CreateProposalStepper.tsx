@@ -23,7 +23,9 @@ import {
   Badge,
   useDisclosure,
 } from "@chakra-ui/react";
-import useDaoElectionPeriods from "../../hooks/useDaoElectionPeriods";
+import useDaoElectionPeriods, {
+  useDaoNotStartedElectionPeriods,
+} from "../../hooks/useDaoElectionPeriods";
 import { useClient } from "../../hooks/useClient";
 import { GasFeeEstimation } from "@xinfin/osx-client-common";
 import { useCreateProposalContext } from "../../contexts/CreateProposalContext";
@@ -59,17 +61,10 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
   const { activeStep, goToPrevious, goToNext } = steps;
 
   const lastStep = defaultSteps.length - 2;
-  const { data: periods } = useDaoElectionPeriods();
+  const { data: periods, isActive: isActivePeriods } =
+    useDaoNotStartedElectionPeriods();
 
   const { daofinClient } = useClient();
-  const handleProceedButton = () => {
-    if (activeStep === lastStep) {
-      // handleOpenPublishModal();
-    } else {
-      goToNext();
-    }
-    window.scrollTo(0, 0);
-  };
 
   const getCurrentSchema = (activeStep: number) => {
     switch (activeStep) {
@@ -175,12 +170,6 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
                           {activeStep === 4 && <ProposalCosts />}
                         </Stack>
                       </CardBody>
-                      {/* <ProposalCardFooter
-                      handleProceedButton={handleProceedButton}
-                      goToPrevious={goToPrevious}
-                      activeStep={activeStep}
-                      lastStep={defaultSteps.length}
-                    /> */}
                       <CardFooter justifyContent={"space-between"}>
                         <Button
                           isDisabled={activeStep === 0}
@@ -195,7 +184,10 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
                             !(Object.keys(touched).length > 0) ||
                             Object.keys(errors).length > 0
                           }
-                          onClick={() => submitForm()}
+                          onClick={() => {
+                            submitForm();
+                            window.scrollTo(0, 0);
+                          }}
                           colorScheme="blue"
                           mx={1}
                         >

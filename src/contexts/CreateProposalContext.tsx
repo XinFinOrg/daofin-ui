@@ -207,13 +207,12 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
-  console.log({ formData });
-
   const handleOpenPublishModal = async () => {
     onOpen(() => {
       setCreationProcessState(TransactionState.LOADING);
     });
     let metadaIpfsHash;
+    console.log("selectedElectionPeriod", formData.selectedElectionPeriod);
 
     try {
       metadaIpfsHash = await daofinClient?.methods.pinMetadata({

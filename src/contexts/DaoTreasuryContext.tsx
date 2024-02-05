@@ -71,7 +71,7 @@ const DaoTreasuryProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const [publishedTxData, setPublishedTxData] = useState<{
     hash: string;
-    data: ModalActionButtonType;
+    data: ModalActionButtonType | undefined;
   }>();
 
   const shouldPoll =
@@ -110,10 +110,7 @@ const DaoTreasuryProvider: FC<PropsWithChildren> = ({ children }) => {
             // step;
             setPublishedTxData({
               hash: step.txHash,
-              data: {
-                goTo: "/",
-                text: "Go to Dashboard page",
-              },
+              data: undefined,
             });
             break;
           case DaoDepositSteps.DONE:
@@ -174,8 +171,8 @@ const DaoTreasuryProvider: FC<PropsWithChildren> = ({ children }) => {
         >
           <>
             <VStack>
-              <Image src="/treasury.png" w={'200px'} />
-              <DefaultBox p={2}  textAlign={"center"}>
+              <Image src="/treasury.png" w={"200px"} />
+              <DefaultBox p={2} textAlign={"center"}>
                 {shortenAddress(daoAddress)}{" "}
                 {clicked ? (
                   <IconButton

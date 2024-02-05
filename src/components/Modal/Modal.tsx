@@ -11,6 +11,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { FC, PropsWithChildren } from "react";
+import { DefaultBox } from "../Box";
 
 export type ModalProps = {
   isOpen: boolean;
@@ -25,12 +26,14 @@ const Modal: FC<ModalProps & PropsWithChildren & ChakraModalProps> = (
   return (
     <>
       <ChakraModal {...props} isOpen={isOpen} onClose={onClose}>
+        <DefaultBox>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{title}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>{children}</ModalBody>
         </ModalContent>
+        </DefaultBox>
       </ChakraModal>
     </>
   );

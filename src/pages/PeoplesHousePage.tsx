@@ -122,11 +122,7 @@ const PeoplesHousePage = () => {
               )}
             />
             <HStack flexDirection={["column", "column", "column", "row"]}>
-              <DefaultBox
-                w={["full", "full", "60%"]}
-                alignSelf={"flex-start"}
-                mr={2}
-              >
+              <Box w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={2}>
                 <VStack>
                   {deposits && deposits.length > 0 ? (
                     deposits.map(
@@ -140,7 +136,6 @@ const PeoplesHousePage = () => {
                       }) => (
                         <WalletAddressCardWithBalance
                           address={voter}
-                          // date={new Date(toStandardTimestamp(depositDate))}
                           balance={weiBigNumberToFormattedNumber(amount)}
                           symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
                         />
@@ -161,7 +156,7 @@ const PeoplesHousePage = () => {
                     </>
                   )}
                 </VStack>
-              </DefaultBox>
+              </Box>
 
               {proposalTypes && proposalTypes?.length > 0 && (
                 <DefaultBox

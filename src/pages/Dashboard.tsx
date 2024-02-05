@@ -129,13 +129,10 @@ const Dashboard: FC = () => {
       Promise.all(
         proposals.map(async (item) => {
           const { executed, pluginProposalId } = item;
-          const { canExecute } = await makeCall(pluginProposalId);
-          // console.log("1", canExecute && !executed);
-          // console.log("2", canExecute, !executed);
-
+          const status = await makeCall(pluginProposalId);
           return {
             ...item,
-            canExecute,
+            canExecute: status?.canExecute,
           };
         })
       ),

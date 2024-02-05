@@ -104,7 +104,7 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
       if (!status.executed && !status.canExecute && !status.isOpen) {
       }
     }
-  }, [status]);
+  }, [status, proposalId]);
 
   return (
     <>
