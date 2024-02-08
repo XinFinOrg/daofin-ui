@@ -42,7 +42,7 @@ export function useDaoNotStartedElectionPeriods() {
 
   const notStartedPeriods = useMemo(() => {
     if (!data) return [];
-    const now = Date.now()+1000*3600*24*3;
+    const now = Date.now();
 
     return data.filter(
       ({ startDate, endDate }) => now < startDate && now < endDate
