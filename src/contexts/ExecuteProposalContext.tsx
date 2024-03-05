@@ -1,4 +1,4 @@
-import { useDisclosure } from "@chakra-ui/react";
+import { Box, useDisclosure } from "@chakra-ui/react";
 import {
   FC,
   PropsWithChildren,
@@ -21,6 +21,8 @@ import { DefaultInput, Modal } from "../components";
 import { DefaultButton } from "../components/Button";
 import { CHAIN_METADATA } from "../utils/networks";
 import ViewGrantProposalType from "../components/actions/views/ViewGrantProposalType";
+import useFetchProposalStatus from "../hooks/useFetchProposalStatus";
+import { useModal } from "./ModalContext";
 
 interface ExecuteProposalContextType {
   handleSendTx: () => void;
@@ -107,8 +109,14 @@ const ExecuteProposalProvider: FC<
     txReviewOpen();
     onCloseExecuteModal();
   };
+
+  const { makeCall } = useFetchProposalStatus();
+  const { displayModal } = useModal();
   const handleToggleFormModal = () => {
-    onOpenExecuteModal();
+    makeCall(proposalId).then((data) => {
+      if (!data?.canExecute) displayModal("cannot-execute");
+      else onOpenExecuteModal();
+    });
   };
   const handleExecuteClicked = () => {
     setCreationProcessState(TransactionState.LOADING);
@@ -136,10 +144,11 @@ const ExecuteProposalProvider: FC<
         >
           <>
             {/* {proposal.actions()} */}
-            {proposal?.actions.map((item) => (
-              <ViewGrantProposalType {...item} />
-            ))}
-
+            <Box mb={"4"}>
+              {proposal?.actions.map((item) => (
+                <ViewGrantProposalType {...item} />
+              ))}
+            </Box>
             <DefaultButton
               w={"full"}
               colorScheme="blue"

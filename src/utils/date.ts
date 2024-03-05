@@ -21,6 +21,9 @@ export const timestampToStandardFormatString = (
 export const toDate = (timestamp: number | string) => new Date(timestamp);
 
 export const expirationDistance = (from: Date, to: Date) =>
+  appFormatDistance(from, to);
+
+export const appFormatDistance = (from: Date, to: Date) =>
   formatDistance(from, to, { includeSeconds: true });
 
 export const proposalTimeStatus = (startDate: Date, endDate: Date) => {

@@ -14,6 +14,7 @@ import { CheckIcon, CopyIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { useNetwork } from "../../contexts/network";
 import { WalletCardBox } from "../Box";
+import { useAppGlobalConfig } from "../../contexts/AppGlobalConfig";
 
 interface WalletAddressCardProps {
   address: string;
@@ -24,6 +25,7 @@ const WalletAddressCard: FC<WalletAddressCardProps> = ({ address, sm }) => {
   const [clicked, setClicked] = useState(false);
   const navigate = useNavigate();
   const { network } = useNetwork();
+  const { daoAddress } = useAppGlobalConfig();
   useEffect(() => {
     const timeout = setTimeout(() => {
       setClicked(false);
@@ -45,7 +47,7 @@ const WalletAddressCard: FC<WalletAddressCardProps> = ({ address, sm }) => {
           <Jazzicon diameter={25} seed={jsNumberForAddress(address)} />
         </Box>
         <Text fontSize="sm" fontWeight={"500"} onClick={handleCopyClick}>
-          {shortenAddress(address)}
+          {address === daoAddress ? "Treasury" : shortenAddress(address)}
         </Text>
         <Box w={"25px"}>
           {clicked ? (

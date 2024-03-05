@@ -127,7 +127,7 @@ const JudiciaryPage = () => {
                 />
               ))
             ) : (
-              <>
+              <DefaultBox w={"full"}>
                 <VStack
                   w={"100%"}
                   alignItems="center"
@@ -139,7 +139,7 @@ const JudiciaryPage = () => {
                     {"There is no member yet."}
                   </Text>
                 </VStack>
-              </>
+              </DefaultBox>
             )}
           </VStack>
         </Box>

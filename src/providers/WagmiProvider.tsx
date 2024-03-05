@@ -1,22 +1,19 @@
 import {
+  Chain,
   RainbowKitProvider,
   connectorsForWallets,
 } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { FC, PropsWithChildren } from "react";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { xdcTestnet, xdc } from "wagmi/chains";
+import { xdcTestnet } from "wagmi/chains";
 import {
   injectedWallet,
-  rainbowWallet,
   walletConnectWallet,
-  metaMaskWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { publicProvider } from "wagmi/providers/public";
 const WagmiProvider: FC<PropsWithChildren> = ({ children }) => {
   const projectId = process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID as string;
-
-  // 2. Create wagmiConfig
   const chains = [xdcTestnet];
   const { publicClient } = configureChains(chains, [publicProvider()]);
 

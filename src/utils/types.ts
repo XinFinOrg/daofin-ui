@@ -37,6 +37,7 @@ export type Proposal = {
     };
   };
   committeesVotes: VoteStatsType[];
+  electionIndex: string;
 };
 export type Deposit = {
   id: string;

@@ -1,10 +1,3 @@
-import {
-  Button,
-  ButtonProps,
-  Tooltip,
-  useColorModeValue,
-  useTheme,
-} from "@chakra-ui/react";
 import { FC, PropsWithChildren, useEffect, useState } from "react";
 import DefaultButton, { DefaultButtonProps } from "./DefaultButton";
 import { useWallet } from "../../hooks/useWallet";
@@ -13,6 +6,9 @@ import useIsXDCValidatorCandidate from "../../hooks/useIsXDCValidatorCandidate";
 import useIsUserDeposited from "../../hooks/useIsUserDeposited";
 import useIsJudiciaryMember from "../../hooks/useIsJudiciaryMember";
 import useIsMasterNodeDelegatee from "../../hooks/useIsMasterNodeDelegatee";
+import useIsUserVotedOnProposal from "../../hooks/useIsUserVotedOnProposal";
+import { FetchProposalStatusType } from "../../hooks/useFetchProposalStatus";
+import { Modal } from "../Modal";
 
 export type WalletAuthorizedButtonProps = PropsWithChildren &
   DefaultButtonProps & {};
@@ -20,7 +16,6 @@ export type WalletAuthorizedButtonProps = PropsWithChildren &
 const WalletAuthorizedButton: FC<WalletAuthorizedButtonProps> = (props) => {
   const { address, isOnWrongNetwork, network } = useWallet();
   const [isDisabled, setIsDisabled] = useState(false);
-  const [disabledMessage, setDisabledMessage] = useState("");
 
   useEffect(() => {
     if (!(address && isAddress(address)) || isOnWrongNetwork) {
@@ -80,4 +75,57 @@ const PeopleButton: FC<PeopleButtonProps> = (props) => {
   );
 };
 
-export { WalletAuthorizedButton, MasterNodeAuthorizedButton, PeopleButton };
+type VoteButtonProps = PropsWithChildren &
+  DefaultButtonProps & {
+    proposalId?: string;
+    status: FetchProposalStatusType;
+  };
+
+const VoteButton: FC<VoteButtonProps> = (props) => {
+  const { address } = useWallet();
+  const { status } = props;
+  const isMasterNode = useIsXDCValidatorCandidate(
+    address ? address : zeroAddress
+  );
+  const isDelegatee = useIsMasterNodeDelegatee(address ? address : zeroAddress);
+  const isJury = useIsJudiciaryMember(address ? address : zeroAddress);
+
+  const isUserDeposited = useIsUserDeposited(address ? address : zeroAddress);
+
+  const isUserVoted = useIsUserVotedOnProposal(props?.proposalId);
+
+  const isDisabled =
+    address &&
+    status.isOpen &&
+    !isMasterNode &&
+    !isUserVoted &&
+    (isDelegatee || isJury || isUserDeposited);
+
+  return (
+    <DefaultButton {...props} /*isDisabled={!isDisabled}*/>
+      {props.children}
+    </DefaultButton>
+  );
+};
+
+type ExecuteProposalButtonProps = PropsWithChildren &
+  DefaultButtonProps & {
+    status: FetchProposalStatusType;
+  };
+
+const ExecuteProposalButton: FC<ExecuteProposalButtonProps> = (props) => {
+  const { address } = useWallet();
+
+  const { status } = props;
+
+  const isDisabled = address && status && !status.executed && status.canExecute;
+
+  return <DefaultButton {...props}>{props.children}</DefaultButton>;
+};
+export {
+  WalletAuthorizedButton,
+  MasterNodeAuthorizedButton,
+  PeopleButton,
+  VoteButton,
+  ExecuteProposalButton,
+};

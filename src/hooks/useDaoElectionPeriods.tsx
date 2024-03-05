@@ -56,4 +56,19 @@ export function useDaoNotStartedElectionPeriods() {
   };
 }
 
+export function useFindProposalElectionPeriod(proposalStartDate?: number) {
+  const { data, isLoading } = useDaoElectionPeriods();
+
+  const proposalPeriod = useMemo(() => {
+    if (!data || !proposalStartDate) return undefined;
+    return data.find(({ startDate }) => proposalStartDate === startDate);
+  }, [data, proposalStartDate]);
+
+  return {
+    data: proposalPeriod,
+    isLoading,
+    isActive: !!proposalPeriod,
+  };
+}
+
 export default useDaoElectionPeriods;

@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useClient } from "./useClient";
+import { Address, useContractReads } from "wagmi";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
+import { DaofinPlugin__factory } from "@xinfin/osx-daofin-contracts-ethers";
+import { multicall } from "@wagmi/core";
 export type FetchProposalStatusType = {
   canExecute: boolean;
   isMinParticipationReached: boolean;
@@ -7,9 +11,16 @@ export type FetchProposalStatusType = {
   isOpen: boolean;
   executed: boolean;
 };
+
 const useFetchProposalStatus = () => {
   const { daofinClient } = useClient();
   const [isLoading, setIsLoading] = useState(false);
+  const { pluginAddress } = useAppGlobalConfig();
+  const daofinContracts = {
+    abi: DaofinPlugin__factory.abi,
+    address: pluginAddress,
+  } as const;
+
   const fetchStatus = useCallback(
     (pluginProposalId: string) =>
       Promise.all([
@@ -18,6 +29,29 @@ const useFetchProposalStatus = () => {
         daofinClient?.methods.canExecute(pluginProposalId),
         daofinClient?.methods.isOpenProposal(pluginProposalId),
         daofinClient?.methods.isExecutedProposal(pluginProposalId),
+        // multicall({
+        //   contracts: [
+        //     {
+        //       abi: DaofinPlugin__factory.abi,
+        //       address: pluginAddress as Address,
+        //       functionName: "canExecute",
+        //       args: [BigInt("1")],
+        //     },
+        //     {
+        //       abi: DaofinPlugin__factory.abi,
+        //       address: pluginAddress as Address,
+        //       functionName: "isThresholdReached",
+        //       args: [BigInt("1")],
+        //     },
+        //     {
+        //       abi: DaofinPlugin__factory.abi,
+        //       address: pluginAddress as Address,
+        //       functionName: "isMinParticipationReached",
+        //       args: [BigInt("1")],
+        //     },
+        //   ],
+        //   multicallAddress:"0xcA11bde05977b3631167028862bE2a173976CA11"
+        // }),
       ]),
     [daofinClient]
   );

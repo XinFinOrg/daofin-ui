@@ -12,51 +12,20 @@ import { useNetwork } from "../contexts/network";
 import { useClient } from "../hooks/useClient";
 import { useWallet } from "../hooks/useWallet";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
-import Modal from "../components/Modal/Modal";
-import { FormLabel } from "@chakra-ui/form-control";
-import { Input, InputGroup, InputRightAddon } from "@chakra-ui/input";
-import BoxWrapper from "../components/BoxWrapper";
-import { Tooltip } from "@chakra-ui/tooltip";
-import { Button } from "@chakra-ui/button";
-import useDaoGlobalSettings from "../hooks/useDaoGlobalSettings";
-import { Select } from "@chakra-ui/select";
-import { option } from "yargs";
-import { use } from "chai";
-import WithConnectedWallet from "../components/WithConnectedWallet";
 import useIsJudiciaryMember from "../hooks/useIsJudiciaryMember";
-import React, { FC, useEffect, useMemo } from "react";
-import ManageJudiciary from "../components/ManageJudiciary";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import { Box, HStack, VStack } from "@chakra-ui/layout";
-import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Skeleton,
-  Text,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { Image, Text } from "@chakra-ui/react";
 import { Page } from "../components";
 import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
-import { zeroAddress } from "viem";
-
-import DefaultProgressBar from "../components/DefaultProgressBar";
-import {
-  WalletAddressCard,
-  WalletAddressCardWithBalance,
-  WalletAddressCardWithDate,
-} from "../components/WalletAddressCard";
+import { WalletAddressCardWithBalance } from "../components/WalletAddressCard";
 import {
   PeoplesHouseProvider,
   usePeopleHouseContext,
 } from "../contexts/PeoplesHouseContext";
 import { Formik } from "formik";
-import { toStandardTimestamp } from "../utils/date";
-import useFetchVoterDepositAmount from "../hooks/useFetchVoterDepositAmount";
 import {
   numberWithCommaSeparate,
-  toEther,
   weiBigNumberToFormattedNumber,
 } from "../utils/numbers";
 import { BigNumber } from "ethers";
@@ -70,12 +39,14 @@ import { DefaultBox } from "../components/Box";
 import RulesOfDecisions from "../components/RulesOfDecisions";
 import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTypeDetails";
 import { DefaultAlert } from "../components/Alerts";
+import { ViewGrantProposalType } from "../components/actions";
+import { DefaultButton } from "../components/Button";
+import { Modal } from "../components/Modal";
+import useGetHouseDepositInfo from "../hooks/useGetHouseDepositInfo";
 export type JoinHouseFormType = {
   amount: string;
 };
 const PeoplesHousePage = () => {
-  const { daoAddress, pluginAddress } = useAppGlobalConfig();
-
   const { address: voterAddress } = useWallet();
 
   const { daofinClient } = useClient();
@@ -121,59 +92,49 @@ const PeoplesHousePage = () => {
                 totalSupply ? totalSupply : 0
               )}
             />
-            <HStack flexDirection={["column", "column", "column", "row"]}>
-              <Box w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={2}>
-                <VStack>
-                  {deposits && deposits.length > 0 ? (
-                    deposits.map(
-                      ({
-                        amount,
-                        id,
-                        snapshotBlock,
-                        voter,
-                        depositDate,
-                        txHash,
-                      }) => (
-                        <WalletAddressCardWithBalance
-                          address={voter}
-                          balance={weiBigNumberToFormattedNumber(amount)}
-                          symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
-                        />
-                      )
-                    )
-                  ) : (
-                    <>
-                      <VStack alignItems="center" alignSelf={"center"}>
-                        <EmptyBoxIcon />
-                        <Text
-                          fontSize={"xs"}
-                          fontWeight={"500"}
-                          opacity={"0.5"}
-                        >
-                          {"There is no member yet."}
-                        </Text>
-                      </VStack>
-                    </>
-                  )}
-                </VStack>
-              </Box>
-
-              {proposalTypes && proposalTypes?.length > 0 && (
-                <DefaultBox
-                  w={["full", "full", "40%"]}
-                  alignSelf={"flex-start"}
-                >
-                  <RulesOfDecisions
-                    communityName={communityName}
-                    summary={"All below info demostrate how voting rules work."}
-                    proposalTypes={proposalTypes}
-                  />
-                </DefaultBox>
-              )}
-            </HStack>
           </PeoplesHouseProvider>
         </>
       </Formik>
+      <HStack flexDirection={["column", "column", "column", "row"]}>
+        <Box w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={2}>
+          <VStack>
+            {deposits && deposits.length > 0 ? (
+              deposits.map(
+                ({ amount, id, snapshotBlock, voter, depositDate, txHash }) => (
+                  <WalletAddressCardWithBalance
+                    address={voter}
+                    balance={weiBigNumberToFormattedNumber(amount)}
+                    symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
+                  />
+                )
+              )
+            ) : (
+              <DefaultBox w={"full"}>
+                <VStack alignItems="center" alignSelf={"center"}>
+                  <EmptyBoxIcon />
+                  <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                    {"There is no member yet."}
+                  </Text>
+                </VStack>
+              </DefaultBox>
+            )}
+          </VStack>
+        </Box>
+        <VStack w={["full", "full", "40%"]}>
+          <Box w={["full"]}>
+            {proposalTypes && proposalTypes?.length > 0 && (
+              <DefaultBox alignSelf={"flex-start"}>
+                <RulesOfDecisions
+                  communityName={communityName}
+                  summary={"All below info demostrate how voting rules work."}
+                  proposalTypes={proposalTypes}
+                />
+              </DefaultBox>
+            )}
+          </Box>
+          <Box w={["full"]}>{/* <Resignation /> */}</Box>
+        </VStack>
+      </HStack>
     </Page>
   );
 };
@@ -300,6 +261,95 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
           </HStack>
         </VStack>
       </DefaultBox>
+    </>
+  );
+};
+
+const Resignation = () => {
+  const { address: connectedWalletAddress } = useWallet();
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  const [modalData, setModalData] = useState({
+    title: "Resignation",
+    imageWarning: false,
+    imageSubTitle: "",
+    imageAmount: "",
+  });
+  const { data: depositInfo } = useGetHouseDepositInfo(connectedWalletAddress);
+  useEffect(() => {
+    if (!connectedWalletAddress) {
+      setModalData((prev) => ({
+        ...prev,
+        imageWarning: true,
+        imageSubTitle: "pls connect your wallet",
+      }));
+    } else {
+      // if(depositInfo.){
+      // }
+    }
+  }, [connectedWalletAddress, depositInfo]);
+  const { imageSubTitle, imageWarning, title } = modalData;
+  const handleResignClicked = () => {
+    onOpen();
+  };
+  return (
+    <>
+      <DefaultBox alignSelf={"flex-start"}>
+        <Box as="span" flex="1" textAlign="left">
+          <Text fontWeight={"bold"} mb={"2"}>
+            Resignation
+          </Text>
+          <Text fontSize={"sm"} mb={"2"}>
+            As the People’s House, you can add fund anytime to Treasury, and
+            request to claim your deposit back
+          </Text>
+        </Box>
+        {connectedWalletAddress ? (
+          <>
+            <Box w={"full"} mb={"2"}>
+              <ViewGrantProposalType
+                data={new Uint8Array()}
+                to={connectedWalletAddress}
+                value={BigInt("10")}
+              />
+            </Box>
+            <Box w={"full"} mb={"2"}>
+              <WalletAuthorizedButton
+                w={"full"}
+                variant={"outline"}
+                onClick={handleResignClicked}
+              >
+                Resign
+              </WalletAuthorizedButton>
+            </Box>
+            <Box w={"full"}>
+              <WalletAuthorizedButton w={"full"} variant={"outline"}>
+                Claim your withdrawal
+              </WalletAuthorizedButton>
+            </Box>
+          </>
+        ) : (
+          "Connect your wallet"
+        )}
+      </DefaultBox>
+
+      {isOpen && (
+        <Modal isOpen={isOpen} onClose={onClose} title={title}>
+          <HStack justifyContent={"center"}>
+            {imageWarning ? (
+              <Image src="/treasury-withdraw.svg" />
+            ) : (
+              <Image src="/treasury-withdraw-warning.svg" />
+            )}
+            <Text>{imageSubTitle}</Text>
+          </HStack>
+
+          <Box w={"full"}>
+            <DefaultButton w={"full"} variant={"outline"}>
+              Cancel
+            </DefaultButton>
+          </Box>
+        </Modal>
+      )}
     </>
   );
 };

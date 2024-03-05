@@ -16,7 +16,6 @@ function useIsMasterNodeDelegatee(member: string) {
       .isMasterNodeDelegatee(member)
       .then((data) => {
         setIsLoading(false);
-        console.log(data);
 
         setisMasterNodeDelegatee(data);
       })

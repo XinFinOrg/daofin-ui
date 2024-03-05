@@ -36,7 +36,12 @@ import {
 } from "@chakra-ui/react";
 import ProposalTypeBadge from "./ProposalTypeBadge";
 import { IoShareSocial } from "react-icons/io5";
-import { CopyIcon, InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
+import {
+  ArrowForwardIcon,
+  CopyIcon,
+  InfoOutlineIcon,
+  TimeIcon,
+} from "@chakra-ui/icons";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 
 import VotingStatsBox from "./VotingStatsBox";
@@ -58,7 +63,11 @@ import { NoProposalIcon } from "../utils/assets/icons/NoProposalIcon";
 import { Formik } from "formik";
 import { useVoteContext } from "../contexts/voteContext";
 import { DefaultBox } from "./Box";
-import { WalletAuthorizedButton } from "./Button/AuthorizedButton";
+import {
+  ExecuteProposalButton,
+  VoteButton,
+  WalletAuthorizedButton,
+} from "./Button/AuthorizedButton";
 import { useExecuteProposalContext } from "../contexts/ExecuteProposalContext";
 import ViewGrantProposalType from "./actions/views/ViewGrantProposalType";
 import useFetchProposalStatus, {
@@ -66,12 +75,15 @@ import useFetchProposalStatus, {
 } from "../hooks/useFetchProposalStatus";
 import { DefaultButton } from "./Button";
 import { ExpandableText } from "./ExpandableText";
+import useIsUserVotedOnProposal from "../hooks/useIsUserVotedOnProposal";
+import { useWallet } from "../hooks/useWallet";
 
 const ProposalDetails: FC<{
   proposal: Proposal | undefined;
   isLoading: boolean;
 }> = ({ proposal, isLoading }) => {
   const { network } = useNetwork();
+  const { address } = useWallet();
   const { committeesListWithIcon } = useCommitteeUtils();
 
   const { handleToggleFormModal: onExecuteModalOpen } =
@@ -164,8 +176,39 @@ const ProposalDetails: FC<{
                       </Flex>
                     )}
 
-                    <Flex alignItems={"center"} w={["full", "full", "initial"]}>
-                      {proposal && !isLoading && proposalStatus?.isOpen ? (
+                    <Flex
+                      alignItems={"center"}
+                      gap={4}
+                      w={["full", "full", "initial"]}
+                    >
+                      {proposal && !isLoading && proposalStatus && (
+                        <>
+                          <VoteButton
+                            colorScheme="blue"
+                            w={"full"}
+                            status={proposalStatus}
+                            onClick={handleToggleFormModal}
+                            proposalId={proposal.pluginProposalId}
+                          >
+                            Vote Now
+                          </VoteButton>
+
+                          <Box>
+                            <ArrowForwardIcon />
+                          </Box>
+
+                          <ExecuteProposalButton
+                            status={proposalStatus}
+                            colorScheme="blue"
+                            w={"full"}
+                            onClick={onExecuteModalOpen}
+                          >
+                            Execute Now
+                          </ExecuteProposalButton>
+                        </>
+                      )}
+
+                      {/* {proposal && !isLoading && proposalStatus?.isOpen ? (
                         proposalStatus?.canExecute ? (
                           <WalletAuthorizedButton
                             colorScheme="blue"
@@ -175,13 +218,13 @@ const ProposalDetails: FC<{
                             Execute Now
                           </WalletAuthorizedButton>
                         ) : (
-                          <WalletAuthorizedButton
+                          <VoteButton
                             colorScheme="blue"
                             w={"full"}
                             onClick={handleToggleFormModal}
                           >
                             Vote Now
-                          </WalletAuthorizedButton>
+                          </VoteButton>
                         )
                       ) : proposalStatus?.executed ? (
                         <WalletAuthorizedButton isDisabled={true} w={"full"}>
@@ -191,7 +234,7 @@ const ProposalDetails: FC<{
                         <WalletAuthorizedButton isDisabled={true} w={"full"}>
                           Vote{" "}
                         </WalletAuthorizedButton>
-                      )}
+                      )} */}
 
                       {/* {proposal.executed && <CheckCircleIcon />} */}
                     </Flex>

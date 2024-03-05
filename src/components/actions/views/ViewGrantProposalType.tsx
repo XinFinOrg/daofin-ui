@@ -11,13 +11,18 @@ import { v4 as uuid } from "uuid";
 import { useAppGlobalConfig } from "../../../contexts/AppGlobalConfig";
 import { DaoAction } from "@xinfin/osx-client-common";
 import { DefaultAlert } from "../../Alerts";
-const ViewGrantProposalType: FC<DaoAction> = ({ data, to, value }) => {
+const ViewGrantProposalType: FC<DaoAction & { from?: string }> = ({
+  data,
+  to,
+  value,
+  from,
+}) => {
   const { network } = useNetwork();
   const { daoAddress } = useAppGlobalConfig();
   return (
     <>
       {
-        <VStack p={5} alignItems={"flex-start"} key={uuid()}>
+        <VStack alignItems={"flex-start"} key={uuid()}>
           <DefaultAlert
             fontWeight={"semibold"}
             width={"full"}
@@ -36,25 +41,24 @@ const ViewGrantProposalType: FC<DaoAction> = ({ data, to, value }) => {
               </Text>
             </HStack>
           </DefaultAlert>
-          <HStack justifyContent={"start"} w={"full"}
-          flexDirection={['column','column','row',]}>
+          <HStack
+            justifyContent={"start"}
+            w={"full"}
+            flexDirection={["column", "column", "row"]}
+          >
             <Box
               // bgColor={"blue.100"}
-              p={2}
+
               width={"full"}
               borderRadius={"md"}
               justifySelf={"stretch"}
             >
-              <WalletAddressCard sm address={daoAddress} />
+              <WalletAddressCard sm address={from ? from : daoAddress} />
             </Box>{" "}
             <Box>
               <ArrowForwardIcon />
             </Box>
-            <Box
-              p={2}
-              borderRadius={"md"}
-              width={"full"}
-            >
+            <Box borderRadius={"md"} width={"full"}>
               <WalletAddressCard sm address={to} />
             </Box>
           </HStack>

@@ -1,51 +1,23 @@
 import { DaoAction } from "@xinfin/osx-client-common";
-import React, {
-  ComponentType,
-  FC,
-  ReactElement,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import useDaoProposals from "../hooks/useDaoProposals";
-import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
+import { FC, ReactElement, useEffect, useState } from "react";
 import { Proposal, ProposalStatus } from "../utils/types";
-import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
-import { shortenAddress } from "../utils/networks";
-import { styled } from "styled-components";
+import { Box, Flex, Text } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
-import {
-  HStack,
-  VStack,
-  Badge,
-  Image,
-  Skeleton,
-  CircularProgress,
-  Progress,
-} from "@chakra-ui/react";
+import { HStack, Skeleton } from "@chakra-ui/react";
 import BaseTable from "./BaseTable";
 import ProposalTypeBadge from "./ProposalTypeBadge";
 import ProposalStatusBadge from "./ProposalStatusBadge";
-import { InfoIcon, InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
+import { InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
 import DefaultProgressBar from "./DefaultProgressBar";
-import MasterNodeDelegateeSenateIcon from "../utils/assets/icons/MasterNodeDelegateeSenateIcon";
-import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
-import PeopleHouseIcon from "../utils/assets/icons/PeopleHouseIcon";
+
 import { Link, useNavigate } from "react-router-dom";
 import Jazzicon from "react-jazzicon/dist/Jazzicon";
 import { jsNumberForAddress } from "react-jazzicon";
-import { zeroAddress } from "viem";
 import {
-  expirationDistance,
   proposalTimeStatus,
   toNormalDate,
   toStandardFormatString,
-  toStandardTimestamp,
 } from "../utils/date";
-import { IoIdCardOutline } from "react-icons/io5";
-import { NoProposalIcon } from "../utils/assets/icons/NoProposalIcon";
-import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
 import useVoteStats from "../hooks/useVoteStats";
 const jazzicon = require("@metamask/jazzicon");
 
@@ -84,34 +56,16 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
                   creationTxHash={creationTxHash}
                 />
               ),
-              threshold: (
-                <CommitteesSupportThresholdVoteStatsProgressBar
-                  proposalId={pluginProposalId}
-                  // data={committeesVotes?.map(({ supportThreshold, Icon }) => ({
-                  //   threshold: supportThreshold?.supportThresholdPercentage
-                  //     ? +supportThreshold?.supportThresholdPercentage
-                  //     : 0,
-                  //   Icon: Icon ? Icon : <></>,
-                  //   percentage: supportThreshold?.numberOfVotesPercentage
-                  //     ? +supportThreshold?.numberOfVotesPercentage
-                  //     : 0,
-                  // }))}
-                />
-              ),
-              quorum: (
-                <CommitteesMinParticipationVoteStatsProgressBar
-                  proposalId={pluginProposalId}
-                  // data={committeesVotes?.map(({ minParticipation, Icon }) => ({
-                  //   threshold: minParticipation?.minParticipationPercentage
-                  //     ? +minParticipation?.minParticipationPercentage
-                  //     : 0,
-                  //   Icon: Icon ? Icon : <></>,
-                  //   percentage: minParticipation?.numberOfVotesPercentage
-                  //     ? +minParticipation?.numberOfVotesPercentage
-                  //     : 0,
-                  // }))}
-                />
-              ),
+              // threshold: (
+              //   <CommitteesSupportThresholdVoteStatsProgressBar
+              //     proposalId={pluginProposalId}
+              //   />
+              // ),
+              // quorum: (
+              //   <CommitteesMinParticipationVoteStatsProgressBar
+              //     proposalId={pluginProposalId}
+              //   />
+              // ),
               action: (
                 <Button
                   variant={"outline"}
@@ -128,18 +82,18 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
             {
               label: "Proposals",
               accessor: "name",
-              w: "40%",
+              w: "80%",
             },
-            {
-              label: "Threshold",
-              accessor: "threshold",
-              w: "20%",
-            },
-            {
-              label: "Quorum",
-              accessor: "quorum",
-              w: "20%",
-            },
+            // {
+            //   label: "Threshold",
+            //   accessor: "threshold",
+            //   w: "20%",
+            // },
+            // {
+            //   label: "Quorum",
+            //   accessor: "quorum",
+            //   w: "20%",
+            // },
             {
               label: "",
               accessor: "action",

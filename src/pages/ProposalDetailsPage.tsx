@@ -36,7 +36,10 @@ const ProposalDetailsPage = () => {
       >
         {
           <ExecuteProposalProvider proposal={data}>
-            <VoteProvider proposalId={proposalId ? proposalId : ""}>
+            <VoteProvider
+              proposalId={proposalId ? proposalId : ""}
+              proposal={data}
+            >
               <ProposalDetails proposal={data} isLoading={isLoading} />
             </VoteProvider>
           </ExecuteProposalProvider>

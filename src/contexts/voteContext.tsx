@@ -11,11 +11,23 @@ import {
 import { VoteFormType } from "../pages/ProposalDetailsPage";
 import VoteFormModal from "../components/Modal/VoteFormModal";
 import { TransactionReviewModal } from "../components/Modal";
-import { TransactionState } from "../utils/types";
+import { Proposal, TransactionState } from "../utils/types";
 import { ModalActionButtonType } from "../components/Modal/TransactionReviewModal";
 import { useClient } from "../hooks/useClient";
 import { usePollGasFee } from "../hooks/usePollGasfee";
 import { VoteSteps } from "@xinfin/osx-daofin-sdk-client";
+import { useWallet } from "../hooks/useWallet";
+import useIsXDCValidatorCandidate from "../hooks/useIsXDCValidatorCandidate";
+import { zeroAddress } from "viem";
+import useIsMasterNodeDelegatee from "../hooks/useIsMasterNodeDelegatee";
+import useIsJudiciaryMember from "../hooks/useIsJudiciaryMember";
+import useIsUserDeposited from "../hooks/useIsUserDeposited";
+import useIsUserVotedOnProposal from "../hooks/useIsUserVotedOnProposal";
+import { useModal } from "./ModalContext";
+import useDaoElectionPeriods, {
+  useFindProposalElectionPeriod,
+} from "../hooks/useDaoElectionPeriods";
+import { toStandardTimestamp } from "../utils/date";
 
 interface VoteContextType {
   handleSendTx: () => void;
@@ -25,12 +37,14 @@ interface VoteContextType {
 const VoteContext = createContext<VoteContextType | null>(null);
 
 interface VoteProviderProps extends PropsWithChildren {
+  proposal: Proposal | undefined;
   proposalId: string;
 }
 
 export const VoteProvider: FC<VoteProviderProps> = ({
   children,
   proposalId,
+  proposal,
 }) => {
   const { isOpen, onToggle, onClose, onOpen } = useDisclosure();
   const {
@@ -67,9 +81,35 @@ export const VoteProvider: FC<VoteProviderProps> = ({
     shouldPoll
   );
 
+  const { address } = useWallet();
+
+  const isMasterNode = useIsXDCValidatorCandidate(
+    address ? address : zeroAddress
+  );
+  const isDelegatee = useIsMasterNodeDelegatee(address ? address : zeroAddress);
+  const isJury = useIsJudiciaryMember(address ? address : zeroAddress);
+
+  const isUserDeposited = useIsUserDeposited(address ? address : zeroAddress);
+
+  const isUserVoted = useIsUserVotedOnProposal(proposalId);
+
+  const { data, isActive } = useFindProposalElectionPeriod(proposal?.startDate);
+  const { displayModal } = useModal();
   const handleToggleFormModal = () => {
-    onOpen();
-    resetForm();
+    if (!address) displayModal("connect-wallet");
+    else if (isMasterNode) displayModal("not-mn");
+    else if (!(isDelegatee || isJury || isUserDeposited))
+      displayModal("not-voter");
+    else if (isUserVoted) displayModal("voted-already");
+    else if (isActive)
+      displayModal(
+        "waiting-to-start-election",
+        toStandardTimestamp(data?.startDate ? data?.startDate : 0)
+      );
+    else {
+      onOpen();
+      resetForm();
+    }
   };
   const handleSendTx = async () => {
     const iterator = daofinClient?.methods.vote(
