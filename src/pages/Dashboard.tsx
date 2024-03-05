@@ -1,22 +1,12 @@
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import DaoHeader from "../components/DaoHeader";
-import { styled } from "styled-components";
 import useDaoProposals from "../hooks/useDaoProposals";
-import { useClient } from "../hooks/useClient";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
-import PeoplesHouseDeposits from "../components/PeoplesHouseDeposits";
-import usePeoplesHouseDeposits from "../hooks/useDeposits";
 import {
   CHAIN_METADATA,
-  getPluginInstallationId,
   makeBlockScannerHashUrl,
-  shortenAddress,
   shortenTxHash,
 } from "../utils/networks";
 import { Box } from "@chakra-ui/layout";
-import ManageJudiciary from "../components/ManageJudiciary";
-import ManageMasterNodeDelegatee from "../components/ManageMasterNodeDelegatee";
-import WrongNetwork from "../components/WrongNetwork";
 
 import {
   Button,
@@ -26,7 +16,6 @@ import {
   Badge,
   HStack,
   Flex,
-  Container,
   useColorModeValue,
   Skeleton,
   IconButton,
@@ -34,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 import { Modal, Page } from "../components";
 import { v4 as uuid } from "uuid";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Proposals from "../components/Proposals";
 import CommunityCards from "../components/CommunityCards";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
@@ -49,10 +38,7 @@ import { zeroAddress } from "viem";
 import { IoBarChart } from "react-icons/io5";
 import useFetchDaoBalance from "../hooks/useFetchDaoBalance";
 import { weiBigNumberToFormattedNumber } from "../utils/numbers";
-import { fetchTokenPrice } from "../services/prices";
 import { useNetwork } from "../contexts/network";
-import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
-import CoinIcon from "../utils/assets/icons/CoinIcon";
 import { WalletAuthorizedButton } from "../components/Button/AuthorizedButton";
 import { DefaultBox } from "../components/Box";
 import AddFundButton, { AddFund } from "../components/Button/AddFundButton";

@@ -1,19 +1,15 @@
-import React, { FC, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import Modal, { ModalProps } from "./Modal";
 import {
   Alert,
   AlertDescription,
-  AlertDialogBody,
   Box,
   Button,
   CircularProgress,
   Flex,
-  Heading,
   Image,
   Text,
-  useDisclosure,
 } from "@chakra-ui/react";
-import GasEstimation from "../../utils/assets/icons/GasEstimation.png";
 import { XdcIcon } from "../../utils/assets/icons/XdcIcon";
 import {
   CheckCircleIcon,
@@ -90,7 +86,7 @@ const TransactionReviewModal = <T extends any | undefined>({
       {status === TransactionState.LOADING && (
         <Box>
           <Box mb={4}>
-            <Image src={GasEstimation}></Image>
+            <Image src={'GasEstimation.png'}></Image>
           </Box>
           <DefaultBox p={"4"} mb={4}>
             <Flex flexDirection={"column"}>

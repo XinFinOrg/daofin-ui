@@ -1,9 +1,6 @@
-import { HStack, Text, VStack } from "@chakra-ui/react";
-import { ConnectButton, useConnectModal } from "@rainbow-me/rainbowkit";
-import React, { FC } from "react";
+import { Text, VStack } from "@chakra-ui/react";
+import { FC } from "react";
 import { DefaultButton } from "../Button";
-import { useWalletConnectors } from "@rainbow-me/rainbowkit/dist/wallets/useWalletConnectors";
-import { Link } from "react-router-dom";
 import { appFormatDistance, toDate } from "../../utils/date";
 
 const WaitingForElectionToStartModalContent: FC<{

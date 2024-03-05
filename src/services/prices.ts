@@ -9,7 +9,7 @@ import { isNativeToken } from "../utils/tokens";
 export async function fetchTokenPrice(
   address: string,
   network: SupportedNetworks,
-  symbol?: string
+  _?: string
 ): Promise<number | undefined> {
   // check if token address is address zero, ie, native token of platform
   const nativeToken = isNativeToken(address);

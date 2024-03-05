@@ -12,9 +12,9 @@ export type AppGlobalConfigContextType = {
   pluginRepoAddress: string;
 };
 const initialState = {
-  daoAddress: process.env.REACT_APP_DAOFIN_DAO_ADDRESS as string,
-  pluginAddress: process.env.REACT_APP_DAOFIN_PLUGIN_ADDRESS as string,
-  pluginRepoAddress: process.env.REACT_APP_DAOFIN_PLUGIN_REPO_ADDRESS as string,
+  daoAddress: import.meta.env.VITE_DAOFIN_DAO_ADDRESS as string,
+  pluginAddress: import.meta.env.VITE_DAOFIN_PLUGIN_ADDRESS as string,
+  pluginRepoAddress: import.meta.env.VITE_DAOFIN_PLUGIN_REPO_ADDRESS as string,
 };
 const AppGlobalConfigContext =
   createContext<AppGlobalConfigContextType>(initialState);

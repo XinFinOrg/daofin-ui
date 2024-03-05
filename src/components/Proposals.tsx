@@ -1,4 +1,3 @@
-import { DaoAction } from "@xinfin/osx-client-common";
 import { FC, ReactElement, useEffect, useState } from "react";
 import { Proposal, ProposalStatus } from "../utils/types";
 import { Box, Flex, Text } from "@chakra-ui/layout";
@@ -19,11 +18,9 @@ import {
   toStandardFormatString,
 } from "../utils/date";
 import useVoteStats from "../hooks/useVoteStats";
-const jazzicon = require("@metamask/jazzicon");
 
 const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
   const navigate = useNavigate();
-
   return (
     <>
       {
@@ -38,7 +35,6 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
               endDate,
               startDate,
               creationTxHash,
-              committeesVotes,
             }) => ({
               name: (
                 <ProposalSummary
@@ -123,9 +119,6 @@ const ProposalSummary: FC<ProposalSummaryProps> = ({
   publishedDate,
   proposalId,
   status,
-  creatorAddress,
-  startDate,
-  endDate,
   creationTxHash,
 }) => {
   return (

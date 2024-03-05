@@ -1,9 +1,8 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { Proposal } from "../utils/types";
 import {
   Box,
   Flex,
-  Heading,
   Text,
   Badge,
   Grid,
@@ -11,18 +10,11 @@ import {
   HStack,
   VStack,
 } from "@chakra-ui/layout";
-import {
-  CHAIN_METADATA,
-  JudiciaryCommittee,
-  MasterNodeCommittee,
-  PeoplesHouseCommittee,
-  makeBlockScannerHashUrl,
-  shortenAddress,
-} from "../utils/networks";
+import { makeBlockScannerHashUrl, shortenAddress } from "../utils/networks";
 
 import { useNetwork } from "../contexts/network";
 
-import { Button, IconButton } from "@chakra-ui/button";
+import { Button } from "@chakra-ui/button";
 import {
   Skeleton,
   Tab,
@@ -30,60 +22,38 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  Tag,
-  useClipboard,
-  useSteps,
 } from "@chakra-ui/react";
 import ProposalTypeBadge from "./ProposalTypeBadge";
 import { IoShareSocial } from "react-icons/io5";
-import {
-  ArrowForwardIcon,
-  CopyIcon,
-  InfoOutlineIcon,
-  TimeIcon,
-} from "@chakra-ui/icons";
+import { ArrowForwardIcon, InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 
 import VotingStatsBox from "./VotingStatsBox";
 import { BlockIcon } from "../utils/assets/icons";
 import ProposalStatusStepper from "./ProposalStatusStepper";
-import {
-  WalletAddressCard,
-  WalletAddressCardWithBalance,
-} from "./WalletAddressCard";
+import { WalletAddressCard } from "./WalletAddressCard";
 import {
   timestampToStandardFormatString,
   toStandardTimestamp,
 } from "../utils/date";
-import useVoteStats from "../hooks/useVoteStats";
 import useFetchVotersOnProposal from "../hooks/useFetchVotersOnProposal";
-import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
 import { NoProposalIcon } from "../utils/assets/icons/NoProposalIcon";
-import { Formik } from "formik";
 import { useVoteContext } from "../contexts/voteContext";
 import { DefaultBox } from "./Box";
-import {
-  ExecuteProposalButton,
-  VoteButton,
-  WalletAuthorizedButton,
-} from "./Button/AuthorizedButton";
+import { ExecuteProposalButton, VoteButton } from "./Button/AuthorizedButton";
 import { useExecuteProposalContext } from "../contexts/ExecuteProposalContext";
 import ViewGrantProposalType from "./actions/views/ViewGrantProposalType";
 import useFetchProposalStatus, {
   FetchProposalStatusType,
 } from "../hooks/useFetchProposalStatus";
-import { DefaultButton } from "./Button";
 import { ExpandableText } from "./ExpandableText";
-import useIsUserVotedOnProposal from "../hooks/useIsUserVotedOnProposal";
-import { useWallet } from "../hooks/useWallet";
 
 const ProposalDetails: FC<{
   proposal: Proposal | undefined;
   isLoading: boolean;
 }> = ({ proposal, isLoading }) => {
   const { network } = useNetwork();
-  const { address } = useWallet();
   const { committeesListWithIcon } = useCommitteeUtils();
 
   const { handleToggleFormModal: onExecuteModalOpen } =
@@ -337,7 +307,7 @@ const ProposalDetails: FC<{
                                 ))}
                               </TabList>
                               <TabPanels>
-                                {voteOptionsList.map(([key, value]) => (
+                                {voteOptionsList.map(([key,]) => (
                                   <TabPanel w={"full"} key={key}>
                                     <VStack spacing={"1"} alignItems={"start"}>
                                       {allVoters.filter(

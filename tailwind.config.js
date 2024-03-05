@@ -1,11 +1,7 @@
 module.exports = {
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-  ],
-  purge: [
-    './src/**/*.html',
-    './src/**/*.tsx',
-    './node_modules/@aragon/ods/**/*.cjs.js',
+    "./index.html",
+    './src/**/*.{html,js}',
   ],
   theme: {
     extend: {},

@@ -7,27 +7,13 @@ import {
   useColorModeValue,
   Stack,
   Text,
-  Heading,
   useColorMode,
-  // Switch,
   Image,
-  Spacer,
   Divider,
-  useBreakpoint,
   Switch,
 } from "@chakra-ui/react";
-import {
-  HamburgerIcon,
-  CloseIcon,
-  SunIcon,
-  MoonIcon,
-  InfoIcon,
-  BellIcon,
-} from "@chakra-ui/icons";
-import { Navigate } from "react-router";
+import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
-import WrongNetwork from "./WrongNetwork";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import {
   DashboardIcon,
@@ -38,10 +24,8 @@ import {
 import { useBlockNumber } from "wagmi";
 import { CHAIN_METADATA } from "../utils/networks";
 import { useNetwork } from "../contexts/network";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { XdcIcon } from "../utils/assets/icons/XdcIcon";
-import { fetchTokenPrice } from "../services/prices";
-import { constants } from "ethers";
 import { DefaultBox } from "./Box";
 import { useGlobalState } from "../contexts/GlobalStateContext";
 import { uuid } from "../utils/numbers";
@@ -173,7 +157,7 @@ export default function Header() {
             <HStack spacing={8} alignItems={"center"}>
               <Box ml={[0, 0, 0, "auto"]}>
                 <Link to={""}>
-                  <Image src="/logo1.svg" />
+                  <Image src="/logo.svg" />
                 </Link>
               </Box>
               <HStack

@@ -84,9 +84,9 @@ export const UseClientProvider: React.FC<PropsWithChildren> = ({
         url: `${CHAIN_METADATA[network].ipfs}/api/v0`,
         headers: {
           Authorization: `Basic ${Buffer.from(
-            process.env.REACT_APP_IPFS_API_KEY +
+            import.meta.env.VITE_IPFS_API_KEY +
               ":" +
-              process.env.REACT_APP_IPFS_API_SECRET
+              import.meta.env.VITE_IPFS_API_SECRET
           ).toString("base64")}`,
         },
       },
