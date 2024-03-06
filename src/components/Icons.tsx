@@ -1,4 +1,4 @@
-import React from "react";
+
 
 export const Bold = ({ size = 16, color = "currentColor" }) => (
   <svg

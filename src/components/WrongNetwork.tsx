@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useNetwork } from "../contexts/network";
 import { useWallet } from "../hooks/useWallet";
 import { Box, Text } from "@chakra-ui/react";
@@ -6,10 +6,6 @@ import { Box, Text } from "@chakra-ui/react";
 function WrongNetwork() {
   const { network } = useNetwork();
   const { isConnected } = useWallet();
-  // console.log(detemi);
-
-  console.log({ network });
-
   return (
     <>
       {isConnected && network === "unsupported" && (

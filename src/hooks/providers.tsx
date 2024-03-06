@@ -1,5 +1,4 @@
 import {
-  AlchemyProvider,
   InfuraProvider,
   JsonRpcProvider,
   Web3Provider,
@@ -21,8 +20,8 @@ import {
   translateToNetworkishName,
 } from "../utils/networks";
 
-const NW_ARB = { chainId: 42161, name: "arbitrum" };
-const NW_ARB_GOERLI = { chainId: 421613, name: "arbitrum-goerli" };
+// const NW_ARB = { chainId: 42161, name: "arbitrum" };
+// const NW_ARB_GOERLI = { chainId: 421613, name: "arbitrum-goerli" };
 
 /* CONTEXT PROVIDER ========================================================= */
 type Nullable<T> = T | null;
@@ -101,7 +100,7 @@ function getInfuraProvider(network: SupportedNetworks) {
 export function getJsonRpcProvider(
   network: SupportedNetworks
 ): JsonRpcProvider {
-  const translatedNetwork = translateToNetworkishName(network);
+  // const translatedNetwork = translateToNetworkishName(network);
   return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0]);
 }
 /**

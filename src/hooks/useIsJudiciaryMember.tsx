@@ -16,8 +16,7 @@ function useIsJudiciaryMember(member: string) {
       .isJudiciaryMember(member)
       .then((data) => {
         setIsLoading(false);
-        console.log(data);
-        
+
         setIsJudiciaryMember(data);
       })
       .catch((e) => {

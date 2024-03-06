@@ -2,20 +2,14 @@ import {
   SupportedNetwork as SdkSupportedNetworks,
   Context as SdkContext,
 } from "@xinfin/osx-client-common";
-import {
-  format,
-  formatDistance,
-  formatDistanceToNow,
-  formatRelative,
-  Locale,
-} from "date-fns";
-import { bytesToHex, resolveIpfsCid } from "@aragon/sdk-common";
-import { DaofinDetails, VoteOption } from "@xinfin/osx-daofin-sdk-client";
-import { Client, VoteValues } from "@xinfin/osx-sdk-client";
+import { format, formatRelative } from "date-fns";
+import { resolveIpfsCid } from "@aragon/sdk-common";
+import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
+import { Client } from "@xinfin/osx-sdk-client";
 import { isAddress } from "@ethersproject/address";
 import { ethers } from "ethers";
 import { defaultAbiCoder } from "@ethersproject/abi";
-import { BigNumber,BigNumberish } from "@ethersproject/bignumber";
+import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
 export const SUPPORTED_CHAIN_ID = [
   1, 5, 137, 80001, 42161, 421613, 50, 51,
 ] as const;
@@ -93,9 +87,9 @@ export const CHAIN_METADATA: ChainList = {
     etherscanApi: "https://apothem.xdcscan.io/api",
     etherscanApiKey: "",
     supportsEns: true,
-    ipfs: process.env.REACT_APP_IPFS_API_URL,
-    daofinSubgraph: process.env.REACT_APP_APOTHEM_DAOFIN_SUB_GRAPH_URL || "",
-    osxSubgraph: process.env.REACT_APP_APOTHEM_OSX_SUB_GRAPH_URL || "",
+    ipfs: import.meta.env.VITE_IPFS_API_URL,
+    daofinSubgraph: import.meta.env.VITE_APOTHEM_DAOFIN_SUB_GRAPH_URL || "",
+    osxSubgraph: import.meta.env.VITE_APOTHEM_OSX_SUB_GRAPH_URL || "",
   },
   xdc: {
     id: 50,
@@ -114,9 +108,9 @@ export const CHAIN_METADATA: ChainList = {
     etherscanApi: "https://xdc.xdcscan.io/api",
     etherscanApiKey: "",
     supportsEns: false,
-    ipfs: process.env.REACT_APP_IPFS_API_URL,
-    daofinSubgraph: process.env.REACT_APP_XDC_DAOFIN_SUB_GRAPH_URL || "",
-    osxSubgraph: process.env.REACT_APP_XDC_OSX_SUB_GRAPH_URL || "",
+    ipfs: import.meta.env.VITE_IPFS_API_URL,
+    daofinSubgraph: import.meta.env.VITE_XDC_DAOFIN_SUB_GRAPH_URL || "",
+    osxSubgraph: import.meta.env.VITE_XDC_OSX_SUB_GRAPH_URL || "",
   },
   unsupported: {
     id: 1,
@@ -210,7 +204,7 @@ export function toDisplayEns(ensName?: string) {
   if (!ensName.includes(".dao.eth")) return `${ensName}.dao.eth`;
   return ensName;
 }
-type SubgraphNetworkUrl = Record<SupportedNetworks, string | undefined>;
+// type SubgraphNetworkUrl = Record<SupportedNetworks, string | undefined>;
 
 // export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
 //   xdc: undefined,
@@ -440,4 +434,30 @@ export function applyRatioCeiled(
   }
 
   return result;
+}
+export const BASE_URL = "https://api.coingecko.com/api/v3";
+export const DEFAULT_CURRENCY = "usd";
+
+// Coingecko Api specific asset platform keys
+export const ASSET_PLATFORMS: Record<SupportedNetworks, string | null> = {
+  xdc: null,
+  apothem: null,
+  unsupported: null,
+};
+
+export const NATIVE_TOKEN_ID = {
+  default: "xdce-crowd-sale",
+};
+
+export function makeBlockScannerHashUrl(
+  network: SupportedNetworks,
+  hash: string
+) {
+  return `${CHAIN_METADATA[network].explorer}/txs/${hash}`;
+}
+export function makeBlockScannerAddressUrl(
+  network: SupportedNetworks,
+  address: string
+) {
+  return `${CHAIN_METADATA[network].explorer}/address/${address}`;
 }

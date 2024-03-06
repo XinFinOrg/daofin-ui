@@ -1,14 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useClient } from "./useClient";
-import { useNetwork } from "../contexts/network";
-import { GlobalSettings } from "@xinfin/osx-daofin-sdk-client";
-import { ProposalsQuery } from "@xinfin/osx-daofin-sdk-client/dist/internal/graphql-queries/proposals";
-import { BigNumber, ethers } from "ethers";
 import { getPluginInstallationId } from "../utils/networks";
-import { ProposalBase, ProposalMetadata } from "@xinfin/osx-client-common";
-import { Judiciary, MasterNodeDelegatee, Proposal } from "../utils/types";
-import { SubgraphProposalBase } from "@xinfin/osx-daofin-sdk-client";
-import { resolveIpfsCid } from "@xinfin/osx-sdk-common";
+import {  MasterNodeDelegatee,  } from "../utils/types";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 const PluginMasterNodeDelegateesQueries = `
 query QuerypluginMasterNodeDelegatees($pluginId: ID!) {
   pluginMasterNodeDelegatees(where:{ plugin: $pluginId }) {
@@ -23,13 +17,17 @@ query QuerypluginMasterNodeDelegatees($pluginId: ID!) {
 }
 `;
 
-function useFetchMasterNodeDelegatee(
-  daoAddress: string,
-  pluginAddress: string
-): { data: MasterNodeDelegatee[]; error: string; isLoading: boolean } {
+function useFetchMasterNodeDelegatee(): {
+  data: MasterNodeDelegatee[];
+  error: string;
+  isLoading: boolean;
+} {
+  const { daoAddress, pluginAddress } = useAppGlobalConfig();
   const { daofinClient } = useClient();
 
-  const [masterNodeDelegatees, setMasterNodeDelegatees] = useState<MasterNodeDelegatee[]>([]);
+  const [masterNodeDelegatees, setMasterNodeDelegatees] = useState<
+    MasterNodeDelegatee[]
+  >([]);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const pluginId = getPluginInstallationId(daoAddress, pluginAddress);
@@ -45,6 +43,7 @@ function useFetchMasterNodeDelegatee(
         },
       })
       .then((data) => {
+        setIsLoading(false);
         setMasterNodeDelegatees(
           data.pluginMasterNodeDelegatees as unknown as MasterNodeDelegatee[]
         );

@@ -1,34 +1,28 @@
-import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import { Web3Button, useWeb3Modal } from "@web3modal/react";
-import { useAccount } from "wagmi";
 import Header from "./components/Header";
-import { useClient } from "./hooks/useClient";
-import { useDaoQuery } from "./hooks/useDaoDetails";
-import DaoHeader from "./components/DaoHeader";
-import DaofinSettingsCard from "./components/DaofinSettingsCard";
-import { styled } from "styled-components";
 import CreateProposal from "./pages/CreateProposal";
-import Tiptap from "./components/Tiptap";
 import { Route, Routes } from "react-router";
 import Dashboard from "./pages/Dashboard";
 import ProposalsPage from "./pages/ProposalsPage";
 import ProposalDetailsPage from "./pages/ProposalDetailsPage";
 import JudiciaryPage from "./pages/JudiciaryPage";
-import CommitteesPage from "./pages/CommitteesPage";
 import PeoplesHousePage from "./pages/PeoplesHousePage";
 import MasterNodeDelegatePage from "./pages/MasterNodeDelegatePage";
+import { Box, useColorModeValue } from "@chakra-ui/react";
+import CommunityPage from "./pages/CommunityPage";
+import TreasuryPage from "./pages/TreasuryPage";
+import Footer from "./components/Footer";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
-    <div className="App">
+    <Box bgColor={useColorModeValue("#FFF", "#19262e")}>
       <Header />
+      {/* <RouterProvider router={router} /> */}
       <Routes>
         <Route path="/" element={<Dashboard />} />
       </Routes>
       <Routes>
-        <Route path="/create" element={<CreateProposal />} />
+        <Route path="/create/:type" element={<CreateProposal />} />
       </Routes>
       <Routes>
         <Route path="/proposals">
@@ -39,20 +33,31 @@ function App() {
           />
         </Route>
 
-        <Route path="/committees">
-          <Route path="/committees" element={<CommitteesPage />} />
-          <Route path="/committees/judiciaries" element={<JudiciaryPage />} />
+        <Route path="/community">
+          <Route path="/community" element={<CommunityPage />} />
+          <Route path="/community/judiciary" element={<JudiciaryPage />} />
           <Route
-            path="/committees/peoples-house"
+            path="/community/peoples-house"
             element={<PeoplesHousePage />}
           />
           <Route
-            path="/committees/master-node-delegatee"
+            path="/community/masternode-delegatee-senate"
             element={<MasterNodeDelegatePage />}
           />
         </Route>
+        <Route path="/treasury">
+          <Route path="/treasury" element={<TreasuryPage />} />
+        </Route>
       </Routes>
-    </div>
+      <Routes>
+        <Route path="/not-found">
+          <Route path="/not-found" element={<NotFoundPage />} />
+        </Route>
+      </Routes>
+      <Box p={5}>
+        <Footer />
+      </Box>
+    </Box>
   );
 }
 

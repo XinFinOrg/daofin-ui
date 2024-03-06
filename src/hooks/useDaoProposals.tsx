@@ -1,13 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useClient } from "./useClient";
-import { useNetwork } from "../contexts/network";
-import { GlobalSettings } from "@xinfin/osx-daofin-sdk-client";
-import { ProposalsQuery } from "@xinfin/osx-daofin-sdk-client/dist/internal/graphql-queries/proposals";
-import { ethers } from "ethers";
 import { getPluginInstallationId } from "../utils/networks";
-import { ProposalBase, ProposalMetadata } from "@xinfin/osx-client-common";
+import { ProposalMetadata } from "@xinfin/osx-client-common";
 import { Proposal } from "../utils/types";
-import { SubgraphProposalBase } from "@xinfin/osx-daofin-sdk-client";
 import { resolveIpfsCid } from "@xinfin/osx-sdk-common";
 const ProposalsQueries = `
 query ProposalsQuery($pluginId: ID!) {
@@ -22,6 +17,12 @@ query ProposalsQuery($pluginId: ID!) {
     creationBlockNumber
     snapshotBlock
     executed
+    createdAt
+    executionTxHash
+    executionBlockNumber
+    executionDate
+    executedBy
+    creationTxHash
     actions {
       id
       to
@@ -34,6 +35,21 @@ query ProposalsQuery($pluginId: ID!) {
   }
 }
 `;
+
+export type SubgraphProposalBase = {
+  id: string;
+  dao: {
+    id: string;
+  };
+  creator: string;
+  metadata: string;
+  startDate: string;
+  endDate: string;
+  createdAt: string;
+  executed: boolean;
+  pluginProposalId: string;
+  potentiallyExecutable: boolean;
+};
 function useDaoProposals(
   daoAddress: string,
   pluginAddress: string
@@ -62,16 +78,18 @@ function useDaoProposals(
               metadataCid
             );
             const metadata = JSON.parse(metadataString) as ProposalMetadata;
+
             return {
               ...item,
               metadata,
+              // committeesVotes: [...stats],
             };
           })
-        )
+        );
       })
       .then((data) => {
-
         setProposals(data as unknown as Proposal[]);
+        setIsLoading(false);
       })
       .catch((e) => {
         setIsLoading(false);

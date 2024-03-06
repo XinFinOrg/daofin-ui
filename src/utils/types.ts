@@ -1,6 +1,10 @@
 import { DaoAction, ProposalMetadata } from "@xinfin/osx-client-common";
-import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
+import {
+  CommitteeVotingSettings,
+  VoteOption,
+} from "@xinfin/osx-daofin-sdk-client";
 import { BigNumberish } from "ethers";
+import { VoteStatsType } from "../hooks/useVoteStats";
 
 export type Proposal = {
   id: string;
@@ -15,12 +19,32 @@ export type Proposal = {
   executed: boolean;
   potentiallyExecutable: boolean;
   actions: DaoAction[];
+  createdAt: string;
+  executionTxHash: string;
+  executionBlockNumber: string;
+  executionDate: number;
+  creationTxHash: string;
+  executedBy: string;
+  proposalType: {
+    id: string;
+    txHash: string;
+    settings: {
+      id: string;
+      supportThreshold: string;
+      minParticipation: string;
+      minVotingPower: string;
+    };
+  };
+  committeesVotes: VoteStatsType[];
+  electionIndex: string;
 };
 export type Deposit = {
   id: string;
   voter: string;
   amount: string;
   snapshotBlock: number;
+  depositDate: number;
+  txHash: string;
 };
 export type Judiciary = {
   id: string;
@@ -57,3 +81,30 @@ export type VoterOnProposal = {
   creationDate: BigNumberish;
   snapshotBlock: BigNumberish;
 };
+
+export type ProposalType = {
+  id: string;
+  txHash: string;
+  proposalTypeId: string;
+  creationDate: BigNumberish;
+  settings: CommitteeVotingSettings[];
+};
+export enum ProposalTypeEnum {
+  Grant = 0,
+  NewProposalType = 1,
+  UpdateSettings = 2,
+  UpdateElectionPeriods = 3,
+  UpdateJudiciary = 4,
+  UpdateProposalCosts = 5,
+}
+export enum ProposalStatus {
+  ACTIVE = "Active",
+  PUBLISHED = "Published",
+  PENDING = "Pending",
+  SUCCEEDED = "Succeeded",
+  EXECUTED = "Executed",
+  DEFEATED = "Defeated",
+  REACHED = "Reached",
+  NOT_STARTED = "Not Started",
+  EXPIRED = "Expired",
+}
