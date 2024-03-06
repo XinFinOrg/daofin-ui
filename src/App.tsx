@@ -5,60 +5,14 @@ import Dashboard from "./pages/Dashboard";
 import ProposalsPage from "./pages/ProposalsPage";
 import ProposalDetailsPage from "./pages/ProposalDetailsPage";
 import JudiciaryPage from "./pages/JudiciaryPage";
-import CommitteesPage from "./pages/CommunityPage";
 import PeoplesHousePage from "./pages/PeoplesHousePage";
 import MasterNodeDelegatePage from "./pages/MasterNodeDelegatePage";
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import CommunityPage from "./pages/CommunityPage";
 import TreasuryPage from "./pages/TreasuryPage";
 import Footer from "./components/Footer";
-import { ScrollRestoration, createBrowserRouter } from "react-router-dom";
-import { useEffect } from "react";
 import NotFoundPage from "./pages/NotFoundPage";
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Dashboard />,
-  },
-  {
-    path: "/create/:type",
-    element: <CreateProposal />,
-  },
-  {
-    path: "/proposals",
-    children: [
-      {
-        path: "/proposals",
-        element: <ProposalsPage />,
-      },
-      {
-        path: "/proposals/:proposalId/details",
-        element: <ProposalDetailsPage />,
-      },
-    ],
-  },
-  {
-    path: "/community",
-    children: [
-      {
-        path: "/community",
-        element: <CommunityPage />,
-      },
-      {
-        path: "/community/judiciary",
-        element: <JudiciaryPage />,
-      },
-      {
-        path: "/community/peoples-house",
-        element: <PeoplesHousePage />,
-      },
-      {
-        path: "/community/masternode-delegatee-senate",
-        element: <MasterNodeDelegatePage />,
-      },
-    ],
-  },
-]);
+
 function App() {
   return (
     <Box bgColor={useColorModeValue("#FFF", "#19262e")}>

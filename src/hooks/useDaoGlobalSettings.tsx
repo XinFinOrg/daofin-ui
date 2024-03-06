@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useClient } from "./useClient";
-import { useNetwork } from "../contexts/network";
 import { GlobalSettings } from "@xinfin/osx-daofin-sdk-client";
 
 function useDaoGlobalSettings(): {
@@ -9,9 +8,8 @@ function useDaoGlobalSettings(): {
   isLoading: boolean;
 } {
   const [globalSettings, setGlobalSettings] = useState<GlobalSettings>();
-  const { daofinClient, client } = useClient();
-  const { network } = useNetwork();
-  const [error, setError] = useState<string>("");
+  const { daofinClient } = useClient();
+  const [error] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -20,11 +18,11 @@ function useDaoGlobalSettings(): {
 
     daofinClient.methods
       .getGlobalSettings()
-      .then((data) => {
+      .then((data: GlobalSettings) => {
         setIsLoading(false);
         setGlobalSettings(data as GlobalSettings);
       })
-      .catch((e) => {
+      .catch((e: any) => {
         setIsLoading(false);
         console.log("error", e);
       });

@@ -1,13 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useClient } from "./useClient";
-import { useNetwork } from "../contexts/network";
-import { da } from "date-fns/locale";
 function useIsXDCValidatorCandidate(member: string) {
   const [isXDCValidatorCandidate, setIsXDCValidatorCandidate] =
     useState<boolean>();
   const { daofinClient } = useClient();
-  const [error, setError] = useState<Error>();
-  const [isLoading, setIsLoading] = useState(false);
+  // const [error, setError] = useState<Error>();
+  const [, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!daofinClient || !member) return;
@@ -15,13 +13,13 @@ function useIsXDCValidatorCandidate(member: string) {
 
     daofinClient.methods
       .isXDCValidatorCadidate(member)
-      .then((data) => {
+      .then((data: boolean) => {
         setIsLoading(false);
         console.log(data);
 
         setIsXDCValidatorCandidate(data);
       })
-      .catch((e) => {
+      .catch((e: any) => {
         setIsLoading(false);
         console.log("error", e);
       });

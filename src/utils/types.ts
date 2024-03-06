@@ -5,7 +5,6 @@ import {
 } from "@xinfin/osx-daofin-sdk-client";
 import { BigNumberish } from "ethers";
 import { VoteStatsType } from "../hooks/useVoteStats";
-import { CommitteeGlobal } from "../hooks/useCommitteeUtils";
 
 export type Proposal = {
   id: string;

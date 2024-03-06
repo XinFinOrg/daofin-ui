@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Page } from "../components";
 import { DefaultBox } from "../components/Box";
 import { Box, Image, Text, VStack } from "@chakra-ui/react";

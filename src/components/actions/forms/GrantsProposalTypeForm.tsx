@@ -1,13 +1,13 @@
-import { Box, FormControl, useClipboard } from "@chakra-ui/react";
+import { Box,  } from "@chakra-ui/react";
 import { Form, useFormikContext } from "formik";
-import React from "react";
+
 import { DefaultInput } from "../..";
 import { CHAIN_METADATA } from "../../../utils/networks";
 import { useNetwork } from "../../../contexts/network";
 import { CreateProposalFormData } from "../../../pages/CreateProposal";
 
 const GrantsProposalTypeForm = () => {
-  const { values, setFieldValue } = useFormikContext<CreateProposalFormData>();
+  const {  setFieldValue } = useFormikContext<CreateProposalFormData>();
   const { network } = useNetwork();
   return (
     <Box>

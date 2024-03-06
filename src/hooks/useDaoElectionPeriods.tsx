@@ -1,15 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useClient } from "./useClient";
-import { useNetwork } from "../contexts/network";
-import { GlobalSettings } from "@xinfin/osx-daofin-sdk-client";
-import { DaofinPlugin } from "@xinfin/osx-daofin-contracts-ethers";
-import { toDate, toStandardTimestamp } from "../utils/date";
+import { toStandardTimestamp } from "../utils/date";
 export type ElectionPeriod = { startDate: number; endDate: number; id: string };
 function useDaoElectionPeriods() {
   const [electionPeriods, setElectionPeriods] = useState<ElectionPeriod[]>();
-  const { daofinClient, client } = useClient();
-  const { network } = useNetwork();
-  const [error, setError] = useState<Error>();
+  const { daofinClient } = useClient();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -18,7 +13,7 @@ function useDaoElectionPeriods() {
 
     daofinClient.methods
       .getElectionPeriods()
-      .then((data) => {
+      .then((data: ElectionPeriod[]) => {
         const modifiedData = data.map((item, index) => ({
           ...item,
           id: `${index}`,
@@ -28,7 +23,7 @@ function useDaoElectionPeriods() {
         setElectionPeriods(modifiedData as unknown as ElectionPeriod[]);
         setIsLoading(false);
       })
-      .catch((e) => {
+      .catch((e: any) => {
         setIsLoading(false);
         console.log("error", e);
       });

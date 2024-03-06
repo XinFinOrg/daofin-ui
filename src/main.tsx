@@ -1,4 +1,4 @@
-import React from "react";
+
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import "./utils/assets/inter-regular.ttf";
@@ -8,18 +8,18 @@ import WagmiProvider from "./providers/WagmiProvider";
 import { WalletMenuProvider } from "./contexts/walletMenu";
 import { UseClientProvider } from "./hooks/useClient";
 import { ProvidersProvider } from "./hooks/providers";
-import { HashRouter } from "react-router-dom";
 import { QueryClient } from "@tanstack/query-core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ApolloProvider } from "@apollo/client";
 import { apothemTestClient, client } from "./contexts/apolloClient";
 import { ChakraProvider } from "@chakra-ui/react";
-import { Route, HashRouter as Router } from "react-router-dom";
+import {  HashRouter as Router } from "react-router-dom";
 import { AppGlobalConfigProvider } from "./contexts/AppGlobalConfig";
 import { NetworkProvider } from "./contexts/network";
 import { theme } from "./utils/theme";
 import { GlobalStateProvider } from "./contexts/GlobalStateContext";
 import { ModalProvider } from "./contexts/ModalContext";
+import React from "react";
 
 // import 'tailwindcss/tailwind.css';
 const root = ReactDOM.createRoot(

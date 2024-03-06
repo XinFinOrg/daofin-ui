@@ -1,5 +1,4 @@
-import React, { FC } from "react";
-import { Proposal } from "../../../utils/types";
+import  { FC } from "react";
 import { Box, HStack, Text, VStack } from "@chakra-ui/react";
 import { XdcIcon } from "../../../utils/assets/icons/XdcIcon";
 import { weiBigNumberToFormattedNumber } from "../../../utils/numbers";
@@ -12,7 +11,7 @@ import { useAppGlobalConfig } from "../../../contexts/AppGlobalConfig";
 import { DaoAction } from "@xinfin/osx-client-common";
 import { DefaultAlert } from "../../Alerts";
 const ViewGrantProposalType: FC<DaoAction & { from?: string }> = ({
-  data,
+  
   to,
   value,
   from,

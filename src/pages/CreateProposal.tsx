@@ -1,58 +1,9 @@
-import { DaoAction, ProposalMetadata } from "@xinfin/osx-client-common";
-
-import { styled } from "styled-components";
-import { useClient } from "../hooks/useClient";
-import { v4 as uuid } from "uuid";
-import CreateMetaData from "../components/CreateProposalStepper/CreateMetaData";
-
 import CreateProposalStepper from "../components/CreateProposalStepper/CreateProposalStepper";
-import { ProposalCreationSteps } from "@xinfin/osx-sdk-client";
 
-import { useDisclosure } from "@chakra-ui/hooks";
-import Modal from "../components/Modal/Modal";
-import { Box, Flex, Text } from "@chakra-ui/layout";
-import { Progress } from "@chakra-ui/progress";
-import { useState } from "react";
-import { TransactionState } from "../utils/types";
-import { decodeProposalId } from "@xinfin/osx-sdk-common";
-import { CheckCircleIcon } from "@chakra-ui/icons";
-import { Button } from "@chakra-ui/button";
-import { useNavigate, useParams } from "react-router";
-import { Link } from "react-router-dom";
-import {
-  CHAIN_METADATA,
-  shortenAddress,
-  shortenTxHash,
-} from "../utils/networks";
-import { zeroAddress } from "viem";
-import Page from "../components/Page";
-import {
-  Formik,
-  FormikProps,
-  useField,
-  useFormik,
-  useFormikContext,
-} from "formik";
+import { useParams } from "react-router";
+
 import { CreateProposalProvider } from "../contexts/CreateProposalContext";
-import {
-  CreationFormSchema,
-  GrantActionSchema,
-  MetaDataSchema,
-} from "../schemas/createProposalSchema";
-import { useSteps } from "@chakra-ui/stepper";
-const CreateProposalWrapper = styled.div.attrs({
-  className: "min-h-screen",
-})``;
-
-const steps = [
-  { id: uuid(), title: "MetaData", StepComponents: CreateMetaData },
-  { id: uuid(), title: "Second" },
-  { id: uuid(), title: "Third" },
-];
-type CreateProposalType = {
-  metaData: ProposalMetadata;
-  actions: DaoAction[];
-};
+import { Page } from "../components";
 
 export interface CreateProposalFormData {
   metaData: {

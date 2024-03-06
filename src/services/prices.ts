@@ -37,6 +37,6 @@ export async function fetchTokenPrice(
     console.error("Error fetching token price", error);
   }
 }
-function getNativeTokenId(network: SupportedNetworks): string {
+function getNativeTokenId(_: SupportedNetworks): string {
   return NATIVE_TOKEN_ID.default;
 }

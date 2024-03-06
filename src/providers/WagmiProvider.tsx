@@ -1,5 +1,4 @@
 import {
-  Chain,
   RainbowKitProvider,
   connectorsForWallets,
 } from "@rainbow-me/rainbowkit";

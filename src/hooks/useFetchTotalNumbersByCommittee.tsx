@@ -11,10 +11,10 @@ function useFetchTotalNumbersByCommittee(
   committee: string
 ): BigNumberish | undefined {
   const [total, setTotal] = useState<BigNumberish>(0);
-  const { daofinClient, client } = useClient();
-  const { network } = useNetwork();
-  const [error, setError] = useState<Error>();
-  const [isLoading, setIsLoading] = useState(false);
+  const { daofinClient } = useClient();
+  // const { network } = useNetwork();
+  // const [error, setError] = useState<Error>();
+  const [, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!daofinClient || !committee) return;
@@ -22,11 +22,11 @@ function useFetchTotalNumbersByCommittee(
 
     daofinClient.methods
       .getTotalNumberOfMembersByCommittee(committee)
-      .then((data) => {
+      .then((data: BigNumberish) => {
         setIsLoading(false);
         setTotal(data);
       })
-      .catch((e) => {
+      .catch((e: any) => {
         setIsLoading(false);
         setTotal(0);
         console.log("error", e);

@@ -1,22 +1,14 @@
 import { useMemo } from "react";
-import {
-  MasterNodeCommittee,
-  applyRatioCeiled,
-  getPluginInstallationId,
-} from "../utils/networks";
+import { applyRatioCeiled } from "../utils/networks";
 import useFetchGlobalCommitteeToVotingSettings from "./useFetchGlobalCommitteeToVotingSettings";
 import useFetchProposalTallyDetails from "./useFetchProposalTallyDetails";
 import useFetchTotalNumbersByCommittee from "./useFetchTotalNumbersByCommittee";
 import { BigNumber } from "@ethersproject/bignumber";
-import { parseEther } from "viem";
-import Big from "big.js";
-import useDaoProposal from "./useDaoProposal";
-import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import { toEther, toStandardPercentage } from "../utils/numbers";
-import { DaofinPlugin } from "@xinfin/osx-daofin-contracts-ethers";
+import { TallyDetails } from "@xinfin/osx-daofin-sdk-client";
 
 export type VotingMinParticipationStats = {
-  tally: DaofinPlugin.TallyDatailsStruct;
+  tally: TallyDetails;
   numberOfVotes: BigNumber;
   minParticipation: BigNumber;
   numberOfVotesPercentage: number;

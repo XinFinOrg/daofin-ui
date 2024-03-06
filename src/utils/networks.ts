@@ -2,16 +2,10 @@ import {
   SupportedNetwork as SdkSupportedNetworks,
   Context as SdkContext,
 } from "@xinfin/osx-client-common";
-import {
-  format,
-  formatDistance,
-  formatDistanceToNow,
-  formatRelative,
-  Locale,
-} from "date-fns";
-import { bytesToHex, resolveIpfsCid } from "@aragon/sdk-common";
-import { DaofinDetails, VoteOption } from "@xinfin/osx-daofin-sdk-client";
-import { Client, VoteValues } from "@xinfin/osx-sdk-client";
+import { format, formatRelative } from "date-fns";
+import { resolveIpfsCid } from "@aragon/sdk-common";
+import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
+import { Client } from "@xinfin/osx-sdk-client";
 import { isAddress } from "@ethersproject/address";
 import { ethers } from "ethers";
 import { defaultAbiCoder } from "@ethersproject/abi";
@@ -210,7 +204,7 @@ export function toDisplayEns(ensName?: string) {
   if (!ensName.includes(".dao.eth")) return `${ensName}.dao.eth`;
   return ensName;
 }
-type SubgraphNetworkUrl = Record<SupportedNetworks, string | undefined>;
+// type SubgraphNetworkUrl = Record<SupportedNetworks, string | undefined>;
 
 // export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
 //   xdc: undefined,

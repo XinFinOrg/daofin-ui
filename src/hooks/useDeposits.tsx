@@ -1,19 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useClient } from "./useClient";
-import { useNetwork } from "../contexts/network";
-import { GlobalSettings } from "@xinfin/osx-daofin-sdk-client";
-import { ProposalsQuery } from "@xinfin/osx-daofin-sdk-client/dist/internal/graphql-queries/proposals";
-import { ethers } from "ethers";
-import { formatDate, getPluginInstallationId } from "../utils/networks";
-import { ProposalBase, ProposalMetadata } from "@xinfin/osx-client-common";
-import { Deposit, Proposal } from "../utils/types";
-import { SubgraphProposalBase } from "@xinfin/osx-daofin-sdk-client";
-import {
-  decodeProposalId,
-  encodeProposalId,
-  getExtendedProposalId,
-  resolveIpfsCid,
-} from "@xinfin/osx-sdk-common";
+import {  getPluginInstallationId } from "../utils/networks";
+import { Deposit } from "../utils/types";
+
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 const DepositsQueries = `
 query DepositsQueries($pluginId: ID!) {

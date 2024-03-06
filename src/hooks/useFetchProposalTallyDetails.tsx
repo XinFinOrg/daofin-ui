@@ -18,10 +18,10 @@ function useFetchProposalTallyDetails(
 
     daofinClient.methods
       .getProposalTallyDetails(proposalId, committee)
-      .then((data) => {
+      .then((data: unknown) => {
         setTallyDetails(data as unknown as TallyDetails);
       })
-      .catch((e) => {
+      .catch((e: any) => {
         setIsLoading(false);
         setError(e);
         console.log("error", e);

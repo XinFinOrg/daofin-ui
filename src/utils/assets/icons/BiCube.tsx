@@ -1,11 +1,9 @@
 import {
-  Box,
   IconProps,
   createIcon,
-  useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
-import React, { FC } from "react";
+import  { FC } from "react";
 
 export const BiCubeX = createIcon({
   displayName: "UpDownIcon",

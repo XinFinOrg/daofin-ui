@@ -1,4 +1,3 @@
-import Big from "big.js";
 import { utils, BigNumberish, BigNumber } from "ethers";
 import { v4 as uuidV4 } from "uuid";
 export function toEther(value: string) {
@@ -15,9 +14,7 @@ export function weiToGwei(value: string) {
   return utils.parseUnits(value, "wei");
 }
 
-export function numberWithCommaSeparate(
-  value: number | string
-) {
+export function numberWithCommaSeparate(value: number | string) {
   return typeof value === "number"
     ? value.toLocaleString("en-US")
     : parseFloat(value).toLocaleString();

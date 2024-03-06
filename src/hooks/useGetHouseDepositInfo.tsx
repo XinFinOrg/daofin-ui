@@ -15,11 +15,11 @@ function useGetHouseDepositInfo(voterAddress: string | null) {
 
     daofinClient.methods
       .getHouseDeposit(voterAddress)
-      .then((data) => {
+      .then((data: ReturnType<DaofinPlugin["_voterToLockedAmounts"]>) => {
         setIsLoading(false);
         setDepositInfo(data);
       })
-      .catch((e) => {
+      .catch((e: any) => {
         setIsLoading(false);
         console.log("error", e);
       });

@@ -1,4 +1,4 @@
-import React from "react";
+
 import BoxWrapper from "./BoxWrapper";
 import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
 import useFetchJudiciaries from "../hooks/useFetchJudiciaries";

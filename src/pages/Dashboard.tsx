@@ -26,42 +26,30 @@ import { v4 as uuid } from "uuid";
 import { Link, useNavigate } from "react-router-dom";
 import Proposals from "../components/Proposals";
 import CommunityCards from "../components/CommunityCards";
-import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 import {
   ArrowForwardIcon,
   CheckCircleIcon,
-  CheckIcon,
   ExternalLinkIcon,
   TimeIcon,
 } from "@chakra-ui/icons";
-import { zeroAddress } from "viem";
 import { IoBarChart } from "react-icons/io5";
 import useFetchDaoBalance from "../hooks/useFetchDaoBalance";
 import { weiBigNumberToFormattedNumber } from "../utils/numbers";
 import { useNetwork } from "../contexts/network";
 import { WalletAuthorizedButton } from "../components/Button/AuthorizedButton";
 import { DefaultBox } from "../components/Box";
-import AddFundButton, { AddFund } from "../components/Button/AddFundButton";
+import { AddFund } from "../components/Button/AddFundButton";
 import {
   proposalTimeStatus,
   timestampToStandardFormatString,
-  toNormalDate,
   toStandardFormatString,
 } from "../utils/date";
 import Jazzicon from "react-jazzicon/dist/Jazzicon";
 import { jsNumberForAddress } from "react-jazzicon";
 import useFetchProposalStatus from "../hooks/useFetchProposalStatus";
-import {
-  DarkGrayBox,
-  DefaultBoxProps,
-  WhiteBox,
-} from "../components/Box/DefaultBox";
-import {
-  ReadyToExecuteProposalType,
-  ReadyToExecuteProposals,
-} from "../components/ReadyToExecuteProposal";
+import { DefaultBoxProps, WhiteBox } from "../components/Box/DefaultBox";
+import { ReadyToExecuteProposals } from "../components/ReadyToExecuteProposal";
 import { Proposal } from "../utils/types";
-import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTypeDetails";
 import useDaoElectionPeriods from "../hooks/useDaoElectionPeriods";
 import { toDate } from "date-fns";
 import ProposalStatusBadge from "../components/ProposalStatusBadge";
@@ -71,14 +59,14 @@ const Dashboard: FC = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
   const {
     data: proposals,
-    error,
+
     isLoading,
   } = useDaoProposals(daoAddress, pluginAddress);
 
   const { isOpen, onClose, onToggle } = useDisclosure();
   const { data: nativeBalanceOfDao, isLoading: isLoadingNativeBalanceOfDao } =
     useFetchDaoBalance();
-  const [proposalTypes, setProposalTypes] = useState([
+  const [proposalTypes] = useState([
     {
       id: uuid(),
       name: "Grant",
@@ -99,7 +87,6 @@ const Dashboard: FC = () => {
       isComingSoon: true,
     },
   ]);
-  const { committeesListWithIcon } = useCommitteeUtils();
   const { network } = useNetwork();
   const executedProposals = useMemo(
     () => proposals.filter(({ executed }) => executed),
@@ -114,7 +101,7 @@ const Dashboard: FC = () => {
     async () =>
       Promise.all(
         proposals.map(async (item) => {
-          const { executed, pluginProposalId } = item;
+          const {  pluginProposalId } = item;
           const status = await makeCall(pluginProposalId);
           return {
             ...item,
@@ -316,13 +303,10 @@ const Dashboard: FC = () => {
               {executedProposals.length > 0 ? (
                 executedProposals.map(
                   ({
-                    executed,
                     executionTxHash,
-                    executionBlockNumber,
                     creationTxHash,
                     pluginProposalId,
                     executionDate,
-                    executedBy,
                     metadata,
                   }) => (
                     <GreenDefaultBox w={"full"} mb={2}>
@@ -424,7 +408,7 @@ const Dashboard: FC = () => {
         >
           <VStack w={"full"}>
             {proposalTypes.map(
-              ({ name, description, isComingSoon, id, proposalId }) => (
+              ({ name, description, isComingSoon, proposalId }) => (
                 <Box key={uuid()}>
                   <Flex
                     _hover={{

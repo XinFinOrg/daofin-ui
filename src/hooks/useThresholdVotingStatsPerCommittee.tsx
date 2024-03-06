@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-import { MasterNodeCommittee, applyRatioCeiled } from "../utils/networks";
+import { applyRatioCeiled } from "../utils/networks";
 import useFetchGlobalCommitteeToVotingSettings from "./useFetchGlobalCommitteeToVotingSettings";
 import useFetchProposalTallyDetails from "./useFetchProposalTallyDetails";
 import useFetchTotalNumbersByCommittee from "./useFetchTotalNumbersByCommittee";
 import { BigNumber } from "@ethersproject/bignumber";
-import Big from "big.js";
+
 import { toEther, toStandardPercentage } from "../utils/numbers";
 
 export type VotingSupportThresholdStats = {

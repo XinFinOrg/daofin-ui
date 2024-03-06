@@ -1,5 +1,4 @@
 import { FC, PropsWithChildren } from "react";
-import DefaultButton, { DefaultButtonProps } from "./DefaultButton";
 import {
   WalletAuthorizedButton,
   WalletAuthorizedButtonProps,
@@ -12,7 +11,7 @@ import { Formik } from "formik";
 
 export interface AddFundButtonProps extends WalletAuthorizedButtonProps {}
 
-export const AddFund: FC<PropsWithChildren> = (props) => {
+export const AddFund: FC<PropsWithChildren> = () => {
   return (
     <Formik
       initialValues={{

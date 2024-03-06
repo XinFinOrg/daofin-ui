@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
+import { useMemo} from "react";
 import {
   JudiciaryCommittee,
   MasterNodeCommittee,
@@ -16,9 +15,8 @@ import useThresholdVotingStatsPerCommittee, {
 import { VoterOnProposal } from "../utils/types";
 import { BigNumber, BigNumberish } from "ethers";
 import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
-import { formatEther } from "viem";
+
 import { toEther } from "../utils/numbers";
-import useFetchProposalTallyDetails from "./useFetchProposalTallyDetails";
 
 export type VoteStatsType = CommitteeGlobal & {
   minParticipation: VotingMinParticipationStats | undefined;

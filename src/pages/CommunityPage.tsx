@@ -2,53 +2,34 @@ import {
   Box,
   Flex,
   Text,
-  Heading,
-  Container,
   HStack,
   VStack,
 } from "@chakra-ui/layout";
-import React, { useMemo } from "react";
-import { styled } from "styled-components";
-import { v4 as uuid } from "uuid";
-import BoxWrapper from "../components/BoxWrapper";
+import{ useMemo } from "react";
 import { Link } from "react-router-dom";
 import Page from "../components/Page";
-import { IoBarChart } from "react-icons/io5";
 import {
-  Button,
-  IconButton,
   Skeleton,
-  Tooltip,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import CommunityCards from "../components/CommunityCards";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import {
   WalletAddressCardWithBalance,
-  WalletAddressCard,
   WalletAddressCardWithDate,
 } from "../components/WalletAddressCard";
-import { zeroAddress } from "viem";
-import { CHAIN_METADATA, JudiciaryCommittee } from "../utils/networks";
+import { CHAIN_METADATA } from "../utils/networks";
 import { useNetwork } from "../contexts/network";
-import MasterNodeDelegatePage from "./MasterNodeDelegatePage";
 import { MasterNodeSenateCard } from "../components/WalletAddressCard";
 import {
-  Area,
-  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
-  Legend,
   ResponsiveContainer,
   XAxis,
-  YAxis,
 } from "recharts";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import useFetchJudiciaries from "../hooks/useFetchJudiciaries";
-import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
 import { toNormalDate, toStandardTimestamp } from "../utils/date";
-import { useMasterNodeDelegateeSentateContext } from "../contexts/MasterNodeDelegateeSentateContext";
 import useFetchMasterNodeDelegatee from "../hooks/useFetchMasterNodeDelegatee";
 import usePeoplesHouseDeposits from "../hooks/useDeposits";
 import {
@@ -56,7 +37,6 @@ import {
   toWei,
   weiBigNumberToFormattedNumber,
 } from "../utils/numbers";
-import { NoProposalIcon } from "../utils/assets/icons/NoProposalIcon";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
 import CoinIcon from "../utils/assets/icons/CoinIcon";
 import useFetchDaoBalance from "../hooks/useFetchDaoBalance";

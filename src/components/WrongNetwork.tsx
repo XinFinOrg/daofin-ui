@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useNetwork } from "../contexts/network";
 import { useWallet } from "../hooks/useWallet";
 import { Box, Text } from "@chakra-ui/react";

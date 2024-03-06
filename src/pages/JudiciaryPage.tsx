@@ -1,24 +1,13 @@
-import React from "react";
-import ManageJudiciary from "../components/ManageJudiciary";
+
 import { Box, HStack, VStack } from "@chakra-ui/layout";
 import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Alert,
-  Button,
+
   Text,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { Page } from "../components";
 import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
-import { zeroAddress } from "viem";
 
-import DefaultProgressBar from "../components/DefaultProgressBar";
 import {
-  WalletAddressCard,
   WalletAddressCardWithDate,
 } from "../components/WalletAddressCard";
 import useFetchJudiciaries from "../hooks/useFetchJudiciaries";
@@ -26,8 +15,6 @@ import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
 import { JudiciaryCommittee } from "../utils/networks";
 import {
-  timestampToStandardFormatString,
-  toStandardFormatString,
   toStandardTimestamp,
 } from "../utils/date";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
@@ -39,7 +26,7 @@ import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTy
 
 const JudiciaryPage = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
-  const { data: juries, error } = useFetchJudiciaries(
+  const { data: juries, } = useFetchJudiciaries(
     daoAddress,
     pluginAddress
   );

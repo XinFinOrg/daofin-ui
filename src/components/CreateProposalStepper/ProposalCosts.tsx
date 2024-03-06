@@ -29,16 +29,16 @@ import { ProposalCostIcon } from "../../utils/assets/icons";
 import { useClient } from "../../hooks/useClient";
 import { BigNumberish } from "ethers";
 import { toEther } from "../../utils/numbers";
-import { CreateProposalFormData } from "../../pages/CreateProposal";
+// import { CreateProposalFormData } from "../../pages/CreateProposal";
 const ProposalCosts: FC = () => {
-  const { values, setFieldValue } = useFormikContext<CreateProposalFormData>();
+  // const { values, setFieldValue } = useFormikContext<CreateProposalFormData>();
   const [proposalCosts, setProposalCosts] = useState<BigNumberish>(0);
   const { daofinClient } = useClient();
 
   const [isLoading, setLoading] = useState(false);
   useEffect(() => {
     setLoading(true);
-    daofinClient?.methods.getProposalCosts().then((data) => {
+    daofinClient?.methods.getProposalCosts().then((data:BigNumberish) => {
       setProposalCosts(data);
       setLoading(false);
     });

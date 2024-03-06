@@ -1,14 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useClient } from "./useClient";
-import { useNetwork } from "../contexts/network";
-import { GlobalSettings } from "@xinfin/osx-daofin-sdk-client";
-import { ProposalsQuery } from "@xinfin/osx-daofin-sdk-client/dist/internal/graphql-queries/proposals";
-import { BigNumber, ethers } from "ethers";
 import { getPluginInstallationId } from "../utils/networks";
-import { ProposalBase, ProposalMetadata } from "@xinfin/osx-client-common";
-import { Judiciary, Proposal, VoterOnProposal } from "../utils/types";
-import { SubgraphProposalBase } from "@xinfin/osx-daofin-sdk-client";
-import { resolveIpfsCid } from "@xinfin/osx-sdk-common";
+import {  VoterOnProposal } from "../utils/types";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 const PluginProposalVotes = `
 query pluginProposalVotes($pluginId: ID!, $pluginProposalId: String!  ) {

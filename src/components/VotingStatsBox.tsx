@@ -9,35 +9,24 @@ import {
   Text,
   Box,
 } from "@chakra-ui/react";
-import React, { FC, useEffect, useMemo } from "react";
+import  { FC, useMemo } from "react";
 import DefaultProgressBar from "./DefaultProgressBar";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
-import {
-  JudiciaryCommittee,
-  MasterNodeCommittee,
-  PeoplesHouseCommittee,
-} from "../utils/networks";
-import useThresholdVotingStatsPerCommittee from "../hooks/useThresholdVotingStatsPerCommittee";
-import useMinParticipationVotingStatsPerCommittee from "../hooks/useMinParticipationVotingStatsPerCommittee";
-import { BigNumber, utils } from "ethers";
+
 import {
   numberWithCommaSeparate,
-  toEther,
-  weiBigNumberToFormattedNumber,
 } from "../utils/numbers";
 import useTotalNumberOfVoters from "../hooks/useTotalNumberOfVoters";
-import useFetchVotersOnProposal from "../hooks/useFetchVotersOnProposal";
 import useVoteStats from "../hooks/useVoteStats";
-import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
 
 interface VotingStatsBoxProps {
   currentVoters?: number;
   proposalId: string;
 }
 const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
-  const { committeesListWithIcon, committeesList } = useCommitteeUtils();
+  const { committeesListWithIcon,  } = useCommitteeUtils();
 
-  const { mapCommitteeToTotalNumber } = useTotalNumberOfVoters();
+  const {  } = useTotalNumberOfVoters();
 
   const stats = useVoteStats(proposalId);
   // useEffect(() => call(proposalId), []);
@@ -85,7 +74,7 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
         </TabList>
 
         <TabPanels>
-          {stats.map(({ id, name, voters }) => (
+          {stats.map(({ id, }) => (
             <TabPanel key={id} p={"6"}>
               <HStack
                 justifyContent={"space-between"}

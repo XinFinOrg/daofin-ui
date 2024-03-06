@@ -1,20 +1,16 @@
 import {
   Box,
-  Button,
   HStack,
   Heading,
   Icon,
   Image,
   Skeleton,
   Text,
-  Tooltip,
   VStack,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { Page } from "../components";
 import { useNetwork } from "../contexts/network";
 import { ArrowForwardIcon, ExternalLinkIcon } from "@chakra-ui/icons";
-import { TreasuryIcon } from "../utils/assets/icons";
 import { XdcIcon } from "../utils/assets/icons/XdcIcon";
 import { Cell, Pie, PieChart } from "recharts";
 import useFetchDaoBalance from "../hooks/useFetchDaoBalance";
@@ -23,11 +19,7 @@ import {
   toWei,
   weiBigNumberToFormattedNumber,
 } from "../utils/numbers";
-import {
-  CHAIN_METADATA,
-  makeBlockScannerAddressUrl,
-  makeBlockScannerHashUrl,
-} from "../utils/networks";
+import { CHAIN_METADATA, makeBlockScannerAddressUrl } from "../utils/networks";
 import { DefaultBox } from "../components/Box";
 import { FC, useEffect, useMemo, useState } from "react";
 import { useGlobalState } from "../contexts/GlobalStateContext";
@@ -54,7 +46,6 @@ const TreasuryPage = () => {
   const { client } = useClient();
   const { daoAddress } = useAppGlobalConfig();
   const [addfunds, setAddFunds] = useState<Transfer[]>();
-  const { network } = useNetwork();
   const xdcPrice = useGlobalState().xdcPrice;
 
   useEffect(() => {
@@ -108,7 +99,7 @@ const TreasuryPage = () => {
                     paddingAngle={5}
                     dataKey="value"
                   >
-                    {data.map((entry, index) => (
+                    {data.map((_, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={COLORS[index % COLORS.length]}
@@ -194,12 +185,8 @@ const TreasuryPage = () => {
               {addfunds && addfunds.length > 0 ? (
                 addfunds?.map(
                   ({
-                    creationDate,
-                    from,
+                    
                     to,
-                    tokenType,
-                    transactionId,
-                    type,
                   }) => (
                     <WalletAddressCardWithBalance
                       balance={0}
@@ -255,7 +242,6 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
   isDaoBalanceLoading,
 }) => {
   const { network } = useNetwork();
-  const { handleOpenPublishModal } = useDaoTreasury();
   const { daoAddress } = useAppGlobalConfig();
   return (
     <>

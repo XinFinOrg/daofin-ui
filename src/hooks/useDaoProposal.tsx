@@ -1,22 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useClient } from "./useClient";
-import { useNetwork } from "../contexts/network";
-import { GlobalSettings } from "@xinfin/osx-daofin-sdk-client";
-import { ProposalsQuery } from "@xinfin/osx-daofin-sdk-client/dist/internal/graphql-queries/proposals";
-import { ethers } from "ethers";
-import { formatDate, getPluginInstallationId } from "../utils/networks";
-import { ProposalBase, ProposalMetadata } from "@xinfin/osx-client-common";
+import {  ProposalMetadata } from "@xinfin/osx-client-common";
 import { Proposal } from "../utils/types";
 import {
-  decodeProposalId,
-  encodeProposalId,
-  getExtendedProposalId,
   resolveIpfsCid,
 } from "@xinfin/osx-sdk-common";
 import { useNavigate } from "react-router-dom";
 import {
-  toNormalDate,
-  toStandardFormatString,
   toStandardTimestamp,
 } from "../utils/date";
 import { SubgraphProposalBase } from "./useDaoProposals";

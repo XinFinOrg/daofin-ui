@@ -1,5 +1,5 @@
 import { createIcon, useColorModeValue } from "@chakra-ui/react";
-import React from "react";
+
 
 export const TreasuryIconChakra = createIcon({
   displayName: "TreasuryIconChakra",

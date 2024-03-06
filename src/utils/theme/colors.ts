@@ -1,4 +1,3 @@
-import { extendTheme, ColorHues } from "@chakra-ui/react";
 
 export const colors = {
   blue: {

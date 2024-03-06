@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Box, HStack, VStack } from "@chakra-ui/layout";
-import { Text, useColorModeValue } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 import { Page } from "../components";
 import { MasterNodeSenateCard } from "../components/WalletAddressCard";
 import MasterNodeDelegateeSenateIcon from "../utils/assets/icons/MasterNodeDelegateeSenateIcon";
@@ -27,7 +27,7 @@ const MasterNodeDelegatePage = () => {
   const { data: delegatees } = useFetchMasterNodeDelegatee();
   const communityName = MasterNodeCommittee;
   const totalMasterNodes = useFetchTotalNumbersByCommittee(communityName);
-  const bgColor = useColorModeValue("gray.50", "gray.900");
+  // const bgColor = useColorModeValue("gray.50", "gray.900");
 
   const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
 

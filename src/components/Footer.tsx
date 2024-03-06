@@ -1,6 +1,6 @@
 import { SunIcon } from "@chakra-ui/icons";
 import { Box, Flex, Icon, Image, Text, createIcon } from "@chakra-ui/react";
-import React from "react";
+
 import XdcCoinLogo from "../utils/assets/xdc-coin.svg";
 const Footer = () => {
   return (

@@ -1,25 +1,16 @@
-import React, {
-  Component,
-  ComponentType,
-  FC,
-  ReactElement,
+import {
   ReactNode,
-  useEffect,
 } from "react";
 import {
-  Box,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
   Text,
-  Tfoot,
   Th,
   Thead,
   Tr,
   VStack,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { v4 as uuid } from "uuid";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
@@ -53,7 +44,7 @@ const BaseTable = <T,>({ columns, data, emptyText }: BaseTableProps<T>) => {
           {data.length > 0 ? (
             data.map((row) => (
               <Tr key={uuid()}>
-                {columns.map((col, index) => (
+                {columns.map((col) => (
                   <Td
                     key={uuid()}
                     w={col.w}

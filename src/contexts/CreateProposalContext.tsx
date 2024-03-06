@@ -1,4 +1,4 @@
-import { FormikHelpers, useFormikContext } from "formik";
+import { FormikHelpers } from "formik";
 import {
   Dispatch,
   FC,
@@ -8,7 +8,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import styled from "styled-components";
@@ -17,24 +16,17 @@ import { usePollGasFee } from "../hooks/usePollGasfee";
 import { useClient } from "../hooks/useClient";
 import { CreateProposalParams } from "@xinfin/osx-daofin-sdk-client";
 import { TransactionReviewModal } from "../components/Modal";
-import {
-  useBreakpoint,
-  useBreakpointValue,
-  useDisclosure,
-  useSteps,
-} from "@chakra-ui/react";
-import { BigNumberish, BigNumber } from "@ethersproject/bignumber";
+import { useSteps } from "@chakra-ui/react";
+import { BigNumberish } from "@ethersproject/bignumber";
 import { TransactionState } from "../utils/types";
-import { decodeAbiParameters, parseEther, zeroAddress } from "viem";
+import { parseEther } from "viem";
 import { ProposalCreationSteps } from "@xinfin/osx-sdk-client";
 import useTransactionModalDisclosure from "../hooks/useTransactionModalDisclosure";
-import { DefaultAlert } from "../components/Alerts";
 import { toEther } from "../utils/numbers";
 import {
   GrantActionSchema,
   MetaDataSchema,
 } from "../schemas/createProposalSchema";
-import { useFeeData } from "wagmi";
 import { addPrefix } from "../utils/url";
 
 export type CreateProposalContextType = {
@@ -153,7 +145,7 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
     if (daofinClient && daofinClient.methods) {
       daofinClient?.methods
         .getProposalCosts()
-        .then((data) => {
+        .then((data: BigNumberish) => {
           setProposalCosts(data);
         })
         .catch(console.log);
