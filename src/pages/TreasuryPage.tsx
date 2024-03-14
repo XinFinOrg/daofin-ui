@@ -57,7 +57,7 @@ query DaoTransfers($id: ID!) {
 const DaoWithdraws = `
 query DaoWithdraws($daoId: ID!) {
   actions(orderBy: proposal__endDate, orderDirection: asc, 
-    where: {dao: $daoId proposal_: {executed:false}}
+    where: {dao: $daoId proposal_: {executed:true}}
   ) {
     id
     to
