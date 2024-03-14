@@ -46,7 +46,7 @@ type ProviderProviderProps = {
  * therefore be null if no wallet is connected.
  */
 export function ProvidersProvider({ children }: ProviderProviderProps) {
-  const { provider } = useWallet();
+  const { provider, isOnWrongNetwork } = useWallet();
   const { network } = useNetwork();
 
   const [infuraProvider, setInfuraProvider] = useState<Providers["infura"]>(
@@ -77,7 +77,7 @@ function getInfuraProvider(network: SupportedNetworks) {
   // library, there's no reason why passing the chainId wouldn't work. Also,
   // I've tried it on a fresh project and had no problems there...
   if (network == "apothem") {
-    return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
+    return new JsonRpcProvider(CHAIN_METADATA[network]?.rpc[0], {
       chainId: CHAIN_METADATA[network].id,
       name: translateToNetworkishName(network),
       ensAddress:
@@ -100,8 +100,11 @@ function getInfuraProvider(network: SupportedNetworks) {
 export function getJsonRpcProvider(
   network: SupportedNetworks
 ): JsonRpcProvider {
-  // const translatedNetwork = translateToNetworkishName(network);
-  return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0]);
+  const translatedNetwork = translateToNetworkishName(network);
+  if (translatedNetwork === "unsupported") {
+    return new JsonRpcProvider(CHAIN_METADATA['apothem']?.rpc[0]);
+  }
+  return new JsonRpcProvider(CHAIN_METADATA[network]?.rpc[0]);
 }
 /**
  * Returns provider based on the given chain id

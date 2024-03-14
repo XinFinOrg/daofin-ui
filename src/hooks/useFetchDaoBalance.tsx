@@ -28,7 +28,6 @@ function useFetchDaoBalance() {
         console.log("error", e);
       });
   }, [daofinClient]);
-
   return { data: amount, isLoading };
 }
 export default useFetchDaoBalance;

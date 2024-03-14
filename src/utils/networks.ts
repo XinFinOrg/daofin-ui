@@ -10,9 +10,7 @@ import { isAddress } from "@ethersproject/address";
 import { ethers } from "ethers";
 import { defaultAbiCoder } from "@ethersproject/abi";
 import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
-export const SUPPORTED_CHAIN_ID = [
-  1, 5, 137, 80001, 42161, 421613, 50, 51,
-] as const;
+export const SUPPORTED_CHAIN_ID = [50, 51] as const;
 export type SupportedChainID = (typeof SUPPORTED_CHAIN_ID)[number];
 const SUPPORTED_NETWORKS = ["apothem", "xdc"] as const;
 
@@ -113,7 +111,7 @@ export const CHAIN_METADATA: ChainList = {
     osxSubgraph: import.meta.env.VITE_XDC_OSX_SUB_GRAPH_URL || "",
   },
   unsupported: {
-    id: 1,
+    id: 51,
     name: "Unsupported",
     domain: "L1 Blockchain",
     logo: "",

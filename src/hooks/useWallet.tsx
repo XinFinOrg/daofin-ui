@@ -56,8 +56,8 @@ export const useWallet = (): IUseWallet => {
 
   const provider = useMemo(() => {
     if (["apothem"].includes(network)) {
-      return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
-        chainId: CHAIN_METADATA[network].id,
+      return new JsonRpcProvider(CHAIN_METADATA[network]?.rpc[0], {
+        chainId: CHAIN_METADATA[network]?.id,
         name: translateToNetworkishName(network),
         ensAddress:
           LIVE_CONTRACTS[translateToNetworkishName(network) as SupportedNetwork]
@@ -80,7 +80,7 @@ export const useWallet = (): IUseWallet => {
 
   const balance: bigint | null = wagmiBalance?.value || null;
   const isOnWrongNetwork: boolean =
-    isConnected && CHAIN_METADATA[network].id !== chainId;
+    isConnected && CHAIN_METADATA[network]?.id !== chainId;
 
   const methods = {
     selectWallet: async (cacheProvider?: boolean, networkId?: string) => {

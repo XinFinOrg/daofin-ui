@@ -5,9 +5,8 @@ import {
   Text,
   VStack,
   useClipboard,
-  useColorModeValue,
 } from "@chakra-ui/react";
-import React, { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { jsNumberForAddress } from "react-jazzicon";
 import Jazzicon from "react-jazzicon/dist/Jazzicon";
 import { CHAIN_METADATA, shortenAddress } from "../../utils/networks";

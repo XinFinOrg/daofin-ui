@@ -7,12 +7,13 @@ import {
   Skeleton,
   Text,
   VStack,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { Page } from "../components";
+import { Modal, Page } from "../components";
 import { useNetwork } from "../contexts/network";
 import { ArrowForwardIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { XdcIcon } from "../utils/assets/icons/XdcIcon";
-import { Cell, Pie, PieChart } from "recharts";
+import { Cell, Pie, PieChart, Tooltip } from "recharts";
 import useFetchDaoBalance from "../hooks/useFetchDaoBalance";
 import {
   toEther,
@@ -20,42 +21,140 @@ import {
   weiBigNumberToFormattedNumber,
 } from "../utils/numbers";
 import { CHAIN_METADATA, makeBlockScannerAddressUrl } from "../utils/networks";
-import { DefaultBox } from "../components/Box";
+import { DefaultBox, WalletCardBox } from "../components/Box";
 import { FC, useEffect, useMemo, useState } from "react";
 import { useGlobalState } from "../contexts/GlobalStateContext";
 import CoinIcon from "../utils/assets/icons/CoinIcon";
 import { useClient } from "../hooks/useClient";
-import {
-  DaoTreasuryProvider,
-  useDaoTreasury,
-} from "../contexts/DaoTreasuryContext";
+import { DaoTreasuryProvider } from "../contexts/DaoTreasuryContext";
 import { DefaultButton } from "../components/Button";
 import { Formik } from "formik";
 import { AddFund } from "../components/Button/AddFundButton";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
-import { Transfer } from "@xinfin/osx-sdk-client";
-import { WalletAddressCardWithBalance } from "../components/WalletAddressCard";
-import { Link } from "react-router-dom";
 
-const data = [{ name: "Group A", value: 100 }];
+import { Link } from "react-router-dom";
+import { Address, formatEther } from "viem";
+import SecondaryWalletAddressCard from "../components/WalletAddressCard/SecondaryWalletAddressCard";
+import { toNormalDate } from "../utils/date";
+import { erc20ABI, useContractRead, useToken } from "wagmi";
+import WithdrawActionCard from "../components/WalletAddressCard/WithdrawActionCard";
+const Query = `
+query DaoTransfers($id: ID!) {
+  nativeTransfers(
+    where: {to: $id}
+    orderBy: createdAt
+    orderDirection: desc
+  ) {
+    id
+    to
+    from
+    amount
+    reference
+    createdAt
+    txHash
+  }
+}`;
+const DaoWithdraws = `
+query DaoWithdraws($daoId: ID!) {
+  actions(orderBy: proposal__endDate, orderDirection: asc, 
+    where: {dao: $daoId proposal_: {executed:false}}
+  ) {
+    id
+    to
+    value
+    data
+    proposal {
+      executed
+    }
+    daoId
+    dao {
+      id
+    }
+    execResult
+  }
+}
+`;
+
+type NativeTransfer = {
+  id: string;
+  to: string;
+  from: string;
+  amount: string; // BigInt often represented as a string in TypeScript to avoid precision loss.
+  reference: string;
+  createdAt: string;
+  txHash: string;
+};
+
+type WithdrawQueryAction = {
+  id: string;
+  to: string;
+  value: string;
+  data: string;
+  proposal: {
+    executed: boolean;
+    executionTxHash: string;
+  };
+  daoId: string;
+  dao: {
+    id: string;
+  };
+  execResult: string;
+};
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 const TreasuryPage = () => {
   const { data: nativeBalanceOfDao, isLoading: isDaoBalanceLoading } =
     useFetchDaoBalance();
-  const { client } = useClient();
+  const { daofinClient } = useClient();
   const { daoAddress } = useAppGlobalConfig();
-  const [addfunds, setAddFunds] = useState<Transfer[]>();
+  const [addfunds, setAddFunds] = useState<NativeTransfer[]>();
+  const [withdraws, setWithdraws] = useState<WithdrawQueryAction[]>();
+  const { data: fxdBalance } = useContractRead({
+    abi: erc20ABI,
+    args: [daoAddress as Address],
+    functionName: "balanceOf",
+    address: "0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96",
+  });
+
+  const [pieData, setPieData] = useState([{ name: "Non", value: 1 }]);
   const xdcPrice = useGlobalState().xdcPrice;
+  const {
+    isOpen: addFundIsOpen,
+    onOpen: addFundOnOpen,
+    onClose: addFundOnClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: withdrawIsOpen,
+    onOpen: withdrawOnOpen,
+    onClose: withdrawOnClose,
+  } = useDisclosure();
 
   useEffect(() => {
-    client?.methods
-      .getDaoTransfers({ daoAddressOrEns: daoAddress })
+    if (!daofinClient || !daoAddress) return;
+    daofinClient?.graphql
+      .request<{ nativeTransfers: NativeTransfer[] }>({
+        query: Query,
+        params: { id: daoAddress },
+      })
       .then((data) => {
-        setAddFunds(data ? data : []);
+        setAddFunds(data.nativeTransfers);
       })
       .catch(console.log);
-  }, []);
+  }, [daofinClient, daoAddress]);
+
+  useEffect(() => {
+    if (!daofinClient || !daoAddress) return;
+    daofinClient?.graphql
+      .request<{ actions: WithdrawQueryAction[] }>({
+        query: DaoWithdraws,
+        params: { daoId: daoAddress.toLowerCase() },
+      })
+      .then(({ actions }) => {
+        setWithdraws(actions);
+      })
+      .catch(console.log);
+  }, [daofinClient, daoAddress]);
 
   const usdValueOfDao = useMemo(() => {
     return nativeBalanceOfDao
@@ -66,7 +165,18 @@ const TreasuryPage = () => {
         )
       : 0;
   }, [xdcPrice, nativeBalanceOfDao]);
-  // const { handleOpenPublishModal } = useDaoTreasury();
+
+  useEffect(() => {
+    if (nativeBalanceOfDao && fxdBalance) {
+      setPieData([
+        {
+          name: "XDC",
+          value: +weiBigNumberToFormattedNumber(nativeBalanceOfDao),
+        },
+        { name: "FXD", value: +weiBigNumberToFormattedNumber(fxdBalance) },
+      ]);
+    }
+  }, [nativeBalanceOfDao, fxdBalance]);
   return (
     <Page>
       <Formik
@@ -82,7 +192,7 @@ const TreasuryPage = () => {
             }
             isDaoBalanceLoading={isDaoBalanceLoading}
           />
-          <DefaultBox mr={4} w={"full"} mb={""}>
+          <DefaultBox mr={4} w={"full"} mb={"4"}>
             <HStack>
               <HStack
                 w={["0", "0", "50%"]}
@@ -90,26 +200,29 @@ const TreasuryPage = () => {
                 visibility={["hidden", "hidden", "visible"]}
                 overflow={["hidden", "hidden", "visible"]}
               >
-                <PieChart width={200} height={200}>
-                  <Pie
-                    data={data}
-                    innerRadius={60}
-                    outerRadius={80}
-                    fill="#fffff"
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {data.map((_, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                </PieChart>
+                {pieData && (
+                  <PieChart width={200} height={200}>
+                    <Pie
+                      data={pieData}
+                      innerRadius={60}
+                      outerRadius={80}
+                      fill="#fffff"
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {pieData.map((_, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                )}
               </HStack>
               <VStack w={["100%", "100%", "50%"]} alignSelf={"flex-start"}>
-                <DefaultBox w={"full"} mr={4}>
+                <WalletCardBox w={"full"} mr={4} p={4}>
                   <HStack justifyContent={"space-between"}>
                     <HStack>
                       <Box w={"35px"}>
@@ -135,12 +248,12 @@ const TreasuryPage = () => {
                       <Text>$ {usdValueOfDao?.toString()}</Text>
                     </Box>
                   </HStack>
-                </DefaultBox>{" "}
-                <DefaultBox w={"full"} mr={4}>
+                </WalletCardBox>
+                <WalletCardBox w={"full"} mr={4} p={4}>
                   <HStack justifyContent={"space-between"}>
                     <HStack>
                       <Box w={"35px"}>
-                        <Icon />
+                        <Image src="fxd.png" />
                       </Box>
                       <Text fontSize={"md"} fontWeight={"semibold"}>
                         FXD
@@ -151,11 +264,16 @@ const TreasuryPage = () => {
                     </HStack>
 
                     <Box>
-                      <Text>0 FXD</Text>
+                      <Text>
+                        {fxdBalance
+                          ? weiBigNumberToFormattedNumber(fxdBalance)
+                          : 0}{" "}
+                        FXD
+                      </Text>
                       <Text>$ {1}</Text>
                     </Box>
                   </HStack>
-                </DefaultBox>
+                </WalletCardBox>
               </VStack>
             </HStack>
           </DefaultBox>
@@ -177,30 +295,44 @@ const TreasuryPage = () => {
                   </Box>
                 </HStack>
                 <HStack>
-                  <Text cursor={"pointer"}>
+                  <Text
+                    cursor={"pointer"}
+                    onClick={() => {
+                      addFundOnOpen();
+                    }}
+                  >
                     View All <ArrowForwardIcon />
                   </Text>
                 </HStack>
               </HStack>
-              {addfunds && addfunds.length > 0 ? (
-                addfunds?.map(
-                  ({
-                    
-                    to,
-                  }) => (
-                    <WalletAddressCardWithBalance
-                      balance={0}
-                      symbol=""
-                      address={to}
-                    />
-                  )
-                )
-              ) : (
-                <VStack>
-                  <CoinIcon />
-                  <Text>You have not added any fund to yet</Text>
-                </VStack>
-              )}
+              <Box>
+                {addfunds && addfunds.length > 0 ? (
+                  addfunds
+                    .slice(0, 5)
+                    .map(
+                      ({ from, amount, id, createdAt, reference, txHash }) => (
+                        <Box mb={"2"}>
+                          <SecondaryWalletAddressCard
+                            key={id}
+                            address={from}
+                            balance={formatEther(BigInt(amount)).toString()}
+                            date={toNormalDate(createdAt)}
+                            symbol="XDC"
+                            txHash={txHash}
+                            reference={reference}
+                          />
+                        </Box>
+                      )
+                    )
+                ) : (
+                  <WalletCardBox>
+                    <VStack>
+                      <CoinIcon />
+                      <Text>You have not added any fund to yet</Text>
+                    </VStack>
+                  </WalletCardBox>
+                )}
+              </Box>
             </DefaultBox>
             <DefaultBox w={["100%", "100%", "100%", "50%"]} mb={"4"}>
               <HStack justifyContent={"space-between"} mb={4}>
@@ -216,20 +348,119 @@ const TreasuryPage = () => {
                   </Box>
                 </HStack>
                 <HStack>
-                  <Text cursor={"pointer"}>
+                  <Text
+                    cursor={"pointer"}
+                    onClick={() => {
+                      withdrawOnOpen();
+                    }}
+                  >
                     View All <ArrowForwardIcon />
                   </Text>
                 </HStack>
               </HStack>
-
-              <VStack>
-                <CoinIcon />
-                <Text>You have not withdrawn any fund to yet</Text>
-              </VStack>
+              {withdraws && withdraws.length > 0 ? (
+                withdraws
+                  .slice(0, 5)
+                  .map(({ id, to, value, proposal, data, execResult }) => (
+                    <Box mb={"2"}>
+                      <WithdrawActionCard
+                        key={id}
+                        address={to}
+                        balance={formatEther(BigInt(value)).toString()}
+                        // date={toNormalDate(createdAt)}
+                        symbol={"XDC"}
+                        txHash={
+                          "https://apothem.xdcscan.io/txs/0x8f01f72c7a1a80a003bd21262e383fda7e0697e7d5003acacc3c1373c95a6109"
+                        }
+                        // reference={reference}
+                      />
+                    </Box>
+                  ))
+              ) : (
+                <WalletCardBox>
+                  <VStack>
+                    <CoinIcon />
+                    <Text>You have not withdrawn any fund to yet</Text>
+                  </VStack>
+                </WalletCardBox>
+              )}
             </DefaultBox>
           </HStack>
         </DaoTreasuryProvider>
       </Formik>
+
+      {addFundIsOpen && (
+        <Modal
+          title="Add Funds"
+          isOpen={addFundIsOpen}
+          onClose={addFundOnClose}
+          size={"lg"}
+        >
+          <Box>
+            {addfunds && addfunds.length > 0 ? (
+              addfunds.map(
+                ({ from, amount, id, createdAt, reference, txHash }) => (
+                  <Box mb={"2"}>
+                    <SecondaryWalletAddressCard
+                      key={id}
+                      address={from}
+                      balance={formatEther(BigInt(amount)).toString()}
+                      date={toNormalDate(createdAt)}
+                      symbol="XDC"
+                      txHash={txHash}
+                      reference={reference}
+                    />
+                  </Box>
+                )
+              )
+            ) : (
+              <WalletCardBox>
+                <VStack>
+                  <CoinIcon />
+                  <Text>You have not added any fund yet</Text>
+                </VStack>
+              </WalletCardBox>
+            )}
+          </Box>
+        </Modal>
+      )}
+      {withdrawIsOpen && (
+        <Modal
+          title="Withdraws"
+          isOpen={withdrawIsOpen}
+          onClose={withdrawOnClose}
+          size={"lg"}
+        >
+          <Box>
+            {withdraws && withdraws.length > 0 ? (
+              withdraws
+                .slice(0, 5)
+                .map(({ id, to, value, proposal, data, execResult }) => (
+                  <Box mb={"2"}>
+                    <WithdrawActionCard
+                      key={id}
+                      address={to}
+                      balance={formatEther(BigInt(value)).toString()}
+                      // date={toNormalDate(createdAt)}
+                      symbol={"XDC"}
+                      txHash={
+                        "https://apothem.xdcscan.io/txs/0x8f01f72c7a1a80a003bd21262e383fda7e0697e7d5003acacc3c1373c95a6109"
+                      }
+                      // reference={reference}
+                    />
+                  </Box>
+                ))
+            ) : (
+              <WalletCardBox>
+                <VStack>
+                  <CoinIcon />
+                  <Text>You have not withdrawn any fund yet.</Text>
+                </VStack>
+              </WalletCardBox>
+            )}
+          </Box>
+        </Modal>
+      )}
     </Page>
   );
 };
@@ -319,3 +550,6 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
 };
 
 export default TreasuryPage;
+
+// 0x35ab90b436a7ba75c88755ac241a10d1d9e4a6e3
+// 0x35aB90b436a7bA75C88755ac241A10d1D9e4a6e3

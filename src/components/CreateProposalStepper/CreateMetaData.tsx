@@ -7,7 +7,7 @@ import {
 import { FC, PropsWithChildren, useState } from "react";
 import Tiptap from "../Tiptap";
 import { Box, Flex, Text, HStack } from "@chakra-ui/layout";
-import { AlertIcon, Button } from "@chakra-ui/react";
+import { AlertIcon, Button, IconButton } from "@chakra-ui/react";
 import { v4 as uuid } from "uuid";
 import { DefaultInput, DefaultTextarea } from "../index";
 import {
@@ -23,6 +23,7 @@ import { MetaDataSchema } from "../../schemas/createProposalSchema";
 import { useCreateProposalContext } from "../../contexts/CreateProposalContext";
 import { DefaultButton } from "../Button";
 import { CreateProposalFormData } from "../../pages/CreateProposal";
+import { DeleteIcon } from "@chakra-ui/icons";
 type MetaDataProps = {};
 const CreateMetaData: FC<MetaDataProps> = ({}) => {
   const { setFormData, handleSubmit } = useCreateProposalContext();
@@ -65,7 +66,7 @@ const CreateMetaData: FC<MetaDataProps> = ({}) => {
       <FormControl>
         <Flex flexDirection={"column"}>
           <FieldArray name="metaData.resources">
-            {({ push, form, handleReplace }) => (
+            {({ push, form, handleReplace, remove }) => (
               <>
                 {values.metaData.resources.length > 0 &&
                   values.metaData.resources.map(({ url, name }, index) => (
@@ -92,12 +93,24 @@ const CreateMetaData: FC<MetaDataProps> = ({}) => {
                             leftAddon="Https://"
                           />
                         </Box>
+                        <Box mt={'2'}>
+                          {index !== 0 && (
+                            <IconButton
+                              aria-label=""
+                              icon={<DeleteIcon />}
+                              onClick={() => {
+                                remove(index);
+                              }}
+                            />
+                          )}
+                        </Box>
                       </HStack>
                     </>
                   ))}
-                <Box></Box>
+
                 <Button
-                  className={"mt-2"}
+                  mt={"4"}
+                  className={"w-full mt-2"}
                   colorScheme="gray"
                   isDisabled={Boolean(errors?.metaData?.resources)}
                   onClick={() => {

@@ -83,8 +83,7 @@ const determineNetwork = (
  */
 export function NetworkProvider({ children }: NetworkProviderProps) {
   const navigate = useNavigate();
-  const urlNetwork = useMatch("daos/:network/*");
-  const networkUrlSegment = urlNetwork?.params?.network;
+  const networkUrlSegment = '';
   const { chain } = useWagmiNetwork();
   const chainId = chain?.id || 0;
   const { status: wagmiStatus } = useAccount();
@@ -113,11 +112,10 @@ export function NetworkProvider({ children }: NetworkProviderProps) {
 
   useEffect(() => {
     // unsupported network based on the networkUrlSegment network
-    if (networkState === "unsupported" && networkUrlSegment) {
+    if (networkState === "unsupported") {
       console.warn("network unsupported");
-      navigate("./not-found", { replace: true });
     }
-  }, [networkState, navigate, networkUrlSegment]);
+  }, [networkState, navigate]);
 
   return (
     <NetworkContext.Provider

@@ -9,6 +9,7 @@ import {
   ModalCloseButton,
   useDisclosure,
   Button,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { FC, PropsWithChildren } from "react";
 import { DefaultBox } from "../Box";
@@ -28,7 +29,7 @@ const Modal: FC<ModalProps & PropsWithChildren & ChakraModalProps> = (
       <ChakraModal {...props} isOpen={isOpen} onClose={onClose}>
         <DefaultBox>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent bgColor={useColorModeValue("#F6F7F9", "#151F29")}>
           <ModalHeader>{title}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>{children}</ModalBody>
