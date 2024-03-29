@@ -147,7 +147,7 @@ const selectedDaoVar = makeVar<NavigationDao>({
     name: "",
     avatar: "",
   },
-  chain: 5,
+  chain: 51,
   plugins: [],
 });
 
