@@ -1,39 +1,15 @@
 import { ArrowForwardIcon } from "@chakra-ui/icons";
-import {
-  Box,
-  HStack,
-  IconButton,
-  Skeleton,
-  Text,
-  VStack,
-  useColorModeValue,
-} from "@chakra-ui/react";
-import React, { FC, useMemo } from "react";
-import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
-import { CommitteeGlobal, useCommitteeUtils } from "../hooks/useCommitteeUtils";
+import { Box, HStack, IconButton, Text, VStack } from "@chakra-ui/react";
+import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 import { useNavigate } from "react-router-dom";
-import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
-import {
-  JudiciaryCommittee,
-  MasterNodeCommittee,
-  PeoplesHouseCommittee,
-  getPluginInstallationId,
-} from "../utils/networks";
-import useFetchMasterNodeDelegatee from "../hooks/useFetchMasterNodeDelegatee";
-import useFetchVoterDepositAmount from "../hooks/useFetchVoterDepositAmount";
-import usePeoplesHouseDeposits from "../hooks/useDeposits";
+
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import useTotalNumberOfVoters from "../hooks/useTotalNumberOfVoters";
 
 const CommunityCards = () => {
   const navigate = useNavigate();
-  const { daoAddress, pluginAddress } = useAppGlobalConfig();
   const { committeesListWithIcon } = useCommitteeUtils();
-  const {
-    mapCommitteeToTotalNumber,
-    mapCommitteeToTotalNumberLoadings,
-    isLoading,
-  } = useTotalNumberOfVoters();
+  const { mapCommitteeToTotalNumber } = useTotalNumberOfVoters();
 
   return (
     <HStack w={"full"} flexDirection={["column", "column", "column", "row"]}>
@@ -52,6 +28,8 @@ const CommunityCards = () => {
           p={4}
           mb={4}
           w={["100%", "100%", "100%", "33%"]}
+          borderColor={bgGradient}
+          borderWidth={'thin'}
         >
           <Box w={"50px"} flexShrink={1}>
             {Icon && Icon}

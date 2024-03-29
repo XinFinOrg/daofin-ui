@@ -24,7 +24,6 @@ function useIsUserVotedOnProposal(proposalId: string | undefined) {
         console.log("error", e);
       });
   }, [daofinClient, voterAddress, proposalId]);
-  if (!voterAddress) return false;
 
   return !!isUserVotedOnProposal;
 }

@@ -1,13 +1,10 @@
 import { CHAIN_METADATA, PeoplesHouseCommittee } from "../utils/networks";
 import usePeoplesHouseDeposits from "../hooks/useDeposits";
-import { useDisclosure } from "@chakra-ui/hooks";
-import useIsUserDeposited from "../hooks/useIsUserDeposited";
 import { useNetwork } from "../contexts/network";
 import { useClient } from "../hooks/useClient";
-
-import { FC,  useMemo } from "react";
+import { FC, useMemo } from "react";
 import { Box, HStack, VStack } from "@chakra-ui/layout";
-import {  Text } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 import { Page } from "../components";
 import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
 import { WalletAddressCardWithBalance } from "../components/WalletAddressCard";
@@ -23,10 +20,7 @@ import {
 import { BigNumber } from "ethers";
 import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
-import {
-  PeopleButton,
-  
-} from "../components/Button/AuthorizedButton";
+import { PeopleButton } from "../components/Button/AuthorizedButton";
 import { DefaultBox } from "../components/Box";
 import RulesOfDecisions from "../components/RulesOfDecisions";
 import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTypeDetails";
@@ -234,12 +228,12 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
             <DefaultAlert w={["full", "full", "40%"]}>
               <Box fontSize={"sm"}>
                 <Text fontWeight={"semibold"}>
-                  How to modify one or multiple member?
+                  How does House work?
                 </Text>
                 <Text>
-                  Lorem ipsum dolor sit amet consectetur. Senectus elementum
-                  erat pellentesque nisl nibh. Vitae diam dolor convallis porta
-                  lacus.
+                  People’s House empowers its members by granting voting power
+                  proportional to their token holdings, adhering to the
+                  principle of "one token, one vote."
                 </Text>
               </Box>
             </DefaultAlert>

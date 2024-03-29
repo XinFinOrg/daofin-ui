@@ -4,6 +4,7 @@ import { getPluginInstallationId } from "../utils/networks";
 import { ProposalMetadata } from "@xinfin/osx-client-common";
 import { Proposal } from "../utils/types";
 import { resolveIpfsCid } from "@xinfin/osx-sdk-common";
+import { TallyDetails } from "@xinfin/osx-daofin-sdk-client";
 const ProposalsQueries = `
 query ProposalsQuery($pluginId: ID!) {
   pluginProposals(where: { plugin: $pluginId }) {
@@ -32,6 +33,29 @@ query ProposalsQuery($pluginId: ID!) {
     dao{
       id
     }
+    tallyDetails {
+      committee
+      id
+      totalVotes
+      yesVotes
+      noVotes
+      abstainVotes
+      quorumRequiredVote
+      passrateRequiredVote
+      quorumActiveVote
+      passrateActiveVote
+      totalMembers
+      pluginProposalId
+      proposalType {
+        id
+        settings {
+          name
+          supportThreshold
+          minParticipation
+          minVotingPower
+        }
+      }
+    }
   }
 }
 `;
@@ -49,6 +73,7 @@ export type SubgraphProposalBase = {
   executed: boolean;
   pluginProposalId: string;
   potentiallyExecutable: boolean;
+  tallyDetails: TallyDetails[];
 };
 function useDaoProposals(
   daoAddress: string,

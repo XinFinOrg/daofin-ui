@@ -18,9 +18,12 @@ import {
   toStandardFormatString,
 } from "../utils/date";
 import useVoteStats from "../hooks/useVoteStats";
+import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 
 const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
   const navigate = useNavigate();
+  const { committeesListWithIcon } = useCommitteeUtils();
+
   return (
     <>
       {
@@ -35,6 +38,7 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
               endDate,
               startDate,
               creationTxHash,
+              tallyDetails,
             }) => ({
               name: (
                 <ProposalSummary
@@ -52,16 +56,43 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
                   creationTxHash={creationTxHash}
                 />
               ),
-              // threshold: (
-              //   <CommitteesSupportThresholdVoteStatsProgressBar
-              //     proposalId={pluginProposalId}
-              //   />
-              // ),
-              // quorum: (
-              //   <CommitteesMinParticipationVoteStatsProgressBar
-              //     proposalId={pluginProposalId}
-              //   />
-              // ),
+              threshold: (
+                <CommitteesSupportThresholdVoteStatsProgressBar
+                  proposalId={pluginProposalId}
+                  data={tallyDetails.map(
+                    ({
+                      passrateRequiredVote,
+                      passrateActiveVote,
+                      committee,
+                    }) => ({
+                      percentage: +passrateActiveVote as number,
+                      threshold: +passrateRequiredVote as number,
+                      Icon: committeesListWithIcon.find(
+                        ({ id }) => id === committee
+                      )?.Icon as ReactElement,
+                    })
+                  )}
+                />
+              ),
+              quorum: (
+                <CommitteesMinParticipationVoteStatsProgressBar
+                  proposalId={pluginProposalId}
+                  data={tallyDetails.map(
+                    ({
+                      quorumRequiredVote,
+                      quorumActiveVote,
+                      totalMembers,
+                      committee,
+                    }) => ({
+                      percentage: +quorumActiveVote as number,
+                      threshold: +quorumRequiredVote as number,
+                      Icon: committeesListWithIcon.find(
+                        ({ id }) => id === committee
+                      )?.Icon as ReactElement,
+                    })
+                  )}
+                />
+              ),
               action: (
                 <Button
                   variant={"outline"}
@@ -69,7 +100,7 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
                     navigate(`/proposals/${parseInt(pluginProposalId)}/details`)
                   }
                 >
-                  Vote
+                  View
                 </Button>
               ),
             })
@@ -179,36 +210,15 @@ interface CommitteesVoteStatsProgressBarsProps {
 }
 const CommitteesMinParticipationVoteStatsProgressBar: FC<
   CommitteesVoteStatsProgressBarsProps
-> = ({ data, proposalId }) => {
-  const stats = useVoteStats(proposalId);
-  const [isFetched, setIsFetched] = useState(false);
-  useEffect(() => {
-    if (
-      stats.length > 0 &&
-      stats.filter(
-        ({ minParticipation, supportThreshold }) =>
-          minParticipation !== undefined && supportThreshold !== undefined
-      ).length > 0
-    ) {
-      setIsFetched(true);
-    }
-  }, [stats]);
+> = ({ data }) => {
   return (
     <Box>
-      {stats?.length > 0 && isFetched ? (
-        stats.map(({ minParticipation, Icon }) => (
+      {data && data?.length > 0 ? (
+        data.map(({ Icon, percentage, threshold }) => (
           <Box mb={1}>
             <DefaultProgressBar
-              percentage={
-                minParticipation?.numberOfVotesPercentage
-                  ? +minParticipation?.numberOfVotesPercentage
-                  : 0
-              }
-              threshold={
-                minParticipation?.minParticipationPercentage
-                  ? +minParticipation?.minParticipationPercentage
-                  : 0
-              }
+              percentage={percentage ? +percentage : 0}
+              threshold={threshold ? +threshold : 0}
               Icon={Icon}
             />
           </Box>
@@ -221,36 +231,15 @@ const CommitteesMinParticipationVoteStatsProgressBar: FC<
 };
 const CommitteesSupportThresholdVoteStatsProgressBar: FC<
   CommitteesVoteStatsProgressBarsProps
-> = ({ data, proposalId }) => {
-  const stats = useVoteStats(proposalId);
-  const [isFetched, setIsFetched] = useState(false);
-  useEffect(() => {
-    if (
-      stats.length > 0 &&
-      stats.filter(
-        ({ minParticipation, supportThreshold }) =>
-          minParticipation !== undefined && supportThreshold !== undefined
-      ).length > 0
-    ) {
-      setIsFetched(true);
-    }
-  }, [stats]);
+> = ({ data }) => {
   return (
     <Box>
-      {stats?.length > 0 && isFetched ? (
-        stats.map(({ supportThreshold, Icon }) => (
+      {data && data?.length > 0 ? (
+        data.map(({ Icon, percentage, threshold }) => (
           <Box mb={1}>
             <DefaultProgressBar
-              percentage={
-                supportThreshold?.numberOfVotesPercentage
-                  ? +supportThreshold?.numberOfVotesPercentage
-                  : 0
-              }
-              threshold={
-                supportThreshold?.supportThresholdPercentage
-                  ? +supportThreshold?.supportThresholdPercentage
-                  : 0
-              }
+              percentage={percentage ? +percentage : 0}
+              threshold={threshold ? +threshold : 0}
               Icon={Icon}
             />
           </Box>

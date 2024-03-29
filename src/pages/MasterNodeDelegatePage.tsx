@@ -19,6 +19,7 @@ import { DefaultBox } from "../components/Box";
 import { DefaultAlert } from "../components/Alerts";
 import RulesOfDecisions from "../components/RulesOfDecisions";
 import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTypeDetails";
+import { MasterNodeDelegationSchema } from "../schemas/delegateMasterNodeSchema";
 
 export type UpdateOrJoinMasterNodeDelegateeType = {
   delegateeAddress: string;
@@ -30,13 +31,14 @@ const MasterNodeDelegatePage = () => {
   // const bgColor = useColorModeValue("gray.50", "gray.900");
 
   const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
-
+  
   return (
     <Page>
       <Formik
         initialValues={{
           delegateeAddress: "",
         }}
+        validationSchema={MasterNodeDelegationSchema}
         onSubmit={() => {}}
       >
         <MasterNodeDelegateeSentateProvider>
@@ -52,11 +54,7 @@ const MasterNodeDelegatePage = () => {
               </VStack>
             </DefaultBox>
             <HStack flexDirection={["column", "column", "column", "row"]}>
-              <Box
-                w={["full", "full", "60%"]}
-                alignSelf={"flex-start"}
-                mr={2}
-              >
+              <Box w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={2}>
                 <VStack>
                   {delegatees.length > 0 ? (
                     delegatees.map(
@@ -69,6 +67,7 @@ const MasterNodeDelegatePage = () => {
                         creationDate,
                       }) => (
                         <MasterNodeSenateCard
+                          txHash={txHash}
                           key={id}
                           address={member}
                           joinedDate={toNormalDate(creationDate.toString())}
@@ -78,8 +77,7 @@ const MasterNodeDelegatePage = () => {
                       )
                     )
                   ) : (
-                    <DefaultBox w={'full'}>
-
+                    <DefaultBox w={"full"}>
                       <VStack
                         w={"100%"}
                         alignItems="center"
@@ -191,12 +189,12 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
         </DefaultBox>
         <DefaultAlert w={["full", "50%"]} p={4}>
           <Box fontSize={"sm"}>
-            <Text fontWeight={"semibold"}>
-              How to modify one or multiple member?
-            </Text>
+            <Text fontWeight={"semibold"}>Why Delegatation mechanism?</Text>
             <Text>
-              Lorem ipsum dolor sit amet consectetur. Senectus elementum erat
-              pellentesque nisl nibh. Vitae diam dolor convallis porta lacus.
+              This mechanism enhances security and ensures that each Master
+              Node's influence is accurately represented, with the flexibility
+              for Master Nodes to change their delegatee under certain
+              conditions.
             </Text>
           </Box>
         </DefaultAlert>

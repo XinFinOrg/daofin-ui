@@ -1,14 +1,10 @@
 import { useEffect, useState } from "react";
 import { useClient } from "./useClient";
-import {  ProposalMetadata } from "@xinfin/osx-client-common";
+import { ProposalMetadata } from "@xinfin/osx-client-common";
 import { Proposal } from "../utils/types";
-import {
-  resolveIpfsCid,
-} from "@xinfin/osx-sdk-common";
+import { resolveIpfsCid } from "@xinfin/osx-sdk-common";
 import { useNavigate } from "react-router-dom";
-import {
-  toStandardTimestamp,
-} from "../utils/date";
+import { toStandardTimestamp } from "../utils/date";
 import { SubgraphProposalBase } from "./useDaoProposals";
 const ProposalQueries = `
 query ProposalQuery($id: ID!) {
@@ -40,6 +36,29 @@ query ProposalQuery($id: ID!) {
           supportThreshold
           minParticipation
           minVotingPower
+        }
+      }
+      tallyDetails {
+        committee
+        id
+        totalVotes
+        yesVotes
+        noVotes
+        abstainVotes
+        quorumRequiredVote
+        passrateRequiredVote
+        quorumActiveVote
+        passrateActiveVote
+        totalMembers
+        pluginProposalId
+        proposalType {
+          id
+          settings {
+            name
+            supportThreshold
+            minParticipation
+            minVotingPower
+          }
         }
       }
     }

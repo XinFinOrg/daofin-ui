@@ -38,6 +38,7 @@ function useFetchJudiciaries(
       })
       .then((data) => {
         setJudiciaries(data.pluginJudiciaries as unknown as Judiciary[]);
+        setIsLoading(false);
       })
       .catch((e) => {
         setIsLoading(false);

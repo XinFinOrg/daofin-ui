@@ -44,7 +44,6 @@ interface VoteProviderProps extends PropsWithChildren {
 export const VoteProvider: FC<VoteProviderProps> = ({
   children,
   proposalId,
-  proposal,
 }) => {
   const { isOpen, onToggle, onClose, onOpen } = useDisclosure();
   const {
@@ -81,35 +80,9 @@ export const VoteProvider: FC<VoteProviderProps> = ({
     shouldPoll
   );
 
-  const { address } = useWallet();
-
-  const isMasterNode = useIsXDCValidatorCandidate(
-    address ? address : zeroAddress
-  );
-  const isDelegatee = useIsMasterNodeDelegatee(address ? address : zeroAddress);
-  const isJury = useIsJudiciaryMember(address ? address : zeroAddress);
-
-  const isUserDeposited = useIsUserDeposited(address ? address : zeroAddress);
-
-  const isUserVoted = useIsUserVotedOnProposal(proposalId);
-
-  const { data, isActive } = useFindProposalElectionPeriod(proposal?.startDate);
-  const { displayModal } = useModal();
   const handleToggleFormModal = () => {
-    if (!address) displayModal("connect-wallet");
-    else if (isMasterNode) displayModal("not-mn");
-    else if (!(isDelegatee || isJury || isUserDeposited))
-      displayModal("not-voter");
-    else if (isUserVoted) displayModal("voted-already");
-    else if (isActive)
-      displayModal(
-        "waiting-to-start-election",
-        toStandardTimestamp(data?.startDate ? data?.startDate : 0)
-      );
-    else {
-      onOpen();
-      resetForm();
-    }
+    onOpen();
+    resetForm();
   };
   const handleSendTx = async () => {
     const iterator = daofinClient?.methods.vote(
@@ -117,7 +90,6 @@ export const VoteProvider: FC<VoteProviderProps> = ({
       values.voteOption,
       false
     );
-    console.log(values.voteOption);
 
     if (!iterator) return;
     setCreationProcessState(TransactionState.WAITING);

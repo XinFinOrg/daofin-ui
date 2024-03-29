@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  HStack,
   Radio,
   RadioGroup,
   Stack,
@@ -16,6 +17,8 @@ import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
 import { useFormik, useFormikContext } from "formik";
 import { VoteFormType } from "../../pages/ProposalDetailsPage";
 import { DefaultBox } from "../Box";
+import { DefaultAlert } from "../Alerts";
+import { InfoIcon } from "@chakra-ui/icons";
 
 interface VoteFormModalProps extends PropsWithChildren {
   isOpen: boolean;
@@ -67,7 +70,9 @@ const VoteFormModal: FC<VoteFormModalProps> = ({
               <DefaultBox
                 key={key}
                 bgColor={
-                  values.voteOption.toString() === key ? highlightVoteOption : undefined
+                  values.voteOption.toString() === key
+                    ? highlightVoteOption
+                    : undefined
                 }
                 w={"full"}
                 px={6}

@@ -29,29 +29,6 @@ const useFetchProposalStatus = () => {
         daofinClient?.methods.canExecute(pluginProposalId),
         daofinClient?.methods.isOpenProposal(pluginProposalId),
         daofinClient?.methods.isExecutedProposal(pluginProposalId),
-        // multicall({
-        //   contracts: [
-        //     {
-        //       abi: DaofinPlugin__factory.abi,
-        //       address: pluginAddress as Address,
-        //       functionName: "canExecute",
-        //       args: [BigInt("1")],
-        //     },
-        //     {
-        //       abi: DaofinPlugin__factory.abi,
-        //       address: pluginAddress as Address,
-        //       functionName: "isThresholdReached",
-        //       args: [BigInt("1")],
-        //     },
-        //     {
-        //       abi: DaofinPlugin__factory.abi,
-        //       address: pluginAddress as Address,
-        //       functionName: "isMinParticipationReached",
-        //       args: [BigInt("1")],
-        //     },
-        //   ],
-        //   multicallAddress:"0xcA11bde05977b3631167028862bE2a173976CA11"
-        // }),
       ]),
     [daofinClient]
   );

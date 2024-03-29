@@ -111,7 +111,7 @@ export default function Header() {
               </Box>
               <Box mx={"4"}>
                 <Text fontWeight="semibold">
-                  <a href={"https://docs.xdc.community"} target={"_blank"}>
+                  <a href={"https://docs.xdc.community/daofin"} target={"_blank"}>
                     DOCS
                   </a>
                 </Text>

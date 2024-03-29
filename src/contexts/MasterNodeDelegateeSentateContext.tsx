@@ -126,13 +126,14 @@ export const MasterNodeDelegateeSentateProvider: FC<PropsWithChildren> = ({
             title="Delegate a member"
           >
             <>
-              <DefaultAlert p={6}>
+              <DefaultAlert p={6} mb={6}>
                 <Box>
                   {" "}
                   <Text fontWeight={"semibold"}>How to delegate a member?</Text>
                   <Text>
-                    Lorem ipsum dolor sit amet consectetur. Senectus elementum
-                    erat pellentesque nisl nibh.
+                    To bring more security layer on top of the Master Node
+                    address, each of them should whitelist a delegatee address
+                    to perform actions onbehalf.
                   </Text>
                 </Box>
               </DefaultAlert>
@@ -143,6 +144,8 @@ export const MasterNodeDelegateeSentateProvider: FC<PropsWithChildren> = ({
                 label="Address"
                 isRequired
                 mb={"4"}
+                borderTopEndRadius={0}
+                borderEndEndRadius={0}
                 onClickRightAddon={async (e: any) => {
                   const value = await navigator.clipboard.readText();
                   setFieldValue("delegateeAddress", value);

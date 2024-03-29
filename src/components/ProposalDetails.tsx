@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { Proposal } from "../utils/types";
 import {
   Box,
@@ -16,12 +16,16 @@ import { useNetwork } from "../contexts/network";
 
 import { Button } from "@chakra-ui/button";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Skeleton,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Tooltip,
 } from "@chakra-ui/react";
 import ProposalTypeBadge from "./ProposalTypeBadge";
 import { IoShareSocial } from "react-icons/io5";
@@ -48,6 +52,8 @@ import useFetchProposalStatus, {
   FetchProposalStatusType,
 } from "../hooks/useFetchProposalStatus";
 import { ExpandableText } from "./ExpandableText";
+import { DefaultToolTip, InfoTooltip } from "./Tooltip";
+import { DefaultButton } from "./Button";
 
 const ProposalDetails: FC<{
   proposal: Proposal | undefined;
@@ -70,7 +76,6 @@ const ProposalDetails: FC<{
         .slice(1),
     []
   );
-  const { handleToggleFormModal } = useVoteContext();
 
   const [proposalStatus, setProposalStatus] =
     useState<FetchProposalStatusType>();
@@ -82,16 +87,17 @@ const ProposalDetails: FC<{
       });
     }
   }, [makeCall, proposal?.pluginProposalId]);
-
+  const filterVotersList = useCallback(
+    (tabCommittee: string) => {
+      return allVoters.filter(({ committee }) => committee === tabCommittee);
+    },
+    [allVoters]
+  );
   return (
     <>
       {
         <Box w={"full"}>
-          <Grid
-            templateColumns={"repeat(2, 1fr)"}
-            // templateRows={"repeat(1, 1fr)"}
-            gap={[4, 6]}
-          >
+          <Grid templateColumns={"repeat(2, 1fr)"} gap={[4, 6]}>
             <GridItem colSpan={2}>
               <Skeleton isLoaded={!isLoading}>
                 <DefaultBox w={"100%"}>
@@ -151,9 +157,16 @@ const ProposalDetails: FC<{
                       gap={4}
                       w={["full", "full", "initial"]}
                     >
-                      {proposal && !isLoading && proposalStatus && (
-                        <>
-                          <VoteButton
+                      {proposal &&
+                        proposal.pluginProposalId &&
+                        !isLoading &&
+                        proposalStatus && (
+                          <>
+                            <ProposalActionButtons
+                              status={proposalStatus}
+                              proposalId={proposal.pluginProposalId}
+                            />
+                            {/* <VoteButton
                             colorScheme="blue"
                             w={"full"}
                             status={proposalStatus}
@@ -161,9 +174,9 @@ const ProposalDetails: FC<{
                             proposalId={proposal.pluginProposalId}
                           >
                             Vote Now
-                          </VoteButton>
+                          </VoteButton> */}
 
-                          <Box>
+                            {/* <Box>
                             <ArrowForwardIcon />
                           </Box>
 
@@ -174,9 +187,9 @@ const ProposalDetails: FC<{
                             onClick={onExecuteModalOpen}
                           >
                             Execute Now
-                          </ExecuteProposalButton>
-                        </>
-                      )}
+                          </ExecuteProposalButton> */}
+                          </>
+                        )}
 
                       {/* {proposal && !isLoading && proposalStatus?.isOpen ? (
                         proposalStatus?.canExecute ? (
@@ -216,9 +229,7 @@ const ProposalDetails: FC<{
               <Skeleton isLoaded={!isLoading} minH={"300px"} mb={6}>
                 <GridItem mb={6} w="100%" h={"min-content"}>
                   <DefaultBox>
-                    {proposal?.pluginProposalId && (
-                      <VotingStatsBox proposalId={proposal.pluginProposalId} />
-                    )}
+                    {proposal && <VotingStatsBox proposal={proposal} />}
                   </DefaultBox>
                 </GridItem>
               </Skeleton>
@@ -285,7 +296,7 @@ const ProposalDetails: FC<{
                                 fontWeight={"semibold"}
                                 whiteSpace={"nowrap"}
                               >
-                                {name}
+                                {`${name} (${filterVotersList(id).length})`}
                               </Text>
                             </HStack>
                           </Tab>
@@ -296,32 +307,13 @@ const ProposalDetails: FC<{
                         {committeesListWithIcon.map(({ id, name }) => (
                           <TabPanel p={"6"}>
                             <Tabs isFitted variant="soft-rounded">
-                              <TabList
-                                flexDirection={["column", "column", "row"]}
-                                gap={4}
-                              >
-                                {voteOptionsList.map(([key, value]) => (
-                                  <Tab key={key}>
-                                    <Text>{value}</Text>
-                                  </Tab>
-                                ))}
-                              </TabList>
                               <TabPanels>
-                                {voteOptionsList.map(([key,]) => (
+                                {voteOptionsList.map(([key]) => (
                                   <TabPanel w={"full"} key={key}>
                                     <VStack spacing={"1"} alignItems={"start"}>
-                                      {allVoters.filter(
-                                        (item) =>
-                                          item.committee === id &&
-                                          item.option === +key
-                                      ).length > 0 ? (
-                                        allVoters
-                                          .filter(
-                                            (item) =>
-                                              item.committee === id &&
-                                              item.option === +key
-                                          )
-                                          .map(({ voter, txHash }, index) => (
+                                      {filterVotersList(id).length > 0 ? (
+                                        filterVotersList(id).map(
+                                          ({ voter, txHash }, index) => (
                                             <HStack w={"full"} key={index}>
                                               <WalletAddressCard
                                                 address={voter}
@@ -336,7 +328,8 @@ const ProposalDetails: FC<{
                                                 <BlockIcon w={"5"} h={"5"} />
                                               </a>
                                             </HStack>
-                                          ))
+                                          )
+                                        )
                                       ) : (
                                         <VStack alignSelf={"center"} p={6}>
                                           <NoProposalIcon />
@@ -344,9 +337,19 @@ const ProposalDetails: FC<{
                                             No {name} has voted yet! Be the
                                             first!
                                           </Text>
-                                          <Button variant={"outline"}>
-                                            Vote now!
-                                          </Button>
+                                          {proposal && proposalStatus && (
+                                            <VoteButton
+                                              w={"full"}
+                                              proposalId={
+                                                proposal.pluginProposalId
+                                              }
+                                              expired={!proposalStatus?.isOpen}
+                                              status={proposalStatus}
+                                              variant={"outline"}
+                                            >
+                                              Vote now
+                                            </VoteButton>
+                                          )}
                                         </VStack>
                                       )}
                                     </VStack>
@@ -406,6 +409,32 @@ const ProposalDetails: FC<{
         </Box>
       }
     </>
+  );
+};
+
+type ProposalActionButtonsProps = {
+  status: FetchProposalStatusType;
+  proposalId: string;
+};
+
+const ProposalActionButtons: FC<ProposalActionButtonsProps> = ({
+  status,
+  proposalId,
+}) => {
+  const { handleToggleFormModal } = useVoteContext();
+  return (
+    <Box>
+      <VoteButton
+        w={"full"}
+        colorScheme="blue"
+        status={status}
+        expired={!status.isOpen}
+        onClick={handleToggleFormModal}
+        proposalId={proposalId}
+      >
+        Vote Now
+      </VoteButton>
+    </Box>
   );
 };
 

@@ -22,21 +22,26 @@ export async function fetchTokenPrice(
 
   // build url based on whether token is ethereum
   const endPoint = `/simple/token_price/${platformId}?vs_currencies=usd&contract_addresses=`;
-  const url = nativeToken
-    ? `${BASE_URL}/simple/price?ids=${getNativeTokenId(
-        fetchNetwork
-      )}&vs_currencies=usd`
+  let url = nativeToken
+    ? "https://api2.alphaex.net/common/xdc_wallet_live_price?currency=XDC&nativeCurr=USD"
     : `${BASE_URL}${endPoint}${fetchAddress}`;
 
   try {
-    const res = await fetch(url);
-    const data = await res.json();
-
+    let res;
+    let data;
+    if (nativeToken) {
+      res = await fetch(url);
+      data = await res.json();
+      return data.message as number;
+    }
+    res = await fetch(url);
+    data = await res.json();
     return Object.values(data as object)[0]?.usd as number;
   } catch (error) {
     console.error("Error fetching token price", error);
   }
 }
+
 function getNativeTokenId(_: SupportedNetworks): string {
   return NATIVE_TOKEN_ID.default;
 }

@@ -1,22 +1,13 @@
-
 import { Box, HStack, VStack } from "@chakra-ui/layout";
-import {
-
-  Text,
-} from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 import { Page } from "../components";
 import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
-
-import {
-  WalletAddressCardWithDate,
-} from "../components/WalletAddressCard";
+import { WalletAddressCardWithDate } from "../components/WalletAddressCard";
 import useFetchJudiciaries from "../hooks/useFetchJudiciaries";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
 import { JudiciaryCommittee } from "../utils/networks";
-import {
-  toStandardTimestamp,
-} from "../utils/date";
+import { toStandardTimestamp } from "../utils/date";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
 import { DefaultButton } from "../components/Button";
 import { DefaultBox } from "../components/Box";
@@ -26,10 +17,7 @@ import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTy
 
 const JudiciaryPage = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
-  const { data: juries, } = useFetchJudiciaries(
-    daoAddress,
-    pluginAddress
-  );
+  const { data: juries } = useFetchJudiciaries(daoAddress, pluginAddress);
   const communityName = JudiciaryCommittee;
   const totalNumberOfJudiciaries =
     useFetchTotalNumbersByCommittee(JudiciaryCommittee);
@@ -92,11 +80,12 @@ const JudiciaryPage = () => {
             <DefaultAlert w={["full", "full", "50%"]}>
               <VStack alignItems={"flex-start"} fontSize={"sm"}>
                 <Text fontWeight={"semibold"}>
-                  How to modify one or multiple member?
+                  How is the role of Judiciaries?
                 </Text>
                 <Text>
-                  Lorem ipsum dolor sit amet consectetur. Senectus elementum
-                  erat pellentesque nisl nibh. nisl nibh. nisl nibh.
+                  Their primary role is to ensure that proposals align with
+                  DAOFIN's overarching goals and criteria, serving as the
+                  guardians of the ecosystem's integrity.
                 </Text>
               </VStack>
             </DefaultAlert>

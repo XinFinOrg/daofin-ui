@@ -1,6 +1,7 @@
 import { DaoAction, ProposalMetadata } from "@xinfin/osx-client-common";
 import {
   CommitteeVotingSettings,
+  TallyDetails,
   VoteOption,
 } from "@xinfin/osx-daofin-sdk-client";
 import { BigNumberish } from "ethers";
@@ -37,6 +38,7 @@ export type Proposal = {
   };
   committeesVotes: VoteStatsType[];
   electionIndex: string;
+  tallyDetails: TallyDetailResponse[];
 };
 export type Deposit = {
   id: string;
@@ -108,3 +110,26 @@ export enum ProposalStatus {
   NOT_STARTED = "Not Started",
   EXPIRED = "Expired",
 }
+export type TallyDetailResponse = {
+  committee: string;
+  id: string;
+  totalVotes: string;
+  yesVotes: string;
+  noVotes: string;
+  abstainVotes: string;
+  quorumRequiredVote: string;
+  passrateRequiredVote: string;
+  quorumActiveVote: string;
+  passrateActiveVote: string;
+  totalMembers: string;
+  pluginProposalId: string;
+  proposalType: {
+    id: string;
+    settings: {
+      name: string;
+      supportThreshold: string;
+      minParticipation: string;
+      minVotingPower: string;
+    };
+  };
+};

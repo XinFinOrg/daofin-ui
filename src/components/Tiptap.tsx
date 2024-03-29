@@ -185,7 +185,7 @@ const Tiptap: FC<InputProps> = ({ label, size: _, ...props }) => {
         {...field}
         {...props}
         editor={editor}
-        className={"border border-1 text-start	"}
+        className={"border border-1 text-start"}
       />
     </div>
   );

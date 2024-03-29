@@ -7,10 +7,11 @@ import { FC, PropsWithChildren } from "react";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { xdcTestnet } from "wagmi/chains";
 import {
-  injectedWallet,
+  metaMaskWallet,
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { publicProvider } from "wagmi/providers/public";
+
 const WagmiProvider: FC<PropsWithChildren> = ({ children }) => {
   const projectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID as string;
   const chains = [xdcTestnet];
@@ -20,7 +21,7 @@ const WagmiProvider: FC<PropsWithChildren> = ({ children }) => {
     {
       groupName: "Recommended",
       wallets: [
-        injectedWallet({ chains }),
+        metaMaskWallet({ projectId, chains }),
         walletConnectWallet({ projectId, chains }),
       ],
     },

@@ -1,5 +1,6 @@
 import { utils, BigNumberish, BigNumber } from "ethers";
 import { v4 as uuidV4 } from "uuid";
+import { RATIO_BASE, applyRatioCeiled } from "./networks";
 export function toEther(value: string) {
   return utils.formatEther(value);
 }
@@ -30,4 +31,10 @@ export function toStandardPercentage(percentage: string) {
 
 export function uuid() {
   return uuidV4();
+}
+
+export function convertProposalTypeSettingsToPercentage(
+  value: string
+): BigNumber {
+  return BigNumber.from(value).div(RATIO_BASE);
 }

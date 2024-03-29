@@ -31,6 +31,7 @@ interface MasterNodeSenateCardProps {
   masterNodeAddress: string;
   joinedDate: Date;
   blockNumber: number;
+  txHash?: string;
 }
 const MasterNodeSenateCard: FC<MasterNodeSenateCardProps> = ({
   address,

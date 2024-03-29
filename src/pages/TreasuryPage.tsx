@@ -38,6 +38,7 @@ import SecondaryWalletAddressCard from "../components/WalletAddressCard/Secondar
 import { toNormalDate } from "../utils/date";
 import { erc20ABI, useContractRead, useToken } from "wagmi";
 import WithdrawActionCard from "../components/WalletAddressCard/WithdrawActionCard";
+import { BigNumber } from "ethers";
 const Query = `
 query DaoTransfers($id: ID!) {
   nativeTransfers(
@@ -166,14 +167,19 @@ const TreasuryPage = () => {
       : 0;
   }, [xdcPrice, nativeBalanceOfDao]);
 
+  console.log(nativeBalanceOfDao, fxdBalance?.toString());
+
   useEffect(() => {
-    if (nativeBalanceOfDao && fxdBalance) {
+    if (nativeBalanceOfDao) {
       setPieData([
         {
           name: "XDC",
           value: +weiBigNumberToFormattedNumber(nativeBalanceOfDao),
         },
-        { name: "FXD", value: +weiBigNumberToFormattedNumber(fxdBalance) },
+        {
+          name: "FXD",
+          value: +weiBigNumberToFormattedNumber(BigNumber.from(fxdBalance)),
+        },
       ]);
     }
   }, [nativeBalanceOfDao, fxdBalance]);

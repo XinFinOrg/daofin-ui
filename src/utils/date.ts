@@ -19,6 +19,7 @@ export const timestampToStandardFormatString = (
 ) => format(toStandardTimestamp(solidityTimestamp), DEFAULT_FORMAT);
 
 export const toDate = (timestamp: number | string) => new Date(timestamp);
+export const dateNow = () => new Date(Date.now());
 
 export const expirationDistance = (from: Date, to: Date) =>
   appFormatDistance(from, to);

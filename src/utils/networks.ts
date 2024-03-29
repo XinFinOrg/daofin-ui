@@ -402,7 +402,7 @@ export function convertCommitteeToPlainText(bytesName: string) {
 }
 
 // The base value to encode real-valued ratios on the interval [0, 1] as integers on the interval 0 to 10^6.
-const RATIO_BASE: BigNumberish = BigNumber.from(10).pow(6);
+export const RATIO_BASE: BigNumberish = BigNumber.from(10).pow(6);
 
 // Thrown if a ratio value exceeds the maximal value of 10^6.
 class RatioOutOfBounds extends Error {
@@ -459,3 +459,10 @@ export function makeBlockScannerAddressUrl(
 ) {
   return `${CHAIN_METADATA[network].explorer}/address/${address}`;
 }
+
+export function generateProposalTypeName(
+  name: string
+) {
+  return name.split(' ').join('-').toLocaleLowerCase()
+}
+

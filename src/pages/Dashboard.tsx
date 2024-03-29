@@ -53,13 +53,13 @@ import { Proposal } from "../utils/types";
 import useDaoElectionPeriods from "../hooks/useDaoElectionPeriods";
 import { toDate } from "date-fns";
 import ProposalStatusBadge from "../components/ProposalStatusBadge";
+import ElectionPeriods from "../components/ElectionPeriods";
 
 const Dashboard: FC = () => {
   const navigate = useNavigate();
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
   const {
     data: proposals,
-
     isLoading,
   } = useDaoProposals(daoAddress, pluginAddress);
 
@@ -101,7 +101,7 @@ const Dashboard: FC = () => {
     async () =>
       Promise.all(
         proposals.map(async (item) => {
-          const {  pluginProposalId } = item;
+          const { pluginProposalId } = item;
           const status = await makeCall(pluginProposalId);
           return {
             ...item,
@@ -187,7 +187,6 @@ const Dashboard: FC = () => {
               </VStack>
               <Box>
                 <AddFund />
-                {/* <AddFundButton variant="outline">+ Add fund</AddFundButton> */}
               </Box>
             </HStack>
           </DefaultBox>
@@ -198,73 +197,7 @@ const Dashboard: FC = () => {
         <CommunityCards />
       </Flex>
       <Box mb={4}>
-        <HStack w={["full", "full", "50%"]} justifyContent={"space-between"}>
-          <Text fontWeight={"semibold"} fontSize={"lg"}>
-            Election Periods
-          </Text>
-          {/* <Link to={"/proposals"}>
-            <Button variant={"link"} size={"sm"}>
-              View all <ArrowForwardIcon />
-            </Button>
-          </Link> */}
-        </HStack>
-        <Skeleton
-          isLoaded={!isLoadingPeriods}
-          w={["full", "full", "50%"]}
-          alignItems={"flex-start"}
-        >
-          <VStack>
-            {periods?.map(({ startDate, endDate }, index) => (
-              <WhiteBox key={uuid()} p={2} w="full">
-                <Flex
-                  w={"full"}
-                  justifyContent="flex-start"
-                  alignItems={"center"}
-                  textAlign={"center"}
-                  mb={1}
-                  fontSize={["xs", "xs", "xs", "sm"]}
-                >
-                  <Text p={"1"}>{index + 1}- </Text>
-                  <HStack
-                    margin={"1"}
-                    p={"1"}
-                    maxW={"40%"}
-                    borderRadius="md"
-                    justifyContent={"flex-start"}
-                    flexDirection={["column", "column", "row"]}
-                  >
-                    <Text fontWeight={"semibold"}>
-                      {toStandardFormatString(toDate(startDate))}
-                    </Text>
-                  </HStack>
-                  <Box>
-                    <ArrowForwardIcon />
-                  </Box>
-                  <HStack
-                    margin={"1"}
-                    p={"1"}
-                    borderRadius="md"
-                    justifyContent={"center"}
-                    flexDirection={["column", "column", "row"]}
-                  >
-                    <Text fontWeight={"semibold"}>
-                      {toStandardFormatString(toDate(endDate))}
-                    </Text>
-                  </HStack>
-                  <Box>
-                    <ProposalStatusBadge
-                      variant={"subtle"}
-                      title={proposalTimeStatus(
-                        toDate(startDate),
-                        toDate(endDate)
-                      )}
-                    />
-                  </Box>
-                </Flex>
-              </WhiteBox>
-            ))}
-          </VStack>
-        </Skeleton>
+        <ElectionPeriods isLoading={isLoadingPeriods} periods={periods} />
       </Box>
 
       <Flex

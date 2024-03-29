@@ -1,16 +1,8 @@
-import {
-  Box,
-  Flex,
-  Text,
-  HStack,
-  VStack,
-} from "@chakra-ui/layout";
-import{ useMemo } from "react";
+import { Box, Flex, Text, HStack, VStack } from "@chakra-ui/layout";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import Page from "../components/Page";
-import {
-  Skeleton,
-} from "@chakra-ui/react";
+import { Skeleton } from "@chakra-ui/react";
 import CommunityCards from "../components/CommunityCards";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import {
@@ -314,6 +306,7 @@ const CommunityPage = () => {
                   }) => (
                     <Box w={["50%", "20%"]} key={id}>
                       <MasterNodeSenateCard
+                        txHash={txHash}
                         address={member}
                         blockNumber={parseInt(snapshotBlock.toString())}
                         joinedDate={toNormalDate(creationDate.toString())}

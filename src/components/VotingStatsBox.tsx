@@ -9,37 +9,40 @@ import {
   Text,
   Box,
 } from "@chakra-ui/react";
-import  { FC, useMemo } from "react";
+import { FC, useMemo } from "react";
 import DefaultProgressBar from "./DefaultProgressBar";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 
 import {
+  convertProposalTypeSettingsToPercentage,
   numberWithCommaSeparate,
 } from "../utils/numbers";
 import useTotalNumberOfVoters from "../hooks/useTotalNumberOfVoters";
 import useVoteStats from "../hooks/useVoteStats";
+import { Proposal } from "../utils/types";
+import { Cell, Pie, PieChart, Tooltip } from "recharts";
 
 interface VotingStatsBoxProps {
   currentVoters?: number;
-  proposalId: string;
+  proposal: Proposal;
 }
-const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
-  const { committeesListWithIcon,  } = useCommitteeUtils();
 
-  const {  } = useTotalNumberOfVoters();
+const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
+  const { committeesListWithIcon } = useCommitteeUtils();
 
-  const stats = useVoteStats(proposalId);
-  // useEffect(() => call(proposalId), []);
+  const {} = useTotalNumberOfVoters();
+
   const allVotersNumber = useMemo(
     () =>
-      stats
-        ? stats.reduce(
-            (acc, { voters }) => (voters ? acc + voters?.data.length : acc),
+      proposal.tallyDetails
+        ? proposal.tallyDetails.reduce(
+            (acc, { totalVotes }) => (totalVotes ? acc + +totalVotes : acc),
             0
           )
         : 0,
-    [stats]
+    [proposal]
   );
+
   return (
     <>
       <HStack
@@ -74,91 +77,97 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposalId }) => {
         </TabList>
 
         <TabPanels>
-          {stats.map(({ id, }) => (
-            <TabPanel key={id} p={"6"}>
-              <HStack
-                justifyContent={"space-between"}
-                alignItems={"flex-start"}
-                py={"4"}
-                flexDirection={["column", "column", "row"]}
-              >
-                <Text fontWeight={"semibold"}>
-                  <Text>
-                    {
-                      stats.find(({ id: committeeId }) => id === committeeId)
-                        ?.voters?.data.length
-                    }{" "}
-                    <Text as="p" display={"inline-block"}>
-                      Voted
-                    </Text>{" "}
-                  </Text>
-                </Text>
+          {proposal.tallyDetails.map(
+            ({
+              id,
+              yesVotes,
+              noVotes,
+              abstainVotes,
+              totalVotes,
+              quorumActiveVote,
+              quorumRequiredVote,
+              passrateActiveVote,
+              passrateRequiredVote,
+              totalMembers,
+            }) => (
+              <TabPanel key={id} p={"6"}>
                 <HStack
-                  fontWeight={"semibold"}
+                  justifyContent={"space-between"}
                   alignItems={"flex-start"}
+                  py={"4"}
                   flexDirection={["column", "column", "row"]}
                 >
-                  {stats
-                    .find(({ id: committeeId }) => id === committeeId)
-                    ?.options.map(({ value, text }) => (
-                      <Text>
-                        <Text as="p" display={"inline-block"}>
-                          {value}
-                        </Text>{" "}
-                        {text}
-                      </Text>
-                    ))}
+                  <Text fontWeight={"semibold"}>
+                    <Text>
+                      {`${totalVotes} `}
+                      <Text as="p" display={"inline-block"}>
+                        Voted
+                      </Text>{" "}
+                    </Text>
+                  </Text>
+                  <HStack
+                    fontWeight={"semibold"}
+                    alignItems={"flex-start"}
+                    flexDirection={["column", "column", "row"]}
+                  >
+                    <Text>
+                      <Text as="p" display={"inline-block"}>
+                        {yesVotes}
+                      </Text>{" "}
+                      {"YES"}
+                    </Text>
+                    <Text>
+                      <Text as="p" display={"inline-block"}>
+                        {noVotes}
+                      </Text>{" "}
+                      {"NO"}
+                    </Text>
+                    <Text>
+                      <Text as="p" display={"inline-block"}>
+                        {abstainVotes}
+                      </Text>{" "}
+                      {"ABSTAIN"}
+                    </Text>
+                  </HStack>
                 </HStack>
-              </HStack>
-              {stats
-                .filter(({ id: committeeId }) => id === committeeId)
-                .map(({ minParticipation, supportThreshold }) => (
-                  <VStack alignItems={"flex-start"}>
-                    <DefaultProgressBar
-                      percentage={
-                        minParticipation?.numberOfVotesPercentage
-                          ? +minParticipation.numberOfVotesPercentage.toString()
-                          : 0
-                      }
-                      threshold={
-                        minParticipation?.minParticipationPercentage
-                          ? +minParticipation.minParticipationPercentage.toString()
-                          : 0
-                      }
-                      height={"2"}
-                      ProgressLabel={
-                        <Text
-                          fontSize={["xs", "sm", "md"]}
-                          fontWeight={"normal"}
-                        >
-                          Quorum
-                        </Text>
-                      }
-                    />
-                    <DefaultProgressBar
-                      percentage={
-                        supportThreshold?.numberOfVotesPercentage
-                          ? +supportThreshold?.numberOfVotesPercentage
-                          : 0
-                      }
-                      threshold={
-                        supportThreshold?.supportThresholdPercentage
-                          ? +supportThreshold?.supportThresholdPercentage
-                          : 0
-                      }
-                      ProgressLabel={
-                        <Text
-                          fontWeight={"normal"}
-                          fontSize={["xs", "sm", "md"]}
-                        >
-                          Threshold
-                        </Text>
-                      }
-                    />
-                  </VStack>
-                ))}
-            </TabPanel>
-          ))}
+                <VStack alignItems={"flex-start"}>
+                  <DefaultProgressBar
+                    percentage={
+                      +quorumActiveVote == 0
+                        ? 0
+                        : +((+quorumActiveVote / +totalMembers) * 100)
+                    }
+                    threshold={+proposal == 0
+                      ? 0
+                      : +((+quorumRequiredVote / +totalMembers) * 100)}
+                    height={"2"}
+                    ProgressLabel={
+                      <Text fontSize={["xs", "sm", "md"]} fontWeight={"normal"}>
+                        Quorum
+                      </Text>
+                    }
+                  />
+                  <DefaultProgressBar
+                    percentage={
+                      +passrateActiveVote == 0
+                        ? 0
+                        : +((+passrateActiveVote / +totalMembers) * 100)
+                    }
+                    threshold={
+                      passrateRequiredVote
+                        ? (+passrateRequiredVote / +totalMembers) * 100
+                        : 0
+                    }
+                    ProgressLabel={
+                      <Text fontWeight={"normal"} fontSize={["xs", "sm", "md"]}>
+                        Threshold
+                      </Text>
+                    }
+                  />
+                </VStack>
+              </TabPanel>
+            )
+          )}
         </TabPanels>
       </Tabs>
     </>
