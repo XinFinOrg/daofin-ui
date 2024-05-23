@@ -51,6 +51,7 @@ const Input: React.FC<InputProps & ChakraInputProps> = ({
           {...props}
           id={props.id || name}
           placeholder={props.placeholder || ""}
+          
         />
         {rightAddon && (
           <InputRightAddon

@@ -6,65 +6,11 @@ import { resolveIpfsCid } from "@xinfin/osx-sdk-common";
 import { useNavigate } from "react-router-dom";
 import { toStandardTimestamp } from "../utils/date";
 import { SubgraphProposalBase } from "./useDaoProposals";
-const ProposalQueries = `
-query ProposalQuery($id: ID!) {
-    pluginProposal(id: $id) {
-      id
-      actions {
-        id
-        to
-        data
-        value
-      }
-      allowFailureMap
-      creator
-      createdAt
-      metadata
-      startDate
-      endDate
-      snapshotBlock
-      executed
-      creationBlockNumber
-      failureMap 
-      pluginProposalId
-      creationTxHash
-      proposalType {
-        id
-        txHash
-        settings {
-          id
-          supportThreshold
-          minParticipation
-          minVotingPower
-        }
-      }
-      tallyDetails {
-        committee
-        id
-        totalVotes
-        yesVotes
-        noVotes
-        abstainVotes
-        quorumRequiredVote
-        passrateRequiredVote
-        quorumActiveVote
-        passrateActiveVote
-        totalMembers
-        pluginProposalId
-        proposalType {
-          id
-          settings {
-            name
-            supportThreshold
-            minParticipation
-            minVotingPower
-          }
-        }
-      }
-    }
-  }
-`;
-function useDaoProposal(pluginId: string): {
+import { proposalByProposalIdQuery } from "../utils/graphql-queries/proposals-query";
+import useCommunityMembers from "./useCommunityMembers";
+import { applyRatioCeiled } from "../utils/vote-utils";
+
+function useDaoProposal(proposalId: string): {
   data: Proposal | undefined;
   error: string;
   isLoading: boolean;
@@ -75,14 +21,15 @@ function useDaoProposal(pluginId: string): {
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { data: communityLengths } = useCommunityMembers();
   useEffect(() => {
-    if (!daofinClient) return;
+    if (!daofinClient || !communityLengths) return;
     setIsLoading(true);
     daofinClient.graphql
       .request<{ pluginProposal: SubgraphProposalBase }>({
-        query: ProposalQueries,
+        query: proposalByProposalIdQuery,
         params: {
-          id: pluginId,
+          id: proposalId,
         },
       })
       .then(async ({ pluginProposal }) => {
@@ -93,7 +40,8 @@ function useDaoProposal(pluginId: string): {
 
         const startDate = toStandardTimestamp(+pluginProposal.startDate);
         const endDate = toStandardTimestamp(+pluginProposal.endDate);
-
+        const a = pluginProposal.tallyDetails[0].proposalType.settings;
+        // applyRatioCeiled();
         return {
           ...pluginProposal,
           metadata,
@@ -110,7 +58,7 @@ function useDaoProposal(pluginId: string): {
         setError(e);
         console.log("error", e);
       });
-  }, [daofinClient]);
+  }, [daofinClient, communityLengths]);
 
   return { data: proposals, error: error, isLoading };
 }

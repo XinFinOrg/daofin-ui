@@ -203,6 +203,8 @@ const DaoTreasuryProvider: FC<PropsWithChildren> = ({ children }) => {
               rightAddon={`${CHAIN_METADATA[network].nativeCurrency.symbol}`}
               placeholder="0"
               label="Amount"
+              borderBottomRightRadius={0}
+              borderTopRightRadius={0}
               isRequired
               mb={"4"}
             />

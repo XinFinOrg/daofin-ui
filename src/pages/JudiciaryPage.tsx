@@ -94,30 +94,32 @@ const JudiciaryPage = () => {
       </DefaultBox>
       <HStack flexDirection={["column", "column", "column", "row"]}>
         <Box w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={2}>
-          <VStack>
-            {juries.length > 0 ? (
-              juries.map(({ member, creationDate }) => (
-                <WalletAddressCardWithDate
-                  address={member}
-                  date={new Date(toStandardTimestamp(creationDate.toString()))}
-                />
-              ))
-            ) : (
-              <DefaultBox w={"full"}>
-                <VStack
-                  w={"100%"}
-                  alignItems="center"
-                  alignSelf={"center"}
-                  p={6}
-                >
-                  <EmptyBoxIcon />
-                  <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
-                    {"There is no member yet."}
-                  </Text>
-                </VStack>
-              </DefaultBox>
-            )}
-          </VStack>
+          <DefaultBox>
+            <VStack>
+              {juries.length > 0 ? (
+                juries.map(({ member, creationDate }) => (
+                  <WalletAddressCardWithDate
+                    address={member}
+                    date={
+                      new Date(toStandardTimestamp(creationDate.toString()))
+                    }
+                  />
+                ))
+              ) : (
+                  <VStack
+                    w={"100%"}
+                    alignItems="center"
+                    alignSelf={"center"}
+                    p={6}
+                  >
+                    <EmptyBoxIcon />
+                    <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                      {"There is no member yet."}
+                    </Text>
+                  </VStack>
+              )}
+            </VStack>
+          </DefaultBox>
         </Box>
         {proposalTypes && proposalTypes?.length > 0 && (
           <DefaultBox w={["full", "full", "40%"]} alignSelf={"flex-start"}>

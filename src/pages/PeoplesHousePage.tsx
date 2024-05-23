@@ -25,6 +25,7 @@ import { DefaultBox } from "../components/Box";
 import RulesOfDecisions from "../components/RulesOfDecisions";
 import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTypeDetails";
 import { DefaultAlert } from "../components/Alerts";
+import PeopleHouseIcon from "../utils/assets/icons/PeopleHouseIcon";
 export type JoinHouseFormType = {
   amount: string;
 };
@@ -78,26 +79,28 @@ const PeoplesHousePage = () => {
       </Formik>
       <HStack flexDirection={["column", "column", "column", "row"]}>
         <Box w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={2}>
-          <VStack>
-            {deposits && deposits.length > 0 ? (
-              deposits.map(({ amount, voter }) => (
-                <WalletAddressCardWithBalance
-                  address={voter}
-                  balance={weiBigNumberToFormattedNumber(amount)}
-                  symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
-                />
-              ))
-            ) : (
-              <DefaultBox w={"full"}>
-                <VStack alignItems="center" alignSelf={"center"}>
-                  <EmptyBoxIcon />
-                  <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
-                    {"There is no member yet."}
-                  </Text>
-                </VStack>
-              </DefaultBox>
-            )}
-          </VStack>
+          <DefaultBox w={"full"}>
+            <VStack>
+              {deposits && deposits.length > 0 ? (
+                deposits.map(({ amount, voter }) => (
+                  <WalletAddressCardWithBalance
+                    address={voter}
+                    balance={weiBigNumberToFormattedNumber(amount)}
+                    symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
+                  />
+                ))
+              ) : (
+                <DefaultBox w={"full"}>
+                  <VStack alignItems="center" alignSelf={"center"}>
+                    <EmptyBoxIcon />
+                    <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                      {"There is no member yet."}
+                    </Text>
+                  </VStack>
+                </DefaultBox>
+              )}
+            </VStack>
+          </DefaultBox>
         </Box>
         <VStack w={["full", "full", "40%"]}>
           <Box w={["full"]}>
@@ -143,7 +146,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
             <Box>
               <HStack>
                 <Box w={["60px", "50px"]} flexShrink={1}>
-                  <JudiciariesIcon />
+                  <PeopleHouseIcon />
                 </Box>
                 <Box>
                   <Text fontSize={["lg", "xl"]} fontWeight={"bold"}>
@@ -227,9 +230,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
 
             <DefaultAlert w={["full", "full", "40%"]}>
               <Box fontSize={"sm"}>
-                <Text fontWeight={"semibold"}>
-                  How does House work?
-                </Text>
+                <Text fontWeight={"semibold"}>How does House work?</Text>
                 <Text>
                   People’s House empowers its members by granting voting power
                   proportional to their token holdings, adhering to the

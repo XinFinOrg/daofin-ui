@@ -79,6 +79,8 @@ const CreateMetaData: FC<MetaDataProps> = ({}) => {
                         <Box w={["full", "full", "full", "40%"]}>
                           <DefaultInput
                             noErrorMessage
+                            borderTopLeftRadius={0}
+                            borderBottomLeftRadius={0}
                             w="sm"
                             placeholder="Label"
                             name={`metaData.resources.${index}.name`}
@@ -90,10 +92,12 @@ const CreateMetaData: FC<MetaDataProps> = ({}) => {
                             noErrorMessage
                             placeholder="Resource(Link)"
                             name={`metaData.resources.${index}.url`}
+                            borderTopLeftRadius={0}
+                            borderBottomLeftRadius={0}
                             leftAddon="Https://"
                           />
                         </Box>
-                        <Box mt={'2'}>
+                        <Box mt={"2"}>
                           {index !== 0 && (
                             <IconButton
                               aria-label=""

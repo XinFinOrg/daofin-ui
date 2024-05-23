@@ -52,16 +52,17 @@ import { ReadyToExecuteProposals } from "../components/ReadyToExecuteProposal";
 import { Proposal } from "../utils/types";
 import useDaoElectionPeriods from "../hooks/useDaoElectionPeriods";
 import { toDate } from "date-fns";
-import ProposalStatusBadge from "../components/ProposalStatusBadge";
+import ProposalStatusBadge from "../components/Badge/ProposalStatusBadge";
 import ElectionPeriods from "../components/ElectionPeriods";
+import { TwitterTimelineEmbed } from "react-twitter-embed";
 
 const Dashboard: FC = () => {
   const navigate = useNavigate();
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
-  const {
-    data: proposals,
-    isLoading,
-  } = useDaoProposals(daoAddress, pluginAddress);
+  const { data: proposals, isLoading } = useDaoProposals(
+    daoAddress,
+    pluginAddress
+  );
 
   const { isOpen, onClose, onToggle } = useDisclosure();
   const { data: nativeBalanceOfDao, isLoading: isLoadingNativeBalanceOfDao } =
@@ -196,9 +197,19 @@ const Dashboard: FC = () => {
       <Flex mb={1}>
         <CommunityCards />
       </Flex>
-      <Box mb={4}>
-        <ElectionPeriods isLoading={isLoadingPeriods} periods={periods} />
-      </Box>
+      <Flex flexDirection={['column','column','column',"row"]} gap={4}>
+        <Box mb={4} width={['full','full','full','2/3',]}>
+          <ElectionPeriods isLoading={isLoadingPeriods} periods={periods} />
+        </Box>
+        <Box mb={4} width={['full','full','full','1/3',]} px={10} py={5}>
+          <TwitterTimelineEmbed
+            sourceType="profile"
+            screenName="DaoFinXDC"
+            noHeader
+            options={{ height: 300,borderRadius:"50px" }}
+          />
+        </Box>
+      </Flex>
 
       <Flex
         mb={4}

@@ -27,7 +27,7 @@ import {
   Tabs,
   Tooltip,
 } from "@chakra-ui/react";
-import ProposalTypeBadge from "./ProposalTypeBadge";
+import ProposalTypeBadge from "./Badge/ProposalTypeBadge";
 import { IoShareSocial } from "react-icons/io5";
 import { ArrowForwardIcon, InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
@@ -54,6 +54,7 @@ import useFetchProposalStatus, {
 import { ExpandableText } from "./ExpandableText";
 import { DefaultToolTip, InfoTooltip } from "./Tooltip";
 import { DefaultButton } from "./Button";
+import { VoteBadge } from "./Badge";
 
 const ProposalDetails: FC<{
   proposal: Proposal | undefined;
@@ -277,7 +278,7 @@ const ProposalDetails: FC<{
                   <DefaultBox>
                     <HStack justifyContent={"space-between"} mb={"6"} p={"6"}>
                       <Text fontSize={"lg"} fontWeight={"bold"}>
-                        Voter
+                        Voters
                       </Text>
                     </HStack>
                     <Tabs isFitted>
@@ -313,11 +314,15 @@ const ProposalDetails: FC<{
                                     <VStack spacing={"1"} alignItems={"start"}>
                                       {filterVotersList(id).length > 0 ? (
                                         filterVotersList(id).map(
-                                          ({ voter, txHash }, index) => (
+                                          (
+                                            { voter, txHash, option },
+                                            index
+                                          ) => (
                                             <HStack w={"full"} key={index}>
                                               <WalletAddressCard
                                                 address={voter}
                                               />
+                                              <VoteBadge option={option} />
                                               <a
                                                 href={makeBlockScannerHashUrl(
                                                   network,

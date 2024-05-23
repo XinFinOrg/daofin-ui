@@ -31,7 +31,7 @@ const MasterNodeDelegatePage = () => {
   // const bgColor = useColorModeValue("gray.50", "gray.900");
 
   const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
-  
+
   return (
     <Page>
       <Formik
@@ -55,31 +55,31 @@ const MasterNodeDelegatePage = () => {
             </DefaultBox>
             <HStack flexDirection={["column", "column", "column", "row"]}>
               <Box w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={2}>
-                <VStack>
-                  {delegatees.length > 0 ? (
-                    delegatees.map(
-                      ({
-                        member,
-                        masterNode,
-                        snapshotBlock,
-                        txHash,
-                        id,
-                        creationDate,
-                      }) => (
-                        <MasterNodeSenateCard
-                          txHash={txHash}
-                          key={id}
-                          address={member}
-                          joinedDate={toNormalDate(creationDate.toString())}
-                          blockNumber={parseInt(snapshotBlock.toString())}
-                          masterNodeAddress={masterNode}
-                        />
+                <DefaultBox>
+                  <VStack>
+                    {delegatees.length > 0 ? (
+                      delegatees.map(
+                        ({
+                          member,
+                          masterNode,
+                          snapshotBlock,
+                          txHash,
+                          id,
+                          creationDate,
+                        }) => (
+                          <MasterNodeSenateCard
+                            txHash={txHash}
+                            key={id}
+                            address={member}
+                            joinedDate={toNormalDate(creationDate.toString())}
+                            blockNumber={parseInt(snapshotBlock.toString())}
+                            masterNodeAddress={masterNode}
+                          />
+                        )
                       )
-                    )
-                  ) : (
-                    <DefaultBox w={"full"}>
+                    ) : (
                       <VStack
-                        w={"100%"}
+                        w={"full"}
                         alignItems="center"
                         alignSelf={"center"}
                       >
@@ -92,9 +92,9 @@ const MasterNodeDelegatePage = () => {
                           {"There is no member yet."}
                         </Text>
                       </VStack>
-                    </DefaultBox>
-                  )}
-                </VStack>
+                    )}
+                  </VStack>
+                </DefaultBox>
               </Box>
               {proposalTypes && proposalTypes?.length > 0 && (
                 <DefaultBox

@@ -1,4 +1,4 @@
-import { Box,  } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { Form, useFormikContext } from "formik";
 
 import { DefaultInput } from "../..";
@@ -7,7 +7,7 @@ import { useNetwork } from "../../../contexts/network";
 import { CreateProposalFormData } from "../../../pages/CreateProposal";
 
 const GrantsProposalTypeForm = () => {
-  const {  setFieldValue } = useFormikContext<CreateProposalFormData>();
+  const { setFieldValue } = useFormikContext<CreateProposalFormData>();
   const { network } = useNetwork();
   return (
     <Box>
@@ -18,6 +18,8 @@ const GrantsProposalTypeForm = () => {
             label="Recipient Address"
             isRequired={true}
             rightAddon="Paste"
+            borderTopRightRadius={0}
+            borderBottomEndRadius={0}
             onClickRightAddon={async (e: any) => {
               const value = await navigator.clipboard.readText();
               setFieldValue("action.recipient", value);
@@ -30,6 +32,8 @@ const GrantsProposalTypeForm = () => {
             type="number"
             name="action.amount"
             label="Requested amount"
+            borderTopRightRadius={0}
+            borderBottomEndRadius={0}
           />
         </Box>
       </Form>

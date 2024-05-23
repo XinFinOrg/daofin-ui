@@ -161,6 +161,8 @@ export const PeoplesHouseProvider: FC<PropsWithChildren> = ({ children }) => {
               </Box>
             </DefaultAlert>
             <DefaultInput
+              borderBottomRightRadius={0}
+              borderTopRightRadius={0}
               name="amount"
               rightAddon={`${CHAIN_METADATA[network].nativeCurrency.symbol}`}
               placeholder="0"

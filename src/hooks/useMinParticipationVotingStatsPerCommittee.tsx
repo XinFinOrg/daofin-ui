@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { applyRatioCeiled } from "../utils/networks";
+import { applyRatioCeiled } from "../utils/vote-utils";
 import useFetchGlobalCommitteeToVotingSettings from "./useFetchGlobalCommitteeToVotingSettings";
 import useFetchProposalTallyDetails from "./useFetchProposalTallyDetails";
 import useFetchTotalNumbersByCommittee from "./useFetchTotalNumbersByCommittee";

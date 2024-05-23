@@ -40,9 +40,9 @@ import { erc20ABI, useContractRead, useToken } from "wagmi";
 import WithdrawActionCard from "../components/WalletAddressCard/WithdrawActionCard";
 import { BigNumber } from "ethers";
 const Query = `
-query DaoTransfers($id: ID!) {
+query DaoTransfers($daoId: ID!) {
   nativeTransfers(
-    where: {to: $id}
+    where: {dao: $daoId}
     orderBy: createdAt
     orderDirection: desc
   ) {
@@ -132,11 +132,11 @@ const TreasuryPage = () => {
   } = useDisclosure();
 
   useEffect(() => {
-    if (!daofinClient || !daoAddress) return;
-    daofinClient?.graphql
+    if (!daofinClient || !daofinClient.graphql || !daoAddress) return;
+    daofinClient.graphql
       .request<{ nativeTransfers: NativeTransfer[] }>({
         query: Query,
-        params: { id: daoAddress },
+        params: { daoId: daoAddress.toLowerCase() },
       })
       .then((data) => {
         setAddFunds(data.nativeTransfers);

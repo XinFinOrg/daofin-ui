@@ -4,7 +4,7 @@ import React, { FC } from "react";
 import { Link } from "react-router-dom";
 import { DefaultBox } from "./Box";
 import { ArrowForwardIcon } from "@chakra-ui/icons";
-import ProposalStatusBadge from "./ProposalStatusBadge";
+import ProposalStatusBadge from "./Badge/ProposalStatusBadge";
 import {
   proposalTimeStatus,
   toDate,
@@ -26,7 +26,7 @@ const ElectionPeriods: FC<ElectionPeriodsProps> = ({ isLoading, periods }) => {
   return (
     <>
       <HStack
-        w={["full", "full", "50%"]}
+        w={["full", "full",]}
         justifyContent={"space-between"}
         mb={2}
       >
@@ -40,7 +40,7 @@ const ElectionPeriods: FC<ElectionPeriodsProps> = ({ isLoading, periods }) => {
       </HStack>
       <Skeleton
         isLoaded={!isLoading}
-        w={["full", "full", "50%"]}
+        w={["full", "full",]}
         alignItems={"flex-start"}
       >
         <VStack>

@@ -4,8 +4,8 @@ import { Box, Flex, Text } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { HStack, Skeleton } from "@chakra-ui/react";
 import BaseTable from "./BaseTable";
-import ProposalTypeBadge from "./ProposalTypeBadge";
-import ProposalStatusBadge from "./ProposalStatusBadge";
+import ProposalTypeBadge from "./Badge/ProposalTypeBadge";
+import ProposalStatusBadge from "./Badge/ProposalStatusBadge";
 import { InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
 import DefaultProgressBar from "./DefaultProgressBar";
 

@@ -5,60 +5,7 @@ import { ProposalMetadata } from "@xinfin/osx-client-common";
 import { Proposal } from "../utils/types";
 import { resolveIpfsCid } from "@xinfin/osx-sdk-common";
 import { TallyDetails } from "@xinfin/osx-daofin-sdk-client";
-const ProposalsQueries = `
-query ProposalsQuery($pluginId: ID!) {
-  pluginProposals(where: { plugin: $pluginId }) {
-    id
-    pluginProposalId
-    failureMap
-    creator
-    metadata
-    startDate
-    endDate
-    creationBlockNumber
-    snapshotBlock
-    executed
-    createdAt
-    executionTxHash
-    executionBlockNumber
-    executionDate
-    executedBy
-    creationTxHash
-    actions {
-      id
-      to
-      value
-      data
-    }
-    dao{
-      id
-    }
-    tallyDetails {
-      committee
-      id
-      totalVotes
-      yesVotes
-      noVotes
-      abstainVotes
-      quorumRequiredVote
-      passrateRequiredVote
-      quorumActiveVote
-      passrateActiveVote
-      totalMembers
-      pluginProposalId
-      proposalType {
-        id
-        settings {
-          name
-          supportThreshold
-          minParticipation
-          minVotingPower
-        }
-      }
-    }
-  }
-}
-`;
+import { allProposalsByPluginIdQuery } from "../utils/graphql-queries/proposals-query";
 
 export type SubgraphProposalBase = {
   id: string;
@@ -90,7 +37,7 @@ function useDaoProposals(
     setIsLoading(true);
     daofinClient.graphql
       .request<{ pluginProposals: SubgraphProposalBase[] }>({
-        query: ProposalsQueries,
+        query: allProposalsByPluginIdQuery,
         params: {
           pluginId: getPluginInstallationId(daoAddress, pluginAddress),
         },
