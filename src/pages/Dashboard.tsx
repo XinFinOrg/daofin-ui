@@ -186,12 +186,12 @@ const Dashboard: FC = () => {
           <ElectionPeriods isLoading={isLoadingPeriods} periods={periods} />
         </Box>
         <Box mb={4} width={["full", "full", "full", "1/3"]} px={10} py={5}>
-          <TwitterTimelineEmbed
+          {/* <TwitterTimelineEmbed
             sourceType="profile"
             screenName="DaoFinXDC"
             noHeader
             options={{ height: 300, borderRadius: "50px" }}
-          />
+          /> */}
         </Box>
       </Flex>
 
