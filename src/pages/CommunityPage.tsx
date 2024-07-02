@@ -223,11 +223,12 @@ const CommunityPage = () => {
               <VStack w={"full"}>
                 {people.length > 0 ? (
                   people.map(
-                    ({ amount, depositDate, snapshotBlock, id, voter }) => (
+                    ({ amount, depositDate, snapshotBlock, id, voter,txHash }) => (
                       <Box w={"full"}>
                         <WalletAddressCardWithBalance
                           address={voter}
                           sm
+                          txHash={txHash}
                           balance={weiBigNumberToFormattedNumber(amount)}
                           symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
                         />

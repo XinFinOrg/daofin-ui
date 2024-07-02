@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react';
 
-const useSlowScroll = (multiplier = 0.4) => {
+const useSlowScroll = (multiplier = 0.45) => {
   const scrollRef = useRef({
     targetScroll: 0,
     currentScroll: 0,
-    requestId: null,
+    requestId: 0,
   });
 
   useEffect(() => {
@@ -23,7 +23,7 @@ const useSlowScroll = (multiplier = 0.4) => {
         window.scrollTo(0, scrollRef.current.currentScroll);
         scrollRef.current.requestId = requestAnimationFrame(smoothScroll);
       } else {
-        scrollRef.current.requestId = null;
+        scrollRef.current.requestId = 0;
       }
     };
 
