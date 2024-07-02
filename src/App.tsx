@@ -12,18 +12,20 @@ import CommunityPage from "./pages/CommunityPage";
 import TreasuryPage from "./pages/TreasuryPage";
 import Footer from "./components/Footer";
 import NotFoundPage from "./pages/NotFoundPage";
+import useSlowScroll from "./hooks/useSlowScroll";
 
 function App() {
+  useSlowScroll()
   return (
-    <Box bgColor={useColorModeValue("#FFF", "#19262e")}>
+    <Box bgColor={useColorModeValue("#FFF", "#19262e")} minH={"100vh"}>
       <Header />
       {/* <RouterProvider router={router} /> */}
       <Routes>
         <Route path="/" element={<Dashboard />} />
       </Routes>
-      <Routes>
+      {/* <Routes>
         <Route path="/create/:type" element={<CreateProposal />} />
-      </Routes>
+      </Routes> */}
       <Routes>
         <Route path="/proposals">
           <Route path="/proposals" element={<ProposalsPage />} />
@@ -31,6 +33,7 @@ function App() {
             path="/proposals/:proposalId/details"
             element={<ProposalDetailsPage />}
           />
+          <Route path="/proposals/create/:type" element={<CreateProposal />} />
         </Route>
 
         <Route path="/community">

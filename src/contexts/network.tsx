@@ -59,7 +59,6 @@ const determineNetwork = (
       )?.[0] as SupportedNetworks;
     } else {
       console.log("*NETWORK UNSUPPORTED");
-      console.log("test2");
       return "unsupported";
     }
   }

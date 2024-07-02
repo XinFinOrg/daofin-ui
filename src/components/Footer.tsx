@@ -4,7 +4,7 @@ import { Box, Flex, Icon, Image, Text, createIcon } from "@chakra-ui/react";
 import XdcCoinLogo from "../utils/assets/xdc-coin.svg";
 const Footer = () => {
   return (
-    <Box w={'full'} m={'full'}>
+    <Box w={'full'}   position={'absolute'} bottom={3} right={0}>
       <Flex justifyContent={"center"}>
         <a href="https://xinfin.org" target="_blank">
           <Flex>

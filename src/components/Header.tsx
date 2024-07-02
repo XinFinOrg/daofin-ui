@@ -157,7 +157,8 @@ export default function Header() {
             <HStack spacing={8} alignItems={"center"}>
               <Box ml={[0, 0, 0, "auto"]}>
                 <Link to={""}>
-                  <Image src="/logo.svg" />
+                  {/* <Image src="/logo.svg" /> */}
+                  <img src="/new-logo.png" alt="" width={"250px"} />
                 </Link>
               </Box>
               <HStack

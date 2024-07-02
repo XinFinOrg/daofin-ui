@@ -55,6 +55,7 @@ import { ExpandableText } from "./ExpandableText";
 import { DefaultToolTip, InfoTooltip } from "./Tooltip";
 import { DefaultButton } from "./Button";
 import { VoteBadge } from "./Badge";
+import useVotingStatsContract from "../hooks/contractHooks/useVotingStatsContract";
 
 const ProposalDetails: FC<{
   proposal: Proposal | undefined;
@@ -80,6 +81,10 @@ const ProposalDetails: FC<{
 
   const [proposalStatus, setProposalStatus] =
     useState<FetchProposalStatusType>();
+
+  const { data,error } = useVotingStatsContract(proposal ? proposal.pluginProposalId : "");
+
+  console.log({ data ,error});
   const { makeCall } = useFetchProposalStatus();
   useEffect(() => {
     if (proposal?.pluginProposalId) {
@@ -230,7 +235,7 @@ const ProposalDetails: FC<{
               <Skeleton isLoaded={!isLoading} minH={"300px"} mb={6}>
                 <GridItem mb={6} w="100%" h={"min-content"}>
                   <DefaultBox>
-                    {proposal && <VotingStatsBox proposal={proposal} />}
+                    {/* {proposal && <VotingStatsBox proposal={proposal} />} */}
                   </DefaultBox>
                 </GridItem>
               </Skeleton>

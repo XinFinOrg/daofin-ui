@@ -27,8 +27,6 @@ const RulesOfDecisions: FC<RulesOfDecisionsType> = ({
   communityName,
 }) => {
   const mapProposalTypeIdToItsName = (proposalTypeId: number) => {
-    console.log(proposalTypeId);
-
     switch (proposalTypeId) {
       case ProposalTypeEnum.Grant:
         return "Grant";

@@ -67,7 +67,6 @@ query DaoWithdraws($daoId: ID!) {
     proposal {
       executed
     }
-    daoId
     dao {
       id
     }
@@ -167,7 +166,6 @@ const TreasuryPage = () => {
       : 0;
   }, [xdcPrice, nativeBalanceOfDao]);
 
-  console.log(nativeBalanceOfDao, fxdBalance?.toString());
 
   useEffect(() => {
     if (nativeBalanceOfDao) {
@@ -184,7 +182,7 @@ const TreasuryPage = () => {
     }
   }, [nativeBalanceOfDao, fxdBalance]);
   return (
-    <Page>
+    <Page title="XDCDAO - Treasury">
       <Formik
         initialValues={{
           depositAmount: "",

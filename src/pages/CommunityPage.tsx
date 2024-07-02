@@ -87,7 +87,7 @@ const CommunityPage = () => {
   );
 
   return (
-    <Page>
+    <Page title="XDCDAO - Community">
       <Text fontWeight={"semibold"} fontSize={"lg"} mb={"2"}>
         Community
       </Text>

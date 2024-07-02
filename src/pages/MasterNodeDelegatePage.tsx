@@ -33,7 +33,7 @@ const MasterNodeDelegatePage = () => {
   const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
 
   return (
-    <Page>
+    <Page title="XDCDAO - Senate">
       <Formik
         initialValues={{
           delegateeAddress: "",
@@ -144,7 +144,7 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
                 Master Nodes Delegatee Senate
               </Text>
               <Text fontSize={"xs"}>
-                The set of Master Nodes who have joined DAOFIN by delegation
+                The set of Master Nodes who have joined XDCDAO by delegation
                 mechanism.
               </Text>
             </Box>

@@ -56,43 +56,43 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
                   creationTxHash={creationTxHash}
                 />
               ),
-              threshold: (
-                <CommitteesSupportThresholdVoteStatsProgressBar
-                  proposalId={pluginProposalId}
-                  data={tallyDetails.map(
-                    ({
-                      passrateRequiredVote,
-                      passrateActiveVote,
-                      committee,
-                    }) => ({
-                      percentage: +passrateActiveVote as number,
-                      threshold: +passrateRequiredVote as number,
-                      Icon: committeesListWithIcon.find(
-                        ({ id }) => id === committee
-                      )?.Icon as ReactElement,
-                    })
-                  )}
-                />
-              ),
-              quorum: (
-                <CommitteesMinParticipationVoteStatsProgressBar
-                  proposalId={pluginProposalId}
-                  data={tallyDetails.map(
-                    ({
-                      quorumRequiredVote,
-                      quorumActiveVote,
-                      totalMembers,
-                      committee,
-                    }) => ({
-                      percentage: +quorumActiveVote as number,
-                      threshold: +quorumRequiredVote as number,
-                      Icon: committeesListWithIcon.find(
-                        ({ id }) => id === committee
-                      )?.Icon as ReactElement,
-                    })
-                  )}
-                />
-              ),
+              // threshold: (
+              //   <CommitteesSupportThresholdVoteStatsProgressBar
+              //     proposalId={pluginProposalId}
+              //     data={tallyDetails.map(
+              //       ({
+              //         passrateRequiredVote,
+              //         passrateActiveVote,
+              //         committee,
+              //       }) => ({
+              //         percentage: +passrateActiveVote as number,
+              //         threshold: +passrateRequiredVote as number,
+              //         Icon: committeesListWithIcon.find(
+              //           ({ id }) => id === committee
+              //         )?.Icon as ReactElement,
+              //       })
+              //     )}
+              //   />
+              // ),
+              // quorum: (
+              //   <CommitteesMinParticipationVoteStatsProgressBar
+              //     proposalId={pluginProposalId}
+              //     data={tallyDetails.map(
+              //       ({
+              //         quorumRequiredVote,
+              //         quorumActiveVote,
+              //         totalMembers,
+              //         committee,
+              //       }) => ({
+              //         percentage: +quorumActiveVote as number,
+              //         threshold: +quorumRequiredVote as number,
+              //         Icon: committeesListWithIcon.find(
+              //           ({ id }) => id === committee
+              //         )?.Icon as ReactElement,
+              //       })
+              //     )}
+              //   />
+              // ),
               action: (
                 <Button
                   variant={"outline"}

@@ -1,8 +1,15 @@
-import { Box, HStack, IconButton, Text, useClipboard } from "@chakra-ui/react";
+import {
+  Box,
+  HStack,
+  IconButton,
+  Text,
+  VStack,
+  useClipboard,
+} from "@chakra-ui/react";
 import { FC, useEffect, useState } from "react";
 import { jsNumberForAddress } from "react-jazzicon";
 import Jazzicon from "react-jazzicon/dist/Jazzicon";
-import { CHAIN_METADATA, shortenAddress } from "../../utils/networks";
+import { CHAIN_METADATA, makeBlockScannerHashUrl, shortenAddress } from "../../utils/networks";
 import { CheckIcon, CopyIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import { useNetwork } from "../../contexts/network";
 import { WalletCardBox } from "../Box";
@@ -12,11 +19,13 @@ interface WalletAddressCardWithBalanceProps {
   sm?: true;
   balance: string | number;
   symbol: string;
+  txHash: string;
 }
 const WalletAddressCardWithBalance: FC<WalletAddressCardWithBalanceProps> = ({
   address,
   balance,
   symbol,
+  txHash
 }) => {
   const { onCopy, hasCopied } = useClipboard(address);
   const [clicked, setClicked] = useState(false);
@@ -87,10 +96,23 @@ const WalletAddressCardWithBalance: FC<WalletAddressCardWithBalanceProps> = ({
             />
           </Box>
         </HStack>
-        <HStack fontSize={"sm"} fontWeight={"semibold"}>
-          <Text>{balance} </Text>
-          <Text>{symbol} </Text>
-        </HStack>
+        <VStack alignItems={'end'}>
+          <HStack fontSize={"sm"} fontWeight={"semibold"}>
+            <Text>{balance} </Text>
+            <Text>{symbol} </Text>
+          </HStack>
+          {txHash && (
+            <a href={makeBlockScannerHashUrl(network, txHash)} target="_blank">
+              <HStack>
+                <Text fontSize={"xs"} fontWeight={"normal"}>
+                  <Text fontSize={"xs"} fontWeight="normal">
+                    View on Explorer
+                  </Text>
+                </Text>
+              </HStack>
+            </a>
+          )}
+        </VStack>
       </HStack>
     </WalletCardBox>
   );

@@ -7,7 +7,7 @@ const urlWithoutProtocolRegex =
 export const MetaDataSchema = Yup.object().shape({
   title: Yup.string().required("Must not be empty"),
   summary: Yup.string()
-  .min(50, "Must be greater that 50 characters")
+  .min(30, "Must be greater that 30 characters")
   .max(200, "Must be less that 200 characters")
   .required("Must not be empty"),
   description: Yup.string(),

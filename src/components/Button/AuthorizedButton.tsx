@@ -21,6 +21,7 @@ import { InfoTooltip } from "../Tooltip";
 import { Link } from "react-router-dom";
 import DefaultLink from "../DefaultLink";
 import { getPluginInstallationId } from "../../utils/networks";
+import useHasJoinedMasterNode from "../../hooks/contractHooks/useHasJoinedMasterNode";
 
 export type WalletAuthorizedButtonProps = PropsWithChildren &
   DefaultButtonProps & {};
@@ -56,9 +57,10 @@ const MasterNodeAuthorizedButton: FC<MasterNodeAuthorizedButtonProps> = (
   const isMasterNode = useIsXDCValidatorCandidate(
     address ? address : zeroAddress
   );
-
+  const hasJointoSenate = useHasJoinedMasterNode();
+  const isValid = isMasterNode || hasJointoSenate;
   return (
-    <WalletAuthorizedButton {...props} isDisabled={!isMasterNode}>
+    <WalletAuthorizedButton {...props} isDisabled={!isValid}>
       {props.children}
     </WalletAuthorizedButton>
   );
@@ -223,6 +225,7 @@ const ExecuteProposalButton: FC<ExecuteProposalButtonProps> = (props) => {
 
   return <DefaultButton {...props}>{props.children}</DefaultButton>;
 };
+
 export {
   WalletAuthorizedButton,
   MasterNodeAuthorizedButton,

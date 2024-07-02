@@ -42,6 +42,12 @@ import { GrantsProposalTypeForm } from "../actions";
 import ElectionPeriodsForm from "./ElectionPeriodsForm";
 import ProposalPreview from "./ProposalPreview";
 import ProposalCosts from "./ProposalCosts";
+import {
+  PROPOSAL_TYPES,
+  findProposalTypeById,
+  proposalTypeNameToProposalId,
+} from "../../utils/constants";
+import ProposalAction from "../actions/forms/ProposalAction";
 type CreateProposalStepperProps = {
   proposalTypeId: string | undefined;
 };
@@ -59,14 +65,22 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
   const { steps, defaultSteps, setFormData, handleSubmit } =
     useCreateProposalContext();
   const { activeStep, goToPrevious, goToNext } = steps;
-
+  const [proposalTypeIdState, setProposalTypeIdState] = useState("");
   const lastStep = defaultSteps.length - 2;
   const { data: periods, isActive: isActivePeriods } =
     useDaoNotStartedElectionPeriods();
 
   const { daofinClient } = useClient();
-
-  const getCurrentSchema = (activeStep: number) => {
+  useEffect(() => {
+    if (proposalTypeIdState == "" && proposalTypeId) {
+      setProposalTypeIdState(proposalTypeNameToProposalId(proposalTypeId));
+      setFormData((prev) => ({
+        ...prev,
+        proposalTypeId: proposalTypeNameToProposalId(proposalTypeId),
+      }));
+    }
+  }, [proposalTypeId]);
+  const getCurrentGrantSchema = (activeStep: number) => {
     switch (activeStep) {
       case 0:
         return CreationFormSchema.pick(["metaData"]);
@@ -76,14 +90,20 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
         return undefined;
     }
   };
-  useEffect(() => {
-    if (proposalTypeId !== undefined) {
-      setFormData((prev) => ({
-        ...prev,
-        proposalTypeId,
-      }));
+  const getCurrentDecisionMakingSchema = (activeStep: number) => {
+    switch (activeStep) {
+      case 0:
+        return CreationFormSchema.pick(["metaData"]);
+      default:
+        return undefined;
     }
-  }, []);
+  };
+  const getCurrentSchema = (activeStep: number) => {
+    if (proposalTypeIdState === "0") return getCurrentGrantSchema(activeStep);
+    if (proposalTypeIdState === "1")
+      return getCurrentDecisionMakingSchema(activeStep);
+  };
+
   return (
     <>
       <Formik
@@ -97,7 +117,9 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
           },
           action: { amount: "", recipient: "" },
           selectedElectionPeriod: "0",
-          proposalTypeId: proposalTypeId ? proposalTypeId.toString() : "0",
+          proposalTypeId: proposalTypeId
+            ? proposalTypeNameToProposalId(proposalTypeId)
+            : "-1",
         }}
         validationSchema={getCurrentSchema(activeStep)}
         validateOnChange={true}
@@ -151,7 +173,10 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
                   <Card shadow={"2xl"}>
                     <DefaultBox p={0}>
                       <CardHeader>
-                        <Badge mb={"4"}>GRANT</Badge>
+                        <Badge mb={"4"}>
+                          {proposalTypeIdState &&
+                            findProposalTypeById(proposalTypeIdState)?.name}
+                        </Badge>
                         <Heading size="md">
                           {defaultSteps[activeStep].title}
                         </Heading>
@@ -160,7 +185,11 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
                       <CardBody>
                         <Stack divider={<StackDivider />} spacing="4">
                           {activeStep === 0 && <CreateMetaData />}
-                          {activeStep === 1 && <GrantsProposalTypeForm />}
+                          {activeStep === 1 && (
+                            <ProposalAction
+                              proposalTypeId={proposalTypeIdState}
+                            />
+                          )}
                           {activeStep === 2 && (
                             <ElectionPeriodsForm
                               periods={periods ? periods : []}
@@ -205,50 +234,4 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
     </>
   );
 };
-
-export interface ProposalCardFooterProps {
-  activeStep: number;
-  lastStep: number;
-  handleProceedButton: () => void;
-  goToPrevious: () => void;
-}
-
-const ProposalCardFooter: FC<ProposalCardFooterProps> = ({
-  activeStep,
-  goToPrevious,
-  handleProceedButton,
-  lastStep,
-}) => {
-  // const { values, errors, dirty, handleSubmit } =
-  //   useFormikContext<CreateProposalFormData>();
-
-  const isDisabledProceedButton = activeStep === lastStep;
-
-  const handleSubmitForm = () => {
-    // handleSubmit();
-    handleProceedButton();
-  };
-  return (
-    <CardFooter justifyContent={"space-between"}>
-      <Button
-        isDisabled={activeStep === 0}
-        onClick={() => goToPrevious()}
-        variant={"unstyled"}
-      >
-        {"<-"} Back
-      </Button>
-
-      <Button
-        isDisabled={isDisabledProceedButton}
-        // onClick={handleSubmitForm}
-        colorScheme={"blue"}
-        mx={1}
-        type="submit"
-      >
-        Proceed
-      </Button>
-    </CardFooter>
-  );
-};
-
 export default CreateProposalStepper;

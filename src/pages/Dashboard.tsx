@@ -55,6 +55,9 @@ import { toDate } from "date-fns";
 import ProposalStatusBadge from "../components/Badge/ProposalStatusBadge";
 import ElectionPeriods from "../components/ElectionPeriods";
 import { TwitterTimelineEmbed } from "react-twitter-embed";
+import { PROPOSAL_TYPES } from "../utils/constants";
+import { useContractEvent } from "wagmi";
+import useVotingStatsContract from "../hooks/contractHooks/useVotingStatsContract";
 
 const Dashboard: FC = () => {
   const navigate = useNavigate();
@@ -67,27 +70,7 @@ const Dashboard: FC = () => {
   const { isOpen, onClose, onToggle } = useDisclosure();
   const { data: nativeBalanceOfDao, isLoading: isLoadingNativeBalanceOfDao } =
     useFetchDaoBalance();
-  const [proposalTypes] = useState([
-    {
-      id: uuid(),
-      name: "Grant",
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-      isComingSoon: false,
-      proposalId: 0,
-    },
-    {
-      id: uuid(),
-      name: "Update Settings",
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-      isComingSoon: true,
-    },
-    {
-      id: uuid(),
-      name: "Modify Voting Period",
-      description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-      isComingSoon: true,
-    },
-  ]);
+  const [proposalTypes] = useState(PROPOSAL_TYPES);
   const { network } = useNetwork();
   const executedProposals = useMemo(
     () => proposals.filter(({ executed }) => executed),
@@ -98,6 +81,7 @@ const Dashboard: FC = () => {
   const [readyToExecutedProposals, setReadyToExecutedProposals] =
     useState<Proposal[]>();
 
+    
   const readyToExecutedProposalsCallback = useCallback(
     async () =>
       Promise.all(
@@ -125,7 +109,7 @@ const Dashboard: FC = () => {
     useDaoElectionPeriods();
 
   return (
-    <Page>
+    <Page title="XDCDAO - Dashboard">
       <HStack mb={2}>
         <IoBarChart />
 
@@ -197,16 +181,16 @@ const Dashboard: FC = () => {
       <Flex mb={1}>
         <CommunityCards />
       </Flex>
-      <Flex flexDirection={['column','column','column',"row"]} gap={4}>
-        <Box mb={4} width={['full','full','full','2/3',]}>
+      <Flex flexDirection={["column", "column", "column", "row"]} gap={4}>
+        <Box mb={4} width={["full", "full", "full", "2/3"]}>
           <ElectionPeriods isLoading={isLoadingPeriods} periods={periods} />
         </Box>
-        <Box mb={4} width={['full','full','full','1/3',]} px={10} py={5}>
+        <Box mb={4} width={["full", "full", "full", "1/3"]} px={10} py={5}>
           <TwitterTimelineEmbed
             sourceType="profile"
             screenName="DaoFinXDC"
             noHeader
-            options={{ height: 300,borderRadius:"50px" }}
+            options={{ height: 300, borderRadius: "50px" }}
           />
         </Box>
       </Flex>
@@ -367,7 +351,12 @@ const Dashboard: FC = () => {
                     w={"full"}
                     onClick={() => {
                       if (isComingSoon) return;
-                      navigate(`/create/${proposalId}`);
+                      navigate(
+                        `/proposals/create/${name
+                          .split(" ")
+                          .join("-")
+                          .toLocaleLowerCase()}`
+                      );
                     }}
                   >
                     <Text fontWeight={"bold"}>

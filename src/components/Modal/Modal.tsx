@@ -18,12 +18,13 @@ export type ModalProps = {
   isOpen: boolean;
   title: string;
   onClose: () => void;
+  noCloseButton?:true
 };
 
 const Modal: FC<ModalProps & PropsWithChildren & ChakraModalProps> = (
   props
 ) => {
-  const { isOpen, onClose, title, children, size } = props;
+  const { isOpen, onClose, title, children, size,noCloseButton } = props;
   return (
     <>
       <ChakraModal {...props} isOpen={isOpen} onClose={onClose}>
@@ -31,7 +32,7 @@ const Modal: FC<ModalProps & PropsWithChildren & ChakraModalProps> = (
         <ModalOverlay />
         <ModalContent bgColor={useColorModeValue("#F6F7F9", "#151F29")}>
           <ModalHeader>{title}</ModalHeader>
-          <ModalCloseButton />
+          {!noCloseButton &&<ModalCloseButton />}
           <ModalBody>{children}</ModalBody>
         </ModalContent>
         </DefaultBox>

@@ -40,7 +40,6 @@ function useDaoProposal(proposalId: string): {
 
         const startDate = toStandardTimestamp(+pluginProposal.startDate);
         const endDate = toStandardTimestamp(+pluginProposal.endDate);
-        const a = pluginProposal.tallyDetails[0].proposalType.settings;
         // applyRatioCeiled();
         return {
           ...pluginProposal,

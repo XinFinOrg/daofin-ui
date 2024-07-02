@@ -20,7 +20,6 @@ query ProposalTypesQuery($id: ID!) {
       name
       supportThreshold
       minParticipation
-      minVotingPower
     }
   }
 }
@@ -51,7 +50,6 @@ function useFetchPluginProposalTypeDetails(): {
       .then(({ pluginProposalTypes }) => {
         setProposalTypes(pluginProposalTypes as unknown as ProposalType[]);
         setIsLoading(false);
-        console.log({ pluginProposalTypes });
       })
       .catch((e) => {
         setIsLoading(false);

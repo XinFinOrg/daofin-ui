@@ -57,8 +57,9 @@ const PeoplesHousePage = () => {
   const communityName = PeoplesHouseCommittee;
 
   const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
+  
   return (
-    <Page>
+    <Page title="XDCDAO - House">
       <Formik
         initialValues={{
           amount: "",
@@ -70,9 +71,7 @@ const PeoplesHousePage = () => {
             <PeoplesHouseHeader
               totalMembers={deposits ? deposits.length : 0}
               totalDeposits={weiBigNumberToFormattedNumber(totalDeposits)}
-              totalSupply={weiBigNumberToFormattedNumber(
-                totalSupply ? totalSupply : 0
-              )}
+              totalSupply={totalSupply?totalSupply.toString():"0"}
             />
           </PeoplesHouseProvider>
         </>
@@ -82,9 +81,10 @@ const PeoplesHousePage = () => {
           <DefaultBox w={"full"}>
             <VStack>
               {deposits && deposits.length > 0 ? (
-                deposits.map(({ amount, voter }) => (
+                deposits.map(({ amount, voter,txHash }) => (
                   <WalletAddressCardWithBalance
                     address={voter}
+                    txHash={txHash}
                     balance={weiBigNumberToFormattedNumber(amount)}
                     symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
                   />
@@ -206,7 +206,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
                     fontWeight={"bold"}
                     whiteSpace={"nowrap"}
                   >
-                    {totalSupply}{" "}
+                    {numberWithCommaSeparate(totalSupply)}{" "}
                     {CHAIN_METADATA[network].nativeCurrency.symbol}
                   </Text>
                 </VStack>

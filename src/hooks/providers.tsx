@@ -76,7 +76,7 @@ function getInfuraProvider(network: SupportedNetworks) {
   // However, I have no idea why this is necessary. Looking at the ethers
   // library, there's no reason why passing the chainId wouldn't work. Also,
   // I've tried it on a fresh project and had no problems there...
-  if (network == "apothem") {
+  if (network == "apothem"|| network == "xdc") {
     return new JsonRpcProvider(CHAIN_METADATA[network]?.rpc[0], {
       chainId: CHAIN_METADATA[network].id,
       name: translateToNetworkishName(network),

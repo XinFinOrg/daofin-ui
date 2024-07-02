@@ -24,7 +24,7 @@ import { BigNumberish } from "@ethersproject/bignumber";
 import { TransactionState } from "../../utils/types";
 import { useNetwork } from "../../contexts/network";
 import { Link } from "react-router-dom";
-import { numberWithCommaSeparate } from "../../utils/numbers";
+import { numberWithCommaSeparate, uuid } from "../../utils/numbers";
 import { DefaultAlert } from "../Alerts";
 import { DefaultBox } from "../Box";
 import { WalletAuthorizedButton } from "../Button/AuthorizedButton";
@@ -92,7 +92,7 @@ const TransactionReviewModal = <T extends any | undefined>({
             <Flex flexDirection={"column"}>
               {data &&
                 data.map(({ title, tooltip, value }) => (
-                  <Flex justifyContent={"space-between"}>
+                  <Flex justifyContent={"space-between"} key={uuid()}>
                     <Text fontSize={"sm"} fontWeight={"semibold"}>
                       {title}
                     </Text>

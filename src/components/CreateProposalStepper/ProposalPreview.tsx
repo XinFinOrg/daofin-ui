@@ -33,10 +33,8 @@ import { CopyIcon } from "@chakra-ui/icons";
 const HeadText: FC<PropsWithChildren> = ({ children }) => {
   return (
     <Text
-      as="h6"
-      fontSize="sm"
-      fontWeight={"semibold"}
-      textTransform={"uppercase"}
+      fontSize="md"
+      fontWeight={"bold"}
     >
       {children}
     </Text>
@@ -49,19 +47,19 @@ const ProposalPreview: FC = () => {
   const [noOfLines, setoOfLines] = useState<number | undefined>(7);
   return (
     <Flex flexDirection={"column"}>
-      <Box mb={"10"}>
+      <Box mb={"3"}>
         <HeadText>Title</HeadText>
-        <Heading as="h6" size={"md"}>
+        <Text as="p" size={"sm"}>
           {values.metaData.title}
-        </Heading>
+        </Text>
       </Box>
 
       <Box mb={"3"}>
         <HeadText>Summary</HeadText>
 
-        <Heading as="h6" size={"md"}>
+        <Text as="p" size={"sm"}>
           {values.metaData.summary}
-        </Heading>
+        </Text>
       </Box>
       <Box mb={"3"}>
         <HeadText>Description</HeadText>
@@ -88,26 +86,31 @@ const ProposalPreview: FC = () => {
           ))}
         </Flex>
       </Box>
-      <Box mb={"3"}>
-        <HeadText>Recipient</HeadText>
 
-        <DefaultAlert p={4}>
-          <Text>{values.action.recipient}</Text>
-        </DefaultAlert>
-      </Box>
-      <Box mb={"3"}>
-        <HeadText>Amount</HeadText>
+      {values.action.recipient && values.action.amount && (
+        <>
+          <Box mb={"3"}>
+            <HeadText>Recipient</HeadText>
 
-        <DefaultAlert p={4}>
-          <Flex justifyContent={"space-between"} w={"full"}>
-            <Text>Requested Amount</Text>
-            <Text>
-              {values.action.amount}{" "}
-              {CHAIN_METADATA[network].nativeCurrency.symbol}
-            </Text>
-          </Flex>
-        </DefaultAlert>
-      </Box>
+            <DefaultAlert p={4}>
+              <Text>{values.action.recipient}</Text>
+            </DefaultAlert>
+          </Box>
+          <Box mb={"3"}>
+            <HeadText>Amount</HeadText>
+
+            <DefaultAlert p={4}>
+              <Flex justifyContent={"space-between"} w={"full"}>
+                <Text>Requested Amount</Text>
+                <Text>
+                  {values.action.amount}{" "}
+                  {CHAIN_METADATA[network].nativeCurrency.symbol}
+                </Text>
+              </Flex>
+            </DefaultAlert>
+          </Box>
+        </>
+      )}
     </Flex>
   );
 };

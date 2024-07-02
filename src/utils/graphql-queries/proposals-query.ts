@@ -26,29 +26,6 @@ query ProposalsQuery($pluginId: ID!) {
     dao{
       id
     }
-    tallyDetails {
-      committee
-      id
-      totalVotes
-      yesVotes
-      noVotes
-      abstainVotes
-      quorumRequiredVote
-      passrateRequiredVote
-      quorumActiveVote
-      passrateActiveVote
-      totalMembers
-      pluginProposalId
-      proposalType {
-        id
-        settings {
-          name
-          supportThreshold
-          minParticipation
-          minVotingPower
-        }
-      }
-    }
   }
 }
 `;
@@ -82,30 +59,6 @@ query ProposalQuery($id: ID!) {
           id
           supportThreshold
           minParticipation
-          minVotingPower
-        }
-      }
-      tallyDetails {
-        committee
-        id
-        totalVotes
-        yesVotes
-        noVotes
-        abstainVotes
-        quorumRequiredVote
-        passrateRequiredVote
-        quorumActiveVote
-        passrateActiveVote
-        totalMembers
-        pluginProposalId
-        proposalType {
-          id
-          settings {
-            name
-            supportThreshold
-            minParticipation
-            minVotingPower
-          }
         }
       }
     }

@@ -16,7 +16,7 @@ import { usePollGasFee } from "../hooks/usePollGasfee";
 import { useClient } from "../hooks/useClient";
 import { CreateProposalParams } from "@xinfin/osx-daofin-sdk-client";
 import { TransactionReviewModal } from "../components/Modal";
-import { useSteps } from "@chakra-ui/react";
+import { useBreakpoint, useSteps } from "@chakra-ui/react";
 import { BigNumberish } from "@ethersproject/bignumber";
 import { TransactionState } from "../utils/types";
 import { parseEther } from "viem";
@@ -28,6 +28,7 @@ import {
   MetaDataSchema,
 } from "../schemas/createProposalSchema";
 import { addPrefix } from "../utils/url";
+import { DefaultAlert } from "../components/Alerts";
 
 export type CreateProposalContextType = {
   handlePublishProposal: () => void;
@@ -93,7 +94,6 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
     selectedElectionPeriod: "0",
     proposalTypeId: "0",
   });
-  const [schemas, setSchemas] = useState([MetaDataSchema, GrantActionSchema]);
 
   const { isOpen, onClose, onOpen } = useTransactionModalDisclosure();
 
@@ -106,14 +106,11 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
     } else {
       goToNext();
     }
+
     setFormData((prev) => ({ ...prev, ...values }));
   };
 
-  // const breakpoint = useBreakpoint();
-
-  // const { values, resetForm } = useFormikContext<CreateProposalFormData>();
-
-  // const { action, metaData, selectedElectionPeriod } = values;
+  const breakpoint = useBreakpoint();
 
   const { daofinClient } = useClient();
 
@@ -204,7 +201,6 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
       setCreationProcessState(TransactionState.LOADING);
     });
     let metadaIpfsHash;
-    console.log("selectedElectionPeriod", formData.selectedElectionPeriod);
 
     try {
       metadaIpfsHash = await daofinClient?.methods.pinMetadata({
@@ -219,15 +215,19 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
     }
     if (!metadaIpfsHash) return;
 
+    const actions =
+      formData.proposalTypeId === "1"
+        ? []
+        : [
+            {
+              data: new Uint8Array(),
+              to: formData.action.recipient,
+              value: BigInt(parseEther(formData.action.amount.toString())),
+            },
+          ];
     setProposalCreationData({
       metdata: metadaIpfsHash,
-      actions: [
-        {
-          data: new Uint8Array(),
-          to: formData.action.recipient,
-          value: BigInt(parseEther(formData.action.amount.toString())),
-        },
-      ],
+      actions,
       proposalType: formData.proposalTypeId,
       allowFailureMap: 0,
       electionIndex: formData.selectedElectionPeriod,
@@ -247,7 +247,7 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
         handleSubmit,
       }}
     >
-      {/* {breakpoint === "base" ||
+      {breakpoint === "base" ||
       breakpoint === "xs" ||
       breakpoint === "sm" ||
       breakpoint === "md" ? (
@@ -256,27 +256,27 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
             Please use Desktop screen
           </DefaultAlert>
         </>
-      ) : ( */}
-      <>
-        <CreateProposalWrapper>{children}</CreateProposalWrapper>
+      ) : (
+        <>
+          <CreateProposalWrapper>{children}</CreateProposalWrapper>
 
-        {isOpen && (
-          <TransactionReviewModal
-            isOpen={isOpen}
-            onClose={() =>
-              onClose(() => {
-                stopPolling();
-              })
-            }
-            data={txFees}
-            totalCosts={txCosts}
-            onSubmitClick={handlePublishProposal}
-            status={creationProcessState}
-            txData={publishedTxData}
-          />
-        )}
-      </>
-      {/* )} */}
+          {isOpen && (
+            <TransactionReviewModal
+              isOpen={isOpen}
+              onClose={() =>
+                onClose(() => {
+                  stopPolling();
+                })
+              }
+              data={txFees}
+              totalCosts={txCosts}
+              onSubmitClick={handlePublishProposal}
+              status={creationProcessState}
+              txData={publishedTxData}
+            />
+          )}
+        </>
+      )}
     </CreateProposalContext.Provider>
   );
 };
