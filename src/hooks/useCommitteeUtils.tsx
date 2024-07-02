@@ -56,7 +56,7 @@ export function useCommitteeUtils() {
       {
         id: PeoplesHouseCommittee,
         name: "House",
-        link: "/community/peoples-house",
+        link: "/community/house",
       },
       {
         id: JudiciaryCommittee,
@@ -66,7 +66,7 @@ export function useCommitteeUtils() {
       {
         id: MasterNodeCommittee,
         name: "Senate",
-        link: "/community/masternode-delegatee-senate",
+        link: "/community/senate",
       },
     ],
     []

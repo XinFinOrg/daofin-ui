@@ -40,11 +40,11 @@ function App() {
           <Route path="/community" element={<CommunityPage />} />
           <Route path="/community/judiciary" element={<JudiciaryPage />} />
           <Route
-            path="/community/peoples-house"
+            path="/community/house"
             element={<PeoplesHousePage />}
           />
           <Route
-            path="/community/masternode-delegatee-senate"
+            path="/community/senate"
             element={<MasterNodeDelegatePage />}
           />
         </Route>

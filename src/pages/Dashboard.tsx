@@ -109,7 +109,7 @@ const Dashboard: FC = () => {
     useDaoElectionPeriods();
 
   return (
-    <Page title="XDCDAO - Dashboard">
+    <Page title="Dashboard">
       <HStack mb={2}>
         <IoBarChart />
 

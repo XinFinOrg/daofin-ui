@@ -10,7 +10,7 @@ const NoMasterNodeAllowedModalContent: FC<{
     <VStack>
       <Text>Do you want to become a Master Node Deletegatee Senate?</Text>
 
-      <Link to={"/community/masternode-delegatee-senate"} target="_blank">
+      <Link to={"/community/senate"} target="_blank">
         <DefaultButton> Go to the Senate page</DefaultButton>
       </Link>
     </VStack>

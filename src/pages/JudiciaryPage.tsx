@@ -24,7 +24,7 @@ const JudiciaryPage = () => {
 
   const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
   return (
-    <Page title="XDCDAO - Judiciary">
+    <Page title="Judiciary">
       <DefaultBox mb={4}>
         <VStack>
           <HStack

@@ -59,7 +59,7 @@ const PeoplesHousePage = () => {
   const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
   
   return (
-    <Page title="XDCDAO - House">
+    <Page title="House">
       <Formik
         initialValues={{
           amount: "",

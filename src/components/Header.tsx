@@ -117,11 +117,11 @@ export default function Header() {
                 </Text>
               </Box>
               <Box ml={"4"}>
-                <Switch
+                {/* <Switch
                   isChecked={colorMode === "dark"}
                   onChange={handleSwitchTheme}
                   size="lg"
-                />
+                /> */}
                 {/* <Box position="relative" display="inline-block">
                   <Box
                     position="absolute"
@@ -192,7 +192,7 @@ export default function Header() {
               visibility={["hidden", "visible"]}
               overflow={["hidden", "visible"]}
             >
-              <ConnectButton chainStatus="icon" />
+              <ConnectButton chainStatus="icon" accountStatus='address' />
             </HStack>
           </Flex>
           <Divider m={"auto"} w={"full"} />
@@ -210,14 +210,14 @@ export default function Header() {
                 ))}
               </Stack>
 
-              <Switch
+              {/* <Switch
                 id="isChecked"
                 isChecked={colorMode === "dark"}
                 onChange={handleSwitchTheme}
                 size={"lg"}
                 mb={4}
-              />
-              <ConnectButton chainStatus="icon" />
+              /> */}
+              <ConnectButton chainStatus="icon" accountStatus='address' />
             </Box>
           ) : null}
         </Box>

@@ -182,7 +182,7 @@ const TreasuryPage = () => {
     }
   }, [nativeBalanceOfDao, fxdBalance]);
   return (
-    <Page title="XDCDAO - Treasury">
+    <Page title="Treasury">
       <Formik
         initialValues={{
           depositAmount: "",

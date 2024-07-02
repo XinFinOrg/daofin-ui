@@ -33,7 +33,7 @@ const MasterNodeDelegatePage = () => {
   const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
 
   return (
-    <Page title="XDCDAO - Senate">
+    <Page title="Senate">
       <Formik
         initialValues={{
           delegateeAddress: "",

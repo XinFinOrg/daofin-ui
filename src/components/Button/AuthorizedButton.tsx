@@ -146,7 +146,7 @@ const VoteButton: FC<VoteButtonProps> = (props) => {
           tooltip:
             "Master Nodes must be onboarded in DAOFIN community first and then start voting.",
           message: (
-            <DefaultLink to="/community/masternode-delegatee-senate">
+            <DefaultLink to="/community/senate">
               Would you like to join to Master Node Senate?
             </DefaultLink>
           ),

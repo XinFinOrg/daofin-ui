@@ -87,7 +87,7 @@ const CommunityPage = () => {
   );
 
   return (
-    <Page title="XDCDAO - Community">
+    <Page title="Community">
       <Text fontWeight={"semibold"} fontSize={"lg"} mb={"2"}>
         Community
       </Text>
@@ -252,12 +252,12 @@ const CommunityPage = () => {
                 )}
               </VStack>
               <VStack w={"full"}>
-                <Link to={"/community/peoples-house"}>
+                <Link to={"/community/house"}>
                   <DefaultButton variant={"ghost"} w={"full"} alignSelf={"end"}>
                     View All
                   </DefaultButton>
                 </Link>
-                <Link to={"/community/peoples-house"}>
+                <Link to={"/community/house"}>
                   <DefaultButton w={"full"} alignSelf={"end"}>
                     Join House
                   </DefaultButton>
@@ -285,7 +285,7 @@ const CommunityPage = () => {
               </Text>
             </Box>
             <Box display={"inline-flex"} alignItems={"center"}>
-              <Link to={"/community/masternode-delegatee-senate"}>
+              <Link to={"/community/senate"}>
                 <Text>View all</Text>
               </Link>
               <ArrowForwardIcon />
