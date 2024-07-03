@@ -5,13 +5,13 @@ export const pluginAddress = import.meta.env
   .VITE_DAOFIN_PLUGIN_ADDRESS as string;
 
 export const PROPOSAL_TYPES = [
-  // {
-  //   id: uuid(),
-  //   name: "Grant",
-  //   description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-  //   isComingSoon: false,
-  //   proposalId: 0,
-  // },
+  {
+    id: uuid(),
+    name: "Grant",
+    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+    isComingSoon: false,
+    proposalId: 0,
+  },
   {
     id: uuid(),
     name: "Decision-making",

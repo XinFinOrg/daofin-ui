@@ -281,7 +281,7 @@ const TreasuryPage = () => {
               </VStack>
             </HStack>
           </DefaultBox>
-          <HStack
+          {/* <HStack
             alignItems={"start"}
             flexDirection={["column", "column", "column", "row"]}
           >
@@ -389,11 +389,11 @@ const TreasuryPage = () => {
                 </WalletCardBox>
               )}
             </DefaultBox>
-          </HStack>
+          </HStack> */}
         </DaoTreasuryProvider>
       </Formik>
 
-      {addFundIsOpen && (
+      {/* {addFundIsOpen && (
         <Modal
           title="Add Funds"
           isOpen={addFundIsOpen}
@@ -464,7 +464,7 @@ const TreasuryPage = () => {
             )}
           </Box>
         </Modal>
-      )}
+      )} */}
     </Page>
   );
 };
