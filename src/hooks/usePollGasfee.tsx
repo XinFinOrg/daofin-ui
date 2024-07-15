@@ -48,7 +48,7 @@ export const usePollGasFee = (
           {
             title: "Estimated Gas fee (Gwei)",
             tooltip: "",
-            value: formatEther(maxFee as bigint),
+            value: formatEther(maxFee as bigint).toString(),
           },
           // { title: "Max Fee (Gwei)", tooltip: "", value: maxFee.toString() },
         ]
@@ -60,9 +60,8 @@ export const usePollGasFee = (
       ? {
           tokenValue: formatEther(
             (maxFee as bigint) + (parseEther(value) as bigint)
-          ),
-          usdValue:
-            tokenPrice,
+          ).toString(),
+          usdValue: tokenPrice.toString(),
         }
       : undefined;
   }, [tokenPrice, averageFee]);
