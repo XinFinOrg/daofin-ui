@@ -31,14 +31,14 @@ const ElectionPeriods: FC<ElectionPeriodsProps> = ({ isLoading, periods }) => {
         mb={2}
       >
         <Text fontWeight={"semibold"} fontSize={"lg"}>
-          Election Periods
+          Voting Periods
         </Text>
 
         <DefaultButton variant={"link"} size={"sm"} onClick={onOpen}>
           View all <ArrowForwardIcon />
         </DefaultButton>
       </HStack>
-      <Skeleton
+      {/* <Skeleton
         isLoaded={!isLoading}
         w={["full", "full",]}
         alignItems={"flex-start"}
@@ -48,7 +48,7 @@ const ElectionPeriods: FC<ElectionPeriodsProps> = ({ isLoading, periods }) => {
             <ElectionPeriodCard period={period} index={index} />
           ))}
         </VStack>
-      </Skeleton>
+      </Skeleton> */}
 
       <Modal title="Election Periods" isOpen={isOpen} onClose={onClose}>
         {periods?.map((period, index) => (
@@ -66,15 +66,21 @@ export const ElectionPeriodCard: FC<{
   const { endDate, id, startDate } = period;
   return (
     <DefaultBox key={uuid()} p={2} w="full" mb={1}>
+      <Box>
+          <ProposalStatusBadge
+            variant={"subtle"}
+            title={proposalTimeStatus(toDate(startDate), toDate(endDate))}
+          />
+        </Box>
       <Flex
         w={"full"}
         justifyContent="flex-start"
         alignItems={"center"}
         textAlign={"center"}
         mb={1}
-        fontSize={["xs", "xs", "xs", "sm"]}
+        fontSize={["xs", "xs", "xs", "xs"]}
       >
-        <Text p={"1"}>{index + 1}- </Text>
+        {/* <Text p={"1"}>{index + 1}- </Text> */}
         <HStack
           margin={"1"}
           p={"1"}
@@ -101,12 +107,7 @@ export const ElectionPeriodCard: FC<{
             {toStandardFormatString(toDate(endDate))}
           </Text>
         </HStack>
-        <Box>
-          <ProposalStatusBadge
-            variant={"subtle"}
-            title={proposalTimeStatus(toDate(startDate), toDate(endDate))}
-          />
-        </Box>
+        
       </Flex>
     </DefaultBox>
   );

@@ -18,6 +18,8 @@ import React, {
 } from "react";
 import MasterNodeDelegateeSenateIcon from "../utils/assets/icons/MasterNodeDelegateeSenateIcon";
 import { IconBase } from "react-icons/lib";
+import { Tooltip } from "recharts";
+import { DefaultToolTip } from "./Tooltip";
 
 interface VoteStatProgressBarProps extends ProgressProps {
   percentage: number;
@@ -37,7 +39,7 @@ const DefaultProgressBar: FC<VoteStatProgressBarProps> = ({
     <HStack alignItems={"center"} w={"full"}>
       <Box w={"20%"}>
         {Icon ? (
-          <Box w={["4", "4", "5", "7"]} h={["4", "4","5", "7"]}>
+          <Box w={["4", "4", "5", "7"]} h={["4", "4", "5", "7"]}>
             {Icon}
           </Box>
         ) : (
@@ -49,15 +51,17 @@ const DefaultProgressBar: FC<VoteStatProgressBarProps> = ({
           <></>
         )}
       </Box>
-
-      <Progress
-        w={["full"]}
-        size={size}
-        value={Number(percentage)}
-        borderRadius={"md"}
-      >
-        {threshold !== null && <ThresholdLine threshold={threshold} />}
-      </Progress>
+      <DefaultToolTip label={``}>
+        <Progress
+          w={["full"]}
+          size={size}
+          value={Number(percentage)}
+          borderRadius={"md"}
+        >
+           
+          {threshold !== null && <ThresholdLine threshold={threshold} />}  
+        </Progress>
+      </DefaultToolTip>
     </HStack>
   );
 };

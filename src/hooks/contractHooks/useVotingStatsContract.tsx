@@ -1,17 +1,41 @@
-import { useEffect, useMemo, useState } from "react";
-import { useClient } from "../useClient";
-import { useWallet } from "../useWallet";
-import { Address, erc20ABI, readContracts, useContractRead } from "wagmi";
-import DaofinVotingStats from "../../utils/abis/voting-stats.abi.json";
-import { useGlobalState } from "../../contexts/GlobalStateContext";
+import {
+  Address,
+  useAccount,
+  useChainId,
+  useContractRead,
+  useNetwork,
+  usePublicClient,
+} from "wagmi";
 import { useAppGlobalConfig } from "../../contexts/AppGlobalConfig";
+import { VotingStatsABI } from "../../utils/abis/voting-stats.abi";
 
-function useVotingStatsContract(proposalId: string) {
-  return useContractRead({
-    abi: DaofinVotingStats,
-    address: import.meta.env.VITE_DAOFIN_VOTING_STATS as Address,
-    functionName: "getQuorumStats",
-    args: [proposalId],
+type CommunityReturnType = {
+  name: string;
+  yesVotes: bigint;
+  noVotes: bigint;
+  abstainVotes: bigint;
+  totalVotes: bigint;
+  currentQuorumNumber: bigint;
+  currentPassrateNumber: bigint;
+  requiredQuorumNumber: bigint;
+  requiredPassrateNumber: bigint;
+  totalNumberOfVoters: bigint;
+  currentQuroumNumberRatio: bigint;
+  requiredQuroumNumberRatio: bigint;
+  currentPassrateRatio: bigint;
+  currentPassrateNumberRatio: bigint;
+  requiredPassrateNumberRatio: bigint;
+};
+function useVotingStatsContract(proposalId: bigint, proposalTypeId: bigint) {
+  const { votingStatsAddress } = useAppGlobalConfig();
+
+  //   if (!proposalId || !proposalTypeId) return;
+
+  return useContractRead<typeof VotingStatsABI, string, CommunityReturnType[]>({
+    abi: VotingStatsABI,
+    address: votingStatsAddress as Address,
+    functionName: "stats",
+    args: [proposalId, proposalTypeId],
   });
 }
 export default useVotingStatsContract;

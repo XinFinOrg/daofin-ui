@@ -8,29 +8,31 @@ export const PROPOSAL_TYPES = [
   {
     id: uuid(),
     name: "Grant",
-    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+    description:
+      "Get access to ecosystem grants for Toolings integrations and global events and hackathons.",
     isComingSoon: false,
     proposalId: 0,
   },
   {
     id: uuid(),
     name: "Decision-making",
-    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+    description:
+      "On-chain decision making for the entire ecosystem development, no funding invloved in.",
     isComingSoon: false,
     proposalId: 1,
   },
-  {
-    id: uuid(),
-    name: "Update Voting Settings",
-    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-    isComingSoon: true,
-  },
-  {
-    id: uuid(),
-    name: "Adjust Voting Periods",
-    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-    isComingSoon: true,
-  },
+  // {
+  //   id: uuid(),
+  //   name: "Update Voting Settings",
+  //   description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+  //   isComingSoon: true,
+  // },
+  // {
+  //   id: uuid(),
+  //   name: "Adjust Voting Periods",
+  //   description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+  //   isComingSoon: true,
+  // },
 ];
 
 export const proposalTypeNameToProposalId = (proposalTypeName: string) => {
@@ -42,7 +44,6 @@ export const proposalTypeNameToProposalId = (proposalTypeName: string) => {
     default:
       return "-1";
   }
-
 };
 export const findProposalTypeById = (proposalTypeId: string) => {
   return PROPOSAL_TYPES.find((item) => item.proposalId === +proposalTypeId);

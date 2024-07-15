@@ -148,7 +148,7 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
         .catch(console.log);
     }
   }, [daofinClient?.methods]);
-  const { stopPolling, txCosts, txFees } = usePollGasFee(
+  const { stopPolling, txCosts, txFees, hasLoaded } = usePollGasFee(
     estimateCreationFees,
     shouldPoll,
     toEther(proposalCosts.toString())
@@ -262,6 +262,7 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
 
           {isOpen && (
             <TransactionReviewModal
+              hasLoaded={hasLoaded}
               isOpen={isOpen}
               onClose={() =>
                 onClose(() => {

@@ -29,6 +29,7 @@ export type Proposal = {
   proposalType: {
     id: string;
     txHash: string;
+    proposalTypeId: string;
     settings: {
       id: string;
       supportThreshold: string;

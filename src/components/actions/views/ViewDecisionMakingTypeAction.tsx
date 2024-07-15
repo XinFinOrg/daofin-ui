@@ -6,13 +6,12 @@ import { CHAIN_METADATA } from "../../../utils/networks";
 import { useNetwork } from "../../../contexts/network";
 import { CreateProposalFormData } from "../../../pages/CreateProposal";
 
-const DecisionMakingTypeFormAction = () => {
+const ViewDecisionMakingTypeAction = () => {
   return (
-    <Box >
-      <Text fontWeight={'400'} lineHeight={'1.5'} textUnderlineOffset={'0.3rem'}><strong>Caution:</strong> The main goal of this proposal is making an on-chain decision and not
-      designed to be managed funds.</Text>
+    <Box p={4}>
+      <Text fontWeight={'400'} lineHeight={'1.5'} textUnderlineOffset={'0.3rem'}>No Funding is involved in.</Text>
     </Box>
   );
 };
 
-export default DecisionMakingTypeFormAction;
+export default ViewDecisionMakingTypeAction;

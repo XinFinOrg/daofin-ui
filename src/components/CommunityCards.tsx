@@ -11,6 +11,7 @@ const CommunityCards = () => {
   const { committeesListWithIcon } = useCommitteeUtils();
   const { mapCommitteeToTotalNumber } = useTotalNumberOfVoters();
 
+
   return (
     <HStack w={"full"} flexDirection={["column", "column", "column", "row"]}>
       {committeesListWithIcon.map(({ bgGradient, Icon, id, name, link }) => (

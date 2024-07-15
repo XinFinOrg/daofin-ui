@@ -2,27 +2,13 @@ import {
   Alert,
   AlertDescription,
   AlertIcon,
-  Badge,
   Box,
   Flex,
-  FormControl,
   Heading,
-  Radio,
-  RadioGroup,
   Skeleton,
-  Stack,
-  Text,
-  useClipboard,
-  useRadio,
 } from "@chakra-ui/react";
-import { Form, useField, useFormikContext } from "formik";
 import { FC, useEffect, useMemo, useState } from "react";
-import { DefaultInput } from "..";
 
-import useDaoElectionPeriods, {
-  ElectionPeriod,
-} from "../../hooks/useDaoElectionPeriods";
-import { v4 as uuid } from "uuid";
 import { CHAIN_METADATA } from "../../utils/networks";
 import { useNetwork } from "../../contexts/network";
 import { ProposalCostIcon } from "../../utils/assets/icons";
@@ -73,7 +59,7 @@ const ProposalCosts: FC = () => {
           <AlertIcon />
           <AlertDescription maxWidth="sm">
             A fixed proposal cost at {toEther(proposalCosts?.toString())}{" "}
-            {coinSymbol} is to prevent proposal spam. Proposal cost is NOT
+            {coinSymbol} rate. Proposal cost is NOT
             refundable.
           </AlertDescription>
         </Alert>

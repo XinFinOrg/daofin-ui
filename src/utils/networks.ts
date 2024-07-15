@@ -94,7 +94,7 @@ export const CHAIN_METADATA: ChainList = {
     name: "XDC",
     domain: "L1 Blockchain",
     logo: "https://icons.llamao.fi/icons/chains/rsz_xdc.jpg",
-    explorer: "https://apothem.xdcscan.io",
+    explorer: "https://xdcscan.io",
     testnet: false,
     rpc: [`https://rpc.ankr.com/xdc`],
     nativeCurrency: {

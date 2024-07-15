@@ -37,7 +37,11 @@ export const proposalTimeStatus = (startDate: Date, endDate: Date) => {
     return ProposalStatus.NOT_STARTED;
   }
   if (now > startDate && now > endDate) {
+    if (now.getTime() > endDate.getTime() + 10 * 60 * 1000) {
+      return ProposalStatus.REACHED;
+    }
     return ProposalStatus.EXPIRED;
   }
+  
   return ProposalStatus.PENDING;
 };

@@ -26,6 +26,7 @@ import RulesOfDecisions from "../components/RulesOfDecisions";
 import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTypeDetails";
 import { DefaultAlert } from "../components/Alerts";
 import PeopleHouseIcon from "../utils/assets/icons/PeopleHouseIcon";
+import { JoinHouseFormSchema } from "../schemas/joinHouse";
 export type JoinHouseFormType = {
   amount: string;
 };
@@ -62,8 +63,10 @@ const PeoplesHousePage = () => {
     <Page title="House">
       <Formik
         initialValues={{
-          amount: "",
+          amount: 0,
         }}
+        validationSchema={JoinHouseFormSchema}
+        validateOnChange={true}
         onSubmit={() => {}}
       >
         <>
@@ -180,7 +183,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
               justifyContent={"flex-start"}
               flexDirection={["column", "column", "column", "row"]}
             >
-              <DefaultBox w={["full", "full", "full", "33%"]}>
+              {/* <DefaultBox w={["full", "full", "full", "33%"]}>
                 <VStack
                   fontSize={"sm"}
                   alignSelf={"normal"}
@@ -193,7 +196,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
                     {CHAIN_METADATA[network].nativeCurrency.symbol}
                   </Text>
                 </VStack>
-              </DefaultBox>
+              </DefaultBox> */}
               <DefaultBox w={["full", "full", "full", "33%"]}>
                 <VStack
                   alignSelf={"normal"}

@@ -71,7 +71,7 @@ const ExecuteProposalProvider: FC<
       return await daofinClient.estimation.execute(proposalId);
   }, [daofinClient?.estimation]);
 
-  const { stopPolling, txCosts, txFees } = usePollGasFee(
+  const { stopPolling, txCosts, txFees, hasLoaded } = usePollGasFee(
     estimateCreationFees,
     shouldPoll
   );
@@ -162,6 +162,7 @@ const ExecuteProposalProvider: FC<
       )}
       {txReviewIsOpen && (
         <TransactionReviewModal
+        hasLoaded={hasLoaded}
           isOpen={txReviewIsOpen}
           onClose={() => {
             txReviewClose();

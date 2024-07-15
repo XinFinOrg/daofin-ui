@@ -30,6 +30,7 @@ export const usePollGasFee = (
   const [maxFee, setMaxFee] = useState<BigInt | undefined>(BigInt(0));
   const [averageFee, setAverageFee] = useState<BigInt | undefined>(BigInt(0));
   const [tokenPrice, setTokenPrice] = useState<number>(0);
+  const [hasLoaded, setHasLoaded] = useState<boolean>(false);
 
   const txFees = useMemo(() => {
     return maxFee && averageFee
@@ -71,6 +72,7 @@ export const usePollGasFee = (
         setMaxFee(results[0]?.max);
         setAverageFee(results[0]?.average);
         setError(undefined);
+        setHasLoaded(true);
       } catch (err) {
         setError(err as Error);
         setMaxFee(undefined);
@@ -87,6 +89,7 @@ export const usePollGasFee = (
     setMaxFee(BigInt(0));
     setAverageFee(BigInt(0));
     setTokenPrice(0);
+    setHasLoaded(false);
   }, []);
   return {
     error,
@@ -96,5 +99,6 @@ export const usePollGasFee = (
     stopPolling,
     txCosts,
     txFees,
+    hasLoaded,
   };
 };

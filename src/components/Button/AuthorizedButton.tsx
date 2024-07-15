@@ -22,6 +22,8 @@ import { Link } from "react-router-dom";
 import DefaultLink from "../DefaultLink";
 import { getPluginInstallationId } from "../../utils/networks";
 import useHasJoinedMasterNode from "../../hooks/contractHooks/useHasJoinedMasterNode";
+import useIsValidVoter from "../../hooks/contractHooks/useIsUserVotedOnProposal";
+import { useContractRead } from "wagmi";
 
 export type WalletAuthorizedButtonProps = PropsWithChildren &
   DefaultButtonProps & {};
@@ -57,8 +59,11 @@ const MasterNodeAuthorizedButton: FC<MasterNodeAuthorizedButtonProps> = (
   const isMasterNode = useIsXDCValidatorCandidate(
     address ? address : zeroAddress
   );
-  const hasJointoSenate = useHasJoinedMasterNode();
-  const isValid = isMasterNode || hasJointoSenate;
+  const isMasterNodeDelegatee = useIsMasterNodeDelegatee(
+    address ? address : zeroAddress
+  );
+  const { data: isValidVoter } = useIsValidVoter();
+  const isValid = isMasterNode;
   return (
     <WalletAuthorizedButton {...props} isDisabled={!isValid}>
       {props.children}
@@ -198,16 +203,16 @@ const VoteButton: FC<VoteButtonProps> = (props) => {
       isUserVoted,
     ]);
   return (
-    <Box>
+    <HStack alignItems={"baseline"}>
       <DefaultButton {...props} isDisabled={!isDisabled} mb={2}>
         {props.children}
       </DefaultButton>
       {(tooltip || message) && (
         <HStack fontSize={"xs"}>
-          <InfoTooltip label={tooltip} asLink hasArrow /> {message}
+          <InfoTooltip label={tooltip} asLink hasArrow />
         </HStack>
       )}
-    </Box>
+    </HStack>
   );
 };
 
@@ -217,13 +222,63 @@ type ExecuteProposalButtonProps = PropsWithChildren &
   };
 
 const ExecuteProposalButton: FC<ExecuteProposalButtonProps> = (props) => {
-  const { address } = useWallet();
+  const { address, isOnWrongNetwork } = useWallet();
 
   const { status } = props;
 
   const isDisabled = address && status && !status.executed && status.canExecute;
+  console.log({status});
+  
+  const { message, tooltip }: { message: ReactNode | string; tooltip: string } =
+    useMemo(() => {
+      if (!address)
+        return {
+          tooltip:
+            "Wallet must be connected to be able to initiate the transaction",
+          message: <Text>Wallet is not connected</Text>,
+        };
 
-  return <DefaultButton {...props}>{props.children}</DefaultButton>;
+      if (isOnWrongNetwork)
+        return {
+          tooltip: "Try to switch your network to supported networks",
+          message: <Text>Wrong network</Text>,
+        };
+
+      if (status.executed)
+        return {
+          tooltip: "The proposal is already executed.",
+          message: <Text>Already executed.</Text>,
+        };
+
+      if (!status.canExecute)
+        return {
+          tooltip: "The proposal has not reached the criteria.",
+          message: <Text>The proposal has not reached the criteria.</Text>,
+        };
+
+        if (status.canExecute)
+          return {
+            tooltip: "The proposal has reached the criteria, let's fire!",
+            message: <Text>The proposal has not reached the criteria.</Text>,
+          };
+
+      return {
+        message: "",
+        tooltip: "",
+      };
+    }, [address, status.canExecute, status.executed]);
+  return (
+    <HStack alignItems={"baseline"}>
+      <DefaultButton {...props} isDisabled={!isDisabled} mb={2}>
+        {props.children}
+      </DefaultButton>
+      {(tooltip || message) && (
+        <HStack fontSize={"xs"}>
+          {<InfoTooltip label={tooltip} asLink hasArrow />}
+        </HStack>
+      )}
+    </HStack>
+  );
 };
 
 export {

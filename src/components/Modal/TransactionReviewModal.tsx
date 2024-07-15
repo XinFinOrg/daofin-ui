@@ -1,4 +1,4 @@
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Modal, { ModalProps } from "./Modal";
 import {
   Alert,
@@ -56,6 +56,7 @@ export type TransactionReviewModalProps<T> = Pick<
     hash: string;
     data: ModalActionButtonType | undefined;
   };
+  hasLoaded: boolean;
 };
 const TransactionReviewModal = <T extends any | undefined>({
   isOpen,
@@ -65,6 +66,7 @@ const TransactionReviewModal = <T extends any | undefined>({
   onSubmitClick,
   status,
   txData,
+  hasLoaded,
 }: TransactionReviewModalProps<T>) => {
   const [title, setTitle] = useState("");
   useEffect(() => {
@@ -86,7 +88,7 @@ const TransactionReviewModal = <T extends any | undefined>({
       {status === TransactionState.LOADING && (
         <Box>
           <Box mb={4}>
-            <Image src={'GasEstimation.png'}></Image>
+            <Image src={"GasEstimation.png"}></Image>
           </Box>
           <DefaultBox p={"4"} mb={4}>
             <Flex flexDirection={"column"}>
@@ -126,16 +128,14 @@ const TransactionReviewModal = <T extends any | undefined>({
                       fontWeight={"semibold"}
                       alignItems={"center"}
                     >
-                      <Text mr={1}>
-                        {totalCosts.tokenValue}
-                      </Text>
+                      <Text mr={1}>{totalCosts.tokenValue}</Text>
                       <Box w={"20px"}>
                         <XdcIcon />
                       </Box>
                     </Flex>
                     <Text fontSize={"sm"} fontWeight={"semibold"}>
-                      {/* ${numberWithCommaSeparate(totalCosts.usdValue)} */}
-                      ${totalCosts.usdValue}
+                      {/* ${numberWithCommaSeparate(totalCosts.usdValue)} */}$
+                      {totalCosts.usdValue}
                     </Text>
                   </Flex>
                 </Flex>
@@ -150,14 +150,16 @@ const TransactionReviewModal = <T extends any | undefined>({
           <Box>
             <Flex flexDirection={"row"} justifyContent={"end"}>
               <Flex>
-                <WalletAuthorizedButton
-                  type="submit"
-                  colorScheme="blue"
-                  m={1}
-                  onClick={onSubmitClick}
-                >
-                  Ok, Submit
-                </WalletAuthorizedButton>
+                {hasLoaded === true && (
+                  <WalletAuthorizedButton
+                    type="submit"
+                    colorScheme="blue"
+                    m={1}
+                    onClick={onSubmitClick}
+                  >
+                    Ok, Submit
+                  </WalletAuthorizedButton>
+                )}
               </Flex>
             </Flex>
           </Box>

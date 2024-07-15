@@ -21,6 +21,9 @@ export type SubgraphProposalBase = {
   pluginProposalId: string;
   potentiallyExecutable: boolean;
   tallyDetails: TallyDetails[];
+  proposalType:{
+    proposalTypeId:string
+  }
 };
 function useDaoProposals(
   daoAddress: string,

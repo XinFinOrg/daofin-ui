@@ -16,18 +16,6 @@ import { ModalActionButtonType } from "../components/Modal/TransactionReviewModa
 import { useClient } from "../hooks/useClient";
 import { usePollGasFee } from "../hooks/usePollGasfee";
 import { VoteSteps } from "@xinfin/osx-daofin-sdk-client";
-import { useWallet } from "../hooks/useWallet";
-import useIsXDCValidatorCandidate from "../hooks/useIsXDCValidatorCandidate";
-import { zeroAddress } from "viem";
-import useIsMasterNodeDelegatee from "../hooks/useIsMasterNodeDelegatee";
-import useIsJudiciaryMember from "../hooks/useIsJudiciaryMember";
-import useIsUserDeposited from "../hooks/useIsUserDeposited";
-import useIsUserVotedOnProposal from "../hooks/useIsUserVotedOnProposal";
-import { useModal } from "./ModalContext";
-import useDaoElectionPeriods, {
-  useFindProposalElectionPeriod,
-} from "../hooks/useDaoElectionPeriods";
-import { toStandardTimestamp } from "../utils/date";
 
 interface VoteContextType {
   handleSendTx: () => void;
@@ -75,7 +63,7 @@ export const VoteProvider: FC<VoteProviderProps> = ({
       );
   }, [daofinClient?.estimation, values.voteOption]);
 
-  const { stopPolling, txCosts, txFees } = usePollGasFee(
+  const { stopPolling, txCosts, txFees, hasLoaded } = usePollGasFee(
     estimateCreationFees,
     shouldPoll
   );
@@ -138,6 +126,7 @@ export const VoteProvider: FC<VoteProviderProps> = ({
         )}
         {txReviewIsOpen && (
           <TransactionReviewModal
+            hasLoaded={hasLoaded}
             isOpen={txReviewIsOpen}
             onClose={() => {
               txReviewClose();

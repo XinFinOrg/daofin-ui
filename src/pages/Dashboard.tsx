@@ -57,7 +57,6 @@ import ElectionPeriods from "../components/ElectionPeriods";
 import { TwitterTimelineEmbed } from "react-twitter-embed";
 import { PROPOSAL_TYPES } from "../utils/constants";
 import { useContractEvent } from "wagmi";
-import useVotingStatsContract from "../hooks/contractHooks/useVotingStatsContract";
 
 const Dashboard: FC = () => {
   const navigate = useNavigate();

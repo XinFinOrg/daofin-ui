@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -79,6 +80,7 @@ export const PeoplesHouseProvider: FC<PropsWithChildren> = ({ children }) => {
     tokenPrice,
     txCosts,
     txFees,
+    hasLoaded
   } = usePollGasFee(estimateCreationFees, shouldPoll, values.amount);
 
   const handleSendTx = async () => {
@@ -121,8 +123,7 @@ export const PeoplesHouseProvider: FC<PropsWithChildren> = ({ children }) => {
   const { network } = useNetwork();
   const { data: settings } = useDaoGlobalSettings();
   const isValidHouseMember = useIsUserDeposited(address);
-  console.log({ isValidHouseMember });
-
+  
   const handleCloseModal = () => {
     onClose();
     resetForm();
@@ -188,6 +189,7 @@ export const PeoplesHouseProvider: FC<PropsWithChildren> = ({ children }) => {
       )}
       {txReviewIsOpen && (
         <TransactionReviewModal
+          hasLoaded={hasLoaded}
           isOpen={txReviewIsOpen}
           onClose={() => {
             txReviewClose();

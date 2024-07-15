@@ -28,7 +28,6 @@ function useHasJoinedMasterNode() {
     functionName: "_masterNodeDelegatee",
     args: [],
   });
-  console.log({data});
   
   return (
     !error &&

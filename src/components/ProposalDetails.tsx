@@ -10,26 +10,23 @@ import {
   HStack,
   VStack,
 } from "@chakra-ui/layout";
-import { makeBlockScannerHashUrl, shortenAddress } from "../utils/networks";
-
-import { useNetwork } from "../contexts/network";
-
-import { Button } from "@chakra-ui/button";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+  makeBlockScannerAddressUrl,
+  makeBlockScannerHashUrl,
+  shortenAddress,
+} from "../utils/networks";
+import { useNetwork } from "../contexts/network";
+import {
   Skeleton,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
-  Tooltip,
 } from "@chakra-ui/react";
 import ProposalTypeBadge from "./Badge/ProposalTypeBadge";
 import { IoShareSocial } from "react-icons/io5";
-import { ArrowForwardIcon, InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
+import { InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 
 import VotingStatsBox from "./VotingStatsBox";
@@ -52,10 +49,8 @@ import useFetchProposalStatus, {
   FetchProposalStatusType,
 } from "../hooks/useFetchProposalStatus";
 import { ExpandableText } from "./ExpandableText";
-import { DefaultToolTip, InfoTooltip } from "./Tooltip";
-import { DefaultButton } from "./Button";
 import { VoteBadge } from "./Badge";
-import useVotingStatsContract from "../hooks/contractHooks/useVotingStatsContract";
+import ViewDecisionMakingTypeAction from "./actions/views/ViewDecisionMakingTypeAction";
 
 const ProposalDetails: FC<{
   proposal: Proposal | undefined;
@@ -82,9 +77,6 @@ const ProposalDetails: FC<{
   const [proposalStatus, setProposalStatus] =
     useState<FetchProposalStatusType>();
 
-  const { data,error } = useVotingStatsContract(proposal ? proposal.pluginProposalId : "");
-
-  console.log({ data ,error});
   const { makeCall } = useFetchProposalStatus();
   useEffect(() => {
     if (proposal?.pluginProposalId) {
@@ -99,6 +91,7 @@ const ProposalDetails: FC<{
     },
     [allVoters]
   );
+
   return (
     <>
       {
@@ -114,11 +107,13 @@ const ProposalDetails: FC<{
                     {proposal && proposal?.metadata && (
                       <Flex
                         flexDirection={"column"}
-                        w={["100%", "100%", "50%"]}
+                        w={["100%", "100%", "60%"]}
                         mb={4}
                       >
                         <Box>
-                          <ProposalTypeBadge title="Grant" />
+                          <ProposalTypeBadge
+                            id={proposal.proposalType.proposalTypeId}
+                          />
                         </Box>
                         <Box my={"4"}>
                           <Text as={"h1"} fontSize={"xl"} fontWeight={"bold"}>
@@ -135,7 +130,15 @@ const ProposalDetails: FC<{
                           gap={1}
                         >
                           <Text>
-                            Published By: {shortenAddress(proposal.creator)}
+                            Published By:{" "}
+                            <a
+                              href={makeBlockScannerAddressUrl(
+                                network,
+                                proposal.creator
+                              )}
+                            >
+                              {shortenAddress(proposal.creator)}
+                            </a>
                           </Text>
                           <HStack>
                             <TimeIcon />
@@ -159,73 +162,20 @@ const ProposalDetails: FC<{
                     )}
 
                     <Flex
-                      alignItems={"center"}
+                      alignItems={["center", "center", "flex-end", "flex-end"]}
                       gap={4}
-                      w={["full", "full", "initial"]}
+                      my="auto"
+                      flexDirection={["column"]}
                     >
                       {proposal &&
                         proposal.pluginProposalId &&
                         !isLoading &&
                         proposalStatus && (
-                          <>
-                            <ProposalActionButtons
-                              status={proposalStatus}
-                              proposalId={proposal.pluginProposalId}
-                            />
-                            {/* <VoteButton
-                            colorScheme="blue"
-                            w={"full"}
+                          <ProposalActionButtons
                             status={proposalStatus}
-                            onClick={handleToggleFormModal}
                             proposalId={proposal.pluginProposalId}
-                          >
-                            Vote Now
-                          </VoteButton> */}
-
-                            {/* <Box>
-                            <ArrowForwardIcon />
-                          </Box>
-
-                          <ExecuteProposalButton
-                            status={proposalStatus}
-                            colorScheme="blue"
-                            w={"full"}
-                            onClick={onExecuteModalOpen}
-                          >
-                            Execute Now
-                          </ExecuteProposalButton> */}
-                          </>
+                          />
                         )}
-
-                      {/* {proposal && !isLoading && proposalStatus?.isOpen ? (
-                        proposalStatus?.canExecute ? (
-                          <WalletAuthorizedButton
-                            colorScheme="blue"
-                            w={"full"}
-                            onClick={onExecuteModalOpen}
-                          >
-                            Execute Now
-                          </WalletAuthorizedButton>
-                        ) : (
-                          <VoteButton
-                            colorScheme="blue"
-                            w={"full"}
-                            onClick={handleToggleFormModal}
-                          >
-                            Vote Now
-                          </VoteButton>
-                        )
-                      ) : proposalStatus?.executed ? (
-                        <WalletAuthorizedButton isDisabled={true} w={"full"}>
-                          Executed{" "}
-                        </WalletAuthorizedButton>
-                      ) : (
-                        <WalletAuthorizedButton isDisabled={true} w={"full"}>
-                          Vote{" "}
-                        </WalletAuthorizedButton>
-                      )} */}
-
-                      {/* {proposal.executed && <CheckCircleIcon />} */}
                     </Flex>
                   </Flex>
                 </DefaultBox>
@@ -235,14 +185,14 @@ const ProposalDetails: FC<{
               <Skeleton isLoaded={!isLoading} minH={"300px"} mb={6}>
                 <GridItem mb={6} w="100%" h={"min-content"}>
                   <DefaultBox>
-                    {/* {proposal && <VotingStatsBox proposal={proposal} />} */}
+                    {proposal && <VotingStatsBox proposal={proposal} />}
                   </DefaultBox>
                 </GridItem>
               </Skeleton>
               <GridItem colSpan={[2, 2, 1]} h={"min-content"} mb={6}>
                 <Skeleton
                   isLoaded={!isLoading && !!proposalStatus}
-                  minH={"250px"}
+                  minH={"400px"}
                 >
                   <DefaultBox>
                     {proposalStatus && proposal && !isLoading && (
@@ -272,6 +222,9 @@ const ProposalDetails: FC<{
                     {proposal?.actions.map((item) => (
                       <ViewGrantProposalType {...item} />
                     ))}
+                    {proposal?.actions.length === 0 && (
+                      <ViewDecisionMakingTypeAction />
+                    )}
                   </DefaultBox>
                 </Skeleton>
               </GridItem>
@@ -407,8 +360,10 @@ const ProposalDetails: FC<{
                         </Text>
                       </HStack>
 
-                      {proposal?.metadata?.description && (
+                      {proposal?.metadata?.description ? (
                         <ExpandableText text={proposal.metadata.description} />
+                      ) : (
+                        <Text>Empty</Text>
                       )}
                     </Box>
                   </DefaultBox>
@@ -432,19 +387,28 @@ const ProposalActionButtons: FC<ProposalActionButtonsProps> = ({
   proposalId,
 }) => {
   const { handleToggleFormModal } = useVoteContext();
+  const { handleToggleFormModal: handleExecute } = useExecuteProposalContext();
   return (
-    <Box>
+    <>
       <VoteButton
-        w={"full"}
+        w={["200px", "300px", "200px"]}
         colorScheme="blue"
         status={status}
         expired={!status.isOpen}
         onClick={handleToggleFormModal}
         proposalId={proposalId}
       >
-        Vote Now
+        Vote
       </VoteButton>
-    </Box>
+      <ExecuteProposalButton
+        w={["200px", "300px", "200px"]}
+        colorScheme="green"
+        status={status}
+        onClick={handleExecute}
+      >
+        Execute
+      </ExecuteProposalButton>
+    </>
   );
 };
 

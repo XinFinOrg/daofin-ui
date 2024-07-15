@@ -25,7 +25,16 @@ import useFetchProposalStatus, {
 import { uuid } from "../utils/numbers";
 import { CloseIcon, QuestionOutlineIcon, TimeIcon } from "@chakra-ui/icons";
 import { ProposalStatus } from "../utils/types";
-import { IoCloseCircle } from "react-icons/io5";
+import {
+  IoCloseCircle,
+  IoCloseCircleOutline,
+  IoCloseOutline,
+  IoFlash,
+  IoPlay,
+  IoRocket,
+  IoStop,
+  IoTime,
+} from "react-icons/io5";
 import InfoTooltip from "./Tooltip/InfoTooltip";
 
 interface ProposalStatusStepperProps {
@@ -46,60 +55,69 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
     {
       id: uuid(),
       status: ProposalStatus.PUBLISHED,
-      title: "Published",
+      title: "Publish",
       tooltip: "Published proposals are submitted on-chain to DAOFIN.",
       date: toDate(createdAt),
+      indicator: <IoRocket />,
     },
-    {
-      id: uuid(),
-      status: ProposalStatus.PENDING,
-      title: "Pending",
-      tooltip:
-        "The proposal has been shared with the community and is now awaiting the start of the voting period.",
-      date: dateNow(),
-    },
+    // {
+    //   id: uuid(),
+    //   status: ProposalStatus.PENDING,
+    //   title: "On-Hold",
+    //   tooltip:
+    //     "The proposal has been shared with the community and is now awaiting the start of the voting period.",
+    //   date: undefined, //dateNow(),
+    // },
     {
       id: uuid(),
       status: ProposalStatus.ACTIVE,
-      title: "Running",
+      title: "Start of Voting Period ",
       tooltip:
         "The proposal is currently in the voting phase. Community members are actively casting their votes.",
       date: toDate(startDate),
       endDate: toDate(endDate),
+      indicator: <IoPlay />,
     },
-    // {
-    //   id: uuid(),
-    //   status: ProposalStatus.EXPIRED,
-    //   title: "Closing window",
-    //   description: "Date & Time",
-    //   date: new Date(endDate),
-    // },
-    // {
-    //   id: uuid(),
-    //   status: ProposalStatus.REACHED,
-    //   title: "Threshold’s Reached",
-    //   description: "",
-    //   date: null,
-    // },
-
+    {
+      id: uuid(),
+      status: ProposalStatus.ACTIVE,
+      title: "End of Voting Period",
+      tooltip:
+        "The proposal is currently in the voting phase. Community members are actively casting their votes.",
+      date: toDate(endDate),
+      endDate: toDate(endDate),
+      indicator: <IoStop />,
+    },
+    {
+      id: uuid(),
+      status: ProposalStatus.REACHED,
+      title: "On-chain execution delay",
+      tooltip:
+        "The proposal is currently in the voting phase. Community members are actively casting their votes.",
+      date: toDate(endDate + 10 * 60 * 1000),
+      endDate: toDate(endDate),
+      indicator: <IoTime />,
+    },
     {
       id: uuid(),
       status: ProposalStatus.EXECUTED,
-      title: "Executed",
+      title: "Execution",
       tooltip:
-        "The proposal has been approved and successfully implemented within the DAOFIN ecosystem.",
+        "The proposal has been approved and successfully implemented within the XDCDAO ecosystem.",
       date: undefined,
+      indicator: <IoFlash />,
     },
     {
       id: uuid(),
       status: ProposalStatus.DEFEATED,
       title: "Defeated",
-      tooltip: "The proposal has not been approved by the DAOFIN ecosystem.",
+      tooltip: "The proposal has not been approved by the XDCDAO ecosystem.",
       date: undefined,
+      indicator: <IoCloseOutline />,
     },
   ]);
 
-  const { activeStep, setActiveStep, goToNext } = useSteps({
+  const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: steps.length,
   });
@@ -108,45 +126,71 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
     () => dateNow() > toDate(createdAt) && dateNow() < toDate(startDate),
     [startDate, createdAt]
   );
-  const didNotReachedRequirements = useMemo(
-    () => status && status.canExecute,
+  const isReachedRequirements = useMemo(
+    () =>
+      status && status.isMinParticipationReached && status.isThresholdReached,
     [status]
   );
 
-  const running = useMemo(() => status && status.isOpen, [status]);
+  const running = useMemo(
+    () => dateNow() < toDate(startDate) && dateNow() < toDate(endDate),
+    [startDate, createdAt]
+  );
   const executed = useMemo(() => status && status.executed, [status]);
   const defeated = useMemo(
     () =>
-      !running && !pendingStatus && (!executed || !status.isThresholdReached),
-    [status, pendingStatus, running, executed]
+      !running &&
+      !pendingStatus &&
+      !executed &&
+      !isReachedRequirements,
+    [pendingStatus, running, executed, isReachedRequirements]
   );
+  console.log({ status, defeated });
+  console.log({ pendingStatus, running, executed, isReachedRequirements });
 
   useEffect(() => {
     if (status) {
-      console.log({ pendingStatus, running, executed, defeated });
-
       if (pendingStatus) {
         setActiveStep(1);
+        setSteps((prev) => [
+          ...prev.filter(({ status }) => status !== ProposalStatus.DEFEATED),
+        ]);
       }
 
       if (running) {
         setActiveStep(2);
+        setSteps((prev) => [
+          ...prev.filter(({ status }) => status !== ProposalStatus.DEFEATED),
+        ]);
+      }
+
+      if (isReachedRequirements) {
+        setActiveStep(3);
+        setSteps((prev) => [
+          ...prev.filter(({ status }) => status !== ProposalStatus.DEFEATED),
+        ]);
       }
 
       if (executed) {
         setActiveStep(steps.length);
+        setSteps((prev) => [
+          ...prev.filter(({ status }) => status !== ProposalStatus.DEFEATED),
+        ]);
       }
+
       if (defeated) {
         setSteps((prev) => [
-          ...prev.filter(({ status }) => status !== ProposalStatus.EXECUTED),
+          ...prev
+            .filter(({ status }) => status !== ProposalStatus.EXECUTED)
+            .filter(({ status }) => status !== ProposalStatus.REACHED),
         ]);
       }
     }
-  }, [status, defeated, running, pendingStatus]);
+  }, [defeated, running, pendingStatus]);
 
   useEffect(() => {
     if (defeated) {
-      setActiveStep(steps.length - 1);
+      setActiveStep(steps.length);
     }
   }, [steps, defeated]);
   const activeProposalIndicator =
@@ -165,17 +209,13 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
         <Stepper
           index={activeStep}
           orientation="vertical"
-          height="400px"
+          height="250px"
           gap="0"
         >
           {steps.map((step, index) => (
             <Step key={index}>
               <StepIndicator>
-                <StepStatus
-                  complete={<StepIcon />}
-                  incomplete={<StepNumber />}
-                  active={activeProposalIndicator}
-                />
+                {step.indicator}
               </StepIndicator>
 
               <Box flexShrink="0" w={"full"}>
@@ -189,10 +229,10 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
                   <VStack justifyContent={"start"} alignItems={"start"}>
                     <HStack>
                       {/* <TimeIcon w={"3"} /> */}
-                      <Text fontSize={["sm", "md"]}>
+                      <Text fontSize={["sm", "sm"]}>
                         {step.date !== undefined && step.date !== null
                           ? toStandardFormatString(step.date)
-                          : "-"}
+                          : ""}
                       </Text>
                     </HStack>
                     {/* {step.endDate && (

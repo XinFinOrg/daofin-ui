@@ -66,7 +66,7 @@ export const MasterNodeDelegateeSentateProvider: FC<PropsWithChildren> = ({
       );
   }, [daofinClient?.estimation, values.delegateeAddress]);
 
-  const { txCosts, txFees } = usePollGasFee(estimateCreationFees, shouldPoll);
+  const { txCosts, txFees, hasLoaded} = usePollGasFee(estimateCreationFees, shouldPoll);
 
   const handleSendTx = async () => {
     const proposalIterator =
@@ -168,6 +168,7 @@ export const MasterNodeDelegateeSentateProvider: FC<PropsWithChildren> = ({
         )}
         {txReviewIsOpen && (
           <TransactionReviewModal
+            hasLoaded={hasLoaded}
             isOpen={txReviewIsOpen}
             onClose={txReviewClose}
             data={txFees}

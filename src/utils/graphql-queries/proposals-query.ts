@@ -26,6 +26,16 @@ query ProposalsQuery($pluginId: ID!) {
     dao{
       id
     }
+    proposalType {
+      id
+      txHash
+      proposalTypeId
+      settings {
+        id
+        supportThreshold
+        minParticipation
+      }
+    }
   }
 }
 `;
@@ -55,6 +65,7 @@ query ProposalQuery($id: ID!) {
       proposalType {
         id
         txHash
+        proposalTypeId
         settings {
           id
           supportThreshold

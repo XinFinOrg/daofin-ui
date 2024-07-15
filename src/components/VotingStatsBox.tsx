@@ -21,6 +21,8 @@ import useTotalNumberOfVoters from "../hooks/useTotalNumberOfVoters";
 import useVoteStats from "../hooks/useVoteStats";
 import { Proposal } from "../utils/types";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
+import { useContractReads } from "wagmi";
+import useVotingStatsContract from "../hooks/contractHooks/useVotingStatsContract";
 
 interface VotingStatsBoxProps {
   currentVoters?: number;
@@ -29,17 +31,19 @@ interface VotingStatsBoxProps {
 
 const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
   const { committeesListWithIcon } = useCommitteeUtils();
-
-  const {} = useTotalNumberOfVoters();
+  const votingStatsHook = useVotingStatsContract(
+    BigInt(proposal.pluginProposalId),
+    BigInt(proposal.proposalType.proposalTypeId)
+  );
 
   const allVotersNumber = useMemo(
     () =>
-      proposal.tallyDetails
-        ? proposal.tallyDetails.reduce(
-            (acc, { totalVotes }) => (totalVotes ? acc + +totalVotes : acc),
-            0
+      votingStatsHook.data
+        ? votingStatsHook.data.reduce(
+            (acc, { totalVotes }) => (totalVotes ? acc + totalVotes : acc),
+            0n
           )
-        : 0,
+        : 0n,
     [proposal]
   );
 
@@ -54,7 +58,7 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
         <Text fontSize={"lg"} fontWeight={"bold"}>
           Voting
         </Text>
-        <Text>Current voters {numberWithCommaSeparate(allVotersNumber)}</Text>
+        <Text>Current voters {numberWithCommaSeparate(allVotersNumber.toString())}</Text>
       </HStack>
       <Tabs isFitted>
         <TabList flexDirection={["column", "column", "row"]} gap={4}>
@@ -77,86 +81,80 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
         </TabList>
 
         <TabPanels>
-          {proposal.tallyDetails.map(
-            ({
-              id,
-              yesVotes,
-              noVotes,
-              abstainVotes,
-              totalVotes,
-              quorumActiveVote,
-              quorumRequiredVote,
-              passrateActiveVote,
-              passrateRequiredVote,
-              totalMembers,
-            }) => (
-              <TabPanel key={id} p={"6"}>
-                <HStack
-                  justifyContent={"space-between"}
-                  alignItems={"flex-start"}
-                  py={"4"}
-                  flexDirection={["column", "column", "row"]}
-                >
-                  <Text fontWeight={"semibold"}>
-                    <Text>
-                      {`${totalVotes} `}
-                      <Text as="p" display={"inline-block"}>
-                        Voted
-                      </Text>{" "}
-                    </Text>
-                  </Text>
+          {votingStatsHook &&
+            votingStatsHook?.data?.map(
+              ({
+                abstainVotes,
+                name,
+                noVotes,
+                totalVotes,
+                yesVotes,
+                currentQuroumNumberRatio,
+                requiredQuroumNumberRatio,
+                requiredPassrateNumberRatio,
+                currentPassrateRatio,
+                currentPassrateNumberRatio
+              }) => (
+                <TabPanel key={name} p={"6"}>
                   <HStack
-                    fontWeight={"semibold"}
+                    justifyContent={"space-between"}
                     alignItems={"flex-start"}
+                    py={"4"}
                     flexDirection={["column", "column", "row"]}
                   >
-                    <Text>
-                      <Text as="p" display={"inline-block"}>
-                        {yesVotes}
-                      </Text>{" "}
-                      {"YES"}
-                    </Text>
-                    <Text>
-                      <Text as="p" display={"inline-block"}>
-                        {noVotes}
-                      </Text>{" "}
-                      {"NO"}
-                    </Text>
-                    <Text>
-                      <Text as="p" display={"inline-block"}>
-                        {abstainVotes}
-                      </Text>{" "}
-                      {"ABSTAIN"}
-                    </Text>
-                  </HStack>
-                </HStack>
-                <VStack alignItems={"flex-start"}>
-                  <DefaultProgressBar
-                    percentage={
-                      +quorumActiveVote == 0
-                        ? 0
-                        : +((+quorumActiveVote / +totalMembers) * 100)
-                    }
-                    threshold={+proposal == 0
-                      ? 0
-                      : +((+quorumRequiredVote / +totalMembers) * 100)}
-                    height={"2"}
-                    ProgressLabel={
-                      <Text fontSize={["xs", "sm", "md"]} fontWeight={"normal"}>
-                        Quorum
+                    <Text fontWeight={"semibold"}>
+                      <Text>
+                        {`${totalVotes} `}
+                        <Text as="p" display={"inline-block"}>
+                          Voted
+                        </Text>{" "}
                       </Text>
-                    }
-                  />
-                  <DefaultProgressBar
+                    </Text>
+                    <HStack
+                      fontWeight={"semibold"}
+                      alignItems={"flex-start"}
+                      flexDirection={["column", "column", "row"]}
+                    >
+                      <Text>
+                        <Text as="p" display={"inline-block"}>
+                          {yesVotes.toString()}
+                        </Text>{" "}
+                        {"YES"}
+                      </Text>
+                      <Text>
+                        <Text as="p" display={"inline-block"}>
+                          {noVotes.toString()}
+                        </Text>{" "}
+                        {"NO"}
+                      </Text>
+                      <Text>
+                        <Text as="p" display={"inline-block"}>
+                          {abstainVotes.toString()}
+                        </Text>{" "}
+                        {"ABSTAIN"}
+                      </Text>
+                    </HStack>
+                  </HStack>
+                  <VStack alignItems={"flex-start"}>
+                    <DefaultProgressBar
+                      percentage={+currentQuroumNumberRatio.toString()}
+                      threshold={+requiredQuroumNumberRatio.toString()}
+                      height={"2"}
+                      ProgressLabel={
+                        <Text
+                          fontSize={["xs", "sm", "md"]}
+                          fontWeight={"normal"}
+                        >
+                          Quorum
+                        </Text>
+                      }
+                    />
+                    <DefaultProgressBar
                     percentage={
-                      +passrateActiveVote == 0
-                        ? 0
-                        : +((+passrateActiveVote / +totalMembers) * 100)
+                      +currentPassrateNumberRatio.toString()
                     }
                     threshold={
-                      passrateRequiredVote
-                        ? (+passrateRequiredVote / +totalMembers) * 100
-                        : 0
+                      +requiredPassrateNumberRatio.toString()
                     }
                     ProgressLabel={
                       <Text fontWeight={"normal"} fontSize={["xs", "sm", "md"]}>
@@ -164,10 +162,10 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                       </Text>
                     }
                   />
-                </VStack>
-              </TabPanel>
-            )
-          )}
+                  </VStack>
+                </TabPanel>
+              )
+            )}
         </TabPanels>
       </Tabs>
     </>

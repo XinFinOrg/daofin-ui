@@ -82,7 +82,7 @@ const DaoTreasuryProvider: FC<PropsWithChildren> = ({ children }) => {
       return await client.estimation.deposit(params);
   }, [client?.estimation, params]);
 
-  const { stopPolling, txCosts, txFees } = usePollGasFee(
+  const { stopPolling, txCosts, txFees,hasLoaded } = usePollGasFee(
     estimateCreationFees,
     shouldPoll,
     values.amount
@@ -222,6 +222,7 @@ const DaoTreasuryProvider: FC<PropsWithChildren> = ({ children }) => {
       {txReviewIsOpen && (
         <TransactionReviewModal
           isOpen={txReviewIsOpen}
+          hasLoaded={hasLoaded}
           onClose={() => {
             txReviewClose();
             resetForm();

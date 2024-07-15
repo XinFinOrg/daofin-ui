@@ -39,17 +39,23 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
               startDate,
               creationTxHash,
               tallyDetails,
+              executed,
+              proposalType,
             }) => ({
               name: (
                 <ProposalSummary
                   title={metadata.title}
                   proposalId={parseInt(pluginProposalId)}
-                  type="Grant"
+                  type={proposalType.proposalTypeId}
                   publishedDate={toNormalDate(createdAt)}
-                  status={proposalTimeStatus(
-                    toNormalDate(startDate),
-                    toNormalDate(endDate)
-                  )}
+                  status={
+                    executed
+                      ? ProposalStatus.EXECUTED
+                      : proposalTimeStatus(
+                          toNormalDate(startDate),
+                          toNormalDate(endDate)
+                        )
+                  }
                   creatorAddress={creator}
                   startDate={toNormalDate(startDate)}
                   endDate={toNormalDate(endDate)}
@@ -171,7 +177,7 @@ const ProposalSummary: FC<ProposalSummaryProps> = ({
           </Text>
         </HStack>
         <HStack alignItems={"center"}>
-          <ProposalTypeBadge title={type} />
+          <ProposalTypeBadge id={type} />
           <ProposalStatusBadge title={status} />
           {/* <Box color={"orange"} fontSize={"sm"}>
             <TimeIcon display={"inline-block"} mr={"2"} />

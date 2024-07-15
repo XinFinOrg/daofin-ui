@@ -59,7 +59,7 @@ const MasterNodeSenateCard: FC<MasterNodeSenateCardProps> = ({
   };
   return (
     <WalletCardBox w={"full"} px={4} py={2}>
-      <HStack alignItems={"flex-start"}>
+      <HStack justifyContent={"space-between"} alignItems={'flex-start'} wrap={'wrap'}>
         <VStack spacing={"0"} alignItems={"flex-start"}>
           <HStack>
             <Box mt={"0.5"}>
@@ -122,6 +122,7 @@ const MasterNodeSenateCard: FC<MasterNodeSenateCardProps> = ({
               {blockNumber}
             </Text>
           </HStack>
+        </VStack>
           <HStack>
             <CheckCircleIcon boxSize={"3"} color={"green"} />
 
@@ -146,7 +147,6 @@ const MasterNodeSenateCard: FC<MasterNodeSenateCardProps> = ({
               />
             </Box>
           </HStack>
-        </VStack>
       </HStack>
     </WalletCardBox>
   );

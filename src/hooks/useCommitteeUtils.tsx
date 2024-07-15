@@ -30,6 +30,7 @@ export function useCommitteeUtils() {
     "linear(to-b, #FFE49F, #FFF5DC)",
     "linear(to-b, #FFE49F, #FFF5DC)"
   );
+  
   const committeeIdToIcon = (id: string) => {
     switch (id) {
       case MasterNodeCommittee:
@@ -54,6 +55,11 @@ export function useCommitteeUtils() {
   const committeesList: CommitteeGlobal[] = useMemo(
     () => [
       {
+        id: MasterNodeCommittee,
+        name: "Senate",
+        link: "/community/senate",
+      },
+      {
         id: PeoplesHouseCommittee,
         name: "House",
         link: "/community/house",
@@ -62,11 +68,6 @@ export function useCommitteeUtils() {
         id: JudiciaryCommittee,
         name: "Judiciaries",
         link: "/community/judiciary",
-      },
-      {
-        id: MasterNodeCommittee,
-        name: "Senate",
-        link: "/community/senate",
       },
     ],
     []
