@@ -7,6 +7,9 @@ import { GasFeeEstimation } from "@aragon/sdk-client-common";
 import Big from "big.js";
 import { toEther, toGwei } from "../utils/numbers";
 import { CHAIN_METADATA } from "../utils/networks";
+import { useWallet } from "./useWallet";
+import { usePublicClient } from "wagmi";
+import { formatEther, formatUnits, parseEther } from "viem";
 
 /**
  * This hook returns the gas estimation for a particular transaction and
@@ -26,14 +29,16 @@ export const usePollGasFee = (
   value = "0"
 ) => {
   const { network } = useNetwork();
+  const { getGasPrice } = usePublicClient();
   const [error, setError] = useState<Error | undefined>();
   const [maxFee, setMaxFee] = useState<BigInt | undefined>(BigInt(0));
   const [averageFee, setAverageFee] = useState<BigInt | undefined>(BigInt(0));
+  const [gasPrice, setGasPrice] = useState<BigInt | undefined>(BigInt(0));
   const [tokenPrice, setTokenPrice] = useState<number>(0);
   const [hasLoaded, setHasLoaded] = useState<boolean>(false);
 
   const txFees = useMemo(() => {
-    return maxFee && averageFee
+    return maxFee && averageFee && gasPrice
       ? [
           {
             title: `Value(${CHAIN_METADATA[network].nativeCurrency.symbol})`,
@@ -43,18 +48,21 @@ export const usePollGasFee = (
           {
             title: "Estimated Gas fee (Gwei)",
             tooltip: "",
-            value: averageFee.toString(),
+            value: formatEther(maxFee as bigint),
           },
-          { title: "Max Fee (Gwei)", tooltip: "", value: maxFee.toString() },
+          // { title: "Max Fee (Gwei)", tooltip: "", value: maxFee.toString() },
         ]
       : undefined;
   }, [averageFee, maxFee]);
 
   const txCosts = useMemo(() => {
-    return averageFee && tokenPrice && txFees
+    return averageFee && tokenPrice && txFees && maxFee
       ? {
-          tokenValue: averageFee.toString(),
-          usdValue: tokenPrice.toString(),
+          tokenValue: formatEther(
+            (maxFee as bigint) + (parseEther(value) as bigint)
+          ),
+          usdValue:
+            tokenPrice,
         }
       : undefined;
   }, [tokenPrice, averageFee]);
@@ -66,17 +74,21 @@ export const usePollGasFee = (
         const results = await Promise.all([
           estimationFunction(),
           fetchTokenPrice(constants.AddressZero, network),
+          getGasPrice(),
         ]);
-
-        setTokenPrice(results[1] || 0);
-        setMaxFee(results[0]?.max);
-        setAverageFee(results[0]?.average);
-        setError(undefined);
-        setHasLoaded(true);
+        if (results[0]?.max) {
+          setTokenPrice(results[1] || 0);
+          setMaxFee(results[0].max * results[2]);
+          setAverageFee(results[0]?.average);
+          setGasPrice(BigInt(results[2]));
+          setError(undefined);
+          setHasLoaded(true);
+        }
       } catch (err) {
         setError(err as Error);
         setMaxFee(undefined);
         setAverageFee(undefined);
+        setGasPrice(undefined);
         console.log("Error fetching gas fees and price", err);
       }
     }

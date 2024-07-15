@@ -104,7 +104,7 @@ const TransactionReviewModal = <T extends any | undefined>({
                       alignItems={"center"}
                     >
                       <Text mr={1}>
-                        {numberWithCommaSeparate(value.toString())}
+                        {value.toString()}
                       </Text>
                       {/* <Box w={"20px"}>
                         <XdcIcon />
