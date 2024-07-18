@@ -62,7 +62,7 @@ export default function Header() {
   const bgColorModeLinks = useColorModeValue("blue.100", "blue.800");
   return (
     <>
-      {/* <DefaultBox
+      <DefaultBox
         w={["0", "0", "100%"]}
         py={["0", "0", "1"]}
         px={["0", "0", "4"]}
@@ -85,7 +85,9 @@ export default function Header() {
                     <HStack>
                       <BlockIcon w={"20px"} />
 
-                      <Text fontWeight={"medium"}>{data.toString()}</Text>
+                      <Text fontWeight={"medium"} fontSize={"sm"}>
+                        {data.toString()}
+                      </Text>
                     </HStack>
                   </a>
                 ) : (
@@ -94,23 +96,25 @@ export default function Header() {
               </Box>
               <Box mx={"4"}>
                 <HStack>
-                  <Box w={"25px"}>
+                  <Box w={"20px"}>
                     <XdcIcon />
                   </Box>
-                  <Text fontWeight={"medium"}>${tokenPrice.toFixed(4)}</Text>
+                  <Text fontWeight={"medium"} fontSize={"sm"}>
+                    ${tokenPrice.toFixed(4)}
+                  </Text>
                 </HStack>
               </Box>
             </HStack>
             <HStack>
               <Box mx={"4"}>
-                <Text fontWeight="semibold">
+                <Text fontWeight="semibold" fontSize={"sm"}>
                   <a href={"https://xdc.dev"} target={"_blank"}>
                     XDC.DEV
                   </a>
                 </Text>
               </Box>
               <Box mx={"4"}>
-                <Text fontWeight="semibold">
+                <Text fontWeight="semibold" fontSize={"sm"}>
                   <a
                     href={"https://docs.xdc.community/daofin"}
                     target={"_blank"}
@@ -123,13 +127,13 @@ export default function Header() {
                 <Switch
                   isChecked={colorMode === "dark"}
                   onChange={handleSwitchTheme}
-                  size="lg"
+                  size="md"
                 />
               </Box>
             </HStack>
           </Flex>
         </Box>
-      </DefaultBox> */}
+      </DefaultBox>
       <Box w={"100%"}>
         <Box px={4} w={["full", null, "90%"]} m={"auto"}>
           <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
