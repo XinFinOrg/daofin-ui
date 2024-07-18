@@ -11,6 +11,7 @@ import {
   Image,
   Divider,
   Switch,
+  useTheme,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
@@ -59,7 +60,6 @@ export default function Header() {
   );
   const tokenPrice = useGlobalState().xdcPrice;
   const bgColorModeLinks = useColorModeValue("blue.100", "blue.800");
-
   return (
     <>
       <DefaultBox
@@ -111,17 +111,20 @@ export default function Header() {
               </Box>
               <Box mx={"4"}>
                 <Text fontWeight="semibold">
-                  <a href={"https://docs.xdc.community/daofin"} target={"_blank"}>
+                  <a
+                    href={"https://docs.xdc.community/daofin"}
+                    target={"_blank"}
+                  >
                     DOCS
                   </a>
                 </Text>
               </Box>
               <Box ml={"4"}>
-                {/* <Switch
+                <Switch
                   isChecked={colorMode === "dark"}
                   onChange={handleSwitchTheme}
                   size="lg"
-                /> */}
+                />
                 {/* <Box position="relative" display="inline-block">
                   <Box
                     position="absolute"
@@ -158,7 +161,11 @@ export default function Header() {
               <Box ml={[0, 0, 0, "auto"]}>
                 <Link to={""}>
                   {/* <Image src="/logo.svg" /> */}
-                  <img src="/new-logo.png" alt="" width={"250px"} />
+                  {colorMode === "light" ? (
+                    <img src="/new-logo.png" alt="" width={"250px"} />
+                  ) : (
+                    <img src="/new-logo-dark.png" alt="" width={"250px"} />
+                  )}
                 </Link>
               </Box>
               <HStack
@@ -192,7 +199,7 @@ export default function Header() {
               visibility={["hidden", "visible"]}
               overflow={["hidden", "visible"]}
             >
-              <ConnectButton chainStatus="icon" accountStatus='address' />
+              <ConnectButton chainStatus="icon" accountStatus="address" />
             </HStack>
           </Flex>
           <Divider m={"auto"} w={"full"} />
@@ -217,7 +224,7 @@ export default function Header() {
                 size={"lg"}
                 mb={4}
               /> */}
-              <ConnectButton chainStatus="icon" accountStatus='address' />
+              <ConnectButton chainStatus="icon" accountStatus="address" />
             </Box>
           ) : null}
         </Box>

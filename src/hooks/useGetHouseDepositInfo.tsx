@@ -1,30 +1,51 @@
 import { useEffect, useState } from "react";
 import { useClient } from "./useClient";
 import { DaofinPlugin } from "@xinfin/osx-daofin-contracts-ethers";
+import { useContractRead, useContractWrite } from "wagmi";
+import { useWallet } from "./useWallet";
+import { DaofinABI } from "../utils/abis/daofin.abi";
+import { Address } from "viem";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 
-function useGetHouseDepositInfo(voterAddress: string | null) {
-  const { daofinClient } = useClient();
-  const [depositInfo, setDepositInfo] =
-    useState<ReturnType<DaofinPlugin["_voterToLockedAmounts"]>>();
-
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (!daofinClient || !voterAddress) return;
-    setIsLoading(true);
-
-    daofinClient.methods
-      .getHouseDeposit(voterAddress)
-      .then((data: ReturnType<DaofinPlugin["_voterToLockedAmounts"]>) => {
-        setIsLoading(false);
-        setDepositInfo(data);
-      })
-      .catch((e: any) => {
-        setIsLoading(false);
-        console.log("error", e);
-      });
-  }, [daofinClient]);
-
-  return { data: depositInfo, isLoading };
+type GetHouseDepositInfo = {
+  amount: bigint;
+  blockNumber: bigint;
+  isActive: boolean;
+  startOfCooldownPeriod: bigint;
+  endOfCooldownPeriod: bigint;
+};
+type GetHouseDepositInfoResponse = [
+  GetHouseDepositInfo["amount"],
+  GetHouseDepositInfo["blockNumber"],
+  GetHouseDepositInfo["isActive"],
+  GetHouseDepositInfo["startOfCooldownPeriod"],
+  GetHouseDepositInfo["endOfCooldownPeriod"]
+];
+function useGetHouseDepositInfo() {
+  const { address, chainId } = useWallet();
+  const { pluginAddress } = useAppGlobalConfig();
+  const { data, ...rest } = useContractRead<
+    typeof DaofinABI,
+    string,
+    GetHouseDepositInfoResponse
+  >({
+    abi: DaofinABI,
+    functionName: "_voterToLockedAmounts",
+    account: address as Address,
+    address: pluginAddress as Address,
+    chainId,
+    args: [address as Address],
+  });
+  
+  return {
+    data: {
+      amount: data?.[0],
+      blockNumber: data?.[1],
+      isActive: data?.[2],
+      startOfCooldownPeriod: data?.[3],
+      endOfCooldownPeriod: data?.[4],
+    } as GetHouseDepositInfo,
+    ...rest,
+  };
 }
 export default useGetHouseDepositInfo;

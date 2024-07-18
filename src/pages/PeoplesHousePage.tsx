@@ -2,10 +2,10 @@ import { CHAIN_METADATA, PeoplesHouseCommittee } from "../utils/networks";
 import usePeoplesHouseDeposits from "../hooks/useDeposits";
 import { useNetwork } from "../contexts/network";
 import { useClient } from "../hooks/useClient";
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { Box, HStack, VStack } from "@chakra-ui/layout";
-import { Text } from "@chakra-ui/react";
-import { Page } from "../components";
+import { Image, Text, useDisclosure } from "@chakra-ui/react";
+import { Modal, Page } from "../components";
 import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
 import { WalletAddressCardWithBalance } from "../components/WalletAddressCard";
 import {
@@ -20,13 +20,32 @@ import {
 import { BigNumber } from "ethers";
 import useFetchTotalNumbersByCommittee from "../hooks/useFetchTotalNumbersByCommittee";
 import { EmptyBoxIcon } from "../utils/assets/icons/EmptyBoxIcon";
-import { PeopleButton } from "../components/Button/AuthorizedButton";
+import {
+  PeopleButton,
+  WalletAuthorizedButton,
+} from "../components/Button/AuthorizedButton";
 import { DefaultBox } from "../components/Box";
 import RulesOfDecisions from "../components/RulesOfDecisions";
 import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTypeDetails";
 import { DefaultAlert } from "../components/Alerts";
 import PeopleHouseIcon from "../utils/assets/icons/PeopleHouseIcon";
 import { JoinHouseFormSchema } from "../schemas/joinHouse";
+import useGetHouseDepositInfo from "../hooks/useGetHouseDepositInfo";
+import { useWallet } from "../hooks/useWallet";
+import { ViewGrantProposalType } from "../components/actions";
+import { DefaultButton } from "../components/Button";
+import {
+  Address,
+  useContractWrite,
+  useWaitForTransaction,
+  useWalletClient,
+} from "wagmi";
+import { DaofinABI } from "../utils/abis/daofin.abi";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
+import { appFormatDistance, toDate, toNormalDate } from "../utils/date";
+import Countdown from "react-countdown";
+import { CheckCircleIcon } from "@chakra-ui/icons";
+import { formatEther } from "viem";
 export type JoinHouseFormType = {
   amount: string;
 };
@@ -45,6 +64,7 @@ const PeoplesHousePage = () => {
   // const { isOpen, onClose, onOpen } = useDisclosure();
 
   const { data: deposits } = usePeoplesHouseDeposits();
+  // console.log({ deposits });
 
   const totalDeposits = useMemo(
     () =>
@@ -58,7 +78,7 @@ const PeoplesHousePage = () => {
   const communityName = PeoplesHouseCommittee;
 
   const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
-  
+
   return (
     <Page title="House">
       <Formik
@@ -74,17 +94,17 @@ const PeoplesHousePage = () => {
             <PeoplesHouseHeader
               totalMembers={deposits ? deposits.length : 0}
               totalDeposits={weiBigNumberToFormattedNumber(totalDeposits)}
-              totalSupply={totalSupply?totalSupply.toString():"0"}
+              totalSupply={totalSupply ? totalSupply.toString() : "0"}
             />
           </PeoplesHouseProvider>
         </>
       </Formik>
-      <HStack flexDirection={["column", "column", "column", "row"]}>
-        <Box w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={2}>
+      <HStack flexDirection={["column", "column", "row"]}>
+        <Box w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={0}>
           <DefaultBox w={"full"}>
             <VStack>
               {deposits && deposits.length > 0 ? (
-                deposits.map(({ amount, voter,txHash }) => (
+                deposits.map(({ amount, voter, txHash }) => (
                   <WalletAddressCardWithBalance
                     address={voter}
                     txHash={txHash}
@@ -117,7 +137,9 @@ const PeoplesHousePage = () => {
               </DefaultBox>
             )}
           </Box>
-          <Box w={["full"]}>{/* <Resignation /> */}</Box>
+          <Box w={["full"]}>
+            <Resignation />
+          </Box>
         </VStack>
       </HStack>
     </Page>
@@ -247,94 +269,153 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
     </>
   );
 };
+const Resignation = () => {
+  const { address: connectedWalletAddress } = useWallet();
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  const [modalData, setModalData] = useState({
+    title: "Resignation",
+    imageWarning: false,
+    imageSubTitle: "",
+    imageAmount: "",
+  });
 
-// const Resignation = () => {
-//   const { address: connectedWalletAddress } = useWallet();
-//   const { isOpen, onClose, onOpen } = useDisclosure();
-//   const [modalData, setModalData] = useState({
-//     title: "Resignation",
-//     imageWarning: false,
-//     imageSubTitle: "",
-//     imageAmount: "",
-//   });
-//   const { data: depositInfo } = useGetHouseDepositInfo(connectedWalletAddress);
-//   useEffect(() => {
-//     if (!connectedWalletAddress) {
-//       setModalData((prev) => ({
-//         ...prev,
-//         imageWarning: true,
-//         imageSubTitle: "pls connect your wallet",
-//       }));
-//     } else {
-//       // if(depositInfo.){
-//       // }
-//     }
-//   }, [connectedWalletAddress, depositInfo]);
-//   const { imageSubTitle, imageWarning, title } = modalData;
-//   const handleResignClicked = () => {
-//     onOpen();
-//   };
-//   return (
-//     <>
-//       <DefaultBox alignSelf={"flex-start"}>
-//         <Box as="span" flex="1" textAlign="left">
-//           <Text fontWeight={"bold"} mb={"2"}>
-//             Resignation
-//           </Text>
-//           <Text fontSize={"sm"} mb={"2"}>
-//             As the People’s House, you can add fund anytime to Treasury, and
-//             request to claim your deposit back
-//           </Text>
-//         </Box>
-//         {connectedWalletAddress ? (
-//           <>
-//             <Box w={"full"} mb={"2"}>
-//               <ViewGrantProposalType
-//                 data={new Uint8Array()}
-//                 to={connectedWalletAddress}
-//                 value={BigInt("10")}
-//               />
-//             </Box>
-//             <Box w={"full"} mb={"2"}>
-//               <WalletAuthorizedButton
-//                 w={"full"}
-//                 variant={"outline"}
-//                 onClick={handleResignClicked}
-//               >
-//                 Resign
-//               </WalletAuthorizedButton>
-//             </Box>
-//             <Box w={"full"}>
-//               <WalletAuthorizedButton w={"full"} variant={"outline"}>
-//                 Claim your withdrawal
-//               </WalletAuthorizedButton>
-//             </Box>
-//           </>
-//         ) : (
-//           "Connect your wallet"
-//         )}
-//       </DefaultBox>
+  const { data: connectedWalletDepositInfo } = useGetHouseDepositInfo();
+  console.log(connectedWalletDepositInfo);
 
-//       {isOpen && (
-//         <Modal isOpen={isOpen} onClose={onClose} title={title}>
-//           <HStack justifyContent={"center"}>
-//             {imageWarning ? (
-//               <Image src="/treasury-withdraw.svg" />
-//             ) : (
-//               <Image src="/treasury-withdraw-warning.svg" />
-//             )}
-//             <Text>{imageSubTitle}</Text>
-//           </HStack>
+  const isReadyToRequest =
+    connectedWalletDepositInfo.isActive &&
+    connectedWalletDepositInfo.startOfCooldownPeriod === 0n &&
+    connectedWalletDepositInfo.amount > 0n;
 
-//           <Box w={"full"}>
-//             <DefaultButton w={"full"} variant={"outline"}>
-//               Cancel
-//             </DefaultButton>
-//           </Box>
-//         </Modal>
-//       )}
-//     </>
-//   );
-// };
+  const isRequestedToClaim =
+    !connectedWalletDepositInfo.isActive &&
+    connectedWalletDepositInfo.startOfCooldownPeriod > 0n &&
+    connectedWalletDepositInfo.amount > 0n;
+
+  const isReadyToClaim =
+    !connectedWalletDepositInfo.isActive &&
+    connectedWalletDepositInfo.amount > 0n &&
+    toNormalDate(
+      connectedWalletDepositInfo.endOfCooldownPeriod.toString()
+    ).getTime() <
+      Date.now() * 6000 * 60 * 24 * 7;
+  console.log({ isReadyToClaim });
+
+  useEffect(() => {
+    if (!connectedWalletAddress) {
+      setModalData((prev) => ({
+        ...prev,
+        imageWarning: true,
+        imageSubTitle: "pls connect your wallet",
+      }));
+    } else {
+      // if(depositInfo.){
+      // }
+    }
+  }, [connectedWalletAddress]);
+  const { imageSubTitle, imageWarning, title } = modalData;
+  const handleResignClicked = () => {
+    onOpen();
+  };
+  const client = useWalletClient();
+  const { pluginAddress } = useAppGlobalConfig();
+  const {
+    writeAsync,
+    data,
+    isLoading: requestIsLoading,
+  } = useContractWrite({
+    abi: DaofinABI,
+    functionName: "resignHouse",
+    address: pluginAddress as Address,
+    account: connectedWalletAddress as Address,
+  });
+  const {} = useWaitForTransaction({
+    hash: data?.hash,
+  });
+  const handleResignation = async () => {
+    const hash = await writeAsync();
+    alert(hash);
+  };
+  return (
+    <>
+      <DefaultBox alignSelf={"flex-start"}>
+        <Box as="span" flex="1" textAlign="left">
+          <Text fontWeight={"bold"} mb={"2"}>
+            Resignation
+          </Text>
+          <Text fontSize={"sm"} mb={"2"}>
+            As the People’s House, you can add fund anytime to Treasury, and
+            request to claim your deposit back
+          </Text>
+        </Box>
+        {connectedWalletAddress && connectedWalletDepositInfo ? (
+          <>
+            <Box w={"full"} mb={"2"}>
+              <ViewGrantProposalType
+                data={new Uint8Array()}
+                to={connectedWalletAddress}
+                value={BigInt(formatEther(connectedWalletDepositInfo.amount))}
+              />
+            </Box>
+            <Box w={"full"} mb={"2"}>
+              <WalletAuthorizedButton
+                w={"full"}
+                variant={"outline"}
+                onClick={handleResignation}
+                colorScheme="red"
+                fontSize={['xs','sm']}
+                isDisabled={
+                  requestIsLoading || isRequestedToClaim || !isReadyToRequest
+                }
+              >
+                {isReadyToRequest ? "Request to Resign" : ""}
+
+                {isRequestedToClaim && connectedWalletDepositInfo ? (
+                  <Countdown
+                    renderer={({ days, hours, minutes, seconds }) =>
+                      `Ends in ${days}D ${hours}H ${minutes}m ${seconds}s`
+                    }
+                    date={toNormalDate(
+                      connectedWalletDepositInfo.endOfCooldownPeriod.toString()
+                    )}
+                  />
+                ) : (
+                  ""
+                )}
+              </WalletAuthorizedButton>
+            </Box>
+            <Box w={"full"}>
+              <WalletAuthorizedButton
+                w={"full"}
+                variant={"outline"}
+                isDisabled={isRequestedToClaim || !isReadyToClaim}
+              >
+                {"Claim your withdrawal"}
+              </WalletAuthorizedButton>
+            </Box>
+          </>
+        ) : (
+          "Connect your wallet"
+        )}
+      </DefaultBox>
+
+      {isOpen && (
+        <Modal isOpen={isOpen} onClose={onClose} title={title}>
+          <HStack justifyContent={"center"}>
+            <Image src="/GasEstimation.png" />
+
+            <Text>{imageSubTitle}</Text>
+          </HStack>
+
+          <Box w={"full"}>
+            <DefaultButton w={"full"} variant={"outline"}>
+              Cancel
+            </DefaultButton>
+          </Box>
+        </Modal>
+      )}
+    </>
+  );
+};
 
 export default PeoplesHousePage;

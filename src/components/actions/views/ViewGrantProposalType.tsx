@@ -1,23 +1,25 @@
-import  { FC } from "react";
-import { Box, HStack, Text, VStack } from "@chakra-ui/react";
+import { FC } from "react";
+import { Box, HStack, Text, VStack, useBreakpoint } from "@chakra-ui/react";
 import { XdcIcon } from "../../../utils/assets/icons/XdcIcon";
 import { weiBigNumberToFormattedNumber } from "../../../utils/numbers";
 import { CHAIN_METADATA } from "../../../utils/networks";
 import { WalletAddressCard } from "../../WalletAddressCard";
-import { ArrowForwardIcon } from "@chakra-ui/icons";
+import { ArrowDownIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import { useNetwork } from "../../../contexts/network";
 import { v4 as uuid } from "uuid";
 import { useAppGlobalConfig } from "../../../contexts/AppGlobalConfig";
 import { DaoAction } from "@xinfin/osx-client-common";
 import { DefaultAlert } from "../../Alerts";
 const ViewGrantProposalType: FC<DaoAction & { from?: string }> = ({
-  
   to,
   value,
   from,
 }) => {
   const { network } = useNetwork();
   const { daoAddress } = useAppGlobalConfig();
+  const breakpoint = useBreakpoint();
+  console.log({ breakpoint });
+
   return (
     <>
       {
@@ -35,7 +37,7 @@ const ViewGrantProposalType: FC<DaoAction & { from?: string }> = ({
                 <XdcIcon />
               </Box>
               <Text>
-                {weiBigNumberToFormattedNumber(value.toString())}{" "}
+                {value.toString()}{" "}
                 {CHAIN_METADATA[network].nativeCurrency.symbol}
               </Text>
             </HStack>
@@ -43,7 +45,7 @@ const ViewGrantProposalType: FC<DaoAction & { from?: string }> = ({
           <HStack
             justifyContent={"start"}
             w={"full"}
-            flexDirection={["column", "column", "row"]}
+            flexDirection={["column", "column", "column", "column", "row"]}
           >
             <Box
               // bgColor={"blue.100"}
@@ -55,7 +57,7 @@ const ViewGrantProposalType: FC<DaoAction & { from?: string }> = ({
               <WalletAddressCard sm address={from ? from : daoAddress} />
             </Box>{" "}
             <Box>
-              <ArrowForwardIcon />
+              {breakpoint === "xl" ? <ArrowForwardIcon /> : <ArrowDownIcon />}
             </Box>
             <Box borderRadius={"md"} width={"full"}>
               <WalletAddressCard sm address={to} />
