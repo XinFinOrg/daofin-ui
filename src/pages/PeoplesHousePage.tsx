@@ -280,8 +280,8 @@ const Resignation = () => {
   });
 
   const { data: connectedWalletDepositInfo } = useGetHouseDepositInfo();
-  console.log(connectedWalletDepositInfo);
 
+  const doesHaveDeposit = connectedWalletDepositInfo.amount > 0n;
   const isReadyToRequest =
     connectedWalletDepositInfo.isActive &&
     connectedWalletDepositInfo.startOfCooldownPeriod === 0n &&
@@ -299,7 +299,6 @@ const Resignation = () => {
       connectedWalletDepositInfo.endOfCooldownPeriod.toString()
     ).getTime() <
       Date.now() * 6000 * 60 * 24 * 7;
-  console.log({ isReadyToClaim });
 
   useEffect(() => {
     if (!connectedWalletAddress) {
@@ -350,49 +349,57 @@ const Resignation = () => {
         </Box>
         {connectedWalletAddress && connectedWalletDepositInfo ? (
           <>
-            <Box w={"full"} mb={"2"}>
-              <ViewGrantProposalType
-                data={new Uint8Array()}
-                to={connectedWalletAddress}
-                value={BigInt(formatEther(connectedWalletDepositInfo.amount))}
-              />
-            </Box>
-            <Box w={"full"} mb={"2"}>
-              <WalletAuthorizedButton
-                w={"full"}
-                variant={"outline"}
-                onClick={handleResignation}
-                colorScheme="red"
-                fontSize={['xs','sm']}
-                isDisabled={
-                  requestIsLoading || isRequestedToClaim || !isReadyToRequest
-                }
-              >
-                {isReadyToRequest ? "Request to Resign" : ""}
-
-                {isRequestedToClaim && connectedWalletDepositInfo ? (
-                  <Countdown
-                    renderer={({ days, hours, minutes, seconds }) =>
-                      `Ends in ${days}D ${hours}H ${minutes}m ${seconds}s`
-                    }
-                    date={toNormalDate(
-                      connectedWalletDepositInfo.endOfCooldownPeriod.toString()
-                    )}
+            {doesHaveDeposit ? (
+              <>
+                <Box w={"full"} mb={"2"}>
+                  <ViewGrantProposalType
+                    data={new Uint8Array()}
+                    to={connectedWalletAddress}
+                    value={connectedWalletDepositInfo.amount}
                   />
-                ) : (
-                  ""
-                )}
-              </WalletAuthorizedButton>
-            </Box>
-            <Box w={"full"}>
-              <WalletAuthorizedButton
-                w={"full"}
-                variant={"outline"}
-                isDisabled={isRequestedToClaim || !isReadyToClaim}
-              >
-                {"Claim your withdrawal"}
-              </WalletAuthorizedButton>
-            </Box>
+                </Box>
+                <Box w={"full"} mb={"2"}>
+                  <WalletAuthorizedButton
+                    w={"full"}
+                    variant={"outline"}
+                    onClick={handleResignation}
+                    colorScheme="red"
+                    fontSize={["xs", "sm"]}
+                    isDisabled={
+                      requestIsLoading ||
+                      isRequestedToClaim ||
+                      !isReadyToRequest
+                    }
+                  >
+                    {isReadyToRequest ? "Request to Resign" : ""}
+
+                    {isRequestedToClaim && connectedWalletDepositInfo ? (
+                      <Countdown
+                        renderer={({ days, hours, minutes, seconds }) =>
+                          `Ends in ${days}D ${hours}H ${minutes}m ${seconds}s`
+                        }
+                        date={toNormalDate(
+                          connectedWalletDepositInfo.endOfCooldownPeriod.toString()
+                        )}
+                      />
+                    ) : (
+                      ""
+                    )}
+                  </WalletAuthorizedButton>
+                </Box>
+                <Box w={"full"}>
+                  <WalletAuthorizedButton
+                    w={"full"}
+                    variant={"outline"}
+                    isDisabled={isRequestedToClaim || !isReadyToClaim}
+                  >
+                    {"Claim your withdrawal"}
+                  </WalletAuthorizedButton>
+                </Box>
+              </>
+            ) : (
+              <></>
+            )}
           </>
         ) : (
           "Connect your wallet"

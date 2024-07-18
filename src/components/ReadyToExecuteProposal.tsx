@@ -21,26 +21,28 @@ const ReadyToExecuteProposals: FC<{ data: ReadyToExecuteProposalType[] }> = ({
   return (
     <>
       {data.length > 0 ? (
-        data.map(
-          ({
-            creationTxHash,
-            createdAt,
-            creator,
-            metadata,
-            pluginProposalId,
-          }) => (
-            <ReadyToExecuteProposal
-              key={uuid()}
-              proposal={{
-                creationTxHash,
-                createdAt,
-                creator,
-                metadata,
-                pluginProposalId,
-              }}
-            />
+        data
+          .slice(-3)
+          .map(
+            ({
+              creationTxHash,
+              createdAt,
+              creator,
+              metadata,
+              pluginProposalId,
+            }) => (
+              <ReadyToExecuteProposal
+                key={uuid()}
+                proposal={{
+                  creationTxHash,
+                  createdAt,
+                  creator,
+                  metadata,
+                  pluginProposalId,
+                }}
+              />
+            )
           )
-        )
       ) : (
         <DefaultBox borderStyle={"dashed"}>
           <VStack w={"100%"} alignItems="center" alignSelf={"center"} p={6}>

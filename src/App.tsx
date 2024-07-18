@@ -16,8 +16,10 @@ import useSlowScroll from "./hooks/useSlowScroll";
 
 function App() {
   useSlowScroll()
+  // #141c29
   return (
-    <Box bgColor={useColorModeValue("#FFF", "#19262e")} minH={"100vh"}>
+    // <Box bgColor={useColorModeValue("#FFF", "#1c2531")} minH={"100vh"}>
+    <Box bgColor={useColorModeValue("#FFF", "#141c29")} minH={"100vh"}>
       <Header />
       {/* <RouterProvider router={router} /> */}
       <Routes>

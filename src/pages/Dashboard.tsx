@@ -20,6 +20,7 @@ import {
   Skeleton,
   IconButton,
   Divider,
+  useColorMode,
 } from "@chakra-ui/react";
 import { Modal, Page } from "../components";
 import { v4 as uuid } from "uuid";
@@ -80,7 +81,6 @@ const Dashboard: FC = () => {
   const [readyToExecutedProposals, setReadyToExecutedProposals] =
     useState<Proposal[]>();
 
-    
   const readyToExecutedProposalsCallback = useCallback(
     async () =>
       Promise.all(
@@ -98,7 +98,9 @@ const Dashboard: FC = () => {
   useEffect(() => {
     readyToExecutedProposalsCallback().then((data) => {
       setReadyToExecutedProposals([
-        ...data.filter(({ canExecute, executed }) => canExecute && !executed),
+        ...data
+          .filter(({ canExecute, executed }) => canExecute && !executed)
+          ?.slice(-3),
       ]);
     });
   }, [readyToExecutedProposalsCallback]);
@@ -106,7 +108,7 @@ const Dashboard: FC = () => {
 
   const { data: periods, isLoading: isLoadingPeriods } =
     useDaoElectionPeriods();
-
+  const { colorMode } = useColorMode();
   return (
     <Page title="Dashboard">
       <HStack mb={2}>
@@ -228,68 +230,78 @@ const Dashboard: FC = () => {
           <HStack justifyContent={"space-between"}>
             <Skeleton isLoaded={!isLoading} minH={"50px"} w={"full"}>
               {executedProposals.length > 0 ? (
-                executedProposals.map(
-                  ({
-                    executionTxHash,
-                    creationTxHash,
-                    pluginProposalId,
-                    executionDate,
-                    metadata,
-                  }) => (
-                    <GreenDefaultBox w={"full"} mb={2}>
-                      <HStack
-                        flexDirection={["column", "row"]}
-                        alignItems={"flex-start"}
-                      >
-                        <Box minW={"20px"}>
-                          <Jazzicon
-                            diameter={40}
-                            seed={jsNumberForAddress(creationTxHash)}
+                executedProposals
+                  .slice(-3)
+                  .map(
+                    ({
+                      executionTxHash,
+                      creationTxHash,
+                      pluginProposalId,
+                      executionDate,
+                      metadata,
+                    }) => (
+                      <GreenDefaultBox w={"full"} mb={2}>
+                        <HStack
+                          flexDirection={["column", "row"]}
+                          alignItems={"flex-start"}
+                        >
+                          <Box minW={"20px"}>
+                            <Jazzicon
+                              diameter={40}
+                              seed={jsNumberForAddress(creationTxHash)}
+                            />
+                          </Box>
+                          <VStack alignItems={"flex-start"}>
+                            <Text as={"h1"} fontSize={"sm"} fontWeight={"bold"}>
+                              {metadata.title}
+                            </Text>
+                            <HStack
+                              justifyContent={"space-between"}
+                              flexDirection={["column", "row"]}
+                              alignItems={"flex-start"}
+                            >
+                              <Text fontSize={"xs"}>
+                                <TimeIcon mr={"1"} />
+                                {timestampToStandardFormatString(executionDate)}
+                              </Text>
+                              <Text fontSize={"xs"}>
+                                ID: {pluginProposalId}
+                              </Text>
+                              <Text fontSize={"xs"}>
+                                <CheckCircleIcon color={"green"} mr={"1"} />
+                                Hash: {shortenTxHash(executionTxHash)}{" "}
+                                <a
+                                  target="_blank"
+                                  href={makeBlockScannerHashUrl(
+                                    network,
+                                    executionTxHash
+                                  )}
+                                >
+                                  <ExternalLinkIcon />
+                                </a>
+                              </Text>
+                            </HStack>
+                          </VStack>
+                          <IconButton
+                            aria-label=""
+                            variant={"unstyled"}
+                            flexGrow={1}
+                            textAlign={"end"}
+                            icon={
+                              <ArrowForwardIcon
+                                color={colorMode == "dark" ? "white" : "black"}
+                              />
+                            }
+                            onClick={() => {
+                              navigate(
+                                `/proposals/${pluginProposalId}/details`
+                              );
+                            }}
                           />
-                        </Box>
-                        <VStack alignItems={"flex-start"}>
-                          <Text as={"h1"} fontSize={"sm"} fontWeight={"bold"}>
-                            {metadata.title}
-                          </Text>
-                          <HStack
-                            justifyContent={"space-between"}
-                            flexDirection={["column", "row"]}
-                            alignItems={"flex-start"}
-                          >
-                            <Text fontSize={"xs"}>
-                              <TimeIcon mr={"1"} />
-                              {timestampToStandardFormatString(executionDate)}
-                            </Text>
-                            <Text fontSize={"xs"}>ID: {pluginProposalId}</Text>
-                            <Text fontSize={"xs"}>
-                              <CheckCircleIcon color={"green"} mr={"1"} />
-                              Hash: {shortenTxHash(executionTxHash)}{" "}
-                              <a
-                                target="_blank"
-                                href={makeBlockScannerHashUrl(
-                                  network,
-                                  executionTxHash
-                                )}
-                              >
-                                <ExternalLinkIcon />
-                              </a>
-                            </Text>
-                          </HStack>
-                        </VStack>
-                        <IconButton
-                          aria-label=""
-                          variant={"unstyled"}
-                          flexGrow={1}
-                          textAlign={"end"}
-                          icon={<ArrowForwardIcon color={"black"} />}
-                          onClick={() => {
-                            navigate(`/proposals/${pluginProposalId}/details`);
-                          }}
-                        />
-                      </HStack>
-                    </GreenDefaultBox>
+                        </HStack>
+                      </GreenDefaultBox>
+                    )
                   )
-                )
               ) : (
                 <DefaultBox
                   textAlign={"center"}

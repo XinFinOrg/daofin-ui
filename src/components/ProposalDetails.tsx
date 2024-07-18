@@ -25,7 +25,7 @@ import {
   Tabs,
 } from "@chakra-ui/react";
 import ProposalTypeBadge from "./Badge/ProposalTypeBadge";
-import { IoShareSocial } from "react-icons/io5";
+import { IoRocketSharp, IoShareSocial } from "react-icons/io5";
 import { InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 
@@ -35,6 +35,8 @@ import ProposalStatusStepper from "./ProposalStatusStepper";
 import { WalletAddressCard } from "./WalletAddressCard";
 import {
   timestampToStandardFormatString,
+  toNormalDate,
+  toStandardFormatString,
   toStandardTimestamp,
 } from "../utils/date";
 import useFetchVotersOnProposal from "../hooks/useFetchVotersOnProposal";
@@ -51,6 +53,7 @@ import useFetchProposalStatus, {
 import { ExpandableText } from "./ExpandableText";
 import { VoteBadge } from "./Badge";
 import ViewDecisionMakingTypeAction from "./actions/views/ViewDecisionMakingTypeAction";
+import { formatEther } from "viem";
 
 const ProposalDetails: FC<{
   proposal: Proposal | undefined;
@@ -153,10 +156,16 @@ const ProposalDetails: FC<{
                             <InfoOutlineIcon mr={1} />
                             ID: {proposal.pluginProposalId}
                           </Text>
-                          <HStack>
-                            <IoShareSocial />
-                            <Text>Share</Text>
-                          </HStack>
+                          {proposal.executed && proposal.executionDate && (
+                            <HStack>
+                              <IoRocketSharp />
+                              <Text>
+                                {timestampToStandardFormatString(
+                                  proposal.executionDate.toString()
+                                )}
+                              </Text>
+                            </HStack>
+                          )}
                         </Flex>
                       </Flex>
                     )}
@@ -202,6 +211,11 @@ const ProposalDetails: FC<{
                         endDate={proposal.endDate}
                         status={proposalStatus}
                         createdAt={toStandardTimestamp(proposal.createdAt)}
+                        creationTxHash={proposal.creationTxHash}
+                        executionDate={toStandardTimestamp(
+                          proposal.executionDate
+                        )}
+                        executionTxHash={proposal.executionTxHash}
                       />
                     )}
                   </DefaultBox>
@@ -220,7 +234,9 @@ const ProposalDetails: FC<{
                       </Text>
                     </Box>
                     {proposal?.actions.map((item) => (
-                      <ViewGrantProposalType {...item} />
+                      <ViewGrantProposalType
+                        {...item}
+                      />
                     ))}
                     {proposal?.actions.length === 0 && (
                       <ViewDecisionMakingTypeAction />

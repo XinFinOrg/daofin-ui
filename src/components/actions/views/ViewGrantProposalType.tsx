@@ -10,6 +10,7 @@ import { v4 as uuid } from "uuid";
 import { useAppGlobalConfig } from "../../../contexts/AppGlobalConfig";
 import { DaoAction } from "@xinfin/osx-client-common";
 import { DefaultAlert } from "../../Alerts";
+import { formatEther } from "viem";
 const ViewGrantProposalType: FC<DaoAction & { from?: string }> = ({
   to,
   value,
@@ -18,7 +19,6 @@ const ViewGrantProposalType: FC<DaoAction & { from?: string }> = ({
   const { network } = useNetwork();
   const { daoAddress } = useAppGlobalConfig();
   const breakpoint = useBreakpoint();
-  console.log({ breakpoint });
 
   return (
     <>
@@ -37,7 +37,7 @@ const ViewGrantProposalType: FC<DaoAction & { from?: string }> = ({
                 <XdcIcon />
               </Box>
               <Text>
-                {value.toString()}{" "}
+                {formatEther(value)}
                 {CHAIN_METADATA[network].nativeCurrency.symbol}
               </Text>
             </HStack>

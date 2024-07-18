@@ -62,6 +62,10 @@ query ProposalQuery($id: ID!) {
       failureMap 
       pluginProposalId
       creationTxHash
+      executionTxHash
+      executionBlockNumber
+      executionDate
+      executedBy
       proposalType {
         id
         txHash

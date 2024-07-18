@@ -110,6 +110,9 @@ export enum ProposalStatus {
   REACHED = "Reached",
   NOT_STARTED = "Not Started",
   EXPIRED = "Expired",
+  QUEUED = "Queued",
+  READY_TO_EXECUTE = "Ready to execute",
+  RUNNING = "Running",
 }
 export type TallyDetailResponse = {
   committee: string;

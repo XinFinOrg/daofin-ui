@@ -4,9 +4,11 @@ import { FC, PropsWithChildren } from "react";
 export type DefaultBoxProps = PropsWithChildren & BoxProps & {};
 
 const DefaultBox: FC<DefaultBoxProps> = (props) => {
+
   return (
     <Box
-      bgColor={useColorModeValue("#F6F7F9", "#151F29")}
+      // bgColor={useColorModeValue("#F6F7F9", "#151F29")}
+      bgColor={useColorModeValue("#F6F7F9", "#1c2531")}
       p={"6"}
       borderRadius={"lg"}
       border={"1px"}

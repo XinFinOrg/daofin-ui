@@ -15,21 +15,31 @@ const ProposalStatusBadge: FC<ProposalStatusBadgeProps> = ({
   variant = "solid",
   ...props
 }) => {
-  const notStarted = useColorModeValue("#D7DEE4", "#151F29");
-  const active = useColorModeValue("#BFEED1", "#04AA46");
-  const expired = useColorModeValue("#FAD6D6", "#ad2727");
-  const reached = useColorModeValue("#1ab802", "#ad2727");
+  const { colorMode } = useColorMode();
+  const notStarted = useColorModeValue("#808080", "#d3d3d3"); // Gray / LightGray
+  const published = useColorModeValue("#0000ff", "#add8e6"); // Blue / LightBlue
+  const running = useColorModeValue("#008000", "#90ee90"); // Green / LightGreen
+  const defeated = useColorModeValue("#ff0000", "#f08080"); // Red / LightCoral
+  const queued = useColorModeValue("#ffa500", "#ffa07a"); // Orange / LightSalmon
+  const readyToExecute = useColorModeValue("#800080", "#9370db"); // Purple / MediumPurple
+  const executed = useColorModeValue("#008080", "#48d1cc"); // Teal / MediumTurquoise
+
   const mapProposalStatusToBadge = (title: ProposalStatus) => {
     switch (title) {
       case ProposalStatus.NOT_STARTED:
         return notStarted;
-      case ProposalStatus.ACTIVE:
-        return active;
-      case ProposalStatus.EXPIRED:
-        return expired;
-      case ProposalStatus.REACHED:
-        return reached;
-
+      case ProposalStatus.RUNNING:
+        return running;
+      case ProposalStatus.DEFEATED:
+        return defeated;
+      case ProposalStatus.EXECUTED:
+        return executed;
+      case ProposalStatus.PUBLISHED:
+        return published;
+      case ProposalStatus.QUEUED:
+        return queued;
+      case ProposalStatus.READY_TO_EXECUTE:
+        return readyToExecute;
       default:
         break;
     }
@@ -40,9 +50,10 @@ const ProposalStatusBadge: FC<ProposalStatusBadgeProps> = ({
       fontSize="x-small"
       borderRadius={"lg"}
       bgColor={mapProposalStatusToBadge(title)}
-      px={"2"}
-      py={"0.5"}
+      px={"1"}
+      py={"0.2"}
       color={""}
+      textColor={colorMode === "dark" ? "black" : "white"}
       textTransform={"uppercase"}
     >
       {title}

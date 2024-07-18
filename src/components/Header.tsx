@@ -134,9 +134,9 @@ export default function Header() {
           </Flex>
         </Box>
       </DefaultBox>
-      <Box w={"100%"}>
+      <Box w={"100%"} >
         <Box px={4} w={["full", null, "90%"]} m={"auto"}>
-          <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
+          <Flex h={16} py={2} alignItems={"center"} justifyContent={"space-between"}>
             <IconButton
               size={"md"}
               icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
@@ -149,9 +149,9 @@ export default function Header() {
                 <Link to={""}>
                   {/* <Image src="/logo.svg" /> */}
                   {colorMode === "light" ? (
-                    <img src="/new-logo.png" alt="" width={"250px"} />
+                    <img src="/new-logo.png" alt="" width={"230px"} />
                   ) : (
-                    <img src="/new-logo-dark.png" alt="" width={"250px"} />
+                    <img src="/new-logo-dark.png" alt="" width={"230px"} />
                   )}
                 </Link>
               </Box>
