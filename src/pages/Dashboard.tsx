@@ -86,10 +86,10 @@ const Dashboard: FC = () => {
       Promise.all(
         proposals.map(async (item) => {
           const { pluginProposalId } = item;
-          const status = await makeCall(pluginProposalId);
+          // const status = await makeCall(pluginProposalId);
           return {
             ...item,
-            canExecute: status?.canExecute,
+            // canExecute: status?.canExecute,
           };
         })
       ),
