@@ -139,7 +139,12 @@ const CommunityPage = () => {
       </Flex>
       <DefaultBox mb={4}>
         <Flex flexDirection={"column"}>
-          <HStack w={"full"} justifyContent={"space-between"} mb={"4"}>
+          <HStack
+            w={"full"}
+            justifyContent={"space-between"}
+            mb={"4"}
+            flexWrap={"wrap"}
+          >
             <Box fontSize={["sm", "md"]}>
               <Text fontWeight={"semibold"} mb={"1"}>
                 Judiciaries
@@ -161,7 +166,7 @@ const CommunityPage = () => {
               flexWrap={"wrap"}
               justifyContent={"flex-start"}
             >
-              <HStack>
+              <HStack flexWrap={"wrap"}>
                 {juries.length > 0 &&
                   juries.slice(0, 5).map(({ member, creationDate }) => (
                     <Box w={"sm"}>
@@ -223,7 +228,14 @@ const CommunityPage = () => {
               <VStack w={"full"}>
                 {people.length > 0 ? (
                   people.map(
-                    ({ amount, depositDate, snapshotBlock, id, voter,txHash }) => (
+                    ({
+                      amount,
+                      depositDate,
+                      snapshotBlock,
+                      id,
+                      voter,
+                      txHash,
+                    }) => (
                       <Box w={"full"}>
                         <WalletAddressCardWithBalance
                           address={voter}
@@ -273,6 +285,7 @@ const CommunityPage = () => {
             w={"full"}
             justifyContent={"space-between"}
             mb={"4"}
+            flexWrap={"wrap"}
             fontSize={["sm", "md"]}
           >
             <Box>
@@ -280,7 +293,7 @@ const CommunityPage = () => {
                 Master Node Delegatee Senate
               </Text>
               <Text fontWeight={"normal"} fontSize={"xs"}>
-                The set of Master Nodes who have joined DAOFIN by delegation
+                The set of Master Nodes who have joined XDCDAO by delegation
                 mechanism.
               </Text>
             </Box>
@@ -305,7 +318,7 @@ const CommunityPage = () => {
                     txHash,
                     id,
                   }) => (
-                    <Box w={["50%", "20%"]} key={id}>
+                    <Box w={["100%", "50%", "35%"]} key={id}>
                       <MasterNodeSenateCard
                         txHash={txHash}
                         address={member}

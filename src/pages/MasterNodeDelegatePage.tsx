@@ -54,7 +54,11 @@ const MasterNodeDelegatePage = () => {
               </VStack>
             </DefaultBox>
             <HStack flexDirection={["column", "column", "column", "row"]}>
-              <Box w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={2}>
+              <Box
+                w={["full", "full", "full", "60%"]}
+                alignSelf={"flex-start"}
+                mr={2}
+              >
                 <DefaultBox>
                   <VStack>
                     {delegatees.length > 0 ? (
@@ -98,7 +102,7 @@ const MasterNodeDelegatePage = () => {
               </Box>
               {proposalTypes && proposalTypes?.length > 0 && (
                 <DefaultBox
-                  w={["full", "full", "40%"]}
+                  w={["full", "full", "full", "40%"]}
                   alignSelf={"flex-start"}
                 >
                   <RulesOfDecisions
@@ -161,7 +165,7 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
         </Box>
       </HStack>
       <HStack flexDirection={["column", "column", "column", "row"]} w={"full"}>
-        <DefaultBox w={["full", "50%", "25%", "25%"]}>
+        <DefaultBox w={["full", "full", "full", "25%"]}>
           <VStack
             fontSize={"sm"}
             alignSelf={"normal"}
@@ -174,7 +178,7 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
             </Text>
           </VStack>
         </DefaultBox>{" "}
-        <DefaultBox w={["full", "50%", "25%", "25%"]}>
+        <DefaultBox w={["full", "full", "full", "25%"]}>
           <VStack
             fontSize={"sm"}
             alignSelf={"normal"}
@@ -187,7 +191,7 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
             </Text>
           </VStack>
         </DefaultBox>
-        <DefaultAlert w={["full", "50%"]} p={4}>
+        <DefaultAlert w={["full", "full", "full", "50%"]} p={4}>
           <Box fontSize={"sm"}>
             <Text fontWeight={"semibold"}>Why Delegatation mechanism?</Text>
             <Text>

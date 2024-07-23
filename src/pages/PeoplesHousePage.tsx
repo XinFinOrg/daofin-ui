@@ -4,7 +4,16 @@ import { useNetwork } from "../contexts/network";
 import { useClient } from "../hooks/useClient";
 import { FC, useEffect, useMemo, useState } from "react";
 import { Box, HStack, VStack } from "@chakra-ui/layout";
-import { Image, Text, useDisclosure } from "@chakra-ui/react";
+import {
+  Image,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { Modal, Page } from "../components";
 import JudiciariesIcon from "../utils/assets/icons/JudiciariesIcon";
 import { WalletAddressCardWithBalance } from "../components/WalletAddressCard";
@@ -42,7 +51,12 @@ import {
 } from "wagmi";
 import { DaofinABI } from "../utils/abis/daofin.abi";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
-import { appFormatDistance, toDate, toNormalDate } from "../utils/date";
+import {
+  appFormatDistance,
+  toDate,
+  toNormalDate,
+  toStandardTimestamp,
+} from "../utils/date";
 import Countdown from "react-countdown";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { formatEther } from "viem";
@@ -59,13 +73,21 @@ const PeoplesHousePage = () => {
   //   voterAddress ? voterAddress : ""
   // );
   const totalSupply = useFetchTotalNumbersByCommittee(PeoplesHouseCommittee);
-  // const showAddNewButton = isJudiciaryMember || isUserDeposited;
-
-  // const { isOpen, onClose, onOpen } = useDisclosure();
 
   const { data: deposits } = usePeoplesHouseDeposits();
-  // console.log({ deposits });
+  const activeDeposits = useMemo(
+    () => deposits.filter(({ isActive }) => isActive),
+    [deposits]
+  );
 
+  const freezedDeposits = useMemo(
+    () =>
+      deposits.filter(
+        ({ isActive, requestToResignTimestamp }) =>
+          !isActive && toStandardTimestamp(requestToResignTimestamp.toString())
+      ),
+    [deposits]
+  );
   const totalDeposits = useMemo(
     () =>
       deposits && deposits.length > 0
@@ -92,7 +114,7 @@ const PeoplesHousePage = () => {
         <>
           <PeoplesHouseProvider>
             <PeoplesHouseHeader
-              totalMembers={deposits ? deposits.length : 0}
+              totalMembers={activeDeposits ? activeDeposits.length : 0}
               totalDeposits={weiBigNumberToFormattedNumber(totalDeposits)}
               totalSupply={totalSupply ? totalSupply.toString() : "0"}
             />
@@ -100,32 +122,79 @@ const PeoplesHousePage = () => {
         </>
       </Formik>
       <HStack flexDirection={["column", "column", "row"]}>
-        <Box w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={0}>
-          <DefaultBox w={"full"}>
-            <VStack>
-              {deposits && deposits.length > 0 ? (
-                deposits.map(({ amount, voter, txHash }) => (
-                  <WalletAddressCardWithBalance
-                    address={voter}
-                    txHash={txHash}
-                    balance={weiBigNumberToFormattedNumber(amount)}
-                    symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
-                  />
-                ))
-              ) : (
+        <Box
+          w={["full", "full", "full", "60%"]}
+          alignSelf={"flex-start"}
+          mr={0}
+        >
+          <Tabs variant="soft-rounded" colorScheme="blue">
+            <TabList>
+              <Tab>Active</Tab>
+              <Tab>Freezed</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
                 <DefaultBox w={"full"}>
-                  <VStack alignItems="center" alignSelf={"center"}>
-                    <EmptyBoxIcon />
-                    <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
-                      {"There is no member yet."}
-                    </Text>
+                  <VStack>
+                    {activeDeposits && activeDeposits.length > 0 ? (
+                      activeDeposits.map(({ amount, voter, txHash }) => (
+                        <WalletAddressCardWithBalance
+                          address={voter}
+                          txHash={txHash}
+                          balance={weiBigNumberToFormattedNumber(amount)}
+                          symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
+                        />
+                      ))
+                    ) : (
+                      <DefaultBox w={"full"}>
+                        <VStack alignItems="center" alignSelf={"center"}>
+                          <EmptyBoxIcon />
+                          <Text
+                            fontSize={"xs"}
+                            fontWeight={"500"}
+                            opacity={"0.5"}
+                          >
+                            {"There is no member yet."}
+                          </Text>
+                        </VStack>
+                      </DefaultBox>
+                    )}
                   </VStack>
                 </DefaultBox>
-              )}
-            </VStack>
-          </DefaultBox>
+              </TabPanel>
+              <TabPanel>
+                <DefaultBox w={"full"}>
+                  <VStack>
+                    {freezedDeposits && freezedDeposits.length > 0 ? (
+                      freezedDeposits.map(({ amount, voter, txHash }) => (
+                        <WalletAddressCardWithBalance
+                          address={voter}
+                          txHash={txHash}
+                          balance={weiBigNumberToFormattedNumber(amount)}
+                          symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
+                        />
+                      ))
+                    ) : (
+                      <DefaultBox w={"full"}>
+                        <VStack alignItems="center" alignSelf={"center"}>
+                          <EmptyBoxIcon />
+                          <Text
+                            fontSize={"xs"}
+                            fontWeight={"500"}
+                            opacity={"0.5"}
+                          >
+                            {"There is no member yet."}
+                          </Text>
+                        </VStack>
+                      </DefaultBox>
+                    )}
+                  </VStack>
+                </DefaultBox>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </Box>
-        <VStack w={["full", "full", "40%"]}>
+        <VStack w={["full", "full", "full", "40%"]}>
           <Box w={["full"]}>
             {proposalTypes && proposalTypes?.length > 0 && (
               <DefaultBox alignSelf={"flex-start"}>
@@ -205,21 +274,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
               justifyContent={"flex-start"}
               flexDirection={["column", "column", "column", "row"]}
             >
-              {/* <DefaultBox w={["full", "full", "full", "33%"]}>
-                <VStack
-                  fontSize={"sm"}
-                  alignSelf={"normal"}
-                  alignItems={"flex-start"}
-                  justifyContent={"center"}
-                >
-                  <Text>Deposited Tokens</Text>
-                  <Text fontSize={"lg"} fontWeight={"bold"}>
-                    {totalDeposits}{" "}
-                    {CHAIN_METADATA[network].nativeCurrency.symbol}
-                  </Text>
-                </VStack>
-              </DefaultBox> */}
-              <DefaultBox w={["full", "full", "full", "33%"]}>
+              <DefaultBox w={["full", "full", "full", "full", "33%"]}>
                 <VStack
                   alignSelf={"normal"}
                   alignItems={"flex-start"}
@@ -237,7 +292,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
                 </VStack>
               </DefaultBox>{" "}
               <DefaultBox
-                w={["full", "full", "full", "33%"]}
+                w={["full", "full", "full", "full", "33%"]}
                 alignSelf={"normal"}
               >
                 <VStack
@@ -253,7 +308,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
               </DefaultBox>
             </HStack>
 
-            <DefaultAlert w={["full", "full", "40%"]}>
+            <DefaultAlert w={["full", "full", "full", "40%"]}>
               <Box fontSize={"sm"}>
                 <Text fontWeight={"semibold"}>How does House work?</Text>
                 <Text>
@@ -297,8 +352,12 @@ const Resignation = () => {
     connectedWalletDepositInfo.amount > 0n &&
     toNormalDate(
       connectedWalletDepositInfo.endOfCooldownPeriod.toString()
-    ).getTime() <
-      Date.now() * 6000 * 60 * 24 * 7;
+    ).getTime() < Date.now(); //* 6000 * 60 * 24 * 3;
+  console.log({
+    isReadyToClaim,
+    isRequestedToClaim,
+    connectedWalletDepositInfo,
+  });
 
   useEffect(() => {
     if (!connectedWalletAddress) {
@@ -319,7 +378,7 @@ const Resignation = () => {
   const client = useWalletClient();
   const { pluginAddress } = useAppGlobalConfig();
   const {
-    writeAsync,
+    writeAsync: writeResign,
     data,
     isLoading: requestIsLoading,
   } = useContractWrite({
@@ -328,12 +387,28 @@ const Resignation = () => {
     address: pluginAddress as Address,
     account: connectedWalletAddress as Address,
   });
+
+  const {
+    writeAsync: writeClaim,
+    data: claimData,
+    isLoading: claimIsLoading,
+  } = useContractWrite({
+    abi: DaofinABI,
+    functionName: "executeResignHouse",
+    address: pluginAddress as Address,
+    account: connectedWalletAddress as Address,
+  });
+
   const {} = useWaitForTransaction({
     hash: data?.hash,
   });
   const handleResignation = async () => {
-    const hash = await writeAsync();
-    alert(hash);
+    const hash = await writeResign();
+    console.log(hash);
+  };
+  const handleClaim = async () => {
+    const hash = await writeClaim();
+    console.log(hash);
   };
   return (
     <>
@@ -391,7 +466,10 @@ const Resignation = () => {
                   <WalletAuthorizedButton
                     w={"full"}
                     variant={"outline"}
-                    isDisabled={isRequestedToClaim || !isReadyToClaim}
+                    onClick={handleClaim}
+                    isDisabled={
+                      claimIsLoading || !isRequestedToClaim || !isReadyToClaim
+                    }
                   >
                     {"Claim your withdrawal"}
                   </WalletAuthorizedButton>

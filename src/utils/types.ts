@@ -6,6 +6,7 @@ import {
 } from "@xinfin/osx-daofin-sdk-client";
 import { BigNumberish } from "ethers";
 import { VoteStatsType } from "../hooks/useVoteStats";
+import { FetchProposalStatusType } from "../hooks/useFetchProposalStatus";
 
 export type Proposal = {
   id: string;
@@ -40,7 +41,7 @@ export type Proposal = {
   committeesVotes: VoteStatsType[];
   electionIndex: string;
   tallyDetails: TallyDetailResponse[];
-};
+} & FetchProposalStatusType;
 export type Deposit = {
   id: string;
   voter: string;
@@ -48,6 +49,9 @@ export type Deposit = {
   snapshotBlock: number;
   depositDate: number;
   txHash: string;
+  isActive: boolean;
+  requestToResignTimestamp: bigint;
+  requestToResignTxHash: string;
 };
 export type Judiciary = {
   id: string;

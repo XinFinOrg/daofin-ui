@@ -141,12 +141,16 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
   );
 
   const running = useMemo(
-    () => dateNow() < toDate(startDate) && dateNow() < toDate(endDate),
+    () => dateNow() > toDate(startDate) && dateNow() < toDate(endDate),
     [startDate, createdAt]
   );
   const executed = useMemo(() => status && status.executed, [status]);
   const defeated = useMemo(
     () => !running && !pendingStatus && !executed && !isReachedRequirements,
+    [pendingStatus, running, executed, isReachedRequirements]
+  );
+  const ReadyToExecute = useMemo(
+    () => !running && !pendingStatus && !executed && isReachedRequirements,
     [pendingStatus, running, executed, isReachedRequirements]
   );
   console.log({ status, defeated });
@@ -174,6 +178,12 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
           ...prev.filter(({ status }) => status !== ProposalStatus.DEFEATED),
         ]);
       }
+      if (ReadyToExecute) {
+        setActiveStep(4);
+        setSteps((prev) => [
+          ...prev.filter(({ status }) => status !== ProposalStatus.DEFEATED),
+        ]);
+      }
 
       if (executed) {
         setActiveStep(steps.length);
@@ -191,7 +201,7 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
         ]);
       }
     }
-  }, [defeated, running, pendingStatus]);
+  }, [defeated, running, pendingStatus, ReadyToExecute]);
 
   useEffect(() => {
     if (defeated) {
@@ -235,7 +245,7 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
                           w={"4"}
                           h={"4"}
                           aria-label=""
-                          cursor={'pointer'}
+                          cursor={"pointer"}
                           onClick={() =>
                             window.open(
                               makeBlockScannerHashUrl(network, step.txHash),

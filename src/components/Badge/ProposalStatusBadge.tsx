@@ -23,6 +23,7 @@ const ProposalStatusBadge: FC<ProposalStatusBadgeProps> = ({
   const queued = useColorModeValue("#ffa500", "#ffa07a"); // Orange / LightSalmon
   const readyToExecute = useColorModeValue("#800080", "#9370db"); // Purple / MediumPurple
   const executed = useColorModeValue("#008080", "#48d1cc"); // Teal / MediumTurquoise
+  const expired = useColorModeValue('#d32f2f', '#ff6347'); // DarkRed / Tomato
 
   const mapProposalStatusToBadge = (title: ProposalStatus) => {
     switch (title) {
@@ -40,6 +41,8 @@ const ProposalStatusBadge: FC<ProposalStatusBadgeProps> = ({
         return queued;
       case ProposalStatus.READY_TO_EXECUTE:
         return readyToExecute;
+      case ProposalStatus.EXPIRED:
+        return expired;
       default:
         break;
     }

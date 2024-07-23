@@ -63,7 +63,7 @@ const JudiciaryPage = () => {
             w={"full"}
             justifyContent={"flex-start"}
           >
-            <DefaultBox w={["full", "full", "50%"]}>
+            <DefaultBox w={["full", "full","full", "50%"]}>
               <VStack
                 w={["50%"]}
                 fontSize={"sm"}
@@ -77,7 +77,7 @@ const JudiciaryPage = () => {
                 </Text>
               </VStack>
             </DefaultBox>
-            <DefaultAlert w={["full", "full", "50%"]}>
+            <DefaultAlert w={["full", "full", "full", "50%"]}>
               <VStack alignItems={"flex-start"} fontSize={"sm"}>
                 <Text fontWeight={"semibold"}>
                   How is the role of Judiciaries?
@@ -93,7 +93,7 @@ const JudiciaryPage = () => {
         </VStack>
       </DefaultBox>
       <HStack flexDirection={["column", "column", "column", "row"]}>
-        <Box w={["full", "full", "60%"]} alignSelf={"flex-start"} mr={2}>
+        <Box w={["full", "full","full", "60%"]} alignSelf={"flex-start"} mr={2}>
           <DefaultBox>
             <VStack>
               {juries.length > 0 ? (
@@ -122,7 +122,7 @@ const JudiciaryPage = () => {
           </DefaultBox>
         </Box>
         {proposalTypes && proposalTypes?.length > 0 && (
-          <DefaultBox w={["full", "full", "40%"]} alignSelf={"flex-start"}>
+          <DefaultBox w={["full", "full","full", "40%"]} alignSelf={"flex-start"}>
             <RulesOfDecisions
               communityName={communityName}
               summary={"All below info demostrate how voting rules work."}

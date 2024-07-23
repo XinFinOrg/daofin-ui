@@ -85,7 +85,7 @@ const PeopleButton: FC<PeopleButtonProps> = (props) => {
   const isUserDeposited = useIsUserDeposited(address ? address : zeroAddress);
 
   const isDisabled =
-    !address || isMasterNode || isDelegatee || isJury || isUserDeposited;
+    !address || isMasterNode || isDelegatee || isJury ;
 
   return (
     <WalletAuthorizedButton {...props} isDisabled={isDisabled}>

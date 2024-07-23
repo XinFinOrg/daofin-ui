@@ -12,6 +12,7 @@ import MasterNodeDelegateeSenateIcon from "../utils/assets/icons/MasterNodeDeleg
 import { DefaultAlert } from "../components/Alerts";
 import { useEffect } from "react";
 import useIsValidVoter from "../hooks/contractHooks/useIsUserVotedOnProposal";
+import { useWallet } from "../hooks/useWallet";
 
 export interface CreateProposalFormData {
   metaData: {
@@ -32,9 +33,10 @@ const CreateProposal = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen } = useDisclosure();
   const { data: isValidVoter } = useIsValidVoter();
+  const { address, isConnected, isOnWrongNetwork } = useWallet();
 
   useEffect(() => {
-    if (isValidVoter === false) {
+    if (isValidVoter === false || !address) {
       onOpen();
     }
   }, [isValidVoter]);
@@ -54,7 +56,13 @@ const CreateProposal = () => {
         <Box my={5}>
           <DefaultAlert status={"warning"}>
             <Text>
-              <Text mb={2} textDecoration={'underline'} textUnderlineOffset={'0.2rem'}>You are not a valid voter.</Text>
+              <Text
+                mb={2}
+                textDecoration={"underline"}
+                textUnderlineOffset={"0.2rem"}
+              >
+                You are not a valid voter.
+              </Text>
               In order to make a proposal, you must be part of one of the above
               communities.
             </Text>
@@ -63,7 +71,6 @@ const CreateProposal = () => {
         <DefaultButton onClick={() => navigate("/community")} w={"full"} mb={4}>
           Go to Comminity page
         </DefaultButton>
-        
       </Modal>
     </Page>
   );

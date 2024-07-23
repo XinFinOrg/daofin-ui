@@ -31,17 +31,53 @@ export const proposalTimeStatus = (startDate: Date, endDate: Date) => {
   const now = new Date(Date.now());
 
   if (now > startDate && now < endDate) {
-    return ProposalStatus.ACTIVE;
+    return ProposalStatus.RUNNING;
   }
   if (now < startDate && now < endDate) {
     return ProposalStatus.NOT_STARTED;
   }
-  if (now > startDate && now > endDate) {
-    if (now.getTime() > endDate.getTime() + 10 * 60 * 1000) {
-      return ProposalStatus.REACHED;
-    }
-    return ProposalStatus.EXPIRED;
+  if (
+    now > startDate &&
+    now > endDate &&
+    now.getTime() < endDate.getTime() + 10 * 60 * 1000
+  ) {
+    return ProposalStatus.QUEUED;
   }
-  
-  return ProposalStatus.PENDING;
+
+  return ProposalStatus.EXPIRED;
+};
+export const proposalStatus = (
+  startDate: Date,
+  endDate: Date,
+  executed: boolean,
+  canExecute: boolean
+) => {
+  const now = new Date(Date.now());
+
+  if (now > startDate && now < endDate) {
+    return ProposalStatus.RUNNING;
+  }
+  if (now < startDate && now < endDate) {
+    return ProposalStatus.NOT_STARTED;
+  }
+  if (
+    now > startDate &&
+    now > endDate &&
+    now.getTime() < endDate.getTime() + 10 * 60 * 1000
+  ) {
+    return ProposalStatus.QUEUED;
+  }
+  if (
+    now > startDate &&
+    now > endDate &&
+    now.getTime() > endDate.getTime() + 10 * 60 * 1000
+  ) {
+    if (executed) {
+      return ProposalStatus.EXECUTED;
+    }
+    if (!executed && canExecute) {
+      return ProposalStatus.READY_TO_EXECUTE;
+    }
+  }
+  return ProposalStatus.EXPIRED;
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useClient } from "./useClient";
-import {  getPluginInstallationId } from "../utils/networks";
+import { getPluginInstallationId } from "../utils/networks";
 import { Deposit } from "../utils/types";
 
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
@@ -9,10 +9,13 @@ query DepositsQueries($pluginId: ID!) {
   pluginDeposits(where: {plugin: $pluginId}) {
     id
     voter
-    amount
+    isActive
+    startOfCooldownPeriod
     snapshotBlock
-    depositDate
-    txHash
+    endOfCooldownPeriod
+    requestToResignTimestamp
+    claimTimestamp
+    amount
   }
 }
 `;

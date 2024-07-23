@@ -180,7 +180,7 @@ export const PeoplesHouseProvider: FC<PropsWithChildren> = ({ children }) => {
                 txReviewToggle();
                 setCreationProcessState(TransactionState.LOADING);
               }}
-              isDisabled={isValidHouseMember}
+              // isDisabled={isValidHouseMember}
             >
               Join House
             </Button>

@@ -1,4 +1,3 @@
-
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import "./utils/assets/inter-regular.ttf";
@@ -13,7 +12,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ApolloProvider } from "@apollo/client";
 import { apothemTestClient, client } from "./contexts/apolloClient";
 import { ChakraProvider } from "@chakra-ui/react";
-import {  HashRouter as Router } from "react-router-dom";
+import { HashRouter as Router } from "react-router-dom";
 import { AppGlobalConfigProvider } from "./contexts/AppGlobalConfig";
 import { NetworkProvider } from "./contexts/network";
 import { theme } from "./utils/theme";
@@ -30,10 +29,10 @@ export const queryClient = new QueryClient();
 root.render(
   <React.StrictMode>
     <Router>
-      <AppGlobalConfigProvider>
-        <QueryClientProvider client={queryClient}>
-          <ChakraProvider theme={theme}>
-            <WagmiProvider>
+      <QueryClientProvider client={queryClient}>
+        <ChakraProvider theme={theme}>
+          <WagmiProvider>
+            <AppGlobalConfigProvider>
               <NetworkProvider>
                 <GlobalStateProvider>
                   <UseClientProvider>
@@ -51,10 +50,10 @@ root.render(
                   </UseClientProvider>
                 </GlobalStateProvider>
               </NetworkProvider>
-            </WagmiProvider>
-          </ChakraProvider>
-        </QueryClientProvider>
-      </AppGlobalConfigProvider>
+            </AppGlobalConfigProvider>
+          </WagmiProvider>
+        </ChakraProvider>
+      </QueryClientProvider>
     </Router>
   </React.StrictMode>
 );

@@ -48,6 +48,7 @@ import {
   proposalTypeNameToProposalId,
 } from "../../utils/constants";
 import ProposalAction from "../actions/forms/ProposalAction";
+import { useWallet } from "../../hooks/useWallet";
 type CreateProposalStepperProps = {
   proposalTypeId: string | undefined;
 };

@@ -13,6 +13,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Jazzicon from "react-jazzicon/dist/Jazzicon";
 import { jsNumberForAddress } from "react-jazzicon";
 import {
+  proposalStatus,
   proposalTimeStatus,
   toNormalDate,
   toStandardFormatString,
@@ -23,7 +24,6 @@ import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
   const navigate = useNavigate();
   const { committeesListWithIcon } = useCommitteeUtils();
-
   return (
     <>
       {
@@ -41,6 +41,7 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
               tallyDetails,
               executed,
               proposalType,
+              canExecute
             }) => ({
               name: (
                 <ProposalSummary
@@ -48,14 +49,12 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
                   proposalId={parseInt(pluginProposalId)}
                   type={proposalType.proposalTypeId}
                   publishedDate={toNormalDate(createdAt)}
-                  status={
-                    executed
-                      ? ProposalStatus.EXECUTED
-                      : proposalTimeStatus(
-                          toNormalDate(startDate),
-                          toNormalDate(endDate)
-                        )
-                  }
+                  status={proposalStatus(
+                    toNormalDate(startDate),
+                    toNormalDate(endDate),
+                    executed,
+                    canExecute
+                  )}
                   creatorAddress={creator}
                   startDate={toNormalDate(startDate)}
                   endDate={toNormalDate(endDate)}

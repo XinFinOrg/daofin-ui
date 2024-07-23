@@ -6,6 +6,7 @@ import { Proposal } from "../utils/types";
 import { resolveIpfsCid } from "@xinfin/osx-sdk-common";
 import { TallyDetails } from "@xinfin/osx-daofin-sdk-client";
 import { allProposalsByPluginIdQuery } from "../utils/graphql-queries/proposals-query";
+import useFetchProposalStatus from "./useFetchProposalStatus";
 
 export type SubgraphProposalBase = {
   id: string;
@@ -21,9 +22,9 @@ export type SubgraphProposalBase = {
   pluginProposalId: string;
   potentiallyExecutable: boolean;
   tallyDetails: TallyDetails[];
-  proposalType:{
-    proposalTypeId:string
-  }
+  proposalType: {
+    proposalTypeId: string;
+  };
 };
 function useDaoProposals(
   daoAddress: string,
@@ -34,7 +35,7 @@ function useDaoProposals(
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const { makeCall } = useFetchProposalStatus();
   useEffect(() => {
     if (!daofinClient) return;
     setIsLoading(true);
@@ -53,10 +54,13 @@ function useDaoProposals(
               metadataCid
             );
             const metadata = JSON.parse(metadataString) as ProposalMetadata;
-
+            const status = await makeCall(item.pluginProposalId);
+            console.log({status});
+            
             return {
               ...item,
               metadata,
+              ...status,
               // committeesVotes: [...stats],
             };
           })

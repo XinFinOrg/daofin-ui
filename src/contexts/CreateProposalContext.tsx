@@ -29,6 +29,7 @@ import {
 } from "../schemas/createProposalSchema";
 import { addPrefix } from "../utils/url";
 import { DefaultAlert } from "../components/Alerts";
+import { useWallet } from "../hooks/useWallet";
 
 export type CreateProposalContextType = {
   handlePublishProposal: () => void;
@@ -82,7 +83,6 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
   const { goToNext, activeStep } = steps;
   const [proposalCreationData, setProposalCreationData] =
     useState<CreateProposalParams>();
-
   const [formData, setFormData] = useState<CreateProposalFormData>({
     metaData: {
       title: "",

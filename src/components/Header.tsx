@@ -168,7 +168,7 @@ export default function Header() {
                       px={3}
                       py={1}
                       borderRadius={"md"}
-                      transition="background-color .1s ease-in-out"
+                      transition="background-color .2s ease-in-out"
                       _hover={{
                         bgColor: bgColorModeLinks,
                       }}

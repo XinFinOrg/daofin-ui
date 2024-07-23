@@ -99,8 +99,8 @@ const Dashboard: FC = () => {
     readyToExecutedProposalsCallback().then((data) => {
       setReadyToExecutedProposals([
         ...data
-          .filter(({ canExecute, executed }) => canExecute && !executed)
-          ?.slice(-3),
+          .slice(-3)
+          .filter(({ canExecute, executed }) => canExecute && !executed),
       ]);
     });
   }, [readyToExecutedProposalsCallback]);
