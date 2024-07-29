@@ -11,7 +11,7 @@ const Page: FC<PropsWithChildren & { title?: string }> = ({
   }, []);
   return (
     <Box h={"full"} w={"100%"}>
-      <Box w={["full", "full", "90%"]} p={"4"} m={"auto"}>
+      <Box w={["100%", "100%","100%", "90%"]} p={"4"} m={"auto"}>
         {children}
       </Box>
     </Box>

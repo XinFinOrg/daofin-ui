@@ -11,25 +11,13 @@ export const VotingStatsABI = [
     type: "constructor",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-    ],
-    name: "OwnableInvalidOwner",
+    inputs: [],
+    name: "InvalidInitialization",
     type: "error",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "OwnableUnauthorizedAccount",
+    inputs: [],
+    name: "NotInitializing",
     type: "error",
   },
   {
@@ -52,19 +40,13 @@ export const VotingStatsABI = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "address",
-        name: "previousOwner",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
+        indexed: false,
+        internalType: "uint64",
+        name: "version",
+        type: "uint64",
       },
     ],
-    name: "OwnershipTransferred",
+    name: "Initialized",
     type: "event",
   },
   {
@@ -91,26 +73,6 @@ export const VotingStatsABI = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "renounceOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -167,7 +129,7 @@ export const VotingStatsABI = [
           },
           {
             internalType: "uint256",
-            name: "requiredQuruomNumber",
+            name: "requiredQuorumNumber",
             type: "uint256",
           },
           {
@@ -182,7 +144,7 @@ export const VotingStatsABI = [
           },
           {
             internalType: "uint256",
-            name: "currentQuroumNumberRatio",
+            name: "currentQuorumNumberRatio",
             type: "uint256",
           },
           {
@@ -192,7 +154,7 @@ export const VotingStatsABI = [
           },
           {
             internalType: "uint256",
-            name: "requiredQuroumNumberRatio",
+            name: "requiredQuorumNumberRatio",
             type: "uint256",
           },
           {
@@ -205,6 +167,11 @@ export const VotingStatsABI = [
             name: "requiredPassrateNumberRatio",
             type: "uint256",
           },
+          {
+            internalType: "uint256",
+            name: "status",
+            type: "uint256",
+          },
         ],
         internalType: "struct VotingStats.CommunityReturnType[]",
         name: "communities",
@@ -212,19 +179,6 @@ export const VotingStatsABI = [
       },
     ],
     stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
-    name: "transferOwnership",
-    outputs: [],
-    stateMutability: "nonpayable",
     type: "function",
   },
 ];

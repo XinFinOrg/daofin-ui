@@ -25,8 +25,8 @@ export function weiBigNumberToFormattedNumber(value: BigNumberish) {
   return numberWithCommaSeparate(toEther(value.toString()).toString());
 }
 // percentageBase: Up to 10^6
-export function toStandardPercentage(percentage: string) {
-  return BigNumber.from(percentage).mul(100).div(1000000).toString();
+export function toStandardPercentage(value: string) {
+  return ((+value * 100) / 1000000).toString();
 }
 
 export function uuid() {

@@ -63,7 +63,6 @@ const ManageMasterNodeDelegatee = () => {
   const isMasterNode = useIsXDCValidatorCandidate(
     connectedAddress ? connectedAddress : ""
   );
-  console.log({ isMasterNode });
 
   const showButton = isMasterNode;
   return (

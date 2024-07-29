@@ -60,6 +60,7 @@ import {
 import Countdown from "react-countdown";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { formatEther } from "viem";
+import useIsWithinVotingPeriod from "../hooks/contractHooks/useIsWithinVotingPeriod";
 export type JoinHouseFormType = {
   amount: string;
 };
@@ -335,9 +336,11 @@ const Resignation = () => {
   });
 
   const { data: connectedWalletDepositInfo } = useGetHouseDepositInfo();
+  const { data: isWithinVotingPeriod } = useIsWithinVotingPeriod();
 
   const doesHaveDeposit = connectedWalletDepositInfo.amount > 0n;
   const isReadyToRequest =
+    !isWithinVotingPeriod &&
     connectedWalletDepositInfo.isActive &&
     connectedWalletDepositInfo.startOfCooldownPeriod === 0n &&
     connectedWalletDepositInfo.amount > 0n;
@@ -352,12 +355,7 @@ const Resignation = () => {
     connectedWalletDepositInfo.amount > 0n &&
     toNormalDate(
       connectedWalletDepositInfo.endOfCooldownPeriod.toString()
-    ).getTime() < Date.now(); //* 6000 * 60 * 24 * 3;
-  console.log({
-    isReadyToClaim,
-    isRequestedToClaim,
-    connectedWalletDepositInfo,
-  });
+    ).getTime() < Date.now()* 6000 * 60 * 24 * 1;
 
   useEffect(() => {
     if (!connectedWalletAddress) {
@@ -447,6 +445,9 @@ const Resignation = () => {
                     }
                   >
                     {isReadyToRequest ? "Request to Resign" : ""}
+                    {isWithinVotingPeriod
+                      ? "Unable to request inside voting period"
+                      : ""}
 
                     {isRequestedToClaim && connectedWalletDepositInfo ? (
                       <Countdown

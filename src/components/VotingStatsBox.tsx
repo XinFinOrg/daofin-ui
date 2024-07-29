@@ -8,6 +8,7 @@ import {
   VStack,
   Text,
   Box,
+  Flex,
 } from "@chakra-ui/react";
 import { FC, useMemo } from "react";
 import DefaultProgressBar from "./DefaultProgressBar";
@@ -16,6 +17,7 @@ import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 import {
   convertProposalTypeSettingsToPercentage,
   numberWithCommaSeparate,
+  toStandardPercentage,
 } from "../utils/numbers";
 import useTotalNumberOfVoters from "../hooks/useTotalNumberOfVoters";
 import useVoteStats from "../hooks/useVoteStats";
@@ -23,6 +25,8 @@ import { Proposal } from "../utils/types";
 import { Cell, Pie, PieChart, Tooltip } from "recharts";
 import { useContractReads } from "wagmi";
 import useVotingStatsContract from "../hooks/contractHooks/useVotingStatsContract";
+import { applyRatioCeiled } from "../utils/vote-utils";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 
 interface VotingStatsBoxProps {
   currentVoters?: number;
@@ -58,7 +62,9 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
         <Text fontSize={"lg"} fontWeight={"bold"}>
           Voting
         </Text>
-        <Text>Current voters {numberWithCommaSeparate(allVotersNumber.toString())}</Text>
+        <Text>
+          {/* Current voters {numberWithCommaSeparate(allVotersNumber.toString())} */}
+        </Text>
       </HStack>
       <Tabs isFitted>
         <TabList flexDirection={["column", "column", "row"]} gap={4}>
@@ -89,20 +95,26 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                 noVotes,
                 totalVotes,
                 yesVotes,
-                currentQuroumNumberRatio,
-                requiredQuroumNumberRatio,
+                currentQuorumNumberRatio,
+                requiredQuorumNumberRatio,
                 requiredPassrateNumberRatio,
+                currentPassrateNumberRatio,
+                requiredPassrateNumber,
+                currentPassrateNumber,
+                currentQuorumNumber,
+                requiredQuorumNumber,
                 currentPassrateRatio,
-                currentPassrateNumberRatio
               }) => (
-                <TabPanel key={name} p={"6"}>
+                <TabPanel key={name} p={["1", "6"]}>
                   <HStack
                     justifyContent={"space-between"}
                     alignItems={"flex-start"}
                     py={"4"}
                     flexDirection={["column", "column", "row"]}
+                    fontSize={["xs", "sm"]}
+                    fontWeight={"semibold"}
                   >
-                    <Text fontWeight={"semibold"}>
+                    <Text>
                       <Text>
                         {`${totalVotes} `}
                         <Text as="p" display={"inline-block"}>
@@ -111,7 +123,6 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                       </Text>
                     </Text>
                     <HStack
-                      fontWeight={"semibold"}
                       alignItems={"flex-start"}
                       flexDirection={["column", "column", "row"]}
                     >
@@ -137,31 +148,58 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                   </HStack>
                   <VStack alignItems={"flex-start"}>
                     <DefaultProgressBar
-                      percentage={+currentQuroumNumberRatio.toString()}
-                      threshold={+requiredQuroumNumberRatio.toString()}
+                      percentage={+currentQuorumNumberRatio.toString()}
+                      threshold={+requiredQuorumNumberRatio.toString()}
                       height={"2"}
                       ProgressLabel={
-                        <Text
-                          fontSize={["xs", "sm", "md"]}
-                          fontWeight={"normal"}
-                        >
-                          Quorum
-                        </Text>
+                        <HStack>
+                          {currentQuorumNumberRatio >=
+                            requiredQuorumNumberRatio && (
+                            <CheckCircleIcon color={"green"} />
+                          )}
+                          {currentQuorumNumberRatio <
+                            requiredQuorumNumberRatio && (
+                            <CheckCircleIcon color={"black"} />
+                          )}
+                          <Text fontSize={["xs", "sm"]} fontWeight={"semibold"}>
+                            Quorum
+                          </Text>
+                        </HStack>
+                      }
+                      tooltipLabel={
+                        <Box>
+                          <Text>
+                            Required: {requiredQuorumNumber.toString()}
+                          </Text>
+                        </Box>
                       }
                     />
                     <DefaultProgressBar
-                    percentage={
-                      +currentPassrateNumberRatio.toString()
-                    }
-                    threshold={
-                      +requiredPassrateNumberRatio.toString()
-                    }
-                    ProgressLabel={
-                      <Text fontWeight={"normal"} fontSize={["xs", "sm", "md"]}>
-                        Threshold
-                      </Text>
-                    }
-                  />
+                      percentage={+currentPassrateNumberRatio.toString()}
+                      threshold={+requiredPassrateNumberRatio.toString()}
+                      tooltipLabel={
+                        <Box>
+                          <Text>
+                            Required: {requiredPassrateNumber.toString()}
+                          </Text>
+                        </Box>
+                      }
+                      ProgressLabel={
+                        <HStack>
+                          {currentPassrateNumberRatio >=
+                            requiredPassrateNumberRatio && (
+                            <CheckCircleIcon color={"green"} />
+                          )}
+                          {currentPassrateNumberRatio <
+                            requiredPassrateNumberRatio && (
+                            <CheckCircleIcon color={"black"} />
+                          )}
+                          <Text fontWeight={"semibold"} fontSize={["xs", "sm"]}>
+                            Passrate
+                          </Text>
+                        </HStack>
+                      }
+                    />
                   </VStack>
                 </TabPanel>
               )

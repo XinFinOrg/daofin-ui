@@ -43,7 +43,7 @@ const RulesOfDecisions: FC<RulesOfDecisionsType> = ({
       default:
         return "N/A";
     }
-  };
+  };  
   return (
     <Accordion>
       <DefaultAlert fontSize={"sm"} mb={4}>
@@ -79,7 +79,7 @@ const RulesOfDecisions: FC<RulesOfDecisionsType> = ({
                         ProgressLabel={<Text>Quorum</Text>}
                       />
                       <Text>
-                        {`${toStandardPercentage(minParticipation.toString())}`}
+                        {`${+toStandardPercentage(minParticipation)}`}
                         {"%"}
                       </Text>
                     </HStack>

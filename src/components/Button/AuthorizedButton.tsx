@@ -227,7 +227,6 @@ const ExecuteProposalButton: FC<ExecuteProposalButtonProps> = (props) => {
   const { status } = props;
 
   const isDisabled = address && status && !status.executed && status.canExecute;
-  console.log({status});
   
   const { message, tooltip }: { message: ReactNode | string; tooltip: string } =
     useMemo(() => {

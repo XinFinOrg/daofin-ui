@@ -26,6 +26,7 @@ interface VoteStatProgressBarProps extends ProgressProps {
   threshold: number | null;
   Icon?: ReactElement;
   ProgressLabel?: ReactElement;
+  tooltipLabel?: string | ReactNode;
 }
 const DefaultProgressBar: FC<VoteStatProgressBarProps> = ({
   percentage,
@@ -34,9 +35,15 @@ const DefaultProgressBar: FC<VoteStatProgressBarProps> = ({
   ProgressLabel,
   w = "90%",
   size = "sm",
+  tooltipLabel,
 }) => {
   return (
-    <HStack alignItems={"center"} w={"full"}>
+    <HStack
+      alignItems={["start", "start", "center"]}
+      w={"full"}
+      flexDir={["column", "column", "row"]}
+      justifyContent={"center"}
+    >
       <Box w={"20%"}>
         {Icon ? (
           <Box w={["4", "4", "5", "7"]} h={["4", "4", "5", "7"]}>
@@ -51,15 +58,14 @@ const DefaultProgressBar: FC<VoteStatProgressBarProps> = ({
           <></>
         )}
       </Box>
-      <DefaultToolTip label={``}>
+      <DefaultToolTip label={tooltipLabel ? tooltipLabel : ``}>
         <Progress
           w={["full"]}
           size={size}
           value={Number(percentage)}
           borderRadius={"md"}
         >
-           
-          {threshold !== null && <ThresholdLine threshold={threshold} />}  
+          {threshold !== null && <ThresholdLine threshold={threshold} />}
         </Progress>
       </DefaultToolTip>
     </HStack>
@@ -79,7 +85,7 @@ const ThresholdLine: FC<Pick<VoteStatProgressBarProps, "threshold">> = ({
         transform={`translateX(-${threshold}%)`}
         width="3px"
         height="100%"
-        bg={useColorModeValue("black", "white")}
+        bg={"black"}
       />
     </>
   );

@@ -20,11 +20,12 @@ type CommunityReturnType = {
   requiredQuorumNumber: bigint;
   requiredPassrateNumber: bigint;
   totalNumberOfVoters: bigint;
-  currentQuroumNumberRatio: bigint;
-  requiredQuroumNumberRatio: bigint;
+  currentQuorumNumberRatio: bigint;
+  requiredQuorumNumberRatio: bigint;
   currentPassrateRatio: bigint;
   currentPassrateNumberRatio: bigint;
   requiredPassrateNumberRatio: bigint;
+  status: bigint;
 };
 function useVotingStatsContract(proposalId: bigint, proposalTypeId: bigint) {
   const { votingStatsAddress } = useAppGlobalConfig();

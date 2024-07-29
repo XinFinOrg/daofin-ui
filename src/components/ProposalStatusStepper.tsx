@@ -153,8 +153,6 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
     () => !running && !pendingStatus && !executed && isReachedRequirements,
     [pendingStatus, running, executed, isReachedRequirements]
   );
-  console.log({ status, defeated });
-  console.log({ pendingStatus, running, executed, isReachedRequirements });
 
   useEffect(() => {
     if (status) {
@@ -166,7 +164,9 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
       }
 
       if (running) {
-        setActiveStep(1);
+        if (Date.now() > startDate) {
+          setActiveStep(2);
+        } else setActiveStep(1);
         setSteps((prev) => [
           ...prev.filter(({ status }) => status !== ProposalStatus.DEFEATED),
         ]);

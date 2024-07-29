@@ -157,7 +157,7 @@ export default function Header() {
               </Box>
               <HStack
                 as={"nav"}
-                spacing={4}
+                spacing={[2,3,4]}
                 display={{ base: "none", md: "flex" }}
               >
                 {Links.map((link) => (
