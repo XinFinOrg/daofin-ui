@@ -3,18 +3,36 @@ import {
   PropsWithChildren,
   createContext,
   useContext,
+  useEffect,
   useMemo,
 } from "react";
+import { useNetwork } from "./network";
 
-export type AppGlobalConfigContextType = {
+export type ContractsObj = {
   daoAddress: string;
   pluginAddress: string;
   pluginRepoAddress: string;
+  votingStatsAddress: string;
+};
+export type AppGlobalConfigContextType = {
+  [network: string]: ContractsObj;
 };
 const initialState = {
-  daoAddress: process.env.REACT_APP_DAOFIN_DAO_ADDRESS as string,
-  pluginAddress: process.env.REACT_APP_DAOFIN_PLUGIN_ADDRESS as string,
-  pluginRepoAddress: process.env.REACT_APP_DAOFIN_PLUGIN_REPO_ADDRESS as string,
+  apothem: {
+    daoAddress: import.meta.env.VITE_DAOFIN_DAO_ADDRESS_APOTHEM as string,
+    pluginAddress: import.meta.env.VITE_DAOFIN_PLUGIN_ADDRESS_APOTHEM as string,
+    pluginRepoAddress: import.meta.env
+      .VITE_DAOFIN_PLUGIN_REPO_ADDRESS_APOTHEM as string,
+    votingStatsAddress: import.meta.env
+      .VITE_DAOFIN_VOTING_STATS_APOTHEM as string,
+  },
+  xdc: {
+    daoAddress: import.meta.env.VITE_DAOFIN_DAO_ADDRESS as string,
+    pluginAddress: import.meta.env.VITE_DAOFIN_PLUGIN_ADDRESS as string,
+    pluginRepoAddress: import.meta.env
+      .VITE_DAOFIN_PLUGIN_REPO_ADDRESS as string,
+    votingStatsAddress: import.meta.env.VITE_DAOFIN_VOTING_STATS as string,
+  },
 };
 const AppGlobalConfigContext =
   createContext<AppGlobalConfigContextType>(initialState);
@@ -29,6 +47,8 @@ export const AppGlobalConfigProvider: FC<PropsWithChildren> = ({
     </AppGlobalConfigContext.Provider>
   );
 };
-export const useAppGlobalConfig = (): AppGlobalConfigContextType => {
-  return useContext(AppGlobalConfigContext);
+export const useAppGlobalConfig = (): ContractsObj => {
+  const { network } = useNetwork();
+  const app = useContext(AppGlobalConfigContext);
+  return app[network];
 };

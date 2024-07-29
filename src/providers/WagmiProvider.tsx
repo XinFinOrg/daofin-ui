@@ -1,34 +1,52 @@
 import {
-  EthereumClient,
-  w3mConnectors,
-  w3mProvider,
-} from "@web3modal/ethereum";
-import { Web3Modal } from "@web3modal/react";
+  RainbowKitProvider,
+  connectorsForWallets,
+} from "@rainbow-me/rainbowkit";
+import "@rainbow-me/rainbowkit/styles.css";
 import { FC, PropsWithChildren } from "react";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { xdcTestnet, xdc } from "wagmi/chains";
+import { xdc, xdcTestnet } from "wagmi/chains";
+import {
+  metaMaskWallet,
+  walletConnectWallet,
+} from "@rainbow-me/rainbowkit/wallets";
+import { publicProvider } from "wagmi/providers/public";
 
 const WagmiProvider: FC<PropsWithChildren> = ({ children }) => {
-  const projectId = process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID as string;
+  const projectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID as string;
+  const chains = [
+    xdcTestnet,
+    {
+      ...xdc,
+      rpcUrls: {
+        public: { http: ["https://rpc.ankr.com/xdc"] },
+        default: { http: ["https://erpc.xinfin.network"] },
+      },
+    },
+  ];
+  const { publicClient } = configureChains(chains, [publicProvider()]);
 
-  // 2. Create wagmiConfig
-  const chains = [xdcTestnet, xdc];
-  const { publicClient } = configureChains(chains, [
-    w3mProvider({ projectId }),
+  const connectors = connectorsForWallets([
+    {
+      groupName: "Recommended",
+      wallets: [
+        metaMaskWallet({ projectId, chains }),
+        walletConnectWallet({ projectId, chains }),
+      ],
+    },
   ]);
   const wagmiConfig = createConfig({
     autoConnect: true,
-    connectors: w3mConnectors({ projectId, chains }),
+    connectors,
     publicClient,
   });
-
-  const ethereumClient = new EthereumClient(wagmiConfig, chains);
 
   return (
     <WagmiConfig config={wagmiConfig}>
       <>
-        <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
-        {children}
+        <RainbowKitProvider chains={chains} modalSize="compact">
+          {children}
+        </RainbowKitProvider>
       </>
     </WagmiConfig>
   );

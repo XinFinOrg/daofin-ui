@@ -2,23 +2,15 @@ import {
   SupportedNetwork as SdkSupportedNetworks,
   Context as SdkContext,
 } from "@xinfin/osx-client-common";
-import {
-  format,
-  formatDistance,
-  formatDistanceToNow,
-  formatRelative,
-  Locale,
-} from "date-fns";
-import { bytesToHex, resolveIpfsCid } from "@aragon/sdk-common";
-import { DaofinDetails, VoteOption } from "@xinfin/osx-daofin-sdk-client";
-import { Client, VoteValues } from "@xinfin/osx-sdk-client";
+import { format, formatRelative } from "date-fns";
+import { resolveIpfsCid } from "@aragon/sdk-common";
+import { VoteOption } from "@xinfin/osx-daofin-sdk-client";
+import { Client } from "@xinfin/osx-sdk-client";
 import { isAddress } from "@ethersproject/address";
 import { ethers } from "ethers";
 import { defaultAbiCoder } from "@ethersproject/abi";
-import { BigNumber,BigNumberish } from "@ethersproject/bignumber";
-export const SUPPORTED_CHAIN_ID = [
-  1, 5, 137, 80001, 42161, 421613, 50, 51,
-] as const;
+import { BigNumber, BigNumberish } from "@ethersproject/bignumber";
+export const SUPPORTED_CHAIN_ID = [50, 51] as const;
 export type SupportedChainID = (typeof SUPPORTED_CHAIN_ID)[number];
 const SUPPORTED_NETWORKS = ["apothem", "xdc"] as const;
 
@@ -93,18 +85,18 @@ export const CHAIN_METADATA: ChainList = {
     etherscanApi: "https://apothem.xdcscan.io/api",
     etherscanApiKey: "",
     supportsEns: true,
-    ipfs: process.env.REACT_APP_IPFS_API_URL,
-    daofinSubgraph: process.env.REACT_APP_APOTHEM_DAOFIN_SUB_GRAPH_URL || "",
-    osxSubgraph: process.env.REACT_APP_APOTHEM_OSX_SUB_GRAPH_URL || "",
+    ipfs: import.meta.env.VITE_IPFS_API_URL,
+    daofinSubgraph: import.meta.env.VITE_APOTHEM_DAOFIN_SUB_GRAPH_URL || "",
+    osxSubgraph: import.meta.env.VITE_APOTHEM_OSX_SUB_GRAPH_URL || "",
   },
   xdc: {
     id: 50,
     name: "XDC",
     domain: "L1 Blockchain",
     logo: "https://icons.llamao.fi/icons/chains/rsz_xdc.jpg",
-    explorer: "https://apothem.xdcscan.io",
+    explorer: "https://xdcscan.io",
     testnet: false,
-    rpc: [`https://xdc.xdcrpc.com/      `, `wss://ews.xdc.network/`],
+    rpc: [`https://rpc.ankr.com/xdc`],
     nativeCurrency: {
       name: "XDC",
       symbol: "XDC",
@@ -114,12 +106,12 @@ export const CHAIN_METADATA: ChainList = {
     etherscanApi: "https://xdc.xdcscan.io/api",
     etherscanApiKey: "",
     supportsEns: false,
-    ipfs: process.env.REACT_APP_IPFS_API_URL,
-    daofinSubgraph: process.env.REACT_APP_XDC_DAOFIN_SUB_GRAPH_URL || "",
-    osxSubgraph: process.env.REACT_APP_XDC_OSX_SUB_GRAPH_URL || "",
+    ipfs: import.meta.env.VITE_IPFS_API_URL,
+    daofinSubgraph: import.meta.env.VITE_XDC_DAOFIN_SUB_GRAPH_URL || "",
+    osxSubgraph: import.meta.env.VITE_XDC_OSX_SUB_GRAPH_URL || "",
   },
   unsupported: {
-    id: 1,
+    id: 51,
     name: "Unsupported",
     domain: "L1 Blockchain",
     logo: "",
@@ -210,7 +202,7 @@ export function toDisplayEns(ensName?: string) {
   if (!ensName.includes(".dao.eth")) return `${ensName}.dao.eth`;
   return ensName;
 }
-type SubgraphNetworkUrl = Record<SupportedNetworks, string | undefined>;
+// type SubgraphNetworkUrl = Record<SupportedNetworks, string | undefined>;
 
 // export const SUBGRAPH_API_URL: SubgraphNetworkUrl = {
 //   xdc: undefined,
@@ -409,35 +401,36 @@ export function convertCommitteeToPlainText(bytesName: string) {
   }
 }
 
-// The base value to encode real-valued ratios on the interval [0, 1] as integers on the interval 0 to 10^6.
-const RATIO_BASE: BigNumberish = BigNumber.from(10).pow(6);
+export const BASE_URL = "https://api.coingecko.com/api/v3";
+export const DEFAULT_CURRENCY = "usd";
 
-// Thrown if a ratio value exceeds the maximal value of 10^6.
-class RatioOutOfBounds extends Error {
-  constructor(limit: BigNumberish, actual: BigNumberish) {
-    super(
-      `Ratio out of bounds. Limit: ${limit.toString()}, Actual: ${actual.toString()}`
-    );
-  }
+// Coingecko Api specific asset platform keys
+export const ASSET_PLATFORMS: Record<SupportedNetworks, string | null> = {
+  xdc: null,
+  apothem: null,
+  unsupported: null,
+};
+
+export const NATIVE_TOKEN_ID = {
+  default: "xdce-crowd-sale",
+};
+
+export function makeBlockScannerHashUrl(
+  network: SupportedNetworks,
+  hash: string
+) {
+  return `${CHAIN_METADATA[network].explorer}/txs/${hash}`;
+}
+export function makeBlockScannerAddressUrl(
+  network: SupportedNetworks,
+  address: string
+) {
+  return `${CHAIN_METADATA[network].explorer}/address/${address}`;
 }
 
-// Applies a ratio to a value and ceils the remainder.
-export function applyRatioCeiled(
-  _value: BigNumber,
-  _ratio: BigNumber
-): BigNumber {
-  if (_ratio.gt(RATIO_BASE)) {
-    throw new RatioOutOfBounds(RATIO_BASE, _ratio);
-  }
-
-  _value = _value.mul(_ratio);
-  const remainder: BigNumber = _value.mod(RATIO_BASE);
-  let result: BigNumber = _value.div(RATIO_BASE);
-
-  // Check if ceiling is needed
-  if (!remainder.isZero()) {
-    result = result.add(BigNumber.from(1));
-  }
-
-  return result;
+export function generateProposalTypeName(
+  name: string
+) {
+  return name.split(' ').join('-').toLocaleLowerCase()
 }
+

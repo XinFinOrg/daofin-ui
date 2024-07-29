@@ -1,17 +1,16 @@
-import React from "react";
+
 import BoxWrapper from "./BoxWrapper";
 import { Box, Flex, Heading, Text } from "@chakra-ui/layout";
 import useFetchJudiciaries from "../hooks/useFetchJudiciaries";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import { shortenAddress, shortenTxHash } from "../utils/networks";
-import Modal from "./Modal";
+import Modal from "./Modal/Modal";
 import { useDisclosure } from "@chakra-ui/hooks";
 import { FormLabel } from "@chakra-ui/form-control";
 import { Input, InputGroup } from "@chakra-ui/input";
 import { Tooltip } from "@chakra-ui/tooltip";
 import { Button } from "@chakra-ui/button";
 import { useClient } from "../hooks/useClient";
-import { useForm } from "react-hook-form";
 import {
   AddJudiciarySteps,
   UpdateOrJoinMasterNodeDelegateeSteps,
@@ -24,48 +23,46 @@ import useFetchMasterNodeDelegatee from "../hooks/useFetchMasterNodeDelegatee";
 
 const ManageMasterNodeDelegatee = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
-  const { data } = useFetchMasterNodeDelegatee(daoAddress, pluginAddress);
+  const { data } = useFetchMasterNodeDelegatee();
   const { onClose, isOpen, onOpen } = useDisclosure();
   const { address: connectedAddress } = useWallet();
-  const { setValue, getValues, register, watch } = useForm({
-    defaultValues: {
-      address: "",
-    },
-  });
-  const address = watch("address");
+  // const { setValue, getValues, register, watch } = useForm({
+  //   defaultValues: {
+  //     address: "",
+  //   },
+  // });
+  // const address = watch("address");
 
   const { daofinClient } = useClient();
   const handleAddDelegatee = async () => {
-    const iterator =
-      daofinClient?.methods.updateOrJoinMasterNodeDelegatee(address);
-
-    if (!iterator) return;
-    try {
-      for await (const step of iterator) {
-        switch (step.key) {
-          case UpdateOrJoinMasterNodeDelegateeSteps.WAITING:
-            console.log(step.txHash);
-            break;
-          case UpdateOrJoinMasterNodeDelegateeSteps.DONE: {
-            console.log("DONE", step.key);
-            onClose();
-            break;
-          }
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    // const iterator =
+    //   daofinClient?.methods.updateOrJoinMasterNodeDelegatee(address);
+    // if (!iterator) return;
+    // try {
+    //   for await (const step of iterator) {
+    //     switch (step.key) {
+    //       case UpdateOrJoinMasterNodeDelegateeSteps.WAITING:
+    //         console.log(step.txHash);
+    //         break;
+    //       case UpdateOrJoinMasterNodeDelegateeSteps.DONE: {
+    //         console.log("DONE", step.key);
+    //         onClose();
+    //         break;
+    //       }
+    //     }
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
   const handleOnChange = (e: any) => {
     const name = e.target.name;
     const value = e.target.value;
-    setValue(name, value);
+    // setValue(name, value);
   };
   const isMasterNode = useIsXDCValidatorCandidate(
     connectedAddress ? connectedAddress : ""
   );
-  console.log({ isMasterNode });
 
   const showButton = isMasterNode;
   return (
@@ -116,9 +113,9 @@ const ManageMasterNodeDelegatee = () => {
               <FormLabel>Delegatee Address</FormLabel>
               <InputGroup className="m-1">
                 <Input
-                  {...register("address", {
-                    required: true,
-                  })}
+                  // {...register("address", {
+                  //   required: true,
+                  // })}
                   onChange={handleOnChange}
                   placeholder="0x...."
                 />

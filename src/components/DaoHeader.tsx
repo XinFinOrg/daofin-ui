@@ -1,4 +1,4 @@
-import React from "react";
+
 import { useDaoQuery } from "../hooks/useDaoDetails";
 import { formatDate, shortenAddress, toDisplayEns } from "../utils/networks";
 import { useNetwork } from "../contexts/network";

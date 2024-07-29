@@ -1,44 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useClient } from "./useClient";
-import { useNetwork } from "../contexts/network";
-import { GlobalSettings } from "@xinfin/osx-daofin-sdk-client";
-import { ProposalsQuery } from "@xinfin/osx-daofin-sdk-client/dist/internal/graphql-queries/proposals";
-import { ethers } from "ethers";
-import { formatDate, getPluginInstallationId } from "../utils/networks";
-import { ProposalBase, ProposalMetadata } from "@xinfin/osx-client-common";
+import { ProposalMetadata } from "@xinfin/osx-client-common";
 import { Proposal } from "../utils/types";
-import { SubgraphProposalBase } from "@xinfin/osx-daofin-sdk-client";
-import {
-  decodeProposalId,
-  encodeProposalId,
-  getExtendedProposalId,
-  resolveIpfsCid,
-} from "@xinfin/osx-sdk-common";
-const ProposalQueries = `
-query ProposalQuery($id: ID!) {
-    pluginProposal(id: $id) {
-      id
-      actions {
-        id
-        to
-        data
-        value
-      }
-      allowFailureMap
-      creator
-      createdAt
-      metadata
-      startDate
-      endDate
-      snapshotBlock
-      executed
-      creationBlockNumber
-      failureMap 
-      pluginProposalId
-    }
-  }
-`;
-function useDaoProposal(pluginId: string): {
+import { resolveIpfsCid } from "@xinfin/osx-sdk-common";
+import { useNavigate } from "react-router-dom";
+import { toStandardTimestamp } from "../utils/date";
+import { SubgraphProposalBase } from "./useDaoProposals";
+import { proposalByProposalIdQuery } from "../utils/graphql-queries/proposals-query";
+import useCommunityMembers from "./useCommunityMembers";
+import { applyRatioCeiled } from "../utils/vote-utils";
+
+function useDaoProposal(proposalId: string): {
   data: Proposal | undefined;
   error: string;
   isLoading: boolean;
@@ -48,24 +20,27 @@ function useDaoProposal(pluginId: string): {
   const [proposals, setProposals] = useState<Proposal>();
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const navigate = useNavigate();
+  const { data: communityLengths } = useCommunityMembers();
   useEffect(() => {
-    if (!daofinClient) return;
+    if (!daofinClient || !communityLengths) return;
     setIsLoading(true);
     daofinClient.graphql
       .request<{ pluginProposal: SubgraphProposalBase }>({
-        query: ProposalQueries,
+        query: proposalByProposalIdQuery,
         params: {
-          id: pluginId,
+          id: proposalId,
         },
       })
       .then(async ({ pluginProposal }) => {
+        if (pluginProposal === null) navigate("/not-found");
         const metadataCid = resolveIpfsCid(pluginProposal.metadata);
         const metadataString = await daofinClient.ipfs.fetchString(metadataCid);
         const metadata = JSON.parse(metadataString) as ProposalMetadata;
 
-        const startDate = +pluginProposal.startDate * 1000;
-        const endDate = +pluginProposal.endDate * 1000;
+        const startDate = toStandardTimestamp(+pluginProposal.startDate);
+        const endDate = toStandardTimestamp(+pluginProposal.endDate);
+        // applyRatioCeiled();
         return {
           ...pluginProposal,
           metadata,
@@ -82,7 +57,7 @@ function useDaoProposal(pluginId: string): {
         setError(e);
         console.log("error", e);
       });
-  }, [daofinClient]);
+  }, [daofinClient, communityLengths]);
 
   return { data: proposals, error: error, isLoading };
 }
