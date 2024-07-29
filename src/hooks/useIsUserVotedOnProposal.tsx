@@ -1,20 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { useClient } from "./useClient";
 import { useNetwork } from "../contexts/network";
-function useIsUserVotedOnProposal(proposalId: string, voterAddress: string) {
+import { useWallet } from "./useWallet";
+function useIsUserVotedOnProposal(proposalId: string | undefined) {
   const [isUserVotedOnProposal, setIsUserVotedOnProposal] = useState<boolean>();
   const { daofinClient } = useClient();
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
+  const { address: voterAddress } = useWallet();
 
   useEffect(() => {
-    console.log({ proposalId, voterAddress });
-
-    if (!daofinClient || !voterAddress) return;
+    if (!daofinClient || !voterAddress || !proposalId) return;
     setIsLoading(true);
 
     daofinClient.methods
-      .isVotedOnProposal("0", voterAddress)
+      .isVotedOnProposal(proposalId, voterAddress)
       .then((data) => {
         setIsLoading(false);
         setIsUserVotedOnProposal(data);
@@ -23,9 +23,8 @@ function useIsUserVotedOnProposal(proposalId: string, voterAddress: string) {
         setIsLoading(false);
         console.log("error", e);
       });
-  }, [daofinClient]);
-  if (!voterAddress) return false;
+  }, [daofinClient, voterAddress, proposalId]);
 
-  return isUserVotedOnProposal;
+  return !!isUserVotedOnProposal;
 }
 export default useIsUserVotedOnProposal;

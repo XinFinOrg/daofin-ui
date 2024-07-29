@@ -1,5 +1,4 @@
 import {
-  AlchemyProvider,
   InfuraProvider,
   JsonRpcProvider,
   Web3Provider,
@@ -21,8 +20,8 @@ import {
   translateToNetworkishName,
 } from "../utils/networks";
 
-const NW_ARB = { chainId: 42161, name: "arbitrum" };
-const NW_ARB_GOERLI = { chainId: 421613, name: "arbitrum-goerli" };
+// const NW_ARB = { chainId: 42161, name: "arbitrum" };
+// const NW_ARB_GOERLI = { chainId: 421613, name: "arbitrum-goerli" };
 
 /* CONTEXT PROVIDER ========================================================= */
 type Nullable<T> = T | null;
@@ -47,7 +46,7 @@ type ProviderProviderProps = {
  * therefore be null if no wallet is connected.
  */
 export function ProvidersProvider({ children }: ProviderProviderProps) {
-  const { provider } = useWallet();
+  const { provider, isOnWrongNetwork } = useWallet();
   const { network } = useNetwork();
 
   const [infuraProvider, setInfuraProvider] = useState<Providers["infura"]>(
@@ -77,8 +76,8 @@ function getInfuraProvider(network: SupportedNetworks) {
   // However, I have no idea why this is necessary. Looking at the ethers
   // library, there's no reason why passing the chainId wouldn't work. Also,
   // I've tried it on a fresh project and had no problems there...
-  if (network == "apothem") {
-    return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0], {
+  if (network == "apothem"|| network == "xdc") {
+    return new JsonRpcProvider(CHAIN_METADATA[network]?.rpc[0], {
       chainId: CHAIN_METADATA[network].id,
       name: translateToNetworkishName(network),
       ensAddress:
@@ -102,7 +101,10 @@ export function getJsonRpcProvider(
   network: SupportedNetworks
 ): JsonRpcProvider {
   const translatedNetwork = translateToNetworkishName(network);
-  return new JsonRpcProvider(CHAIN_METADATA[network].rpc[0]);
+  if (translatedNetwork === "unsupported") {
+    return new JsonRpcProvider(CHAIN_METADATA['apothem']?.rpc[0]);
+  }
+  return new JsonRpcProvider(CHAIN_METADATA[network]?.rpc[0]);
 }
 /**
  * Returns provider based on the given chain id

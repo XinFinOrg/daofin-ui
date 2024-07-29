@@ -56,7 +56,7 @@ if (value && JSON.parse(value).functional) {
     // TODO: Check and update the size needed for the cache
     maxSize: 5242880, // 5 MiB
     storage: new LocalStorageWrapper(window.localStorage),
-    debug: process.env.NODE_ENV === "development",
+    debug: import.meta.env.NODE_ENV === "development",
     persistenceMapper: async (data: string) => {
       const parsed = JSON.parse(data);
 
@@ -147,7 +147,7 @@ const selectedDaoVar = makeVar<NavigationDao>({
     name: "",
     avatar: "",
   },
-  chain: 5,
+  chain: 51,
   plugins: [],
 });
 

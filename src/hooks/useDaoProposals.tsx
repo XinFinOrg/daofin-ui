@@ -1,39 +1,31 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useClient } from "./useClient";
-import { useNetwork } from "../contexts/network";
-import { GlobalSettings } from "@xinfin/osx-daofin-sdk-client";
-import { ProposalsQuery } from "@xinfin/osx-daofin-sdk-client/dist/internal/graphql-queries/proposals";
-import { ethers } from "ethers";
 import { getPluginInstallationId } from "../utils/networks";
-import { ProposalBase, ProposalMetadata } from "@xinfin/osx-client-common";
+import { ProposalMetadata } from "@xinfin/osx-client-common";
 import { Proposal } from "../utils/types";
-import { SubgraphProposalBase } from "@xinfin/osx-daofin-sdk-client";
 import { resolveIpfsCid } from "@xinfin/osx-sdk-common";
-const ProposalsQueries = `
-query ProposalsQuery($pluginId: ID!) {
-  pluginProposals(where: { plugin: $pluginId }) {
-    id
-    pluginProposalId
-    failureMap
-    creator
-    metadata
-    startDate
-    endDate
-    creationBlockNumber
-    snapshotBlock
-    executed
-    actions {
-      id
-      to
-      value
-      data
-    }
-    dao{
-      id
-    }
-  }
-}
-`;
+import { TallyDetails } from "@xinfin/osx-daofin-sdk-client";
+import { allProposalsByPluginIdQuery } from "../utils/graphql-queries/proposals-query";
+import useFetchProposalStatus from "./useFetchProposalStatus";
+
+export type SubgraphProposalBase = {
+  id: string;
+  dao: {
+    id: string;
+  };
+  creator: string;
+  metadata: string;
+  startDate: string;
+  endDate: string;
+  createdAt: string;
+  executed: boolean;
+  pluginProposalId: string;
+  potentiallyExecutable: boolean;
+  tallyDetails: TallyDetails[];
+  proposalType: {
+    proposalTypeId: string;
+  };
+};
 function useDaoProposals(
   daoAddress: string,
   pluginAddress: string
@@ -43,13 +35,13 @@ function useDaoProposals(
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const { makeCall } = useFetchProposalStatus();
   useEffect(() => {
     if (!daofinClient) return;
     setIsLoading(true);
     daofinClient.graphql
       .request<{ pluginProposals: SubgraphProposalBase[] }>({
-        query: ProposalsQueries,
+        query: allProposalsByPluginIdQuery,
         params: {
           pluginId: getPluginInstallationId(daoAddress, pluginAddress),
         },
@@ -62,16 +54,21 @@ function useDaoProposals(
               metadataCid
             );
             const metadata = JSON.parse(metadataString) as ProposalMetadata;
+            const status = await makeCall(item.pluginProposalId);
+            console.log({status});
+            
             return {
               ...item,
               metadata,
+              ...status,
+              // committeesVotes: [...stats],
             };
           })
-        )
+        );
       })
       .then((data) => {
-
         setProposals(data as unknown as Proposal[]);
+        setIsLoading(false);
       })
       .catch((e) => {
         setIsLoading(false);
