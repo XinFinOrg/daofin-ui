@@ -47,6 +47,8 @@ const determineNetwork = (
   chainId: number,
   status: "disconnected" | "connecting" | "connected"
 ): SupportedNetworks | "unsupported" => {
+  console.log({ chainId });
+
   if (networkUrlSegment) {
     // NETWORK from url
     return toSupportedNetwork(networkUrlSegment);
@@ -57,13 +59,10 @@ const determineNetwork = (
       return Object.entries(CHAIN_METADATA).find(
         ([, v]) => v.id === chainId
       )?.[0] as SupportedNetworks;
-    } else {
-      console.log("*NETWORK UNSUPPORTED");
-      return "unsupported";
     }
   }
 
-  //NETWORK defaults to eth
+  //NETWORK defaults to apothem
   return "apothem";
 };
 
@@ -82,7 +81,7 @@ const determineNetwork = (
  */
 export function NetworkProvider({ children }: NetworkProviderProps) {
   const navigate = useNavigate();
-  const networkUrlSegment = '';
+  const networkUrlSegment = "";
   const { chain } = useWagmiNetwork();
   const chainId = chain?.id || 0;
   const { status: wagmiStatus } = useAccount();
