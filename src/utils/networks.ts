@@ -64,6 +64,7 @@ export type ChainData = {
   ipfs?: string;
   daofinSubgraph: string;
   osxSubgraph: string;
+  fxdToken: string;
 };
 
 export type ChainList = Record<SupportedNetworks, ChainData>;
@@ -88,6 +89,7 @@ export const CHAIN_METADATA: ChainList = {
     ipfs: import.meta.env.VITE_IPFS_API_URL,
     daofinSubgraph: import.meta.env.VITE_APOTHEM_DAOFIN_SUB_GRAPH_URL || "",
     osxSubgraph: import.meta.env.VITE_APOTHEM_OSX_SUB_GRAPH_URL || "",
+    fxdToken: "0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96",
   },
   xdc: {
     id: 50,
@@ -109,6 +111,7 @@ export const CHAIN_METADATA: ChainList = {
     ipfs: import.meta.env.VITE_IPFS_API_URL,
     daofinSubgraph: import.meta.env.VITE_XDC_DAOFIN_SUB_GRAPH_URL || "",
     osxSubgraph: import.meta.env.VITE_XDC_OSX_SUB_GRAPH_URL || "",
+    fxdToken: "0x49d3f7543335cf38Fa10889CCFF10207e22110B5",
   },
   unsupported: {
     id: 51,
@@ -129,6 +132,7 @@ export const CHAIN_METADATA: ChainList = {
     ipfs: "",
     daofinSubgraph: "",
     osxSubgraph: "",
+    fxdToken: "",
   },
 };
 
@@ -428,9 +432,6 @@ export function makeBlockScannerAddressUrl(
   return `${CHAIN_METADATA[network].explorer}/address/${address}`;
 }
 
-export function generateProposalTypeName(
-  name: string
-) {
-  return name.split(' ').join('-').toLocaleLowerCase()
+export function generateProposalTypeName(name: string) {
+  return name.split(" ").join("-").toLocaleLowerCase();
 }
-

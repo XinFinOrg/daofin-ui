@@ -105,6 +105,7 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 const TreasuryPage = () => {
   const { data: nativeBalanceOfDao, isLoading: isDaoBalanceLoading } =
     useFetchDaoBalance();
+  const { network } = useNetwork();
   const { daofinClient } = useClient();
   const { daoAddress } = useAppGlobalConfig();
   const [addfunds, setAddFunds] = useState<NativeTransfer[]>();
@@ -113,7 +114,7 @@ const TreasuryPage = () => {
     abi: erc20ABI,
     args: [daoAddress as Address],
     functionName: "balanceOf",
-    address: "0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96",
+    address: CHAIN_METADATA[network].fxdToken as Address,
   });
 
   const [pieData, setPieData] = useState([{ name: "Non", value: 1 }]);
@@ -166,9 +167,8 @@ const TreasuryPage = () => {
       : 0;
   }, [xdcPrice, nativeBalanceOfDao]);
 
-
   useEffect(() => {
-    if (nativeBalanceOfDao) {
+    if (nativeBalanceOfDao && fxdBalance) {
       setPieData([
         {
           name: "XDC",
