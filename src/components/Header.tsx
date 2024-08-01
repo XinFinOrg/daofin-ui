@@ -13,7 +13,14 @@ import {
   Switch,
   useTheme,
 } from "@chakra-ui/react";
-import { HamburgerIcon, CloseIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
+import {
+  HamburgerIcon,
+  CloseIcon,
+  MoonIcon,
+  SunIcon,
+  InfoIcon,
+  WarningIcon,
+} from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import {
@@ -134,9 +141,14 @@ export default function Header() {
           </Flex>
         </Box>
       </DefaultBox>
-      <Box w={"100%"} >
+      <Box w={"100%"}>
         <Box px={4} w={["full", null, "90%"]} m={"auto"}>
-          <Flex h={16} py={2} alignItems={"center"} justifyContent={"space-between"}>
+          <Flex
+            h={16}
+            py={2}
+            alignItems={"center"}
+            justifyContent={"space-between"}
+          >
             <IconButton
               size={"md"}
               icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
@@ -157,7 +169,7 @@ export default function Header() {
               </Box>
               <HStack
                 as={"nav"}
-                spacing={[2,3,4]}
+                spacing={[2, 3, 4]}
                 display={{ base: "none", md: "flex" }}
               >
                 {Links.map((link) => (
@@ -190,6 +202,23 @@ export default function Header() {
             </HStack>
           </Flex>
           <Divider m={"auto"} w={"full"} />
+          {network === "apothem" ? (
+            <Box
+              w={"full"}
+              bgColor={"lightsalmon"}
+              py={2}
+              borderRadius={4}
+              my={2}
+              textAlign={"center"}
+            >
+              <Text fontWeight={"semibold"} color={"black"}>
+                <WarningIcon mr={"2"} />
+                You are connected to {network.toLocaleUpperCase()} Testnet
+              </Text>
+            </Box>
+          ) : (
+            <></>
+          )}
           {isOpen ? (
             <Box pb={4} display={{ md: "none" }}>
               <Stack as={"nav"} spacing={4} mb={"4"}>

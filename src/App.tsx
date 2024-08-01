@@ -15,7 +15,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import useSlowScroll from "./hooks/useSlowScroll";
 
 function App() {
-  useSlowScroll()
+  useSlowScroll();
   // #141c29
   return (
     // <Box bgColor={useColorModeValue("#FFF", "#1c2531")} minH={"100vh"}>
@@ -41,10 +41,7 @@ function App() {
         <Route path="/community">
           <Route path="/community" element={<CommunityPage />} />
           <Route path="/community/judiciary" element={<JudiciaryPage />} />
-          <Route
-            path="/community/house"
-            element={<PeoplesHousePage />}
-          />
+          <Route path="/community/house" element={<PeoplesHousePage />} />
           <Route
             path="/community/senate"
             element={<MasterNodeDelegatePage />}

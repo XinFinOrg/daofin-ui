@@ -1,10 +1,27 @@
 import { SunIcon } from "@chakra-ui/icons";
-import { Box, Flex, Icon, Image, Text, createIcon } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Icon,
+  Image,
+  Text,
+  createIcon,
+  useColorMode,
+} from "@chakra-ui/react";
 
 import XdcCoinLogo from "../utils/assets/xdc-coin.svg";
+import { DefaultBox } from "./Box";
+import { Link } from "react-router-dom";
 const Footer = () => {
   return (
-    <Box w={'full'}   position={'absolute'} bottom={3} right={0}>
+    <DefaultBox
+      w={"full"}
+      position={"absolute"}
+      right={0}
+      py={2}
+      bottom={0}
+      borderRadius={0}
+    >
       <Flex justifyContent={"center"}>
         <a href="https://xinfin.org" target="_blank">
           <Flex>
@@ -14,7 +31,7 @@ const Footer = () => {
           </Flex>
         </a>
       </Flex>
-    </Box>
+    </DefaultBox>
   );
 };
 
