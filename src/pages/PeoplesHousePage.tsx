@@ -134,8 +134,8 @@ const PeoplesHousePage = () => {
               <Tab>Freezed</Tab>
             </TabList>
             <TabPanels>
-              <TabPanel>
-                <DefaultBox w={"full"}>
+              <TabPanel pl={0}>
+                <DefaultBox w={"full"} >
                   <VStack>
                     {activeDeposits && activeDeposits.length > 0 ? (
                       activeDeposits.map(({ amount, voter, txHash }) => (
@@ -355,7 +355,8 @@ const Resignation = () => {
     connectedWalletDepositInfo.amount > 0n &&
     toNormalDate(
       connectedWalletDepositInfo.endOfCooldownPeriod.toString()
-    ).getTime() < Date.now()* 6000 * 60 * 24 * 1;
+    ).getTime() <
+      Date.now() * 6000 * 60 * 24 * 1;
 
   useEffect(() => {
     if (!connectedWalletAddress) {

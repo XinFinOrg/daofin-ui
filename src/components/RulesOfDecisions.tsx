@@ -29,7 +29,7 @@ const RulesOfDecisions: FC<RulesOfDecisionsType> = ({
   const mapProposalTypeIdToItsName = (proposalTypeId: number) => {
     switch (proposalTypeId) {
       case ProposalTypeEnum.Grant:
-        return "Grant";
+        return "Grant / Decision";
       case ProposalTypeEnum.NewProposalType:
         return "New ProposalType";
       case ProposalTypeEnum.UpdateElectionPeriods:

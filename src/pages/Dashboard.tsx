@@ -183,16 +183,8 @@ const Dashboard: FC = () => {
         <CommunityCards />
       </Flex>
       <Flex flexDirection={["column", "column", "column", "row"]} gap={4}>
-        <Box mb={4} width={["full", "full", "full", "2/3"]}>
+        <Box mb={4} w={["full", "full", "full"]}>
           <ElectionPeriods isLoading={isLoadingPeriods} periods={periods} />
-        </Box>
-        <Box mb={4} width={["full", "full", "full", "1/3"]} px={10} py={5}>
-          {/* <TwitterTimelineEmbed
-            sourceType="profile"
-            screenName="DaoFinXDC"
-            noHeader
-            options={{ height: 300, borderRadius: "50px" }}
-          /> */}
         </Box>
       </Flex>
 
