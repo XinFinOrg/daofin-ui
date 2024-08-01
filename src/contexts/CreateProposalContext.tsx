@@ -228,7 +228,10 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
     setProposalCreationData({
       metdata: metadaIpfsHash,
       actions,
-      proposalType: formData.proposalTypeId,
+      proposalType:
+        formData.proposalTypeId === "0" || formData.proposalTypeId === "1"
+          ? "0"
+          : formData.proposalTypeId,
       allowFailureMap: 0,
       electionIndex: formData.selectedElectionPeriod,
       voteOption: 0,

@@ -50,6 +50,7 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
         : 0n,
     [proposal]
   );
+  console.log(votingStatsHook.data);
 
   return (
     <>
@@ -154,9 +155,14 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                       ProgressLabel={
                         <HStack>
                           {currentQuorumNumberRatio >=
-                            requiredQuorumNumberRatio && (
-                            <CheckCircleIcon color={"green"} />
-                          )}
+                            requiredQuorumNumberRatio &&
+                            (currentQuorumNumberRatio === 0n &&
+                            currentQuorumNumber == 0n ? (
+                              <CheckCircleIcon color={"black"} />
+                            ) : (
+                              <CheckCircleIcon color={"green"} />
+                            ))}
+
                           {currentQuorumNumberRatio <
                             requiredQuorumNumberRatio && (
                             <CheckCircleIcon color={"black"} />
@@ -187,13 +193,18 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                       ProgressLabel={
                         <HStack>
                           {currentPassrateNumberRatio >=
-                            requiredPassrateNumberRatio && (
-                            <CheckCircleIcon color={"green"} />
-                          )}
+                            requiredPassrateNumberRatio &&
+                            (currentPassrateNumberRatio === 0n &&
+                              currentPassrateRatio == 0n ? (
+                              <CheckCircleIcon color={"black"} />
+                            ) : (
+                              <CheckCircleIcon color={"green"} />
+                            ))}
                           {currentPassrateNumberRatio <
                             requiredPassrateNumberRatio && (
                             <CheckCircleIcon color={"black"} />
                           )}
+
                           <Text fontWeight={"semibold"} fontSize={["xs", "sm"]}>
                             Passrate
                           </Text>
