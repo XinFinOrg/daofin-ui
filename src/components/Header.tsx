@@ -154,16 +154,17 @@ export default function Header() {
               icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
               aria-label={"Open Menu"}
               display={{ md: "none" }}
+              mr={'4'}
               onClick={isOpen ? onClose : onOpen}
             />
             <HStack spacing={8} alignItems={"center"}>
-              <Box ml={[0, 0, 0, "auto"]}>
+              <Box w={'full'} m={'auto'}>
                 <Link to={""}>
                   {/* <Image src="/logo.svg" /> */}
                   {colorMode === "light" ? (
-                    <img src="/new-logo.png" alt="" width={"230px"} />
+                    <Image src="/new-logo.png" alt="" width={['400px','230px']} />
                   ) : (
-                    <img src="/new-logo-dark.png" alt="" width={"230px"} />
+                    <Image src="/new-logo-dark.png" alt="" width={"230px"} />
                   )}
                 </Link>
               </Box>
