@@ -159,7 +159,7 @@ const ProposalSessionStepper: FC<ProposalSessionStepperProps> = ({
     index: 0,
     count: steps.length,
   });
-  const now = new Date(Date.now() + 1000 * 60 * 60 * 24 * 10);
+  const now = new Date(Date.now());
   const pendingStatus = useMemo(
     () => now < toDate(startDate) && now < toDate(endDate),
     [startDate, endDate]
