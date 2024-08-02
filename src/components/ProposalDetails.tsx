@@ -115,7 +115,7 @@ const ProposalDetails: FC<{
   return (
     <>
       {
-        <Grid  maxW='full'templateColumns={"repeat(2, 1fr)"} gap={[4, 6]}>
+        <Grid maxW="full" templateColumns={"repeat(2, 1fr)"} gap={[4, 6]}>
           <GridItem colSpan={2}>
             <Skeleton isLoaded={!isLoading}>
               <DefaultBox>
@@ -128,7 +128,7 @@ const ProposalDetails: FC<{
                     <Flex
                       flexDirection={"column"}
                       w={["100%", "100%", "60%"]}
-                      flexWrap={'wrap'}
+                      flexWrap={"wrap"}
                       mb={4}
                     >
                       <Box>
@@ -208,7 +208,7 @@ const ProposalDetails: FC<{
               </DefaultBox>
             </Skeleton>
           </GridItem>
-          <GridItem colSpan={[2, 2,2, 1]}>
+          <GridItem colSpan={[2, 2, 2, 1]}>
             <Skeleton isLoaded={!isLoading} minH={"300px"} mb={6}>
               <GridItem mb={6} w="100%" h={"min-content"}>
                 <DefaultBox>
@@ -262,7 +262,7 @@ const ProposalDetails: FC<{
             </GridItem>
           </GridItem>
 
-          <GridItem colSpan={[2, 2,2, 1]} w={"full"}>
+          <GridItem colSpan={[2, 2, 2, 1]} w={"full"}>
             <GridItem h={"min-content"} mb={6}>
               <Skeleton isLoaded={!isLoading} minH={"150px"} mb={6}>
                 <DefaultBox>
@@ -312,13 +312,26 @@ const ProposalDetails: FC<{
                                       justifyContent={"center"}
                                       w={"full"}
                                     >
-                                      <Button
-                                        variant={"link"}
-                                        onClick={handleToggleVotersModal}
-                                        textAlign={"center"}
-                                      >
-                                        Show all
-                                      </Button>
+                                      {filterVotersList(id).length > 5 ? (
+                                        <Button
+                                          variant={"link"}
+                                          onClick={handleToggleVotersModal}
+                                          textAlign={"center"}
+                                        >
+                                          Show all
+                                        </Button>
+                                      ) : (
+                                        <VStack alignItems={"center"}>
+                                          <NoProposalIcon />
+                                          <Text>
+                                            No{" "}
+                                            {convertCommitteeToPlainText(
+                                              committeeNameInVotersBox
+                                            )}{" "}
+                                            has voted yet! Be the first!
+                                          </Text>
+                                        </VStack>
+                                      )}
                                     </HStack>
                                   </VStack>
                                 </TabPanel>

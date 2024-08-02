@@ -79,7 +79,7 @@ export const ElectionPeriodCard: FC<{
 }> = ({ period }) => {
   const { endDate, id, startDate } = period;
   return (
-    <DefaultBox key={uuid()} p={2} w="full" mb={1}>
+    <DefaultBox key={uuid()} p={1} w="full" mb={1}>
       <Box>
         <ProposalStatusBadge
           variant={"subtle"}
@@ -98,7 +98,7 @@ export const ElectionPeriodCard: FC<{
         <HStack
           margin={"1"}
           p={"1"}
-          maxW={"40%"}
+          maxW={"45%"}
           borderRadius="md"
           justifyContent={"flex-start"}
           flexDirection={["column", "column", "row"]}
