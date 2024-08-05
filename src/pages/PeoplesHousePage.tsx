@@ -61,6 +61,7 @@ import Countdown from "react-countdown";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { formatEther } from "viem";
 import useIsWithinVotingPeriod from "../hooks/contractHooks/useIsWithinVotingPeriod";
+import useDaoGlobalSettings from "../hooks/useDaoGlobalSettings";
 export type JoinHouseFormType = {
   amount: string;
 };
@@ -101,6 +102,7 @@ const PeoplesHousePage = () => {
   const communityName = PeoplesHouseCommittee;
 
   const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
+  const { data: setting } = useDaoGlobalSettings();
 
   return (
     <Page title="House">
@@ -118,6 +120,9 @@ const PeoplesHousePage = () => {
               totalMembers={activeDeposits ? activeDeposits.length : 0}
               totalDeposits={weiBigNumberToFormattedNumber(totalDeposits)}
               totalSupply={totalSupply ? totalSupply.toString() : "0"}
+              houseMinAmount={
+                setting ? BigInt(setting.houseMinAmount.toString()) : 0n
+              }
             />
           </PeoplesHouseProvider>
         </>
@@ -135,7 +140,7 @@ const PeoplesHousePage = () => {
             </TabList>
             <TabPanels>
               <TabPanel pl={0}>
-                <DefaultBox w={"full"} >
+                <DefaultBox w={"full"}>
                   <VStack>
                     {activeDeposits && activeDeposits.length > 0 ? (
                       activeDeposits.map(({ amount, voter, txHash }) => (
@@ -220,11 +225,13 @@ interface PeoplesHouseHeaderType {
   totalMembers: number;
   totalDeposits: string;
   totalSupply: string;
+  houseMinAmount: bigint;
 }
 const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
   totalMembers,
   totalDeposits,
   totalSupply,
+  houseMinAmount,
 }) => {
   const { handleToggleFormModal } = usePeopleHouseContext();
   const { network } = useNetwork();
@@ -313,9 +320,15 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
               <Box fontSize={"sm"}>
                 <Text fontWeight={"semibold"}>How does House work?</Text>
                 <Text>
-                  People’s House empowers its members by granting voting power
-                  proportional to their token holdings, adhering to the
-                  principle of "one token, one vote."
+                  to People’s House where empowers its members by granting
+                  voting power proportional to their token holdings, adhering to
+                  the principle of "one token, one vote."
+                  <Text fontWeight={"500"}>
+                    The minimum amount to join is{" "}
+                    {`${numberWithCommaSeparate(formatEther(houseMinAmount))} ${
+                      CHAIN_METADATA[network].nativeCurrency.symbol
+                    }`}
+                  </Text>{" "}
                 </Text>
               </Box>
             </DefaultAlert>

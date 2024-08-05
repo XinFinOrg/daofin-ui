@@ -35,8 +35,6 @@ function useFetchPluginProposalTypeDetails(): {
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
-  console.log(getPluginInstallationId(daoAddress, pluginAddress));
-
   useEffect(() => {
     if (!daofinClient) return;
     setIsLoading(true);
