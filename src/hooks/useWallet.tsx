@@ -55,7 +55,7 @@ export const useWallet = (): IUseWallet => {
   const signer = useEthersSigner(chainId);
 
   const provider = useMemo(() => {
-    if (["apothem"].includes(network)) {
+    if (["apothem",'xdc'].includes(network)) {
       return new JsonRpcProvider(CHAIN_METADATA[network]?.rpc[0], {
         chainId: CHAIN_METADATA[network]?.id,
         name: translateToNetworkishName(network),

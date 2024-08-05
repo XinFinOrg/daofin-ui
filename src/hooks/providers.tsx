@@ -102,7 +102,7 @@ export function getJsonRpcProvider(
 ): JsonRpcProvider {
   const translatedNetwork = translateToNetworkishName(network);
   if (translatedNetwork === "unsupported") {
-    return new JsonRpcProvider(CHAIN_METADATA['apothem']?.rpc[0]);
+    return new JsonRpcProvider(CHAIN_METADATA['xdc']?.rpc[0]);
   }
   return new JsonRpcProvider(CHAIN_METADATA[network]?.rpc[0]);
 }
