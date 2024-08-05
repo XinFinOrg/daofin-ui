@@ -76,7 +76,7 @@ export const CHAIN_METADATA: ChainList = {
     logo: "https://icons.llamao.fi/icons/chains/rsz_xdc.jpg",
     explorer: "https://apothem.xdcscan.io",
     testnet: true,
-    rpc: [`https://erpc.apothem.network/`, `https://apothem.xdcrpc.com/`],
+    rpc: [`https://erpc.apothem.network/`],
     nativeCurrency: {
       name: "TXDC",
       symbol: "TXDC",

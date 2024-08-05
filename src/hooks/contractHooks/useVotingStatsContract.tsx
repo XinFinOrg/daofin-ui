@@ -3,11 +3,12 @@ import {
   useAccount,
   useChainId,
   useContractRead,
-  useNetwork,
   usePublicClient,
 } from "wagmi";
 import { useAppGlobalConfig } from "../../contexts/AppGlobalConfig";
 import { VotingStatsABI } from "../../utils/abis/voting-stats.abi";
+import { useNetwork } from "../../contexts/network";
+import { useWallet } from "../useWallet";
 
 type CommunityReturnType = {
   name: string;
@@ -29,13 +30,13 @@ type CommunityReturnType = {
 };
 function useVotingStatsContract(proposalId: bigint, proposalTypeId: bigint) {
   const { votingStatsAddress } = useAppGlobalConfig();
-
-  //   if (!proposalId || !proposalTypeId) return;
+  const { provider } = useWallet();
 
   return useContractRead<typeof VotingStatsABI, string, CommunityReturnType[]>({
     abi: VotingStatsABI,
     address: votingStatsAddress as Address,
     functionName: "stats",
+    chainId: provider?.network.chainId,
     args: [proposalId, proposalTypeId],
   });
 }

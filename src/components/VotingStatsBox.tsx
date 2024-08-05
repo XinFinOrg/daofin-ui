@@ -9,6 +9,7 @@ import {
   Text,
   Box,
   Flex,
+  useColorMode,
 } from "@chakra-ui/react";
 import { FC, useMemo } from "react";
 import DefaultProgressBar from "./DefaultProgressBar";
@@ -50,8 +51,7 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
         : 0n,
     [proposal]
   );
-  console.log(votingStatsHook.data);
-
+  const { colorMode } = useColorMode();
   return (
     <>
       <HStack
@@ -158,14 +158,20 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                             requiredQuorumNumberRatio &&
                             (currentQuorumNumberRatio === 0n &&
                             currentQuorumNumber == 0n ? (
-                              <CheckCircleIcon color={"black"} />
+                              <CheckCircleIcon
+                                color={
+                                  colorMode === "light" ? "black" : "white"
+                                }
+                              />
                             ) : (
                               <CheckCircleIcon color={"green"} />
                             ))}
 
                           {currentQuorumNumberRatio <
                             requiredQuorumNumberRatio && (
-                            <CheckCircleIcon color={"black"} />
+                            <CheckCircleIcon  color={
+                              colorMode === "light" ? "black" : "white"
+                            } />
                           )}
                           <Text fontSize={["xs", "sm"]} fontWeight={"semibold"}>
                             Quorum
@@ -195,14 +201,20 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                           {currentPassrateNumberRatio >=
                             requiredPassrateNumberRatio &&
                             (currentPassrateNumberRatio === 0n &&
-                              currentPassrateRatio == 0n ? (
-                              <CheckCircleIcon color={"black"} />
+                            currentPassrateRatio == 0n ? (
+                              <CheckCircleIcon
+                                color={
+                                  colorMode === "light" ? "black" : "white"
+                                }
+                              />
                             ) : (
                               <CheckCircleIcon color={"green"} />
                             ))}
                           {currentPassrateNumberRatio <
                             requiredPassrateNumberRatio && (
-                            <CheckCircleIcon color={"black"} />
+                            <CheckCircleIcon
+                              color={colorMode === "light" ? "black" : "white"}
+                            />
                           )}
 
                           <Text fontWeight={"semibold"} fontSize={["xs", "sm"]}>
