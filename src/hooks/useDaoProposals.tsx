@@ -55,8 +55,7 @@ function useDaoProposals(
             );
             const metadata = JSON.parse(metadataString) as ProposalMetadata;
             const status = await makeCall(item.pluginProposalId);
-            console.log({status});
-            
+
             return {
               ...item,
               metadata,

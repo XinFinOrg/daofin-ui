@@ -63,7 +63,7 @@ const determineNetwork = (
   }
 
   //NETWORK defaults to apothem
-  return "apothem";
+  return "xdc";
 };
 
 /**

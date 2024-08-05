@@ -13,7 +13,7 @@ import { Box, Text } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
 import { useDisclosure } from "@chakra-ui/hooks";
 import { useClient } from "../hooks/useClient";
-import { useFormikContext } from "formik";
+import { useFormik, useFormikContext } from "formik";
 import { UpdateOrJoinMasterNodeDelegateeType } from "../pages/MasterNodeDelegatePage";
 import { JoinHouseFormType } from "../pages/PeoplesHousePage";
 import { TransactionState } from "../utils/types";
@@ -80,7 +80,7 @@ export const PeoplesHouseProvider: FC<PropsWithChildren> = ({ children }) => {
     tokenPrice,
     txCosts,
     txFees,
-    hasLoaded
+    hasLoaded,
   } = usePollGasFee(estimateCreationFees, shouldPoll, values.amount);
 
   const handleSendTx = async () => {
@@ -123,7 +123,7 @@ export const PeoplesHouseProvider: FC<PropsWithChildren> = ({ children }) => {
   const { network } = useNetwork();
   const { data: settings } = useDaoGlobalSettings();
   const isValidHouseMember = useIsUserDeposited(address);
-  
+
   const handleCloseModal = () => {
     onClose();
     resetForm();
@@ -133,6 +133,7 @@ export const PeoplesHouseProvider: FC<PropsWithChildren> = ({ children }) => {
     txReviewOpen();
     setCreationProcessState(TransactionState.LOADING);
   };
+  const {isValid}=useFormikContext()
   return (
     <PeoplesHouseContext.Provider
       value={{
@@ -175,6 +176,7 @@ export const PeoplesHouseProvider: FC<PropsWithChildren> = ({ children }) => {
               w={"full"}
               colorScheme="blue"
               type="submit"
+              isDisabled={!isValid}
               onClick={() => {
                 onClose();
                 txReviewToggle();
