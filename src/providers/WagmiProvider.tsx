@@ -19,9 +19,9 @@ const WagmiProvider: FC<PropsWithChildren> = ({ children }) => {
     {
       ...xdc,
       rpcUrls: {
-        public: { http: ["https://rpc.ankr.com/xdc"] },
+        public: { http: ["https://erpc.xinfin.network"] },
+        // default: { http: ["https://erpc.xinfin.network"] },
         default: { http: ["https://erpc.xinfin.network"] },
-        // default: { http: ["https://rpc.ankr.com/xdc"] },
       },
     },
   ];
