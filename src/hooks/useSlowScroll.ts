@@ -6,7 +6,7 @@ const useSlowScroll = (multiplier = 0.45) => {
     currentScroll: 0,
     requestId: 0,
   });
-
+  
   useEffect(() => {
     const handleScroll = () => {
       scrollRef.current.targetScroll = window.scrollY;
