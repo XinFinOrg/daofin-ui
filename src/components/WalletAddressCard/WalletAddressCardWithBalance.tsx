@@ -46,7 +46,7 @@ const WalletAddressCardWithBalance: FC<WalletAddressCardWithBalanceProps> = ({
   };
   return (
     <WalletCardBox w={"full"} px={4} py={2}>
-      <HStack alignItems={"center"} justifyContent={"space-between"}>
+      <HStack alignItems={['start',"center"]} justifyContent={"space-between"} flexDirection={['column','row']}>
         <HStack>
           <Box mt={"0.5"}>
             <Jazzicon diameter={25} seed={jsNumberForAddress(address)} />

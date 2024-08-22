@@ -43,7 +43,7 @@ const RulesOfDecisions: FC<RulesOfDecisionsType> = ({
       default:
         return "N/A";
     }
-  };  
+  };
   return (
     <Accordion>
       <DefaultAlert fontSize={"sm"} mb={4}>
@@ -83,7 +83,7 @@ const RulesOfDecisions: FC<RulesOfDecisionsType> = ({
                         {"%"}
                       </Text>
                     </HStack>
-                    <HStack>
+                    <HStack >
                       <DefaultProgressBar
                         percentage={
                           +toStandardPercentage(supportThreshold.toString())
@@ -91,7 +91,7 @@ const RulesOfDecisions: FC<RulesOfDecisionsType> = ({
                         threshold={null}
                         ProgressLabel={<Text>Threshold</Text>}
                       />
-                      <Text>
+                      <Text alignItems={"flex-start"}>
                         {`${toStandardPercentage(supportThreshold.toString())}`}
                         {"%"}
                       </Text>

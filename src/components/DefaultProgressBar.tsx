@@ -44,7 +44,7 @@ const DefaultProgressBar: FC<VoteStatProgressBarProps> = ({
       flexDir={["column", "column", "row"]}
       justifyContent={"center"}
     >
-      <Box w={"20%"}>
+      <Box w={["20%"]}>
         {Icon ? (
           <Box w={["4", "4", "5", "7"]} h={["4", "4", "5", "7"]}>
             {Icon}

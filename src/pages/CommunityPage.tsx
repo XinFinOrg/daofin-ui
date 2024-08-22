@@ -95,6 +95,7 @@ const CommunityPage = () => {
       <Flex mb={4} flexDirection={["column", "column", "column", "row"]}>
         <Skeleton
           mr={4}
+          mb={4}
           w={["100%", "100%", "100%", "50%"]}
           isLoaded={!isLoadingDaoBalance}
         >

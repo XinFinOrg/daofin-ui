@@ -62,7 +62,6 @@ import { useContractEvent } from "wagmi";
 const Dashboard: FC = () => {
   const navigate = useNavigate();
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
-  
   const { data: proposals, isLoading } = useDaoProposals(
     daoAddress,
     pluginAddress
