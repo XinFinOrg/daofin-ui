@@ -14,7 +14,7 @@ const ExpandableText: FC<ExpandableTextProps> = ({ text, lines = 7 }) => {
         dangerouslySetInnerHTML={{
           __html: text,
         }}
-        style={{ wordBreak: "break-all" }}
+        // style={{ wordBreak: "break-all" }}
         noOfLines={noOfLines}
       ></Text>
       <DefaultButton

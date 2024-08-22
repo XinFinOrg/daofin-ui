@@ -73,8 +73,7 @@ export const UseClientProvider: React.FC<PropsWithChildren> = ({
 
     // when network not supported by the SDK, don't set network
     if (
-      translatedNetwork === "unsupported" ||
-      !SupportedNetworksArray.includes(translatedNetwork)
+      translatedNetwork === "unsupported" 
     ) {
       return;
     }

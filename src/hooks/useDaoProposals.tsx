@@ -7,6 +7,7 @@ import { resolveIpfsCid } from "@xinfin/osx-sdk-common";
 import { TallyDetails } from "@xinfin/osx-daofin-sdk-client";
 import { allProposalsByPluginIdQuery } from "../utils/graphql-queries/proposals-query";
 import useFetchProposalStatus from "./useFetchProposalStatus";
+import { useNetwork } from "../contexts/network";
 
 export type SubgraphProposalBase = {
   id: string;
@@ -31,7 +32,7 @@ function useDaoProposals(
   pluginAddress: string
 ): { data: Proposal[]; error: string; isLoading: boolean } {
   const { daofinClient } = useClient();
-
+  const { network } = useNetwork();
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -74,7 +75,7 @@ function useDaoProposals(
         setError(e);
         console.log("error", e);
       });
-  }, [daofinClient]);
+  }, [daofinClient, network]);
 
   return { data: proposals, error: error, isLoading };
 }

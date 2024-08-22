@@ -98,7 +98,8 @@ export const CHAIN_METADATA: ChainList = {
     logo: "https://icons.llamao.fi/icons/chains/rsz_xdc.jpg",
     explorer: "https://xdcscan.io",
     testnet: false,
-    rpc: [`https://rpc.ankr.com/xdc`],
+    // rpc: [`https://rpc.ankr.com/xdc`],
+    rpc: [`https://erpc.xinfin.network`],
     nativeCurrency: {
       name: "XDC",
       symbol: "XDC",
