@@ -29,7 +29,7 @@ const Footer = () => {
             {colorMode === "light" ? (
               <Image w={5} h={5} src="/xdc-coin.svg" />
             ) : (
-              <Image w={5} h={5} src="/xdc-coin.svg" />
+              <Image w={5} h={5} src="/xdc-coin-dark.svg" />
             )}
 
             <Box p={1}></Box>

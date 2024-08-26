@@ -84,7 +84,7 @@ const JudiciaryPage = () => {
                 </Text>
                 <Text>
                   Their primary role is to ensure that proposals align with
-                  DAOFIN's overarching goals and criteria, serving as the
+                  XDCDAO's overarching goals and criteria, serving as the
                   guardians of the ecosystem's integrity.
                 </Text>
               </VStack>
