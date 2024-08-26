@@ -84,7 +84,7 @@ const TransactionReviewModal = <T extends any | undefined>({
   }, [status]);
   const { network } = useNetwork();
   return (
-    <Modal title={title} isOpen={isOpen} onClose={onClose}>
+    <Modal title={title} isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
       {status === TransactionState.LOADING && (
         <Box>
           <Box mb={4}>
@@ -300,11 +300,11 @@ const TransactionReviewModal = <T extends any | undefined>({
                   Back to Dashboard
                 </Button>
               </Link>
-              <a href="https://www.xdc.dev/new">
+              {/* <a href="https://www.xdc.dev/new">
                 <Button w={"full"} variant={"outline"}>
                   Raise a post on XDC.dev
                 </Button>
-              </a>
+              </a> */}
             </Box>
           </Flex>
         </Box>

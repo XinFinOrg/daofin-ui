@@ -75,6 +75,7 @@ const DefaultProgressBar: FC<VoteStatProgressBarProps> = ({
 const ThresholdLine: FC<Pick<VoteStatProgressBarProps, "threshold">> = ({
   threshold,
 }) => {
+  const bg = useColorModeValue("black", "white");
   return (
     <>
       {" "}
@@ -85,7 +86,7 @@ const ThresholdLine: FC<Pick<VoteStatProgressBarProps, "threshold">> = ({
         transform={`translateX(-${threshold}%)`}
         width="3px"
         height="100%"
-        bg={"black"}
+        bg={bg}
       />
     </>
   );

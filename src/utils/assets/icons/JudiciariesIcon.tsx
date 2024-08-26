@@ -3,7 +3,7 @@ const JudiciariesIcon = () => {
   return (
     <svg viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="8" cy="8.5" r="8" fill="url(#paint0_radial_3106_116776)" />
-      <g clip-path="url(#clip0_3106_116776)">
+      <g clipPath="url(#clip0_3106_116776)">
         <path
           d="M9.89999 14.1572H9.55714V14.5001H9.89999V14.1572Z"
           fill="black"
@@ -1623,9 +1623,9 @@ const JudiciariesIcon = () => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(8 8.5) rotate(90) scale(8)"
         >
-          <stop stop-color="#0B1E8E" />
-          <stop offset="0.421873" stop-color="#BE0000" />
-          <stop offset="1" stop-color="#FF7967" />
+          <stop stopColor="#0B1E8E" />
+          <stop offset="0.421873" stopColor="#BE0000" />
+          <stop offset="1" stopColor="#FF7967" />
         </radialGradient>
         <clipPath id="clip0_3106_116776">
           <rect

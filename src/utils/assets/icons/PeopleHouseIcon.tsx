@@ -3,7 +3,7 @@ const PeopleHouseIcon = () => {
   return (
     <svg viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle cx="8" cy="8.5" r="8" fill="url(#paint0_radial_3106_116779)" />
-      <g clip-path="url(#clip0_3106_116779)">
+      <g clipPath="url(#clip0_3106_116779)">
         <path
           d="M10.5455 13.6362H10.1818V13.9999H10.5455V13.6362Z"
           fill="black"
@@ -1483,9 +1483,9 @@ const PeopleHouseIcon = () => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(8 8.5) rotate(90) scale(8)"
         >
-          <stop stop-color="#F41111" />
-          <stop offset="0.53125" stop-color="#FF810C" />
-          <stop offset="1" stop-color="#FFD43A" />
+          <stop stopColor="#F41111" />
+          <stop offset="0.53125" stopColor="#FF810C" />
+          <stop offset="1" stopColor="#FFD43A" />
         </radialGradient>
         <clipPath id="clip0_3106_116779">
           <rect

@@ -26,11 +26,13 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  useBreakpoint,
+  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import ProposalTypeBadge from "./Badge/ProposalTypeBadge";
 import { IoRocketSharp, IoShareSocial } from "react-icons/io5";
-import { InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
+import { ExternalLinkIcon, InfoOutlineIcon, TimeIcon } from "@chakra-ui/icons";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
 
 import VotingStatsBox from "./VotingStatsBox";
@@ -59,6 +61,7 @@ import { VoteBadge } from "./Badge";
 import ViewDecisionMakingTypeAction from "./actions/views/ViewDecisionMakingTypeAction";
 import { formatEther } from "viem";
 import { Modal } from "./Modal";
+import { uuid } from "../utils/numbers";
 
 const ProposalDetails: FC<{
   proposal: Proposal | undefined;
@@ -111,7 +114,7 @@ const ProposalDetails: FC<{
     },
     [allVoters]
   );
-
+  const breakpoint = useBreakpoint();
   return (
     <>
       {
@@ -252,7 +255,7 @@ const ProposalDetails: FC<{
                     </Text>
                   </Box>
                   {proposal?.actions.map((item) => (
-                    <ViewGrantProposalType {...item} />
+                    <ViewGrantProposalType key={uuid()} {...item} />
                   ))}
                   {proposal?.actions.length === 0 && (
                     <ViewDecisionMakingTypeAction />
@@ -273,7 +276,7 @@ const ProposalDetails: FC<{
                   </HStack>
                   <Tabs isFitted>
                     <TabList
-                      flexDirection={["column", "column", "row"]}
+                      // flexDirection={["column", "column", "row"]}
                       gap={4}
                     >
                       {committeesListWithIcon.map(({ Icon, id, name }) => (
@@ -285,13 +288,19 @@ const ProposalDetails: FC<{
                             <Box w={"25px"} h={"25px"}>
                               {Icon && Icon}
                             </Box>
-                            <Text
-                              fontSize={"sm"}
-                              fontWeight={"semibold"}
-                              whiteSpace={"nowrap"}
-                            >
-                              {`${name} (${filterVotersList(id).length})`}
-                            </Text>
+                            {(breakpoint === "2xl" ||
+                              breakpoint === "xl" ||
+                              breakpoint === "lg" ||
+                              breakpoint === "md") && (
+                              <Text
+                                fontSize={"sm"}
+                                fontWeight={"semibold"}
+                                whiteSpace={"nowrap"}
+                              >
+                                {`${name} `}
+                              </Text>
+                            )}
+                            {/* <Text>( {filterVotersList(id).length} )</Text> */}
                           </HStack>
                         </Tab>
                       ))}
@@ -299,7 +308,7 @@ const ProposalDetails: FC<{
 
                     <TabPanels>
                       {committeesListWithIcon.map(({ id, name }) => (
-                        <TabPanel p={["0", "6"]}>
+                        <TabPanel p={["0", "6"]} key={id}>
                           <Tabs isFitted variant="soft-rounded">
                             <TabPanels>
                               {voteOptionsList.map(([key]) => (
@@ -312,15 +321,7 @@ const ProposalDetails: FC<{
                                       justifyContent={"center"}
                                       w={"full"}
                                     >
-                                      {filterVotersList(id).length > 5 ? (
-                                        <Button
-                                          variant={"link"}
-                                          onClick={handleToggleVotersModal}
-                                          textAlign={"center"}
-                                        >
-                                          Show all
-                                        </Button>
-                                      ) : (
+                                      {filterVotersList(id).length === 0 && (
                                         <VStack alignItems={"center"}>
                                           <NoProposalIcon />
                                           <Text>
@@ -331,6 +332,15 @@ const ProposalDetails: FC<{
                                             has voted yet! Be the first!
                                           </Text>
                                         </VStack>
+                                      )}
+                                      {filterVotersList(id).length > 5 && (
+                                        <Button
+                                          variant={"link"}
+                                          onClick={handleToggleVotersModal}
+                                          textAlign={"center"}
+                                        >
+                                          Show all
+                                        </Button>
                                       )}
                                     </HStack>
                                   </VStack>
@@ -357,10 +367,10 @@ const ProposalDetails: FC<{
                         <Badge
                           p={2}
                           borderRadius={"md"}
-                          bgColor={"blue.100"}
-                          textColor={"blue.300"}
+                          bgColor={["lightblue", "blue.400"]}
+                          textColor={"white"}
                         >
-                          {name}
+                          {name} <ExternalLinkIcon />
                         </Badge>
                       </a>
                     ))}
@@ -450,13 +460,38 @@ const ProposalActionButtons: FC<ProposalActionButtonsProps> = ({
 };
 const VoterCards: FC<{ voters: VoterOnProposal[] }> = ({ voters }) => {
   const { network } = useNetwork();
+  const abstain = useColorModeValue("#D7DEE4", "#151F29");
+  const yes = useColorModeValue("#BFEED1", "#04AA46");
+  const no = useColorModeValue("#FAD6D6", "#ad2727");
+  const mapOptionToColor = (option: number) => {
+    switch (option) {
+      case 1:
+        return abstain;
+      case 2:
+        return yes;
+      case 3:
+        return no;
+
+      default:
+        break;
+    }
+  };
   return (
     <VStack spacing={"1"} alignItems={"start"} w={"full"}>
       {voters.length > 0 ? (
         voters.map(({ voter, txHash, option }, index) => (
-          <HStack w={"full"} key={index}>
+          <HStack w={"full"} key={index} position={"relative"}>
             <WalletAddressCard address={voter} />
-            <VoteBadge option={option} />
+            {/* <VoteBadge option={option} /> */}
+            <Box
+              position="absolute"
+              top="0"
+              width="10px"
+              height="100%"
+              borderTopLeftRadius={"3px"}
+              borderBottomLeftRadius={"3px"}
+              bg={mapOptionToColor(option)}
+            />
             <a href={makeBlockScannerHashUrl(network, txHash)} target="_blank">
               <BlockIcon w={"5"} h={"5"} />
             </a>

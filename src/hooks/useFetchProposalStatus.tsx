@@ -4,6 +4,7 @@ import { Address, useContractReads } from "wagmi";
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import { DaofinPlugin__factory } from "@xinfin/osx-daofin-contracts-ethers";
 import { multicall } from "@wagmi/core";
+import { DaofinABI } from "../utils/abis/daofin.abi";
 export type FetchProposalStatusType = {
   canExecute: boolean;
   isMinParticipationReached: boolean;
@@ -18,18 +19,42 @@ const useFetchProposalStatus = () => {
   const { pluginAddress } = useAppGlobalConfig();
   const daofinContracts = {
     abi: DaofinPlugin__factory.abi,
-    address: pluginAddress,
+    address: pluginAddress as Address,
   } as const;
 
   const fetchStatus = useCallback(
     (pluginProposalId: string) =>
-      Promise.all([
-        daofinClient?.methods.isMinParticipationReached(pluginProposalId),
-        daofinClient?.methods.isThresholdReached(pluginProposalId),
-        daofinClient?.methods.canExecute(pluginProposalId),
-        daofinClient?.methods.isOpenProposal(pluginProposalId),
-        daofinClient?.methods.isExecutedProposal(pluginProposalId),
-      ]),
+      multicall({
+        contracts: [
+          {
+            ...daofinContracts,
+            functionName: "isMinParticipationReached",
+            args: [BigInt(pluginProposalId)],
+          },
+          {
+            ...daofinContracts,
+            functionName: "isThresholdReached",
+            args: [BigInt(pluginProposalId)],
+          },
+          {
+            ...daofinContracts,
+            functionName: "canExecute",
+            args: [BigInt(pluginProposalId)],
+          },
+          {
+            ...daofinContracts,
+            functionName: "getProposal",
+            args: [BigInt(pluginProposalId)],
+          },
+        ],
+      }),
+    // Promise.all([
+    //   daofinClient?.methods.isMinParticipationReached(pluginProposalId),
+    //   daofinClient?.methods.isThresholdReached(pluginProposalId),
+    //   daofinClient?.methods.canExecute(pluginProposalId),
+    //   daofinClient?.methods.isOpenProposal(pluginProposalId),
+    //   daofinClient?.methods.isExecutedProposal(pluginProposalId),
+    // ])
     [daofinClient]
   );
   const makeCall = useCallback(
@@ -38,13 +63,13 @@ const useFetchProposalStatus = () => {
       setIsLoading(true);
       const res = await fetchStatus(proposalId);
       setIsLoading(false);
-
+      console.log({ res });
       return {
-        isMinParticipationReached: !!res[0],
-        isThresholdReached: !!res[1],
-        canExecute: !!res[2],
-        isOpen: !!res[3],
-        executed: !!res[4],
+        isMinParticipationReached: !!res[0].result,
+        isThresholdReached: !!res[1].result,
+        canExecute: !!res[2].result,
+        isOpen: !!res[3].result?.[0],
+        executed: !!res[3].result?.[1],
       } as FetchProposalStatusType;
     },
     [fetchStatus]
