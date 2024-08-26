@@ -104,7 +104,12 @@ export default function Header() {
               <Box mx={"4"}>
                 <HStack>
                   <Box w={"20px"}>
-                    <XdcIcon />
+                    {colorMode === "light" ? (
+                      <Image w={5} h={5} src="/xdc-coin.svg" />
+                    ) : (
+                      <Image w={5} h={5} src="/xdc-coin-dark.svg" />
+                    )}
+                    {/* <XdcIcon /> */}
                   </Box>
                   <Text fontWeight={"medium"} fontSize={"sm"}>
                     ${tokenPrice.toFixed(4)}
@@ -154,15 +159,19 @@ export default function Header() {
               icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
               aria-label={"Open Menu"}
               display={{ md: "none" }}
-              mr={'4'}
+              mr={"4"}
               onClick={isOpen ? onClose : onOpen}
             />
             <HStack spacing={8} alignItems={"center"}>
-              <Box w={'full'} m={'auto'}>
+              <Box w={"full"} m={"auto"}>
                 <Link to={""}>
                   {/* <Image src="/logo.svg" /> */}
                   {colorMode === "light" ? (
-                    <Image src="/new-logo.png" alt="" width={['400px','230px']} />
+                    <Image
+                      src="/new-logo.png"
+                      alt=""
+                      width={["400px", "230px"]}
+                    />
                   ) : (
                     <Image src="/new-logo-dark.png" alt="" width={"230px"} />
                   )}
