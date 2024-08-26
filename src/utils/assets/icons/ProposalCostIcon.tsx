@@ -8,7 +8,7 @@ const ProposalCostIcon = () => {
       xmlns="http://www.w3.org/2000/svg"
     >
       <circle cx="60" cy="60" r="60" fill="url(#paint0_radial_2447_111939)" />
-      <g clip-path="url(#clip0_2447_111939)">
+      <g clipPath="url(#clip0_2447_111939)">
         <path d="M88.125 95H85V98.125H88.125V95Z" fill="black" />
         <path d="M85 95H81.875V98.125H85V95Z" fill="black" />
         <path d="M81.8781 95H78.75V98.125H81.8781V95Z" fill="black" />
@@ -447,8 +447,8 @@ const ProposalCostIcon = () => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(60 60) rotate(90) scale(60)"
         >
-          <stop offset="0.416665" stop-color="#561BFF" />
-          <stop offset="1" stop-color="#7E5EFF" />
+          <stop offset="0.416665" stopColor="#561BFF" />
+          <stop offset="1" stopColor="#7E5EFF" />
         </radialGradient>
         <clipPath id="clip0_2447_111939">
           <rect

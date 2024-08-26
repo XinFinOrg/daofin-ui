@@ -114,7 +114,10 @@ const CreateProposalStepper: FC<CreateProposalStepperProps> = ({
             title: "",
             summary: "",
             description: "",
-            resources: [{ name: "XDC Dev Forum", url: "" }],
+            resources: [
+              { name: "XDCDAO Forum", url: "" },
+              { name: "XDC.Dev", url: "" },
+            ],
           },
           action: { amount: "", recipient: "" },
           selectedElectionPeriod: "0",

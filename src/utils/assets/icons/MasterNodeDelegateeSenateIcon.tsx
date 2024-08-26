@@ -1156,8 +1156,8 @@ const MasterNodeDelegateeSenateIcon = () => {
           gradientUnits="userSpaceOnUse"
           gradientTransform="translate(8 8.5) rotate(90) scale(8)"
         >
-          <stop offset="0.489583" stop-color="#0031DE" />
-          <stop offset="1" stop-color="#109BFF" />
+          <stop offset="0.489583" stopColor="#0031DE" />
+          <stop offset="1" stopColor="#109BFF" />
         </radialGradient>
       </defs>
     </svg>

@@ -10,6 +10,7 @@ import {
   Box,
   Flex,
   useColorMode,
+  useBreakpoint,
 } from "@chakra-ui/react";
 import { FC, useMemo } from "react";
 import DefaultProgressBar from "./DefaultProgressBar";
@@ -28,6 +29,7 @@ import { useContractReads } from "wagmi";
 import useVotingStatsContract from "../hooks/contractHooks/useVotingStatsContract";
 import { applyRatioCeiled } from "../utils/vote-utils";
 import { CheckCircleIcon } from "@chakra-ui/icons";
+import { InfoTooltip } from "./Tooltip";
 
 interface VotingStatsBoxProps {
   currentVoters?: number;
@@ -52,6 +54,9 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
     [proposal]
   );
   const { colorMode } = useColorMode();
+  const breakpoint = useBreakpoint();
+  console.log({ votingStatsHook });
+
   return (
     <>
       <HStack
@@ -68,20 +73,25 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
         </Text>
       </HStack>
       <Tabs isFitted>
-        <TabList flexDirection={["column", "column", "row"]} gap={4}>
+        <TabList /* flexDirection={["column", "column", "row"]} */ gap={4}>
           {committeesListWithIcon.map(({ Icon, id, name }) => (
             <Tab key={id}>
               <HStack>
                 <Box w={"25px"} h={"25px"}>
                   {Icon && Icon}
                 </Box>
-                <Text
-                  fontSize={"sm"}
-                  fontWeight={"semibold"}
-                  whiteSpace={"nowrap"}
-                >
-                  {name}
-                </Text>
+                {(breakpoint === "2xl" ||
+                  breakpoint === "xl" ||
+                  breakpoint === "lg" ||
+                  breakpoint === "md") && (
+                  <Text
+                    fontSize={"sm"}
+                    fontWeight={"semibold"}
+                    whiteSpace={"nowrap"}
+                  >
+                    {name}
+                  </Text>
+                )}
               </HStack>
             </Tab>
           ))}
@@ -117,7 +127,7 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                   >
                     <Text>
                       <Text>
-                        {`${totalVotes} `}
+                        {`${numberWithCommaSeparate(totalVotes.toString())} `}
                         <Text as="p" display={"inline-block"}>
                           Voted
                         </Text>{" "}
@@ -129,19 +139,19 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                     >
                       <Text>
                         <Text as="p" display={"inline-block"}>
-                          {yesVotes.toString()}
+                          {numberWithCommaSeparate(yesVotes.toString())}
                         </Text>{" "}
                         {"YES"}
                       </Text>
                       <Text>
                         <Text as="p" display={"inline-block"}>
-                          {noVotes.toString()}
+                          {numberWithCommaSeparate(noVotes.toString())}
                         </Text>{" "}
                         {"NO"}
                       </Text>
                       <Text>
                         <Text as="p" display={"inline-block"}>
-                          {abstainVotes.toString()}
+                          {numberWithCommaSeparate(abstainVotes.toString())}
                         </Text>{" "}
                         {"ABSTAIN"}
                       </Text>
@@ -154,7 +164,14 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                       height={"2"}
                       ProgressLabel={
                         <HStack>
-                          {currentQuorumNumberRatio >=
+                          {currentQuorumNumber >= requiredQuorumNumber ? (
+                            <CheckCircleIcon color={"green"} />
+                          ) : (
+                            <CheckCircleIcon
+                              color={colorMode === "light" ? "black" : "white"}
+                            />
+                          )}
+                          {/* {currentQuorumNumberRatio >=
                             requiredQuorumNumberRatio &&
                             (currentQuorumNumberRatio === 0n &&
                             currentQuorumNumber == 0n ? (
@@ -169,36 +186,42 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
 
                           {currentQuorumNumberRatio <
                             requiredQuorumNumberRatio && (
-                            <CheckCircleIcon  color={
-                              colorMode === "light" ? "black" : "white"
-                            } />
-                          )}
+                            <CheckCircleIcon
+                              color={colorMode === "light" ? "black" : "white"}
+                            />
+                          )} */}
                           <Text fontSize={["xs", "sm"]} fontWeight={"semibold"}>
-                            Quorum
+                            Quorum{" "}
                           </Text>
+                          <InfoTooltip
+                            label={`Required: ${requiredQuorumNumber.toString()}`}
+                            asLink
+                            hasArrow
+                          />
                         </HStack>
                       }
-                      tooltipLabel={
-                        <Box>
-                          <Text>
-                            Required: {requiredQuorumNumber.toString()}
-                          </Text>
-                        </Box>
-                      }
                     />
+
                     <DefaultProgressBar
                       percentage={+currentPassrateNumberRatio.toString()}
                       threshold={+requiredPassrateNumberRatio.toString()}
-                      tooltipLabel={
-                        <Box>
-                          <Text>
-                            Required: {requiredPassrateNumber.toString()}
-                          </Text>
-                        </Box>
-                      }
+                      // tooltipLabel={
+                      //   <Box>
+                      //     <Text>
+                      //       Required: {requiredPassrateNumber.toString()}
+                      //     </Text>
+                      //   </Box>
+                      // }
                       ProgressLabel={
                         <HStack>
-                          {currentPassrateNumberRatio >=
+                          {currentPassrateRatio >= requiredPassrateNumber ? (
+                            <CheckCircleIcon color={"green"} />
+                          ) : (
+                            <CheckCircleIcon
+                              color={colorMode === "light" ? "black" : "white"}
+                            />
+                          )}
+                          {/* {currentPassrateNumberRatio >=
                             requiredPassrateNumberRatio &&
                             (currentPassrateNumberRatio === 0n &&
                             currentPassrateRatio == 0n ? (
@@ -215,11 +238,16 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                             <CheckCircleIcon
                               color={colorMode === "light" ? "black" : "white"}
                             />
-                          )}
+                          )} */}
 
                           <Text fontWeight={"semibold"} fontSize={["xs", "sm"]}>
                             Passrate
                           </Text>
+                          <InfoTooltip
+                            label={`Required: ${requiredPassrateNumber.toString()}`}
+                            asLink
+                            hasArrow
+                          />
                         </HStack>
                       }
                     />

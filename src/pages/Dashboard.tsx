@@ -93,7 +93,7 @@ const Dashboard: FC = () => {
           };
         })
       ),
-    [proposals, makeCall ]
+    [proposals, makeCall]
   );
   useEffect(() => {
     readyToExecutedProposalsCallback().then((data) => {
@@ -103,7 +103,7 @@ const Dashboard: FC = () => {
           .filter(({ canExecute, executed }) => canExecute && !executed),
       ]);
     });
-  }, [readyToExecutedProposalsCallback,network]);
+  }, [readyToExecutedProposalsCallback, network]);
   const onHoverBgColor = useColorModeValue("#D7DEE4", "#1F2E3D");
 
   const { data: periods, isLoading: isLoadingPeriods } =

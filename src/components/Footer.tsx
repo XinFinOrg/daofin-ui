@@ -13,6 +13,7 @@ import XdcCoinLogo from "../utils/assets/xdc-coin.svg";
 import { DefaultBox } from "./Box";
 import { Link } from "react-router-dom";
 const Footer = () => {
+  const { colorMode } = useColorMode();
   return (
     <DefaultBox
       w={"full"}
@@ -25,7 +26,12 @@ const Footer = () => {
       <Flex justifyContent={"center"}>
         <a href="https://xinfin.org" target="_blank">
           <Flex>
-            <Image w={5} h={5} src="/xdc-coin.svg" />
+            {colorMode === "light" ? (
+              <Image w={5} h={5} src="/xdc-coin.svg" />
+            ) : (
+              <Image w={5} h={5} src="/xdc-coin.svg" />
+            )}
+
             <Box p={1}></Box>
             <Text fontWeight={"bold"}>Powered by XDC Network</Text>
           </Flex>

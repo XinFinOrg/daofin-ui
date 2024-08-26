@@ -4,8 +4,8 @@ import {
 } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { FC, PropsWithChildren } from "react";
-import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { xdc, xdcTestnet } from "wagmi/chains";
+import { Address, configureChains, createConfig, WagmiConfig } from "wagmi";
+import { xdc, xdcTestnet, polygon } from "wagmi/chains";
 import {
   metaMaskWallet,
   walletConnectWallet,
@@ -15,13 +15,25 @@ import { publicProvider } from "wagmi/providers/public";
 const WagmiProvider: FC<PropsWithChildren> = ({ children }) => {
   const projectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID as string;
   const chains = [
-    xdcTestnet,
+    {
+      ...xdcTestnet,
+      contracts: {
+        multicall3: {
+          address: "0xD4449Bf3f8E6a1b3fb5224F4e1Ec4288BD765547" as Address,
+        },
+      },
+    },
     {
       ...xdc,
       rpcUrls: {
         public: { http: ["https://erpc.xinfin.network"] },
         // default: { http: ["https://erpc.xinfin.network"] },
         default: { http: ["https://erpc.xinfin.network"] },
+      },
+      contracts: {
+        multicall3: {
+          address: "0x0B1795ccA8E4eC4df02346a082df54D437F8D9aF" as Address,
+        },
       },
     },
   ];

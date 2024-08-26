@@ -155,15 +155,14 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 
   const handlePublishProposal = async () => {
-    if (!proposalCreationData) return;
-    const proposalIterator =
-      daofinClient?.methods.createProposal(proposalCreationData);
-    if (!proposalIterator) {
-      return;
-    }
-    setCreationProcessState(TransactionState.WAITING);
-
     try {
+      if (!proposalCreationData) return;
+      const proposalIterator =
+        daofinClient?.methods.createProposal(proposalCreationData);
+      if (!proposalIterator) {
+        return;
+      }
+      setCreationProcessState(TransactionState.WAITING);
       for await (const step of proposalIterator) {
         switch (step.key) {
           case ProposalCreationSteps.CREATING:
@@ -211,6 +210,7 @@ const CreateProposalProvider: FC<PropsWithChildren> = ({ children }) => {
         })),
       });
     } catch {
+      setCreationProcessState(TransactionState.ERROR);
       throw Error("Could not pin metadata on IPFS");
     }
     if (!metadaIpfsHash) return;

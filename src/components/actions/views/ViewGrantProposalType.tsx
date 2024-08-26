@@ -1,7 +1,10 @@
 import { FC } from "react";
 import { Box, HStack, Text, VStack, useBreakpoint } from "@chakra-ui/react";
 import { XdcIcon } from "../../../utils/assets/icons/XdcIcon";
-import { weiBigNumberToFormattedNumber } from "../../../utils/numbers";
+import {
+  numberWithCommaSeparate,
+  weiBigNumberToFormattedNumber,
+} from "../../../utils/numbers";
 import { CHAIN_METADATA } from "../../../utils/networks";
 import { WalletAddressCard } from "../../WalletAddressCard";
 import { ArrowDownIcon, ArrowForwardIcon } from "@chakra-ui/icons";
@@ -37,7 +40,7 @@ const ViewGrantProposalType: FC<DaoAction & { from?: string }> = ({
                 <XdcIcon />
               </Box>
               <Text>
-                {formatEther(value)}
+                {numberWithCommaSeparate(formatEther(value))}{' '}
                 {CHAIN_METADATA[network].nativeCurrency.symbol}
               </Text>
             </HStack>
