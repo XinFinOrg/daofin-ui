@@ -58,6 +58,7 @@ import ElectionPeriods from "../components/ElectionPeriods";
 import { TwitterTimelineEmbed } from "react-twitter-embed";
 import { PROPOSAL_TYPES } from "../utils/constants";
 import { useContractEvent } from "wagmi";
+import { DefaultButton } from "../components/Button";
 
 const Dashboard: FC = () => {
   const navigate = useNavigate();
@@ -313,22 +314,24 @@ const Dashboard: FC = () => {
       </Flex>
 
       <VStack w={"full"}>
-        <Text
-          alignSelf={"flex-start"}
-          fontSize={"lg"}
-          fontWeight={"semibold"}
-          mb={"2"}
-        >
-          Most Recent Proposals
-        </Text>
+        <HStack justifyContent={"space-between"} w={"full"}>
+          <Text
+            alignSelf={"flex-start"}
+            fontSize={"lg"}
+            fontWeight={"semibold"}
+            mb={"2"}
+          >
+            Most Recent Proposals
+          </Text>
+          <Link to={"/proposals"}>
+            <DefaultButton variant={"link"} size={"sm"}>
+              View all <ArrowForwardIcon />
+            </DefaultButton>
+          </Link>
+        </HStack>
         <Flex justifyContent={"center"} w={"full"}>
           <Box w={"full"}>{<Proposals proposals={proposals} />}</Box>
         </Flex>
-        <Link to={"/proposals"}>
-          <Button variant={"link"}>
-            View all proposals <ArrowForwardIcon />
-          </Button>
-        </Link>
       </VStack>
       {isOpen && (
         <Modal
