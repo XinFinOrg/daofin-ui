@@ -12,8 +12,10 @@ import {
 import XdcCoinLogo from "../utils/assets/xdc-coin.svg";
 import { DefaultBox } from "./Box";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 const Footer = () => {
   const { colorMode } = useColorMode();
+  const {t}=useTranslation()
   return (
     <DefaultBox
       w={"full"}
@@ -33,7 +35,7 @@ const Footer = () => {
             )}
 
             <Box p={1}></Box>
-            <Text fontWeight={"bold"}>Powered by XDC Network</Text>
+            <Text fontWeight={"bold"}>{t('common.poweredByXDC')}</Text>
           </Flex>
         </a>
       </Flex>

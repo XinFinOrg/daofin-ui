@@ -20,6 +20,10 @@ import { DefaultAlert } from "../components/Alerts";
 import RulesOfDecisions from "../components/RulesOfDecisions";
 import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTypeDetails";
 import { MasterNodeDelegationSchema } from "../schemas/delegateMasterNodeSchema";
+import { Address, useContractRead, useContractReads } from "wagmi";
+import { DaofinABI } from "../utils/abis/daofin.abi";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
+import { useTranslation } from "react-i18next";
 
 export type UpdateOrJoinMasterNodeDelegateeType = {
   delegateeAddress: string;
@@ -28,6 +32,17 @@ const MasterNodeDelegatePage = () => {
   const { data: delegatees } = useFetchMasterNodeDelegatee();
   const communityName = MasterNodeCommittee;
   const totalMasterNodes = useFetchTotalNumbersByCommittee(communityName);
+  const { pluginAddress } = useAppGlobalConfig();
+  // useContractReads({
+  //   contracts: [
+  //     {
+  //       abi: DaofinABI,
+  //       address: pluginAddress as Address,
+  //       functionName:"",
+  //       ge
+  //     },
+  //   ],
+  // });
   // const bgColor = useColorModeValue("gray.50", "gray.900");
 
   const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
@@ -128,7 +143,7 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
   totalMasterNodes,
 }) => {
   const { handleToggleFormModal } = useMasterNodeDelegateeSentateContext();
-
+  const { t } = useTranslation();
   return (
     <>
       <HStack
@@ -145,11 +160,10 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
             <Box>
               <Text fontSize={["lg", "xl"]} fontWeight={"bold"}>
                 {" "}
-                Master Nodes Delegatee Senate
+                {t("community.masternodeDelegateeSenate")}
               </Text>
               <Text fontSize={"xs"}>
-                The set of Master Nodes who have joined XDCDAO by delegation
-                mechanism.
+                {t("community.masternodeDelegateeSenateDesc")}
               </Text>
             </Box>
           </HStack>
@@ -160,7 +174,7 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
             colorScheme="blue"
             onClick={handleToggleFormModal}
           >
-            Delegate a member
+            {t("community.delegateMember")}
           </MasterNodeAuthorizedButton>
         </Box>
       </HStack>
@@ -172,7 +186,7 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
             alignItems={"flex-start"}
             justifyContent={"center"}
           >
-            <Text>Total Master Nodes</Text>
+            <Text>{t("community.totalMn")}</Text>
             <Text fontSize={"lg"} fontWeight={"bold"}>
               {totalMasterNodes}
             </Text>
@@ -185,7 +199,7 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
             alignItems={"flex-start"}
             justifyContent={"center"}
           >
-            <Text>Joined Master Nodes</Text>
+            <Text>{t("community.joinedMn")}</Text>
             <Text fontSize={"lg"} fontWeight={"bold"}>
               {totalJoined}
             </Text>
@@ -193,13 +207,8 @@ const MasterNodeDelegateeHeader: FC<MasterNodeDelegateeHeaderProps> = ({
         </DefaultBox>
         <DefaultAlert w={["full", "full", "full", "50%"]} p={4}>
           <Box fontSize={"sm"}>
-            <Text fontWeight={"semibold"}>Why Delegatation mechanism?</Text>
-            <Text>
-              This mechanism enhances security and ensures that each Master
-              Node's influence is accurately represented, with the flexibility
-              for Master Nodes to change their delegatee under certain
-              conditions.
-            </Text>
+            <Text fontWeight={"semibold"}>{t("community.whyDelegation")}</Text>
+            <Text>{t("community.whyDelegationDesc")}</Text>
           </Box>
         </DefaultAlert>
       </HStack>

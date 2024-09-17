@@ -8,10 +8,12 @@ import {
   useDaoTreasury,
 } from "../../contexts/DaoTreasuryContext";
 import { Formik } from "formik";
+import { useTranslation } from "react-i18next";
 
 export interface AddFundButtonProps extends WalletAuthorizedButtonProps {}
 
 export const AddFund: FC<PropsWithChildren> = () => {
+  const { t } = useTranslation();
   return (
     <Formik
       initialValues={{
@@ -20,7 +22,9 @@ export const AddFund: FC<PropsWithChildren> = () => {
       onSubmit={() => {}}
     >
       <DaoTreasuryProvider>
-        <AddFundButton variant="outline" w={'full'}>+ Add fund</AddFundButton>
+        <AddFundButton variant="outline" w={"full"}>
+          + {t("dashboard.addFund")}
+        </AddFundButton>
       </DaoTreasuryProvider>
     </Formik>
   );

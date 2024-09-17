@@ -6,6 +6,7 @@ import {
 } from "@chakra-ui/react";
 import React, { FC } from "react";
 import { ProposalStatus } from "../../utils/types";
+import { useTranslation } from "react-i18next";
 
 interface ProposalStatusBadgeProps extends BadgeProps {
   title: ProposalStatus;
@@ -23,7 +24,7 @@ const ProposalStatusBadge: FC<ProposalStatusBadgeProps> = ({
   const queued = useColorModeValue("#ffa500", "#ffa07a"); // Orange / LightSalmon
   const readyToExecute = useColorModeValue("#800080", "#9370db"); // Purple / MediumPurple
   const executed = useColorModeValue("#008080", "#48d1cc"); // Teal / MediumTurquoise
-  const expired = useColorModeValue('#d32f2f', '#ff6347'); // DarkRed / Tomato
+  const expired = useColorModeValue("#d32f2f", "#ff6347"); // DarkRed / Tomato
 
   const mapProposalStatusToBadge = (title: ProposalStatus) => {
     switch (title) {
@@ -47,6 +48,9 @@ const ProposalStatusBadge: FC<ProposalStatusBadgeProps> = ({
         break;
     }
   };
+  const { t } = useTranslation();
+  console.log(title);
+  
   return (
     <Badge
       {...props}
@@ -59,7 +63,7 @@ const ProposalStatusBadge: FC<ProposalStatusBadgeProps> = ({
       textColor={colorMode === "dark" ? "black" : "white"}
       textTransform={"uppercase"}
     >
-      {title}
+      {t(`common.${title.split(" ").join('').toLocaleLowerCase()}`)}
     </Badge>
   );
 };

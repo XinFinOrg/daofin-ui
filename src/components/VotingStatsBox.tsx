@@ -30,6 +30,7 @@ import useVotingStatsContract from "../hooks/contractHooks/useVotingStatsContrac
 import { applyRatioCeiled } from "../utils/vote-utils";
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { InfoTooltip } from "./Tooltip";
+import { useTranslation } from "react-i18next";
 
 interface VotingStatsBoxProps {
   currentVoters?: number;
@@ -55,8 +56,8 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
   );
   const { colorMode } = useColorMode();
   const breakpoint = useBreakpoint();
-  console.log({ votingStatsHook });
-
+  // console.log({ votingStatsHook });
+  const { t } = useTranslation();
   return (
     <>
       <HStack
@@ -66,7 +67,7 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
         flexDirection={["column", "column", "row"]}
       >
         <Text fontSize={"lg"} fontWeight={"bold"}>
-          Voting
+          {t("common.voting")}
         </Text>
         <Text>
           {/* Current voters {numberWithCommaSeparate(allVotersNumber.toString())} */}
@@ -89,7 +90,7 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                     fontWeight={"semibold"}
                     whiteSpace={"nowrap"}
                   >
-                    {name}
+                    {t(`community.${name.toLocaleLowerCase()}`)}
                   </Text>
                 )}
               </HStack>
@@ -129,7 +130,7 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                       <Text>
                         {`${numberWithCommaSeparate(totalVotes.toString())} `}
                         <Text as="p" display={"inline-block"}>
-                          Voted
+                          {t(`common.voted`)}
                         </Text>{" "}
                       </Text>
                     </Text>
@@ -141,19 +142,19 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                         <Text as="p" display={"inline-block"}>
                           {numberWithCommaSeparate(yesVotes.toString())}
                         </Text>{" "}
-                        {"YES"}
+                        {t(`common.yes`).toUpperCase()}
                       </Text>
                       <Text>
                         <Text as="p" display={"inline-block"}>
                           {numberWithCommaSeparate(noVotes.toString())}
                         </Text>{" "}
-                        {"NO"}
+                        {t(`common.no`).toUpperCase()}
                       </Text>
                       <Text>
                         <Text as="p" display={"inline-block"}>
                           {numberWithCommaSeparate(abstainVotes.toString())}
                         </Text>{" "}
-                        {"ABSTAIN"}
+                        {t(`common.abstains`).toUpperCase()}
                       </Text>
                     </HStack>
                   </HStack>
@@ -191,10 +192,12 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                             />
                           )} */}
                           <Text fontSize={["xs", "sm"]} fontWeight={"semibold"}>
-                            Quorum{" "}
+                            {t("common.quorum")}{" "}
                           </Text>
                           <InfoTooltip
-                            label={`Required: ${requiredQuorumNumber.toString()}`}
+                            label={`${t(
+                              "common.required"
+                            )}: ${requiredQuorumNumber.toString()}`}
                             asLink
                             hasArrow
                           />
@@ -241,10 +244,12 @@ const VotingStatsBox: FC<VotingStatsBoxProps> = ({ proposal }) => {
                           )} */}
 
                           <Text fontWeight={"semibold"} fontSize={["xs", "sm"]}>
-                            Passrate
+                            {t("common.passrate")}
                           </Text>
                           <InfoTooltip
-                            label={`Required: ${requiredPassrateNumber.toString()}`}
+                            label={`${t(
+                              "common.required"
+                            )}: ${requiredPassrateNumber.toString()}`}
                             asLink
                             hasArrow
                           />

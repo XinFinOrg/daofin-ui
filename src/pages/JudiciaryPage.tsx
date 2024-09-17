@@ -14,6 +14,7 @@ import { DefaultBox } from "../components/Box";
 import { DefaultAlert } from "../components/Alerts";
 import RulesOfDecisions from "../components/RulesOfDecisions";
 import useFetchPluginProposalTypeDetails from "../hooks/useFetchPluginProposalTypeDetails";
+import { useTranslation } from "react-i18next";
 
 const JudiciaryPage = () => {
   const { daoAddress, pluginAddress } = useAppGlobalConfig();
@@ -23,6 +24,7 @@ const JudiciaryPage = () => {
     useFetchTotalNumbersByCommittee(JudiciaryCommittee);
 
   const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
+  const { t } = useTranslation();
   return (
     <Page title="Judiciary">
       <DefaultBox mb={4}>
@@ -41,21 +43,19 @@ const JudiciaryPage = () => {
                 <Box>
                   <Text fontSize={["lg", "xl"]} fontWeight={"bold"}>
                     {" "}
-                    Judiciaries
+                    {t("community.judiciaries")}
                   </Text>
-                  <Text fontSize={"xs"}>
-                    A set of pre-selected well-known community leaders.
-                  </Text>
+                  <Text fontSize={"xs"}>{t("community.juryDesc")}</Text>
                 </Box>
               </HStack>
             </Box>
             <Box w={["full", "full", "fit-content"]}>
-              <DefaultButton
+              {/* <DefaultButton
                 w={["full", "full", "fit-content"]}
                 isDisabled={true}
               >
                 Modify Members
-              </DefaultButton>
+              </DefaultButton> */}
             </Box>
           </HStack>
           <HStack
@@ -63,7 +63,7 @@ const JudiciaryPage = () => {
             w={"full"}
             justifyContent={"flex-start"}
           >
-            <DefaultBox w={["full", "full","full", "50%"]}>
+            <DefaultBox w={["full", "full", "full", "50%"]}>
               <VStack
                 w={["50%"]}
                 fontSize={"sm"}
@@ -71,7 +71,7 @@ const JudiciaryPage = () => {
                 alignItems={"flex-start"}
                 justifyContent={"center"}
               >
-                <Text>Total Judiciaries</Text>
+                <Text>{t("community.totalJudiciaries")}</Text>
                 <Text fontSize={"lg"} fontWeight={"bold"}>
                   {totalNumberOfJudiciaries?.toString()}
                 </Text>
@@ -80,20 +80,20 @@ const JudiciaryPage = () => {
             <DefaultAlert w={["full", "full", "full", "50%"]}>
               <VStack alignItems={"flex-start"} fontSize={"sm"}>
                 <Text fontWeight={"semibold"}>
-                  How is the role of Judiciaries?
+                  {t("community.howIsTheRoleOfJudiciaries")}
                 </Text>
-                <Text>
-                  Their primary role is to ensure that proposals align with
-                  XDCDAO's overarching goals and criteria, serving as the
-                  guardians of the ecosystem's integrity.
-                </Text>
+                <Text>{t("community.howIsTheRoleOfJudiciariesDesc")}</Text>
               </VStack>
             </DefaultAlert>
           </HStack>
         </VStack>
       </DefaultBox>
       <HStack flexDirection={["column", "column", "column", "row"]}>
-        <Box w={["full", "full","full", "60%"]} alignSelf={"flex-start"} mr={2}>
+        <Box
+          w={["full", "full", "full", "60%"]}
+          alignSelf={"flex-start"}
+          mr={2}
+        >
           <DefaultBox>
             <VStack>
               {juries.length > 0 ? (
@@ -106,23 +106,26 @@ const JudiciaryPage = () => {
                   />
                 ))
               ) : (
-                  <VStack
-                    w={"100%"}
-                    alignItems="center"
-                    alignSelf={"center"}
-                    p={6}
-                  >
-                    <EmptyBoxIcon />
-                    <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
-                      {"There is no member yet."}
-                    </Text>
-                  </VStack>
+                <VStack
+                  w={"100%"}
+                  alignItems="center"
+                  alignSelf={"center"}
+                  p={6}
+                >
+                  <EmptyBoxIcon />
+                  <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
+                    {"There is no member yet."}
+                  </Text>
+                </VStack>
               )}
             </VStack>
           </DefaultBox>
         </Box>
         {proposalTypes && proposalTypes?.length > 0 && (
-          <DefaultBox w={["full", "full","full", "40%"]} alignSelf={"flex-start"}>
+          <DefaultBox
+            w={["full", "full", "full", "40%"]}
+            alignSelf={"flex-start"}
+          >
             <RulesOfDecisions
               communityName={communityName}
               summary={"All below info demostrate how voting rules work."}

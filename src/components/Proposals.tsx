@@ -20,15 +20,17 @@ import {
 } from "../utils/date";
 import useVoteStats from "../hooks/useVoteStats";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
+import { useTranslation } from "react-i18next";
 
 const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
   const navigate = useNavigate();
   const { committeesListWithIcon } = useCommitteeUtils();
+  const { t } = useTranslation();
   return (
     <>
       {
         <BaseTable
-          emptyText={"There is no proposal yet. Be the first to make change"}
+          emptyText={t("common.thereIsNoProposalYet")}
           data={proposals?.map(
             ({
               metadata,
@@ -41,7 +43,7 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
               tallyDetails,
               executed,
               proposalType,
-              canExecute
+              canExecute,
             }) => ({
               name: (
                 <ProposalSummary
@@ -105,7 +107,7 @@ const Proposals: FC<{ proposals: Proposal[] }> = ({ proposals }) => {
                     navigate(`/proposals/${parseInt(pluginProposalId)}/details`)
                   }
                 >
-                  View
+                  {t('common.view')}
                 </Button>
               ),
             })

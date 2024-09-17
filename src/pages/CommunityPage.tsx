@@ -37,6 +37,7 @@ import { DefaultButton } from "../components/Button";
 import { AddFund } from "../components/Button/AddFundButton";
 import useTotalNumberOfVoters from "../hooks/useTotalNumberOfVoters";
 import { useCommitteeUtils } from "../hooks/useCommitteeUtils";
+import { useTranslation } from "react-i18next";
 
 const data = [
   {
@@ -85,11 +86,12 @@ const CommunityPage = () => {
       }, toWei("0")),
     [mapCommitteeToTotalNumber]
   );
+  const { t } = useTranslation();
 
   return (
     <Page title="Community">
       <Text fontWeight={"semibold"} fontSize={"lg"} mb={"2"}>
-        Community
+        {t("community.name")}
       </Text>
 
       <Flex mb={4} flexDirection={["column", "column", "column", "row"]}>
@@ -103,7 +105,7 @@ const CommunityPage = () => {
             <HStack justifyContent={"space-between"}>
               <VStack alignItems={"flex-start"}>
                 <Text fontSize="sm" fontWeight={"normal"}>
-                  Total Voters
+                  {t("community.totalVoters")}
                 </Text>
                 <Text fontSize="large" fontWeight={"bold"}>
                   {+toEther(totalVoters.toString())}
@@ -120,7 +122,7 @@ const CommunityPage = () => {
             <HStack justifyContent={"space-between"}>
               <VStack alignItems={"flex-start"}>
                 <Text fontSize="sm" fontWeight={"normal"}>
-                  Balance in Treasury
+                  {t("dashboard.balanceInTreasury")}
                 </Text>
                 <Text fontSize="large" fontWeight={"bold"}>
                   {nativeBalanceOfDao
@@ -148,15 +150,15 @@ const CommunityPage = () => {
           >
             <Box fontSize={["sm", "md"]}>
               <Text fontWeight={"semibold"} mb={"1"}>
-                Judiciaries
+                {t("community.judiciaries")}
               </Text>
               <Text fontWeight={"normal"} fontSize={"xs"}>
-                A set of pre-selected well-known community leaders.
+                {t("community.juryDesc")}
               </Text>
             </Box>
             <Box display={"inline-flex"} alignItems={"center"}>
               <Link to={"/community/judiciary"}>
-                <Text fontSize={["sm", "md"]}>View all</Text>
+                <Text fontSize={["sm", "md"]}>{t("common.viewAll")}</Text>
               </Link>
               <ArrowForwardIcon />
             </Box>
@@ -197,11 +199,10 @@ const CommunityPage = () => {
             >
               <Box textAlign={"start"}>
                 <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
-                  People’s House
+                  {t("community.house")}
                 </Text>
                 <Text fontSize={"xs"} fontWeight={"normal"}>
-                  This is the group of Token Holders who have deposited their
-                  tokens into DAO Treasury.
+                  {t("community.houseDesc")}
                 </Text>
               </Box>
               <Box w={"100%"} px={6} py={4}>
@@ -220,7 +221,7 @@ const CommunityPage = () => {
             <VStack alignItems={"flex-start"} w={["100%", "50%"]}>
               <Box textAlign={"start"}>
                 <Text fontSize={"md"} fontWeight={"semibold"} mb={"1"}>
-                  Top Contributors
+                  {t("community.topContributers")}
                 </Text>
                 {/* <Text fontSize={"xs"} fontWeight={"normal"}>
                   People that has funded the DAO treasury the most
@@ -228,26 +229,30 @@ const CommunityPage = () => {
               </Box>
               <VStack w={"full"}>
                 {people.length > 0 ? (
-                  people.map(
-                    ({
-                      amount,
-                      depositDate,
-                      snapshotBlock,
-                      id,
-                      voter,
-                      txHash,
-                    }) => (
-                      <Box w={"full"}>
-                        <WalletAddressCardWithBalance
-                          address={voter}
-                          sm
-                          txHash={txHash}
-                          balance={weiBigNumberToFormattedNumber(amount)}
-                          symbol={CHAIN_METADATA[network].nativeCurrency.symbol}
-                        />
-                      </Box>
+                  people
+                    .slice(0, 5)
+                    .map(
+                      ({
+                        amount,
+                        depositDate,
+                        snapshotBlock,
+                        id,
+                        voter,
+                        txHash,
+                      }) => (
+                        <Box w={"full"}>
+                          <WalletAddressCardWithBalance
+                            address={voter}
+                            sm
+                            txHash={txHash}
+                            balance={weiBigNumberToFormattedNumber(amount)}
+                            symbol={
+                              CHAIN_METADATA[network].nativeCurrency.symbol
+                            }
+                          />
+                        </Box>
+                      )
                     )
-                  )
                 ) : (
                   <>
                     <VStack
@@ -267,12 +272,12 @@ const CommunityPage = () => {
               <VStack w={"full"}>
                 <Link to={"/community/house"}>
                   <DefaultButton variant={"ghost"} w={"full"} alignSelf={"end"}>
-                    View All
+                    {t("common.viewAll")}
                   </DefaultButton>
                 </Link>
                 <Link to={"/community/house"}>
                   <DefaultButton w={"full"} alignSelf={"end"}>
-                    Join House
+                    {t("community.joinHouse")}
                   </DefaultButton>
                 </Link>
               </VStack>
@@ -291,16 +296,15 @@ const CommunityPage = () => {
           >
             <Box>
               <Text fontWeight={"semibold"} mb={"1"}>
-                Master Node Delegatee Senate
+                {t("community.masternodeDelegateeSenate")}
               </Text>
               <Text fontWeight={"normal"} fontSize={"xs"}>
-                The set of Master Nodes who have joined XDCDAO by delegation
-                mechanism.
+                {t("community.masternodeDelegateeSenateDesc")}
               </Text>
             </Box>
             <Box display={"inline-flex"} alignItems={"center"}>
               <Link to={"/community/senate"}>
-                <Text>View all</Text>
+                <Text>{t("common.viewAll")}</Text>
               </Link>
               <ArrowForwardIcon />
             </Box>

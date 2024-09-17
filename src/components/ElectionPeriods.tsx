@@ -19,6 +19,7 @@ import { useDisclosure } from "@chakra-ui/hooks";
 import { Button } from "@chakra-ui/button";
 import ProposalStatusStepper from "./ProposalStatusStepper";
 import ProposalSessionStepper from "./ProposalSessionStepper";
+import { useTranslation } from "react-i18next";
 
 type ElectionPeriodsProps = {
   isLoading: boolean;
@@ -36,15 +37,16 @@ const ElectionPeriods: FC<ElectionPeriodsProps> = ({ isLoading, periods }) => {
         : [],
     [periods]
   );
+  const { t } = useTranslation();
   return (
     <>
       <HStack w={["full", "full"]} justifyContent={"space-between"} mb={2}>
         <Text fontWeight={"semibold"} fontSize={"lg"}>
-          🗓 Voting Periods
+          🗓 {t("dashboard.votingPeriods")}
         </Text>
 
         <DefaultButton variant={"link"} size={"sm"} onClick={onOpen}>
-          View all <ArrowForwardIcon />
+          {t("common.viewAll")} <ArrowForwardIcon />
         </DefaultButton>
       </HStack>
       <Skeleton
@@ -65,7 +67,7 @@ const ElectionPeriods: FC<ElectionPeriodsProps> = ({ isLoading, periods }) => {
         </VStack> */}
       </Skeleton>
 
-      <Modal title="Voting Periods" isOpen={isOpen} onClose={onClose}>
+      <Modal title={t("common.viewAll")} isOpen={isOpen} onClose={onClose}>
         {periods?.map((period) => (
           <ElectionPeriodCard period={period} />
         ))}
@@ -78,6 +80,7 @@ export const ElectionPeriodCard: FC<{
   period: ElectionPeriod;
 }> = ({ period }) => {
   const { endDate, id, startDate } = period;
+  const { t } = useTranslation();
   return (
     <DefaultBox key={uuid()} p={1} w="full" mb={1}>
       <Box>
