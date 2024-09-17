@@ -5,13 +5,14 @@ import { useNavigate } from "react-router-dom";
 
 import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 import useTotalNumberOfVoters from "../hooks/useTotalNumberOfVoters";
+import { useTranslation } from "react-i18next";
 
 const CommunityCards = () => {
   const navigate = useNavigate();
   const { committeesListWithIcon } = useCommitteeUtils();
   const { mapCommitteeToTotalNumber } = useTotalNumberOfVoters();
 
-
+  const { t } = useTranslation();
   return (
     <HStack w={"full"} flexDirection={["column", "column", "column", "row"]}>
       {committeesListWithIcon.map(({ bgGradient, Icon, id, name, link }) => (
@@ -30,7 +31,7 @@ const CommunityCards = () => {
           mb={4}
           w={["100%", "100%", "100%", "33%"]}
           borderColor={bgGradient}
-          borderWidth={'thin'}
+          borderWidth={"thin"}
         >
           <Box w={"50px"} flexShrink={1}>
             {Icon && Icon}
@@ -42,7 +43,8 @@ const CommunityCards = () => {
             color={"black"}
           >
             <Text fontSize={"sm"} fontWeight={"normal"}>
-              Number of {name}
+              {t(`common.numberOf`)}{" "}
+              {t(`community.${name.toLocaleLowerCase()}`)}
             </Text>
             <Text fontSize={"lg"} fontWeight={"bold"}>
               {mapCommitteeToTotalNumber(id)}

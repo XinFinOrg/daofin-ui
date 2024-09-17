@@ -44,6 +44,7 @@ import {
 import InfoTooltip from "./Tooltip/InfoTooltip";
 import { CHAIN_METADATA, makeBlockScannerHashUrl } from "../utils/networks";
 import { useNetwork } from "../contexts/network";
+import { useTranslation } from "react-i18next";
 
 interface ProposalStatusStepperProps {
   proposalId: string;
@@ -65,12 +66,14 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
   executionDate,
   executionTxHash,
 }) => {
+  const { t } = useTranslation();
+
   const [steps, setSteps] = useState([
     {
       id: uuid(),
       status: ProposalStatus.PUBLISHED,
-      title: "Publish",
-      tooltip: "Caputered on-chain successfully.",
+      title: t("proposalStatus.publish"),
+      tooltip: t("proposalStatus.publishTooltip"),
       date: toDate(createdAt),
       indicator: <IoRocket />,
       txHash: creationTxHash,
@@ -78,9 +81,8 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
     {
       id: uuid(),
       status: ProposalStatus.ACTIVE,
-      title: "Start of Voting Period ",
-      tooltip:
-        "The proposal is currently in the voting phase. Community members are actively casting their votes.",
+      title: t("proposalStatus.startVoting"),
+      tooltip: t("proposalStatus.startVotingTooltip"),
       date: toDate(startDate),
       endDate: toDate(endDate),
       indicator: <IoPlay />,
@@ -88,8 +90,8 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
     {
       id: uuid(),
       status: ProposalStatus.ACTIVE,
-      title: "End of Voting Period",
-      tooltip: "Shows the end of voting period of this proposal.",
+      title: t("proposalStatus.endVoting"),
+      tooltip: t("proposalStatus.endVotingTooltip"),
       date: toDate(endDate),
       endDate: toDate(endDate),
       indicator: <IoStop />,
@@ -97,9 +99,8 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
     {
       id: uuid(),
       status: ProposalStatus.REACHED,
-      title: "On-chain Execution Delay",
-      tooltip:
-        "Meets the voting requirements, Queued for the on-chain execution.",
+      title: t("proposalStatus.executionDelay"),
+      tooltip: t("proposalStatus.executionDelayTooltip"),
       date: toDate(endDate + 10 * 60 * 1000),
       endDate: toDate(endDate),
       indicator: <IoTime />,
@@ -107,9 +108,8 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
     {
       id: uuid(),
       status: ProposalStatus.EXECUTED,
-      title: "Execution",
-      tooltip:
-        "The proposal has been approved and successfully executed through DAO Treasury",
+      title: t("proposalStatus.execution"),
+      tooltip: t("proposalStatus.executionTooltip"),
       date:
         dateNow().getTime() < executionDate ? toDate(executionDate) : undefined,
       txHash: executionTxHash,
@@ -118,8 +118,8 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
     {
       id: uuid(),
       status: ProposalStatus.DEFEATED,
-      title: "Defeated",
-      tooltip: "The proposal has not been approved by the XDCDAO governance",
+      title: t("proposalStatus.defeated"),
+      tooltip: t("proposalStatus.defeatedTooltip"),
       date: undefined,
       indicator: <IoCloseOutline />,
     },
@@ -215,11 +215,10 @@ const ProposalStatusStepper: FC<ProposalStatusStepperProps> = ({
     ) : (
       <IoCloseCircle color={"red"} size={"100px"} />
     );
-
   return (
     <>
       <Box p={"5"} fontSize={"lg"} fontWeight={"bold"}>
-        <Text>Proposal Status</Text>
+        <Text>{t("common.proposalstatus")}</Text>
       </Box>
       <Box p={"6"} w={"full"}>
         <Stepper

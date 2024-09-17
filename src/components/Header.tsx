@@ -12,6 +12,7 @@ import {
   Divider,
   Switch,
   useTheme,
+  Select,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -37,7 +38,8 @@ import { XdcIcon } from "../utils/assets/icons/XdcIcon";
 import { DefaultBox } from "./Box";
 import { useGlobalState } from "../contexts/GlobalStateContext";
 import { uuid } from "../utils/numbers";
-
+import { LangType } from "../contexts/GlobalStateContext";
+import { useTranslation } from "react-i18next";
 interface Props {
   children: React.ReactNode;
   href: string;
@@ -66,7 +68,9 @@ export default function Header() {
     []
   );
   const tokenPrice = useGlobalState().xdcPrice;
+  const { switchLanguage } = useGlobalState();
   const bgColorModeLinks = useColorModeValue("blue.100", "blue.800");
+  const { t } = useTranslation();
   return (
     <>
       <DefaultBox
@@ -120,8 +124,8 @@ export default function Header() {
             <HStack>
               <Box mx={"4"}>
                 <Text fontWeight="semibold" fontSize={"sm"}>
-                  <a href={"https://xdc.dev"} target={"_blank"}>
-                    XDC.DEV
+                  <a href={"https://forum.xinfin.org/"} target={"_blank"}>
+                    {t('header.forum')}
                   </a>
                 </Text>
               </Box>
@@ -131,9 +135,22 @@ export default function Header() {
                     href={"https://docs.xdc.community/daofin"}
                     target={"_blank"}
                   >
-                    DOCS
+                    {t('header.docs')}
                   </a>
                 </Text>
+              </Box>
+              <Box>
+                <Select
+                  size={"sm"}
+                  variant="unstyled"
+                  onChange={(e) => {
+                    switchLanguage(e.target.value);
+                  }}
+                >
+                  {["EN", "JPN"].map((lang) => (
+                    <option value={lang.toLowerCase()}>{lang}</option>
+                  ))}
+                </Select>
               </Box>
               <Box ml={"4"}>
                 <Switch
@@ -195,9 +212,11 @@ export default function Header() {
                         bgColor: bgColorModeLinks,
                       }}
                     >
-                      <HStack alignItems={"center"}>
+                      <HStack alignItems={"center"} w={["100px"]}>
                         <>{link.icon}</>
-                        <Text>{link.name}</Text>
+                        <Text>
+                          {t(`header.${link.name.toLocaleLowerCase()}`)}
+                        </Text>
                       </HStack>
                     </Box>
                   </Link>
@@ -231,18 +250,34 @@ export default function Header() {
           )}
           {isOpen ? (
             <Box pb={4} display={{ md: "none" }}>
-              <Stack as={"nav"} spacing={4} mb={"4"}>
+              <Box my={"4"}>
+                <ConnectButton chainStatus="icon" accountStatus="address" />
+              </Box>
+
+              <Stack as={"nav"} spacing={4}>
                 {Links.map((link) => (
                   <Link
                     key={uuid()}
                     to={link.location}
                     onClick={() => onClose()}
                   >
-                    <Text fontWeight={"semibold"}>{link.name}</Text>
+                    <Text>{t(`header.${link.name.toLocaleLowerCase()}`)}</Text>
                   </Link>
                 ))}
               </Stack>
-
+              <Box my={4}>
+                <Select
+                  size={"sm"}
+                  variant="unstyled"
+                  onChange={(e) => {
+                    switchLanguage(e.target.value);
+                  }}
+                >
+                  {["EN", "JPN"].map((lang) => (
+                    <option value={lang.toLowerCase()}>{lang}</option>
+                  ))}
+                </Select>
+              </Box>
               {/* <Switch
                 id="isChecked"
                 isChecked={colorMode === "dark"}
@@ -250,7 +285,6 @@ export default function Header() {
                 size={"lg"}
                 mb={4}
               /> */}
-              <ConnectButton chainStatus="icon" accountStatus="address" />
             </Box>
           ) : null}
         </Box>

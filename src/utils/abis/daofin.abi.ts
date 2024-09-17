@@ -1,5 +1,24 @@
 export const DaofinABI = [
   {
+    inputs: [
+      {
+        internalType: "address",
+        name: "masterNode_",
+        type: "address",
+      },
+    ],
+    name: "isXDCValidatorCandidate",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "isValid",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "AddressIsZero",
     type: "error",

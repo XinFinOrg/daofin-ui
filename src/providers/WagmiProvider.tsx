@@ -17,6 +17,18 @@ const WagmiProvider: FC<PropsWithChildren> = ({ children }) => {
   const chains = [
     {
       ...xdcTestnet,
+      rpcUrls: {
+        default: {
+          http: [
+            "https://rpc.ankr.com/xdc_testnet/3583202f78729c453907a0326e6341ba382b3210fc4c6d18de3d4f9c0d5a8ba7",
+          ],
+        },
+        public: {
+          http: [
+            "https://rpc.ankr.com/xdc_testnet/3583202f78729c453907a0326e6341ba382b3210fc4c6d18de3d4f9c0d5a8ba7",
+          ],
+        },
+      },
       contracts: {
         multicall3: {
           address: "0xD4449Bf3f8E6a1b3fb5224F4e1Ec4288BD765547" as Address,
@@ -26,9 +38,9 @@ const WagmiProvider: FC<PropsWithChildren> = ({ children }) => {
     {
       ...xdc,
       rpcUrls: {
-        public: { http: ["https://erpc.xinfin.network"] },
+        public: { http: ["https://xdcdaorpc.icotokens.net"] },
         // default: { http: ["https://erpc.xinfin.network"] },
-        default: { http: ["https://erpc.xinfin.network"] },
+        default: { http: ["https://xdcdaorpc.icotokens.net"] },
       },
       contracts: {
         multicall3: {

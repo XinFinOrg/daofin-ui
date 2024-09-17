@@ -19,6 +19,7 @@ import { theme } from "./utils/theme";
 import { GlobalStateProvider } from "./contexts/GlobalStateContext";
 import { ModalProvider } from "./contexts/ModalContext";
 import React from "react";
+import { setupI18n } from "./utils/i18n-setup";
 
 // import 'tailwindcss/tailwind.css';
 const root = ReactDOM.createRoot(
@@ -26,6 +27,7 @@ const root = ReactDOM.createRoot(
 );
 // React-Query client
 export const queryClient = new QueryClient();
+setupI18n()
 root.render(
   <React.StrictMode>
     <Router>

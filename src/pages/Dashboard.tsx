@@ -59,6 +59,7 @@ import { TwitterTimelineEmbed } from "react-twitter-embed";
 import { PROPOSAL_TYPES } from "../utils/constants";
 import { useContractEvent } from "wagmi";
 import { DefaultButton } from "../components/Button";
+import { useTranslation } from "react-i18next";
 
 const Dashboard: FC = () => {
   const navigate = useNavigate();
@@ -110,13 +111,15 @@ const Dashboard: FC = () => {
   const { data: periods, isLoading: isLoadingPeriods } =
     useDaoElectionPeriods();
   const { colorMode } = useColorMode();
+  const { t } = useTranslation();
+
   return (
     <Page title="Dashboard">
       <HStack mb={2}>
         <IoBarChart />
 
         <Text fontWeight={"semibold"} fontSize={"lg"}>
-          Overview
+          {t("dashboard.overview")}
         </Text>
       </HStack>
       <Flex
@@ -136,7 +139,7 @@ const Dashboard: FC = () => {
             <HStack justifyContent={"space-between"}>
               <VStack alignItems={"flex-start"}>
                 <Text fontSize="sm" fontWeight={"normal"}>
-                  Total Proposals
+                  {t("dashboard.totalProposals")}
                 </Text>
 
                 <Text fontSize="large" fontWeight={"bold"}>
@@ -148,7 +151,7 @@ const Dashboard: FC = () => {
                   variant="outline"
                   onClick={() => onToggle()}
                 >
-                  New Proposal
+                  {t("dashboard.newProposal")}
                 </WalletAuthorizedButton>
               </Box>
             </HStack>
@@ -163,7 +166,7 @@ const Dashboard: FC = () => {
             <HStack justifyContent={"space-between"}>
               <VStack alignItems={"flex-start"}>
                 <Text fontSize="sm" fontWeight={"normal"}>
-                  Balance in Treasury
+                  {t("dashboard.balanceInTreasury")}
                 </Text>
                 <Text fontSize="large" fontWeight={"bold"}>
                   {nativeBalanceOfDao
@@ -196,7 +199,7 @@ const Dashboard: FC = () => {
       >
         <Box w={["100%", "100%", "100%", "60%"]} mr={"6"}>
           <Text fontSize={"lg"} fontWeight={"semibold"} mb={"2"}>
-            🔥 Ready to Execute
+            🔥 {t("common.readytoexecute")}
           </Text>
           {/* <DefaultBox borderStyle={"dashed"}>  */}
           <VStack
@@ -217,7 +220,7 @@ const Dashboard: FC = () => {
         </Box>
         <Box w={["100%", "100%", "100%", "40%"]}>
           <Text fontSize={"lg"} fontWeight={"semibold"} mb={"2"}>
-            ✅ Executed Proposals
+            ✅ {t("common.executedProposals")}
           </Text>
           {/* <DefaultBox borderStyle={"dashed"} w={"full"}> */}
           <HStack justifyContent={"space-between"}>
@@ -303,7 +306,7 @@ const Dashboard: FC = () => {
                   mb={2}
                 >
                   <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
-                    {"There is no proposal yet."}
+                    {t("common.thereIsNoProposalYet")}
                   </Text>
                 </DefaultBox>
               )}
@@ -321,11 +324,11 @@ const Dashboard: FC = () => {
             fontWeight={"semibold"}
             mb={"2"}
           >
-            Most Recent Proposals
+            {t("common.mostRecentProposals")}
           </Text>
           <Link to={"/proposals"}>
             <DefaultButton variant={"link"} size={"sm"}>
-              View all <ArrowForwardIcon />
+            {t("common.viewAll")} <ArrowForwardIcon />
             </DefaultButton>
           </Link>
         </HStack>
@@ -335,7 +338,7 @@ const Dashboard: FC = () => {
       </VStack>
       {isOpen && (
         <Modal
-          title="What would like to propose?"
+          title={t("dashboard.whatToPropose")}
           isOpen={isOpen}
           onClose={onClose}
           size="sm"
@@ -366,10 +369,15 @@ const Dashboard: FC = () => {
                     }}
                   >
                     <Text fontWeight={"bold"}>
-                      {name} {isComingSoon && <Badge>Coming Soon</Badge>}
+                      {t(`proposalTypes.${name.toLocaleLowerCase()}.name`)}{" "}
+                      {isComingSoon && <Badge>Coming Soon</Badge>}
                     </Text>
 
-                    <Text fontSize={"sm"}>{description}</Text>
+                    <Text fontSize={"sm"}>
+                      {t(
+                        `proposalTypes.${name.toLocaleLowerCase()}.description`
+                      )}
+                    </Text>
                   </Flex>
                   <Divider />
                 </Box>
