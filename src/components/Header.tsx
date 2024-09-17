@@ -36,7 +36,7 @@ import { useNetwork } from "../contexts/network";
 import { useMemo } from "react";
 import { XdcIcon } from "../utils/assets/icons/XdcIcon";
 import { DefaultBox } from "./Box";
-import { useGlobalState } from "../contexts/GlobalStateContext";
+import { langs, useGlobalState } from "../contexts/GlobalStateContext";
 import { uuid } from "../utils/numbers";
 import { LangType } from "../contexts/GlobalStateContext";
 import { useTranslation } from "react-i18next";
@@ -125,7 +125,7 @@ export default function Header() {
               <Box mx={"4"}>
                 <Text fontWeight="semibold" fontSize={"sm"}>
                   <a href={"https://forum.xinfin.org/"} target={"_blank"}>
-                    {t('header.forum')}
+                    {t("header.forum")}
                   </a>
                 </Text>
               </Box>
@@ -135,7 +135,7 @@ export default function Header() {
                     href={"https://docs.xdc.community/daofin"}
                     target={"_blank"}
                   >
-                    {t('header.docs')}
+                    {t("header.docs")}
                   </a>
                 </Text>
               </Box>
@@ -147,9 +147,9 @@ export default function Header() {
                     switchLanguage(e.target.value);
                   }}
                 >
-                  {["EN", "JPN"].map((lang) => (
-                    <option value={lang.toLowerCase()}>{lang}</option>
-                  ))}
+                  {/* {langs.map((lang) => (
+                    <option value={lang}>{lang.toUpperCase()}</option>
+                  ))} */}
                 </Select>
               </Box>
               <Box ml={"4"}>
@@ -273,9 +273,9 @@ export default function Header() {
                     switchLanguage(e.target.value);
                   }}
                 >
-                  {["EN", "JPN"].map((lang) => (
-                    <option value={lang.toLowerCase()}>{lang}</option>
-                  ))}
+                  {/* {langs.map((lang) => (
+                    <option value={lang}>{lang.toUpperCase()}</option>
+                  ))} */}
                 </Select>
               </Box>
               {/* <Switch

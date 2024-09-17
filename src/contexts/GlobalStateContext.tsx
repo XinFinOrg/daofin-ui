@@ -12,6 +12,7 @@ import { fetchTokenPrice } from "../services/prices";
 import { useTranslation } from "react-i18next";
 
 export type LangType = "en" | "jpn";
+export const langs: LangType[] = ["en", "jpn"];
 export interface GlobalStateContextType {
   xdcPrice: number;
   lang: LangType;
