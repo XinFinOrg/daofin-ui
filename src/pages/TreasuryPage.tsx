@@ -538,13 +538,13 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
             </Skeleton>
           </Box>
           <HStack flexDirection={["column", "row"]} w={["full", "initial"]}>
-            <Box w={["full", "initial"]}>
+            {/* <Box w={["full", "initial"]}>
               <Link to={`/create/0`}>
                 <DefaultButton w={["full", "initial"]} variant={"outline"}>
                   {t("treasury.withdraw")}
                 </DefaultButton>
               </Link>
-            </Box>
+            </Box> */}
             <Box w={["full", "initial"]}>
               <AddFund />
             </Box>

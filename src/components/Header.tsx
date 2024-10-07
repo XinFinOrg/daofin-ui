@@ -212,7 +212,7 @@ export default function Header() {
                         bgColor: bgColorModeLinks,
                       }}
                     >
-                      <HStack alignItems={"center"} w={["100px"]}>
+                      <HStack alignItems={"center"} w={["auto"]}>
                         <>{link.icon}</>
                         <Text>
                           {t(`header.${link.name.toLocaleLowerCase()}`)}
