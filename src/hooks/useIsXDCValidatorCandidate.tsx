@@ -13,7 +13,6 @@ function useIsXDCValidatorCandidate(member: string) {
   // const [error, setError] = useState<Error>();
   const [, setIsLoading] = useState(false);
   if (!member) return false;
-
   const { data,error } = useContractRead({
     abi: DaofinABI,
     address: pluginAddress as Address,

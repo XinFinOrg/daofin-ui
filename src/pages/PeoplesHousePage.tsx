@@ -71,6 +71,8 @@ const PeoplesHousePage = () => {
 
   const {} = useClient();
   const { network } = useNetwork();
+  console.log({network});
+  
   // const isUserDeposited = useIsUserDeposited(voterAddress ? voterAddress : "");
   // const isJudiciaryMember = useIsJudiciaryMember(
   //   voterAddress ? voterAddress : ""

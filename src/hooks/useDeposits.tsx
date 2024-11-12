@@ -29,7 +29,8 @@ function usePeoplesHouseDeposits(): {
   const [deposits, setDeposits] = useState<Deposit[]>([]);
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  console.log({deposits});
+  
   useEffect(() => {
     if (!daofinClient) return;
     setIsLoading(true);
@@ -49,7 +50,7 @@ function usePeoplesHouseDeposits(): {
         setError(e);
         console.log("error", e);
       });
-  }, [daofinClient]);
+  }, [daofinClient,]);
 
   return { data: deposits, error: error, isLoading };
 }

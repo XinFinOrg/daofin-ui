@@ -70,7 +70,8 @@ export const UseClientProvider: React.FC<PropsWithChildren> = ({
 
   useEffect(() => {
     const translatedNetwork = translateToNetworkishName(network);
-
+    console.log({translatedNetwork});
+    
     // when network not supported by the SDK, don't set network
     if (
       translatedNetwork === "unsupported" 

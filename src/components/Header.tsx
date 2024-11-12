@@ -147,9 +147,9 @@ export default function Header() {
                     switchLanguage(e.target.value);
                   }}
                 >
-                  {/* {langs.map((lang) => (
+                  {langs.map((lang) => (
                     <option value={lang}>{lang.toUpperCase()}</option>
-                  ))} */}
+                  ))}
                 </Select>
               </Box>
               <Box ml={"4"}>
@@ -212,7 +212,7 @@ export default function Header() {
                         bgColor: bgColorModeLinks,
                       }}
                     >
-                      <HStack alignItems={"center"} w={["auto"]}>
+                      <HStack alignItems={"center"} w={["100px"]}>
                         <>{link.icon}</>
                         <Text>
                           {t(`header.${link.name.toLocaleLowerCase()}`)}
@@ -273,9 +273,9 @@ export default function Header() {
                     switchLanguage(e.target.value);
                   }}
                 >
-                  {/* {langs.map((lang) => (
+                  {langs.map((lang) => (
                     <option value={lang}>{lang.toUpperCase()}</option>
-                  ))} */}
+                  ))}
                 </Select>
               </Box>
               {/* <Switch

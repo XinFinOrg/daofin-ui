@@ -4,7 +4,7 @@ import {
 } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { FC, PropsWithChildren } from "react";
-import { Address, configureChains, createConfig, WagmiConfig } from "wagmi";
+import { Address, configureChains, createConfig, WagmiConfig} from "wagmi";
 import { xdc, xdcTestnet, polygon } from "wagmi/chains";
 import {
   metaMaskWallet,
@@ -20,12 +20,14 @@ const WagmiProvider: FC<PropsWithChildren> = ({ children }) => {
       rpcUrls: {
         default: {
           http: [
-            "https://rpc.ankr.com/xdc_testnet/3583202f78729c453907a0326e6341ba382b3210fc4c6d18de3d4f9c0d5a8ba7",
+            "https://erpc.apothem.network",
+            // "https://rpc.ankr.com/xdc_testnet",
           ],
         },
         public: {
           http: [
-            "https://rpc.ankr.com/xdc_testnet/3583202f78729c453907a0326e6341ba382b3210fc4c6d18de3d4f9c0d5a8ba7",
+            "https://erpc.apothem.network",
+            // "https://rpc.ankr.com/xdc_testnet",
           ],
         },
       },
