@@ -16,6 +16,7 @@ import DefaultProgressBar from "./DefaultProgressBar";
 import { CommitteeVotingSettings } from "@xinfin/osx-daofin-sdk-client";
 import { ProposalType, ProposalTypeEnum } from "../utils/types";
 import { toStandardPercentage, uuid } from "../utils/numbers";
+import { useTranslation } from "react-i18next";
 interface RulesOfDecisionsType {
   summary: string;
   proposalTypes: ProposalType[] | undefined;
@@ -26,6 +27,7 @@ const RulesOfDecisions: FC<RulesOfDecisionsType> = ({
   summary,
   communityName,
 }) => {
+  const { t } = useTranslation();
   const mapProposalTypeIdToItsName = (proposalTypeId: number) => {
     switch (proposalTypeId) {
       case ProposalTypeEnum.Grant:
@@ -48,8 +50,8 @@ const RulesOfDecisions: FC<RulesOfDecisionsType> = ({
     <Accordion>
       <DefaultAlert fontSize={"sm"} mb={4}>
         <VStack alignItems={"flex-start"}>
-          <Text fontWeight={"semibold"}>Rules of Decisions</Text>
-          <Text>{summary}</Text>
+          <Text fontWeight={"semibold"}>{t("rules.name")}</Text>
+          <Text>{t("rules.desc")} </Text>
         </VStack>
       </DefaultAlert>
       {proposalTypes &&
@@ -76,20 +78,20 @@ const RulesOfDecisions: FC<RulesOfDecisionsType> = ({
                           +toStandardPercentage(minParticipation.toString())
                         }
                         threshold={null}
-                        ProgressLabel={<Text>Quorum</Text>}
+                        ProgressLabel={<Text>{t("common.quorum")}</Text>}
                       />
                       <Text>
                         {`${+toStandardPercentage(minParticipation)}`}
                         {"%"}
                       </Text>
                     </HStack>
-                    <HStack >
+                    <HStack>
                       <DefaultProgressBar
                         percentage={
                           +toStandardPercentage(supportThreshold.toString())
                         }
                         threshold={null}
-                        ProgressLabel={<Text>Threshold</Text>}
+                        ProgressLabel={<Text> {t("common.passrate")}</Text>}
                       />
                       <Text alignItems={"flex-start"}>
                         {`${toStandardPercentage(supportThreshold.toString())}`}

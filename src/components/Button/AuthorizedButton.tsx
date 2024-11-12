@@ -59,11 +59,13 @@ const MasterNodeAuthorizedButton: FC<MasterNodeAuthorizedButtonProps> = (
   const isMasterNode = useIsXDCValidatorCandidate(
     address ? address : zeroAddress
   );
-  const isMasterNodeDelegatee = useIsMasterNodeDelegatee(
-    address ? address : zeroAddress
-  );
-  const { data: isValidVoter } = useIsValidVoter();
+  // const isMasterNodeDelegatee = useIsMasterNodeDelegatee(
+  //   address ? address : zeroAddress
+  // );
+  // const { data: isValidVoter } = useIsValidVoter();
   const isValid = isMasterNode;
+  console.log({isMasterNode});
+  
   return (
     <WalletAuthorizedButton {...props} isDisabled={!isValid}>
       {props.children}

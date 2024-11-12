@@ -62,6 +62,7 @@ import { CheckCircleIcon } from "@chakra-ui/icons";
 import { formatEther } from "viem";
 import useIsWithinVotingPeriod from "../hooks/contractHooks/useIsWithinVotingPeriod";
 import useDaoGlobalSettings from "../hooks/useDaoGlobalSettings";
+import { useTranslation } from "react-i18next";
 export type JoinHouseFormType = {
   amount: string;
 };
@@ -70,6 +71,8 @@ const PeoplesHousePage = () => {
 
   const {} = useClient();
   const { network } = useNetwork();
+  console.log({network});
+  
   // const isUserDeposited = useIsUserDeposited(voterAddress ? voterAddress : "");
   // const isJudiciaryMember = useIsJudiciaryMember(
   //   voterAddress ? voterAddress : ""
@@ -103,7 +106,7 @@ const PeoplesHousePage = () => {
 
   const { data: proposalTypes } = useFetchPluginProposalTypeDetails();
   const { data: setting } = useDaoGlobalSettings();
-
+  const { t } = useTranslation();
   return (
     <Page title="House">
       <Formik
@@ -135,7 +138,7 @@ const PeoplesHousePage = () => {
         >
           <Tabs variant="soft-rounded" colorScheme="blue">
             <TabList>
-              <Tab>Active</Tab>
+              <Tab>{t("common.active")}</Tab>
               <Tab>Freezed</Tab>
             </TabList>
             <TabPanels>
@@ -235,6 +238,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
 }) => {
   const { handleToggleFormModal } = usePeopleHouseContext();
   const { network } = useNetwork();
+  const { t } = useTranslation();
   return (
     <>
       <DefaultBox mb={4}>
@@ -253,12 +257,9 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
                 <Box>
                   <Text fontSize={["lg", "xl"]} fontWeight={"bold"}>
                     {" "}
-                    People’s House
+                    {t("community.house")}
                   </Text>
-                  <Text fontSize={"xs"}>
-                    This is the group of Token Holders who have deposited their
-                    tokens into DAO Treasury.
-                  </Text>
+                  <Text fontSize={"xs"}>{t("community.houseDesc")}</Text>
                 </Box>
               </HStack>
             </Box>
@@ -268,7 +269,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
                 w={["full", "full", "inherit"]}
                 onClick={handleToggleFormModal}
               >
-                Join House
+                {t("community.joinHouse")}
               </PeopleButton>
             </Box>
           </HStack>
@@ -288,7 +289,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
                   alignItems={"flex-start"}
                   justifyContent={"center"}
                 >
-                  <Text>Total Supply</Text>
+                  <Text>{t("community.totalSupply")}</Text>
                   <Text
                     fontSize={"lg"}
                     fontWeight={"bold"}
@@ -308,7 +309,7 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
                   alignItems={"flex-start"}
                   justifyContent={"center"}
                 >
-                  <Text>House Members</Text>
+                  <Text>{t("community.houseMembers")}</Text>
                   <Text fontSize={"lg"} fontWeight={"bold"}>
                     {numberWithCommaSeparate(totalMembers)}
                   </Text>
@@ -318,13 +319,13 @@ const PeoplesHouseHeader: FC<PeoplesHouseHeaderType> = ({
 
             <DefaultAlert w={["full", "full", "full", "40%"]}>
               <Box fontSize={"sm"}>
-                <Text fontWeight={"semibold"}>How does House work?</Text>
+                <Text fontWeight={"semibold"}>
+                  {t("community.howDoesHouseWork")}
+                </Text>
                 <Text>
-                  to People’s House where empowers its members by granting
-                  voting power proportional to their token holdings, adhering to
-                  the principle of "one token, one vote."
+                  {t("community.howDoesHouseWorkDesc")}
                   <Text fontWeight={"500"}>
-                    The minimum amount to join is{" "}
+                    {t("community.minAmountHouse")}{" "}
                     {`${numberWithCommaSeparate(formatEther(houseMinAmount))} ${
                       CHAIN_METADATA[network].nativeCurrency.symbol
                     }`}
@@ -422,16 +423,16 @@ const Resignation = () => {
     const hash = await writeClaim();
     console.log(hash);
   };
+  const { t } = useTranslation();
   return (
     <>
       <DefaultBox alignSelf={"flex-start"}>
         <Box as="span" flex="1" textAlign="left">
           <Text fontWeight={"bold"} mb={"2"}>
-            Resignation
+            {t("community.resignation")}
           </Text>
           <Text fontSize={"sm"} mb={"2"}>
-            As the People’s House, you can add fund anytime to Treasury, and
-            request to claim your deposit back
+            {t("community.resignationDesc")}
           </Text>
         </Box>
         {connectedWalletAddress && connectedWalletDepositInfo ? (
@@ -458,9 +459,9 @@ const Resignation = () => {
                       !isReadyToRequest
                     }
                   >
-                    {isReadyToRequest ? "Request to Resign" : ""}
+                    {isReadyToRequest ? t("community.requestToResign") : ""}
                     {isWithinVotingPeriod
-                      ? "Unable to request inside voting period"
+                      ? t("community.unableToWithdraw")
                       : ""}
 
                     {isRequestedToClaim && connectedWalletDepositInfo ? (
@@ -486,7 +487,7 @@ const Resignation = () => {
                       claimIsLoading || !isRequestedToClaim || !isReadyToClaim
                     }
                   >
-                    {"Claim your withdrawal"}
+                    {t("community.claimYourWithdraw")}
                   </WalletAuthorizedButton>
                 </Box>
               </>
@@ -495,7 +496,7 @@ const Resignation = () => {
             )}
           </>
         ) : (
-          "Connect your wallet"
+          t("common.connectWallet")
         )}
       </DefaultBox>
 
@@ -509,7 +510,7 @@ const Resignation = () => {
 
           <Box w={"full"}>
             <DefaultButton w={"full"} variant={"outline"}>
-              Cancel
+              {t("common.cancel")}
             </DefaultButton>
           </Box>
         </Modal>

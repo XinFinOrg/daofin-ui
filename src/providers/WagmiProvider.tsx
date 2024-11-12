@@ -4,7 +4,7 @@ import {
 } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import { FC, PropsWithChildren } from "react";
-import { Address, configureChains, createConfig, WagmiConfig } from "wagmi";
+import { Address, configureChains, createConfig, WagmiConfig} from "wagmi";
 import { xdc, xdcTestnet, polygon } from "wagmi/chains";
 import {
   metaMaskWallet,
@@ -17,6 +17,20 @@ const WagmiProvider: FC<PropsWithChildren> = ({ children }) => {
   const chains = [
     {
       ...xdcTestnet,
+      rpcUrls: {
+        default: {
+          http: [
+            "https://erpc.apothem.network",
+            // "https://rpc.ankr.com/xdc_testnet",
+          ],
+        },
+        public: {
+          http: [
+            "https://erpc.apothem.network",
+            // "https://rpc.ankr.com/xdc_testnet",
+          ],
+        },
+      },
       contracts: {
         multicall3: {
           address: "0xD4449Bf3f8E6a1b3fb5224F4e1Ec4288BD765547" as Address,
@@ -26,9 +40,9 @@ const WagmiProvider: FC<PropsWithChildren> = ({ children }) => {
     {
       ...xdc,
       rpcUrls: {
-        public: { http: ["https://erpc.xinfin.network"] },
+        public: { http: ["https://xdcdaorpc.icotokens.net"] },
         // default: { http: ["https://erpc.xinfin.network"] },
-        default: { http: ["https://erpc.xinfin.network"] },
+        default: { http: ["https://xdcdaorpc.icotokens.net"] },
       },
       contracts: {
         multicall3: {

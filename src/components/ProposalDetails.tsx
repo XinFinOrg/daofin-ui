@@ -62,6 +62,7 @@ import ViewDecisionMakingTypeAction from "./actions/views/ViewDecisionMakingType
 import { formatEther } from "viem";
 import { Modal } from "./Modal";
 import { uuid } from "../utils/numbers";
+import { useTranslation } from "react-i18next";
 
 const ProposalDetails: FC<{
   proposal: Proposal | undefined;
@@ -115,6 +116,7 @@ const ProposalDetails: FC<{
     [allVoters]
   );
   const breakpoint = useBreakpoint();
+  const { t } = useTranslation();
   return (
     <>
       {
@@ -154,7 +156,7 @@ const ProposalDetails: FC<{
                         gap={1}
                       >
                         <Text>
-                          Published By:{" "}
+                          {`${t("common.publishedBy")}: `}
                           <a
                             href={makeBlockScannerAddressUrl(
                               network,
@@ -247,11 +249,10 @@ const ProposalDetails: FC<{
                 <DefaultBox>
                   <Box p={5}>
                     <Text fontSize={"lg"} fontWeight={"bold"}>
-                      Executing Actions
+                      {t("common.executingActions")}
                     </Text>
                     <Text fontSize={"sm"} fontWeight={"normal"}>
-                      These actions can be executed only once the governance
-                      parameters are met
+                      {t("common.executingActionsDescription")}
                     </Text>
                   </Box>
                   {proposal?.actions.map((item) => (
@@ -271,7 +272,7 @@ const ProposalDetails: FC<{
                 <DefaultBox>
                   <HStack justifyContent={"space-between"} mb={"6"} p={"6"}>
                     <Text fontSize={"lg"} fontWeight={"bold"}>
-                      Voters
+                      {t("common.voters")}
                     </Text>
                   </HStack>
                   <Tabs isFitted>
@@ -297,7 +298,7 @@ const ProposalDetails: FC<{
                                 fontWeight={"semibold"}
                                 whiteSpace={"nowrap"}
                               >
-                                {`${name} `}
+                                {t(`community.${name.toLocaleLowerCase()}`)}
                               </Text>
                             )}
                             {/* <Text>( {filterVotersList(id).length} )</Text> */}
@@ -339,7 +340,7 @@ const ProposalDetails: FC<{
                                           onClick={handleToggleVotersModal}
                                           textAlign={"center"}
                                         >
-                                          Show all
+                                          {t("common.viewAll")}
                                         </Button>
                                       )}
                                     </HStack>
@@ -359,7 +360,7 @@ const ProposalDetails: FC<{
               <Skeleton isLoaded={!isLoading} minH={"100px"} mb={6}>
                 <DefaultBox>
                   <Text p={"5"} fontSize={"lg"} fontWeight={"bold"}>
-                    Discussions & References
+                    {t("common.discussion&Links")}
                   </Text>
                   <HStack p={"6"}>
                     {proposal?.metadata?.resources.map(({ name, url }) => (
@@ -384,7 +385,7 @@ const ProposalDetails: FC<{
                   <Box p={"5"}>
                     <HStack alignItems={"baseline"}>
                       <Text mb={4} fontSize={"lg"} fontWeight={"bold"}>
-                        Details
+                        {t("common.details")}
                       </Text>
                     </HStack>
 
@@ -435,6 +436,7 @@ const ProposalActionButtons: FC<ProposalActionButtonsProps> = ({
 }) => {
   const { handleToggleFormModal } = useVoteContext();
   const { handleToggleFormModal: handleExecute } = useExecuteProposalContext();
+  const { t } = useTranslation();
   return (
     <>
       <VoteButton
@@ -445,7 +447,7 @@ const ProposalActionButtons: FC<ProposalActionButtonsProps> = ({
         onClick={handleToggleFormModal}
         proposalId={proposalId}
       >
-        Vote
+        {t("common.vote")}
       </VoteButton>
       <ExecuteProposalButton
         w={["200px", "300px", "200px"]}
@@ -453,7 +455,7 @@ const ProposalActionButtons: FC<ProposalActionButtonsProps> = ({
         status={status}
         onClick={handleExecute}
       >
-        Execute
+        {t("common.execute")}
       </ExecuteProposalButton>
     </>
   );

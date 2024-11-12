@@ -10,6 +10,7 @@ import { Proposal } from "../utils/types";
 import { v4 as uuid } from "uuid";
 import { DefaultBox } from "./Box";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 export type ReadyToExecuteProposalType = Pick<
   Proposal,
   "createdAt" | "metadata" | "creationTxHash" | "pluginProposalId" | "creator"
@@ -18,6 +19,7 @@ export type ReadyToExecuteProposalType = Pick<
 const ReadyToExecuteProposals: FC<{ data: ReadyToExecuteProposalType[] }> = ({
   data,
 }) => {
+  const { t } = useTranslation();
   return (
     <>
       {data.length > 0 ? (
@@ -47,7 +49,7 @@ const ReadyToExecuteProposals: FC<{ data: ReadyToExecuteProposalType[] }> = ({
         <DefaultBox borderStyle={"dashed"}>
           <VStack w={"100%"} alignItems="center" alignSelf={"center"} p={6}>
             <Text fontSize={"xs"} fontWeight={"500"} opacity={"0.5"}>
-              {"There is no proposal yet."}
+              {t("common.thereIsNoProposalYet")}
             </Text>
           </VStack>
         </DefaultBox>

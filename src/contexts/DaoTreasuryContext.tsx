@@ -34,6 +34,7 @@ import { ModalActionButtonType } from "../components/Modal/TransactionReviewModa
 import { usePollGasFee } from "../hooks/usePollGasfee";
 import { DefaultBox } from "../components/Box";
 import { CheckIcon, CopyIcon } from "@chakra-ui/icons";
+import { useTranslation } from "react-i18next";
 export interface DaoTreasuryContextType {
   handleSendTx: () => void;
   handleOpenPublishModal: () => void;
@@ -82,7 +83,7 @@ const DaoTreasuryProvider: FC<PropsWithChildren> = ({ children }) => {
       return await client.estimation.deposit(params);
   }, [client?.estimation, params]);
 
-  const { stopPolling, txCosts, txFees,hasLoaded } = usePollGasFee(
+  const { stopPolling, txCosts, txFees, hasLoaded } = usePollGasFee(
     estimateCreationFees,
     shouldPoll,
     values.amount
@@ -151,6 +152,7 @@ const DaoTreasuryProvider: FC<PropsWithChildren> = ({ children }) => {
     onCopy();
     setClicked(true);
   };
+  const { t } = useTranslation();
   return (
     <DaoTreasuryContext.Provider
       value={{
@@ -167,7 +169,7 @@ const DaoTreasuryProvider: FC<PropsWithChildren> = ({ children }) => {
             onCloseDepositModal();
             resetForm();
           }}
-          title="Deposit to Treasury"
+          title={t("treasury.depositToTreasury")}
         >
           <>
             <VStack>
@@ -202,7 +204,7 @@ const DaoTreasuryProvider: FC<PropsWithChildren> = ({ children }) => {
               name="amount"
               rightAddon={`${CHAIN_METADATA[network].nativeCurrency.symbol}`}
               placeholder="0"
-              label="Amount"
+              label={t("common.amount")}
               borderBottomRightRadius={0}
               borderTopRightRadius={0}
               isRequired
@@ -214,7 +216,7 @@ const DaoTreasuryProvider: FC<PropsWithChildren> = ({ children }) => {
               type="submit"
               onClick={handleDepositClick}
             >
-              Deposit
+              {t("common.deposit")}
             </DefaultButton>
           </>
         </Modal>

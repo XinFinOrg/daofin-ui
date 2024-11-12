@@ -39,6 +39,7 @@ import { toNormalDate } from "../utils/date";
 import { erc20ABI, useContractRead, useToken } from "wagmi";
 import WithdrawActionCard from "../components/WalletAddressCard/WithdrawActionCard";
 import { BigNumber } from "ethers";
+import { useTranslation } from "react-i18next";
 const Query = `
 query DaoTransfers($daoId: ID!) {
   nativeTransfers(
@@ -131,18 +132,18 @@ const TreasuryPage = () => {
     onClose: withdrawOnClose,
   } = useDisclosure();
 
-  useEffect(() => {
-    if (!daofinClient || !daofinClient.graphql || !daoAddress) return;
-    daofinClient.graphql
-      .request<{ nativeTransfers: NativeTransfer[] }>({
-        query: Query,
-        params: { daoId: daoAddress.toLowerCase() },
-      })
-      .then((data) => {
-        setAddFunds(data.nativeTransfers);
-      })
-      .catch(console.log);
-  }, [daofinClient, daoAddress]);
+  // useEffect(() => {
+  //   if (!daofinClient || !daofinClient.graphql || !daoAddress) return;
+  //   daofinClient.graphql
+  //     .request<{ nativeTransfers: NativeTransfer[] }>({
+  //       query: Query,
+  //       params: { daoId: daoAddress.toLowerCase() },
+  //     })
+  //     .then((data) => {
+  //       setAddFunds(data.nativeTransfers);
+  //     })
+  //     .catch(console.log);
+  // }, [daofinClient, daoAddress]);
 
   useEffect(() => {
     if (!daofinClient || !daoAddress) return;
@@ -478,6 +479,7 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
 }) => {
   const { network } = useNetwork();
   const { daoAddress } = useAppGlobalConfig();
+  const { t } = useTranslation();
   return (
     <>
       <Text fontWeight={"semibold"} fontSize={"lg"} mb={2}>
@@ -496,17 +498,17 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
             </Box>
             <Box>
               <Heading fontSize={["lg", "xl"]} fontWeight={"semibold"} mb={"1"}>
-                Governor Assets
+                {t("treasury.governorAsset")}
               </Heading>
               <Text fontSize={"xs"} fontWeight={"normal"}>
-                Value of all assets funded in governer smart contract
+                {t("treasury.governorAssetDesc")}
               </Text>
             </Box>
           </HStack>
           <HStack>
             <a href={"https://github.com/XinFinOrg/osx-daofin"} target="_blank">
               <Text fontSize={"xs"} fontWeight={"normal"}>
-                View contract <ExternalLinkIcon />
+                {t("treasury.viewContract")} <ExternalLinkIcon />
               </Text>
             </a>
             <a
@@ -514,7 +516,7 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
               target="_blank"
             >
               <Text fontSize={"xs"} fontWeight={"normal"}>
-                View Treasury on explorer <ExternalLinkIcon />
+                {t("treasury.viewContractOnExplorer")} <ExternalLinkIcon />
               </Text>
             </a>
           </HStack>
@@ -526,7 +528,7 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
         >
           <Box>
             <Text fontSize={"xs"} fontWeight={"normal"}>
-              Total Value
+              {t("treasury.totalValue")}
             </Text>
             <Skeleton isLoaded={!isDaoBalanceLoading}>
               <Heading fontSize={"2xl"} fontWeight={"bold"} mb={"1"}>
@@ -536,13 +538,13 @@ const TreasuryPageHeader: FC<TreasuryPageHeaderProps> = ({
             </Skeleton>
           </Box>
           <HStack flexDirection={["column", "row"]} w={["full", "initial"]}>
-            <Box w={["full", "initial"]}>
+            {/* <Box w={["full", "initial"]}>
               <Link to={`/create/0`}>
                 <DefaultButton w={["full", "initial"]} variant={"outline"}>
-                  Withdraw
+                  {t("treasury.withdraw")}
                 </DefaultButton>
               </Link>
-            </Box>
+            </Box> */}
             <Box w={["full", "initial"]}>
               <AddFund />
             </Box>

@@ -76,7 +76,9 @@ export const CHAIN_METADATA: ChainList = {
     logo: "https://icons.llamao.fi/icons/chains/rsz_xdc.jpg",
     explorer: "https://apothem.xdcscan.io",
     testnet: true,
-    rpc: [`https://erpc.apothem.network/`],
+    rpc: [
+      `https://rpc.ankr.com/xdc_testnet/3583202f78729c453907a0326e6341ba382b3210fc4c6d18de3d4f9c0d5a8ba7`,
+    ],
     nativeCurrency: {
       name: "TXDC",
       symbol: "TXDC",
@@ -99,7 +101,7 @@ export const CHAIN_METADATA: ChainList = {
     explorer: "https://xdcscan.io",
     testnet: false,
     // rpc: [`https://rpc.ankr.com/xdc`],
-    rpc: [`https://erpc.xinfin.network`],
+    rpc: [`https://xdcdaorpc.icotokens.net`],
     nativeCurrency: {
       name: "XDC",
       symbol: "XDC",

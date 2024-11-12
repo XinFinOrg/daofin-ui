@@ -1,33 +1,54 @@
 import { useEffect, useMemo, useState } from "react";
 import { useClient } from "./useClient";
 import { toStandardTimestamp } from "../utils/date";
+import { Address, useContractRead } from "wagmi";
+import { DaofinABI } from "../utils/abis/daofin.abi";
+import { useAppGlobalConfig } from "../contexts/AppGlobalConfig";
 export type ElectionPeriod = { startDate: number; endDate: number; id: string };
 function useDaoElectionPeriods() {
-  const [electionPeriods, setElectionPeriods] = useState<ElectionPeriod[]>();
+  const [electionPeriods, setElectionPeriods] = useState<ElectionPeriod[]>([]);
   const { daofinClient } = useClient();
-  const [isLoading, setIsLoading] = useState(false);
+  const { pluginAddress } = useAppGlobalConfig();
+  // const [isLoading, setIsLoading] = useState(false);
+  const { data, isLoading } = useContractRead({
+    abi: DaofinABI,
+    address: pluginAddress as Address,
+    functionName: "getElectionPeriods",
+  });
 
+  console.log("ep",data);
+  
   useEffect(() => {
-    if (!daofinClient) return;
-    setIsLoading(true);
+    if (data && electionPeriods.length == 0) {
+      const modifiedData = (data as ElectionPeriod[]).map((item, index) => ({
+        ...item,
+        id: `${index}`,
+        startDate: toStandardTimestamp(item.startDate.toString()),
+        endDate: toStandardTimestamp(item.endDate.toString()),
+      }));
 
-    daofinClient.methods
-      .getElectionPeriods()
-      .then((data: ElectionPeriod[]) => {
-        const modifiedData = data.map((item, index) => ({
-          ...item,
-          id: `${index}`,
-          startDate: toStandardTimestamp(item.startDate.toString()),
-          endDate: toStandardTimestamp(item.endDate.toString()),
-        }));
-        setElectionPeriods(modifiedData as unknown as ElectionPeriod[]);
-        setIsLoading(false);
-      })
-      .catch((e: any) => {
-        setIsLoading(false);
-        console.log("error", e);
-      });
-  }, [daofinClient]);
+      setElectionPeriods(modifiedData);
+    }
+    // if (!daofinClient) return;
+    // setIsLoading(true);
+
+    // daofinClient.methods
+    //   .getElectionPeriods()
+    //   .then((data: ElectionPeriod[]) => {
+    //     const modifiedData = data.map((item, index) => ({
+    //       ...item,
+    //       id: `${index}`,
+    //       startDate: toStandardTimestamp(item.startDate.toString()),
+    //       endDate: toStandardTimestamp(item.endDate.toString()),
+    //     }));
+    //     setElectionPeriods(modifiedData as unknown as ElectionPeriod[]);
+    //     setIsLoading(false);
+    //   })
+    //   .catch((e: any) => {
+    //     setIsLoading(false);
+    //     console.log("error", e);
+    //   });
+  }, [data]);
 
   return { data: electionPeriods, isLoading };
 }
