@@ -1,4 +1,4 @@
-import { Box, Button, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Link, Text, useDisclosure } from "@chakra-ui/react";
 import { Formik, useFormikContext } from "formik";
 import {
   FC,
@@ -19,6 +19,7 @@ import { UpdateOrJoinMasterNodeDelegateeSteps } from "@xinfin/osx-daofin-sdk-cli
 import useTransactionModalDisclosure from "../hooks/useTransactionModalDisclosure";
 import { ModalActionButtonType } from "../components/Modal/TransactionReviewModal";
 import { DefaultAlert } from "../components/Alerts";
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 
 interface MasterNodeDelegateeSentateContextType {
   handleSendTx: () => void;
@@ -66,7 +67,10 @@ export const MasterNodeDelegateeSentateProvider: FC<PropsWithChildren> = ({
       );
   }, [daofinClient?.estimation, values.delegateeAddress]);
 
-  const { txCosts, txFees, hasLoaded} = usePollGasFee(estimateCreationFees, shouldPoll);
+  const { txCosts, txFees, hasLoaded } = usePollGasFee(
+    estimateCreationFees,
+    shouldPoll
+  );
 
   const handleSendTx = async () => {
     const proposalIterator =
@@ -133,7 +137,13 @@ export const MasterNodeDelegateeSentateProvider: FC<PropsWithChildren> = ({
                   <Text>
                     To bring more security layer on top of the Master Node
                     address, each of them should whitelist a delegatee address
-                    to perform actions onbehalf.
+                    to perform actions onbehalf.{" "}
+                    <Link
+                      target="_blank"
+                      href="https://www.xdc.dev/0xbeny/xdcdao-dive-into-master-nodes-senate-22a7"
+                    >
+                      Learn more <ExternalLinkIcon />
+                    </Link>
                   </Text>
                 </Box>
               </DefaultAlert>
