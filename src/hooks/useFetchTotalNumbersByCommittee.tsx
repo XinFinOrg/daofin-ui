@@ -20,32 +20,34 @@ function useFetchTotalNumbersByCommittee(
   const [, setIsLoading] = useState(false);
   const { pluginAddress } = useAppGlobalConfig();
 
-  const { data,error } = useContractRead({
-    abi: DaofinABI,
-    address: pluginAddress as Address,
-    functionName: "getTotalNumberOfMembersByCommittee",
-    args: [committee],
-  });
-  useEffect(()=>{
-    setTotal(data as bigint)
-  },[data])
-  // useEffect(() => {
-  //   if (!daofinClient || !committee) return;
-  //   setIsLoading(true);
+  // const { data,error } = useContractRead({
+  //   abi: DaofinABI,
+  //   address: pluginAddress as Address,
+  //   functionName: "getTotalNumberOfMembersByCommittee",
+  //   args: [committee],
+  // });
+  // console.log({error});
+  
+  // useEffect(()=>{
+  //   setTotal(data as bigint)
+  // },[data])
+  useEffect(() => {
+    if (!daofinClient || !committee) return;
+    setIsLoading(true);
 
     
-  //   daofinClient.methods
-  //     .getTotalNumberOfMembersByCommittee(committee)
-  //     .then((data: BigNumberish) => {
-  //       setIsLoading(false);
-  //       setTotal(data);
-  //     })
-  //     .catch((e: any) => {
-  //       setIsLoading(false);
-  //       setTotal(0);
-  //       console.log("error", e);
-  //     });
-  // }, [daofinClient]);
+    daofinClient.methods
+      .getTotalNumberOfMembersByCommittee(committee)
+      .then((data: BigNumberish) => {
+        setIsLoading(false);
+        setTotal(data);
+      })
+      .catch((e: any) => {
+        setIsLoading(false);
+        setTotal(0);
+        console.log("error", e);
+      });
+  }, [daofinClient]);
 
   return total;
 }
